@@ -1,0 +1,17 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net7.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+    </PropertyGroup>
+    
+    <ItemGroup>
+        <EmbeddedResource Include="Textures/**/*" />
+        <EmbeddedResource Include="Fonts/**/*" />
+        <EmbeddedResource Include="Shaders/**/*" />
+        <EmbeddedResource Include="Audio/**/*" />
+        <EmbeddedResource Include="Music/**/*" />
+    </ItemGroup>
+
+</Project>
