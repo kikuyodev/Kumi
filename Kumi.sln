@@ -1,6 +1,6 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Kumi", "Kumi\Kumi.csproj", "{4DC435A0-CE5D-4652-B0DD-C5C8CC83375C}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Kumi.Game", "Kumi.Game\Kumi.Game.csproj", "{4DC435A0-CE5D-4652-B0DD-C5C8CC83375C}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Kumi.Desktop", "Kumi.Desktop\Kumi.Desktop.csproj", "{579E5090-AB21-49A2-ABD4-A52B5D9C2A24}"
 EndProject

@@ -1,4 +1,5 @@
-﻿using osu.Framework.Testing;
+﻿using Kumi.Game;
+using osu.Framework.Testing;
 
 namespace Kumi.Tests.Visual;
 

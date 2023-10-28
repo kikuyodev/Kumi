@@ -12,7 +12,7 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\Kumi\Kumi.csproj" />
+      <ProjectReference Include="..\Kumi.Game\Kumi.Game.csproj" />
     </ItemGroup>
 
 </Project>

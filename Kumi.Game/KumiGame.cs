@@ -2,7 +2,7 @@
 using osu.Framework.Graphics;
 using osu.Framework.Screens;
 
-namespace Kumi;
+namespace Kumi.Game;
 
 public partial class KumiGame : KumiGameBase
 {

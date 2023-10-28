@@ -1,14 +1,13 @@
 ﻿using Kumi.Resources;
-using osu.Framework;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.IO.Stores;
 using osuTK;
 
-namespace Kumi;
+namespace Kumi.Game;
 
-public partial class KumiGameBase : Game
+public partial class KumiGameBase : osu.Framework.Game
 {
     protected override Container<Drawable> Content { get; }
     

@@ -1,4 +1,5 @@
-﻿using osu.Framework;
+﻿using Kumi.Game;
+using osu.Framework;
 
 namespace Kumi.Desktop;
 
