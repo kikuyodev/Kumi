@@ -9,7 +9,7 @@
     <PropertyGroup Label="NuGet">
         <Title>Kumi Resources</Title>
         <PackageId>kikuyodev.Kumi.Resources</PackageId>
-        <Version>2023.1028.0</Version>
+        <Version>0.0.0</Version>
     </PropertyGroup>
     
     <ItemGroup>

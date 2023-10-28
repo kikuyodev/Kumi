@@ -10,7 +10,7 @@
     <PropertyGroup Label="Nuget">
         <Title>kumi</Title>
         <PackageId>kikuyodev.Kumi.Game</PackageId>
-        <Version>2023.1028.0</Version>
+        <Version>0.0.0</Version>
         <IsPackable>true</IsPackable>
     </PropertyGroup>
 
