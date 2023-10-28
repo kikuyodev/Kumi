@@ -2,14 +2,16 @@
 
     <PropertyGroup>
         <TargetFramework>net7.0</TargetFramework>
+        <OutputType>Library</OutputType>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
     </PropertyGroup>
     
     <PropertyGroup Label="NuGet">
         <Title>Kumi Resources</Title>
-        <PackageId>kikuyodev.Kumi.Resources</PackageId>
+        <PackageId>Kikuyodev.Kumi.Resources</PackageId>
         <Version>0.0.0</Version>
+        <IsPackable>true</IsPackable>
     </PropertyGroup>
     
     <ItemGroup>

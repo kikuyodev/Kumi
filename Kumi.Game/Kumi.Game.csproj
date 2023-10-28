@@ -8,8 +8,8 @@
     </PropertyGroup>
     
     <PropertyGroup Label="Nuget">
-        <Title>kumi</Title>
-        <PackageId>kikuyodev.Kumi.Game</PackageId>
+        <Title>Kumi</Title>
+        <PackageId>Kikuyodev.Kumi.Game</PackageId>
         <Version>0.0.0</Version>
         <IsPackable>true</IsPackable>
     </PropertyGroup>

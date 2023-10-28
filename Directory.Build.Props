@@ -19,7 +19,7 @@
     
     <PropertyGroup Label="NuGet">
         <IsPackable>false</IsPackable>
-        <Authors>Kikuyo Dev</Authors>
+        <Authors>Kikuyodev</Authors>
         <PackageLicenseExpression>MIT</PackageLicenseExpression>
         <PackageProjectUrl>https://github.com/kikuyodev/kumi</PackageProjectUrl>
         <RepositoryUrl>https://github.com/kikuyodev/kumi</RepositoryUrl>
