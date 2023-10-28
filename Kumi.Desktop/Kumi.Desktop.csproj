@@ -1,10 +1,14 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
-    <PropertyGroup>
-        <OutputType>Exe</OutputType>
+    <PropertyGroup Label="Project">
+        <OutputType>WinExe</OutputType>
         <TargetFramework>net7.0</TargetFramework>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
+        <Title>kumi</Title>
+        <Product>kumi</Product>
+        <Version>0.0.0</Version>
+        <Version>0.0.0</Version>
     </PropertyGroup>
 
     <ItemGroup>
