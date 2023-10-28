@@ -1,0 +1,30 @@
+<Project>
+    <PropertyGroup Label="C#">
+        <LangVersion>10.0</LangVersion>
+        <Nullable>enable</Nullable>
+    </PropertyGroup>
+    
+    <PropertyGroup>
+        <ApplicationManifest>$(MSBuildThisFileDirectory)app.manifest</ApplicationManifest>
+    </PropertyGroup>
+    
+    <ItemGroup Label="Resources">
+        <EmbeddedResource Include="Resources\**\*.*" />
+    </ItemGroup>
+    
+    <PropertyGroup Label="Documentation">
+        <GenerateDocumentationFile>true</GenerateDocumentationFile>
+        <NoWarn>$(NoWarn);CS1591</NoWarn>
+    </PropertyGroup>
+    
+    <PropertyGroup Label="NuGet">
+        <IsPackable>false</IsPackable>
+        <Authors>Kikuyo Dev</Authors>
+        <PackageLicenseExpression>MIT</PackageLicenseExpression>
+        <PackageProjectUrl>https://github.com/kikuyodev/kumi</PackageProjectUrl>
+        <RepositoryUrl>https://github.com/kikuyodev/kumi</RepositoryUrl>
+        <PackageReleaseNotes>Automated release.</PackageReleaseNotes>
+        <Copyright>Copyright (c) 2023 Kikuyo dev</Copyright>
+        <PackageTags>game taiko</PackageTags>
+    </PropertyGroup>
+</Project>

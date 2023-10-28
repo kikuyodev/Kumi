@@ -6,6 +6,12 @@
         <Nullable>enable</Nullable>
     </PropertyGroup>
     
+    <PropertyGroup Label="NuGet">
+        <Title>Kumi Resources</Title>
+        <PackageId>kikuyodev.Kumi.Resources</PackageId>
+        <Version>2023.1028.0</Version>
+    </PropertyGroup>
+    
     <ItemGroup>
         <EmbeddedResource Include="Textures/**/*" />
         <EmbeddedResource Include="Fonts/**/*" />

@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
     <metadata>
-        <id>kumi</id>
+        <id>kikuyodev.kumi</id>
         <version>0.0.0</version>
         <title>kumi</title>
         <authors>Kikuyo dev</authors>
         <owners>Kikuto dev</owners>
+        <description>A faithful recreation to Taiko No Tatsujin.</description>
         <projectUrl>https://github.com/kikuyodev/kumi</projectUrl>
         <requireLicenseAcceptance>false</requireLicenseAcceptance>
-        <description></description>
         <releaseNotes>testing</releaseNotes>
         <copyright>Copyright (c) 2023 Kikuyo dev</copyright>
         <language>en-US</language>
