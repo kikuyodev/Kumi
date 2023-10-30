@@ -88,10 +88,7 @@ public class ServerConnector : IServerConnector//, IDisposable
 
     private async Task connect()
     {
-        if (CurrentConnection != null && CurrentConnection.IsConnected)
-        {
-            cancelExistingConnection();
-        }
+        cancelExistingConnection();
         
         if (!await connectionLock.WaitAsync(1000))
             throw new TimeoutException("Failed to acquire connection lock, likely due to a deadlock.");
