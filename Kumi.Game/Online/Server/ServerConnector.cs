@@ -89,7 +89,6 @@ public class ServerConnector : IServerConnector//, IDisposable
 
     private async Task connect()
     {
-        Console.WriteLine("connect");
         if (CurrentConnection != null && CurrentConnection.IsConnected)
         {
             cancelExistingConnection();

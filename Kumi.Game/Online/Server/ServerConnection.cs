@@ -61,19 +61,6 @@ public class ServerConnection : IAsyncDisposable
             // Connect to the server.
             await Connection.ConnectAsync(new Uri(Connector.Provider.EndpointConfiguration.WebsocketUri), cancellationToken);
             ConnectionThread.Start();
-
-            new Thread(() =>
-            {
-                while (ConnectionThread.IsAlive)
-                {
-                    Thread.Sleep(1000);
-                }
-
-                Console.WriteLine("nya");
-            })
-            {
-                IsBackground = true
-            }.Start();
         } catch (Exception e)
         {
             // Set the state to failed.
@@ -135,7 +122,6 @@ public class ServerConnection : IAsyncDisposable
         {
             if (Connection.State != WebSocketState.Open)
             {
-                Console.WriteLine("Closed");
                 Closed?.Invoke(null);
                 break;
             }
