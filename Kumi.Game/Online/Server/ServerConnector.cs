@@ -1,5 +1,4 @@
 ﻿using Kumi.Game.Online.API;
-using Microsoft.AspNetCore.SignalR.Client;
 using Newtonsoft.Json;
 using osu.Framework.Bindables;
 using osu.Framework.Logging;
