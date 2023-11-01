@@ -1,4 +1,4 @@
-﻿namespace Kumi.Game.Online.API.Users;
+﻿namespace Kumi.Game.Online.API.Accounts;
 
 public class GuestAccount : APIAccount
 {

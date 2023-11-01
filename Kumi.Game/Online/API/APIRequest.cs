@@ -1,6 +1,4 @@
-﻿using osu.Framework.IO.Network;
-
-namespace Kumi.Game.Online.API;
+﻿namespace Kumi.Game.Online.API;
 
 /// <summary>
 /// An object that represents a request to the API, without any response data.
