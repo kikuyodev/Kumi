@@ -2,7 +2,7 @@
 
 namespace Kumi.Tests;
 
-public static class Program
+public static class VisualTestRunner
 {
     public static void Main()
     {

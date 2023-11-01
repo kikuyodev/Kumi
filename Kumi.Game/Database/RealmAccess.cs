@@ -15,6 +15,8 @@ public class RealmAccess : IDisposable
     /// </summary>
     private const int schema_version = 1;
 
+    public string FileName { get; private set; }
+
     private Realm? updateRealm;
 
     public Realm Realm
@@ -30,15 +32,16 @@ public class RealmAccess : IDisposable
 
     private readonly Storage storage;
 
-    private RealmConfiguration config => new RealmConfiguration(storage.GetFullPath("kumi.realm"))
+    private RealmConfiguration config => new RealmConfiguration(storage.GetFullPath(FileName))
     {
         SchemaVersion = schema_version,
         MigrationCallback = onMigrate
     };
 
-    public RealmAccess(Storage storage)
+    public RealmAccess(Storage storage, string fileName = "kumi.realm")
     {
         this.storage = storage;
+        FileName = fileName;
         
         cleanupPendingDeletions();
     }
@@ -81,6 +84,11 @@ public class RealmAccess : IDisposable
             using var r = getInstance();
             write(r, action);
         }
+    }
+
+    public bool Compact()
+    {
+        return Realm.Compact(config);
     }
 
     private void onMigrate(Migration migration, ulong oldSchemaVersion)
