@@ -56,7 +56,6 @@ public class FileDecoderTests
     
     private class TestInput
     {
-        
         public Dictionary<TestSection, List<KeyValuePair<string, string>>> Sections { get; set; } = new();
 
         public bool Processed { get; set; } = false;

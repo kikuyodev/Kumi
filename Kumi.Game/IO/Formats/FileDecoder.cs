@@ -10,29 +10,14 @@ namespace Kumi.Game.IO.Formats;
 /// </summary>
 /// <typeparam name="T">The class to parse into.</typeparam>
 /// <typeparam name="TSection">An enum of sections that are parseable</typeparam>
-public abstract class FileDecoder<T, TSection>
+public abstract class FileDecoder<T, TSection> : FileDecoder<T>
     where T : new()
     where TSection : struct
 {
     /// <summary>
-    /// The current version of the file format.
-    /// </summary>
-    public readonly int Version;
-    
-    /// <summary>
-    /// The current object being parsed.
-    /// </summary>
-    public T Current { get; private set; } = new T();
-    
-    /// <summary>
     /// The current section being parsed.
     /// </summary>
     public TSection CurrentSection = default;
-    
-    /// <summary>
-    /// The characters used to denote a comment.
-    /// </summary>
-    protected string CommentCharacter { get; } = "#";
 
     /// <summary>
     /// The characters used to denote a section header.
@@ -44,18 +29,20 @@ public abstract class FileDecoder<T, TSection>
     };
     
     protected FileDecoder(int version)
+        : base(version)
     {
-        Version = version;
+        
     }
     
-    public T Decode(Stream stream) => Decode(stream, new T());
+    public new T Decode(Stream stream) => Decode(stream, new T());
 
     /// <summary>
     /// Parses a readable stream into a designated output of type <see cref="T"/>.
     /// </summary>
     /// <param name="stream">The stream to parse.</param>
-    public T Decode(Stream stream, T input)
+    public new T Decode(Stream stream, T input)
     {
+        // TODO: Split this more to make it less boilerplate-y.
         using var reader = new LineBufferedReader(stream);
         
         string header = reader.ReadLine();
@@ -108,16 +95,10 @@ public abstract class FileDecoder<T, TSection>
     }
 
     /// <summary>
-    /// Safely validates the header of a file if it is the expected format.
-    /// </summary>
-    /// <param name="header">The header to expect.</param>
-    protected virtual bool ValidateHeader(string header) => !string.IsNullOrWhiteSpace(header) && new Regex(@"^#KUMI\sv[0-9]+$").IsMatch(header);
-    
-    /// <summary>
     /// Processes a line of the file.
     /// </summary>
     /// <param name="line">The line being processed.</param>
-    protected virtual void ProcessLine(string line)
+    protected override void ProcessLine(string line)
     {
         return;
     }
@@ -126,16 +107,10 @@ public abstract class FileDecoder<T, TSection>
     /// Runs further processing on the output, once parsing is complete.
     /// </summary>
     /// <param name="output">The output to process.</param>
-    protected virtual void PostProcess()
+    protected override void PostProcess()
     {
         return;
     }
-    
-    /// <summary>
-    /// Whether or not to ignore this line.
-    /// </summary>
-    /// <param name="line">The line being checked.</param>
-    protected virtual bool ShouldIgnoreLine(string line) => string.IsNullOrWhiteSpace(line) || line.StartsWith("#");
     
     /// <summary>
     /// Whether or not to strip comments from lines in this particular section.
@@ -212,5 +187,108 @@ public abstract class FileDecoder<T, TSection>
     {
         public string Start { get; set;  }
         public string End { get; set;  }
+    }
+}
+
+/// <summary>
+/// A line-based file decoder for a specific file format.
+/// </summary>
+/// <typeparam name="T"></typeparam>
+public class FileDecoder<T> : IFileHandler<T>
+    where T : new()
+{
+    /// <summary>
+    /// The current version of the file format.
+    /// </summary>
+    public int Version { get; }
+    
+    public T Current { get; set; } = new T();
+
+    /// <summary>
+    /// The characters used to denote a comment.
+    /// </summary>
+    protected string CommentCharacter { get; } = "#";
+    
+    protected FileDecoder(int version)
+    {
+        Version = version;
+    }
+    
+    public T Decode(Stream stream) => Decode(stream, new T());
+
+    /// <summary>
+    /// Parses a readable stream into a designated output of type <see cref="T"/>.
+    /// </summary>
+    /// <param name="stream">The stream to parse.</param>
+    public virtual T Decode(Stream stream, T input)
+    {
+        using var reader = new LineBufferedReader(stream);
+        
+        string header = reader.ReadLine();
+        if (!ValidateHeader(header))
+            throw new InvalidDataException($"The header of the file being parsed by {nameof(FileDecoder<T>)} is invalid: {header}");
+        
+        Current = input;
+        string line;
+        
+        while ((line = reader.ReadLine()) != null)
+        {
+            if (ShouldIgnoreLine(line))
+                continue;
+
+            line = line.TrimEnd();
+
+            try
+            {
+                ProcessLine(line);
+            } catch (Exception e)
+            {
+                Logger.Log($"An error occurred while parsing a line: {line}", LoggingTarget.Runtime, LogLevel.Error);
+                Logger.Log(e.Message, LoggingTarget.Runtime, LogLevel.Error);
+            }
+        }
+        
+        PostProcess();
+
+        return Current;
+    }
+
+    /// <summary>
+    /// Safely validates the header of a file if it is the expected format.
+    /// </summary>
+    /// <param name="header">The header to expect.</param>
+    protected virtual bool ValidateHeader(string header) => !string.IsNullOrWhiteSpace(header) && new Regex(@"^#KUMI\sv[0-9]+$").IsMatch(header);
+    
+    /// <summary>
+    /// Processes a line of the file.
+    /// </summary>
+    /// <param name="line">The line being processed.</param>
+    protected virtual void ProcessLine(string line)
+    {
+        return;
+    }
+    
+    /// <summary>
+    /// Runs further processing on the output, once parsing is complete.
+    /// </summary>
+    /// <param name="output">The output to process.</param>
+    protected virtual void PostProcess()
+    {
+        return;
+    }
+    
+    /// <summary>
+    /// Whether or not to ignore this line.
+    /// </summary>
+    /// <param name="line">The line being checked.</param>
+    protected virtual bool ShouldIgnoreLine(string line) => string.IsNullOrWhiteSpace(line) || line.StartsWith("#");
+    
+    private string stripComments(string line)
+    {
+        var commentIndex = line.IndexOf(CommentCharacter, StringComparison.Ordinal);
+        if (commentIndex == -1)
+            return line;
+
+        return line.Substring(0, commentIndex);
     }
 }
