@@ -26,7 +26,7 @@ public abstract class FileHandler<T> : IFileHandler<T>
     /// <summary>
     /// The characters used to denote a comment.
     /// </summary>
-    protected string CommentCharacter { get; } = "#";
+    protected virtual string CommentCharacter { get; } = "#";
 
     public int Version { get; }
     public T Current { get; set; } = default!;
