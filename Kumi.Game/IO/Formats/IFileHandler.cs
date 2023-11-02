@@ -6,7 +6,6 @@
 /// <typeparam name="T">The type being handled.</typeparam>
 /// <typeparam name="TSection">The secionds of the file as an enum.</typeparam>
 public interface IFileHandler<T, TSection> : IFileHandler<T>
-    where T : new()
     where TSection : struct
 {
     /// <summary>
@@ -16,7 +15,6 @@ public interface IFileHandler<T, TSection> : IFileHandler<T>
 }
 
 public interface IFileHandler<T>
-    where T : new()
 {
     /// <summary>
     /// The current version of the file format being handled.
