@@ -10,12 +10,12 @@ namespace Kumi.Tests.Resources;
 public class TestResources
 {
     private static Assembly assembly { get; } = typeof(TestResources).Assembly;
-    private static List<string> temporaryFiles { get; } = new();
+    private static List<KeyValuePair<string, string>> temporaryFiles { get; } = new();
     
     /// <summary>
     /// Gets a temporary storage for testing.
     /// </summary>
-    public static TemporaryNativeStorage GetTemporaryStorage() => new TemporaryNativeStorage("TestResources");
+    public static TemporaryNativeStorage GetTemporaryStorage() => new TemporaryNativeStorage("KumiTestResources");
     
     /// <summary>
     /// Gets a resource store for testing.
@@ -34,14 +34,42 @@ public class TestResources
         using (var fileStream = File.OpenWrite(temporaryPath))
                 stream.CopyTo(fileStream);
         
-        temporaryFiles.Add(temporaryPath);
         return File.OpenRead(temporaryPath);
+    }
+
+    public static Stream OpenWritableTemporaryFile(string name)
+    {
+        if (!name.Contains('.'))
+            throw new ArgumentException("Name needs a file extension.", nameof(name));
+
+        if (temporaryFiles.Any(x => x.Key == name))
+            return File.OpenWrite(temporaryFiles.First(x => x.Key == name).Value);
+        
+        string temporaryPath = getTempFile(getExtensionFromName(name));
+        Stream stream = File.OpenWrite(temporaryPath);
+        
+        temporaryFiles.Add(new KeyValuePair<string, string>(name, temporaryPath));
+        return stream;
+    }
+    public static Stream OpenReadableTemporaryFile(string name)
+    {
+        if (!name.Contains('.'))
+            throw new ArgumentException("Name needs a file extension.", nameof(name));
+
+        if (temporaryFiles.Any(x => x.Key == name))
+            return File.OpenRead(temporaryFiles.First(x => x.Key == name).Value);
+        
+        string temporaryPath = getTempFile(getExtensionFromName(name));
+        Stream stream = File.OpenRead(temporaryPath);
+        
+        temporaryFiles.Add(new KeyValuePair<string, string>(name, temporaryPath));
+        return stream;
     }
     
     public static void Cleanup()
     {
-        foreach (string file in temporaryFiles)
-            File.Delete(file);
+        foreach (var filePair in temporaryFiles)
+            File.Delete(filePair.Value);
         
         temporaryFiles.Clear();
     }
