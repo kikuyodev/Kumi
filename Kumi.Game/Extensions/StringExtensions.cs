@@ -1,4 +1,7 @@
-﻿namespace Kumi.Game.Extensions;
+﻿using System.Text;
+using System.Text.RegularExpressions;
+
+namespace Kumi.Game.Extensions;
 
 public static class StringExtensions
 {
@@ -40,5 +43,39 @@ public static class StringExtensions
             return false;
 
         return true;
+    }
+
+    public static string ToScreamingSnakeCase(this string self)
+    {
+        if (string.IsNullOrEmpty(self))
+            return self;
+        
+        if (self.IsSnakeCase())
+            return self.ToUpper();
+
+        if (self.IsCamelCase() || self.IsPascalCase())
+        {
+            if (self.IsPascalCase())
+            {
+                // Lowercase the first letter for consistency.
+                self = $"{char.ToLower(self[0])}{self.Substring(1)}";
+            }
+            
+            // Split the string into words by capital letters.
+            var sb = new StringBuilder();
+            var words = Regex.Split(self, @"(?<!^)(?=[A-Z])");
+            
+            foreach (var word in words)
+            {
+                sb.Append(word.ToUpper());
+                sb.Append('_');
+            }
+            
+            // Remove the trailing underscore.
+            sb.Remove(sb.Length - 1, 1);
+            return sb.ToString();
+        }
+
+        return self;
     }
 }

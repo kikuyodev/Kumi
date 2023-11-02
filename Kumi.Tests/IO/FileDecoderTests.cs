@@ -34,6 +34,12 @@ public class FileDecoderTests
             
         }
 
+        protected override IFileHandler<TestInput, TestSection>.SectionHeaderValues SectionHeader => new IFileHandler<TestInput, TestSection>.SectionHeaderValues
+        {
+            Start = "[#",
+            End = "]"
+        };
+        
         protected override void ProcessLine(string line)
         {
             if (!Current.Sections.ContainsKey(CurrentSection))

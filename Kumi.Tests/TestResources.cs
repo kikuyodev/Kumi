@@ -65,6 +65,9 @@ public class TestResources
         temporaryFiles.Add(new KeyValuePair<string, string>(name, temporaryPath));
         return stream;
     }
+
+    public static string GetTemporaryFilename(string extension)
+        => Guid.NewGuid() + "." + extension;
     
     public static void Cleanup()
     {

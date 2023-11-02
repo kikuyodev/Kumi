@@ -19,6 +19,11 @@ public interface IFileHandler<T, TSection> : IFileHandler<T>
     SectionHeaderValues SectionHeader { get; }
     
     /// <summary>
+    /// Whether to close the stream once the file has been processed.
+    /// </summary>
+    bool CloseStreamUponProcessed { get; }
+    
+    /// <summary>
     /// A class containing the start and end characters of a section header.
     /// </summary>
     public class SectionHeaderValues
@@ -28,7 +33,7 @@ public interface IFileHandler<T, TSection> : IFileHandler<T>
     }
 }
 
-public interface IFileHandler<T>
+public interface IFileHandler<T> : IDisposable
 {
     /// <summary>
     /// The current version of the file format being handled.

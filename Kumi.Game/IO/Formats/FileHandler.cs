@@ -4,11 +4,14 @@ public abstract class FileHandler<T, TSection> : FileHandler<T>, IFileHandler<T,
     where TSection : struct
 {
     public TSection CurrentSection { get; set; }
-    public IFileHandler<T, TSection>.SectionHeaderValues SectionHeader { get; }
+    protected abstract IFileHandler<T, TSection>.SectionHeaderValues SectionHeader { get; }
 
-    public FileHandler(int version)
+    public bool CloseStreamUponProcessed { get; set; }
+
+    protected FileHandler(int version, bool closeStreamUponProcessed = true)
         : base(version)
     {
+        CloseStreamUponProcessed = closeStreamUponProcessed;
     }
     
     #region IFileHandler implementation
@@ -26,14 +29,14 @@ public abstract class FileHandler<T> : IFileHandler<T>
     protected string CommentCharacter { get; } = "#";
 
     public int Version { get; }
-    public T Current { get; set; }
-    
-    public FileHandler(int version)
+    public T Current { get; set; } = default!;
+
+    protected FileHandler(int version)
     {
         Version = version;
     }
 
-    public abstract void Process(T input);
+    protected abstract void Process(T input);
     
     /// <summary>
     /// Runs further processing on the output, once parsing is complete.
@@ -42,7 +45,11 @@ public abstract class FileHandler<T> : IFileHandler<T>
     {
         return;
     }
-    
+
+    public virtual void Dispose()
+    {
+    }
+
     #region IFileHandler implementation
     
     void IFileHandler<T>.PostProcess() => PostProcess();

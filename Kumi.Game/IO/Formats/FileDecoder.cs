@@ -39,6 +39,8 @@ public abstract class FileDecoder<T, TSection> : FileHandler<T, TSection>
         Current = input;
         string line;
         
+        Process(input);
+        
         while ((line = reader.ReadLine()) != null)
         {
             if (ShouldIgnoreLine(line))
@@ -78,6 +80,11 @@ public abstract class FileDecoder<T, TSection> : FileHandler<T, TSection>
         PostProcess();
 
         return Current;
+    }
+
+    protected override void Process(T input)
+    {
+        return;
     }
 
     /// <summary>
