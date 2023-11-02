@@ -10,24 +10,21 @@ namespace Kumi.Game.IO.Formats;
 /// </summary>
 /// <typeparam name="T">The class to parse into.</typeparam>
 /// <typeparam name="TSection">An enum of sections that are parseable</typeparam>
-public abstract class FileDecoder<T, TSection> : FileDecoder<T>
+public abstract class FileDecoder<T, TSection> : FileDecoder<T>, IFileHandler<T, TSection>
     where T : new()
     where TSection : struct
 {
     /// <summary>
     /// The current section being parsed.
     /// </summary>
-    public TSection CurrentSection = default;
+    public TSection CurrentSection { get; set; }= default;
 
-    /// <summary>
-    /// The characters used to denote a section header.
-    /// </summary>
-    protected SectionHeaderValues SectionHeader { get; } = new SectionHeaderValues()
+    protected virtual IFileHandler<T,TSection>.SectionHeaderValues SectionHeader { get; } = new()
     {
         Start = "[#",
         End = "]"
     };
-    
+
     protected FileDecoder(int version)
         : base(version)
     {
@@ -180,21 +177,18 @@ public abstract class FileDecoder<T, TSection> : FileDecoder<T>
         return line.Substring(SectionHeader.Start.Length, line.Length - SectionHeader.End.Length - SectionHeader.Start.Length);
     }
 
-    /// <summary>
-    /// A class containing the start and end characters of a section header.
-    /// </summary>
-    protected class SectionHeaderValues
-    {
-        public string Start { get; set;  }
-        public string End { get; set;  }
-    }
+    #region IFileHandler implementation
+
+    IFileHandler<T, TSection>.SectionHeaderValues IFileHandler<T, TSection>.SectionHeader => SectionHeader;
+
+    #endregion
 }
 
 /// <summary>
 /// A line-based file decoder for a specific file format.
 /// </summary>
 /// <typeparam name="T"></typeparam>
-public class FileDecoder<T> : IFileHandler<T>
+public abstract class FileDecoder<T> : IFileHandler<T>
     where T : new()
 {
     /// <summary>
@@ -236,7 +230,7 @@ public class FileDecoder<T> : IFileHandler<T>
             if (ShouldIgnoreLine(line))
                 continue;
 
-            line = line.TrimEnd();
+            line = line.Trim();
 
             try
             {

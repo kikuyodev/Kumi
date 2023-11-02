@@ -11,7 +11,21 @@ public interface IFileHandler<T, TSection> : IFileHandler<T>
     /// <summary>
     /// The current section being parsed.
     /// </summary>
-    public TSection CurrentSection { get; set; }
+    TSection CurrentSection { get; set; }
+    
+    /// <summary>
+    /// The characters used to denote a section header.
+    /// </summary>
+    SectionHeaderValues SectionHeader { get; }
+    
+    /// <summary>
+    /// A class containing the start and end characters of a section header.
+    /// </summary>
+    public class SectionHeaderValues
+    {
+        public string Start { get; set;  }
+        public string End { get; set;  }
+    }
 }
 
 public interface IFileHandler<T>
