@@ -10,21 +10,10 @@ namespace Kumi.Game.IO.Formats;
 /// </summary>
 /// <typeparam name="T">The class to parse into.</typeparam>
 /// <typeparam name="TSection">An enum of sections that are parseable</typeparam>
-public abstract class FileDecoder<T, TSection> : FileDecoder<T>, IFileHandler<T, TSection>
+public abstract class FileDecoder<T, TSection> : FileHandler<T, TSection>
     where T : new()
     where TSection : struct
 {
-    /// <summary>
-    /// The current section being parsed.
-    /// </summary>
-    public TSection CurrentSection { get; set; }= default;
-
-    protected virtual IFileHandler<T,TSection>.SectionHeaderValues SectionHeader { get; } = new()
-    {
-        Start = "[#",
-        End = "]"
-    };
-
     protected FileDecoder(int version)
         : base(version)
     {
@@ -95,16 +84,7 @@ public abstract class FileDecoder<T, TSection> : FileDecoder<T>, IFileHandler<T,
     /// Processes a line of the file.
     /// </summary>
     /// <param name="line">The line being processed.</param>
-    protected override void ProcessLine(string line)
-    {
-        return;
-    }
-    
-    /// <summary>
-    /// Runs further processing on the output, once parsing is complete.
-    /// </summary>
-    /// <param name="output">The output to process.</param>
-    protected override void PostProcess()
+    protected virtual void ProcessLine(string line)
     {
         return;
     }
@@ -114,6 +94,18 @@ public abstract class FileDecoder<T, TSection> : FileDecoder<T>, IFileHandler<T,
     /// </summary>
     /// <param name="section">The section being checked.</param>
     protected virtual bool ShouldStripComments(TSection section) => true;
+    
+    /// <summary>
+    /// Whether or not to ignore this line.
+    /// </summary>
+    /// <param name="line">The line being checked.</param>
+    protected virtual bool ShouldIgnoreLine(string line) => string.IsNullOrWhiteSpace(line) || line.StartsWith("#");
+    
+    /// <summary>
+    /// Safely validates the header of a file if it is the expected format.
+    /// </summary>
+    /// <param name="header">The header to expect.</param>
+    protected virtual bool ValidateHeader(string header) => !string.IsNullOrWhiteSpace(header) && new Regex(@"^#KUMI\sv[0-9]+$").IsMatch(header);
     
     private bool isSectionHeader(string line) => line.StartsWith(SectionHeader.Start) && line.EndsWith(SectionHeader.End);
 
@@ -176,36 +168,18 @@ public abstract class FileDecoder<T, TSection> : FileDecoder<T>, IFileHandler<T,
 
         return line.Substring(SectionHeader.Start.Length, line.Length - SectionHeader.End.Length - SectionHeader.Start.Length);
     }
-
-    #region IFileHandler implementation
-
-    IFileHandler<T, TSection>.SectionHeaderValues IFileHandler<T, TSection>.SectionHeader => SectionHeader;
-
-    #endregion
 }
 
 /// <summary>
 /// A line-based file decoder for a specific file format.
 /// </summary>
 /// <typeparam name="T"></typeparam>
-public abstract class FileDecoder<T> : IFileHandler<T>
+public abstract class FileDecoder<T> : FileHandler<T>
     where T : new()
 {
-    /// <summary>
-    /// The current version of the file format.
-    /// </summary>
-    public int Version { get; }
-    
-    public T Current { get; set; } = new T();
-
-    /// <summary>
-    /// The characters used to denote a comment.
-    /// </summary>
-    protected string CommentCharacter { get; } = "#";
-    
-    protected FileDecoder(int version)
+    public FileDecoder(int version)
+        : base(version)
     {
-        Version = version;
     }
     
     public T Decode(Stream stream) => Decode(stream, new T());
@@ -263,15 +237,6 @@ public abstract class FileDecoder<T> : IFileHandler<T>
     }
     
     /// <summary>
-    /// Runs further processing on the output, once parsing is complete.
-    /// </summary>
-    /// <param name="output">The output to process.</param>
-    protected virtual void PostProcess()
-    {
-        return;
-    }
-    
-    /// <summary>
     /// Whether or not to ignore this line.
     /// </summary>
     /// <param name="line">The line being checked.</param>
@@ -285,4 +250,5 @@ public abstract class FileDecoder<T> : IFileHandler<T>
 
         return line.Substring(0, commentIndex);
     }
+   
 }

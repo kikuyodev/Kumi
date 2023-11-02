@@ -39,4 +39,9 @@ public interface IFileHandler<T>
     /// The current object being handled.
     /// </summary>
     public T Current { get; set; }
+
+    /// <summary>
+    /// Runs further processing on the output, once parsing is complete.
+    /// </summary>
+    void PostProcess();
 }
