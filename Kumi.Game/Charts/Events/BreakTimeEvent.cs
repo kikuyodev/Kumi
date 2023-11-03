@@ -19,6 +19,12 @@ public class BreakTimeEvent : Event, IHasEndTime
         StartTime = startTime;
         EndTime = endTime;
     }
+
+    internal BreakTimeEvent()
+        : base(-1)
+    {
+    }
+    
     protected override void Parse(string[] input)
     {
         EndTime = StartTime + StringUtils.AssertAndFetch<float>(input[0]);

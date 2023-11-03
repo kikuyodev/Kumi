@@ -7,13 +7,19 @@ namespace Kumi.Game.Charts.Events;
 /// </summary>
 public abstract class MediaEvent : Event, IHasMedia
 {
-    public string FileName { get; protected set; }
-    
+    public string FileName { get; protected set; } = null!;
+
     protected MediaEvent(string filename, float time)
         : base(time)
     {
         StartTime = time;
         FileName = filename;
+    }
+    
+    protected MediaEvent(float time)
+        : base(time)
+    {
+        StartTime = time;
     }
 
     public bool FileExists(Storage chartStorage)

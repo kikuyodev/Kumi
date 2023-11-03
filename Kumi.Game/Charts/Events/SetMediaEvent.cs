@@ -10,8 +10,13 @@ public class SetMediaEvent : MediaEvent
     protected override EventType ExpectedType => EventType.SetMedia;
     protected override int ExpectedLength => 1;
     
-    public SetMediaEvent(string filename, float time)
-        : base(filename, time)
+    public SetMediaEvent(string filename)
+        : base(filename, -1)
+    {
+    }
+
+    internal SetMediaEvent()
+        : base(-1)
     {
     }
 

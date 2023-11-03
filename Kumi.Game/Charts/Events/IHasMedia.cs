@@ -1,6 +1,6 @@
 ﻿using osu.Framework.Platform;
 
-namespace Kumi.Game.Charts;
+namespace Kumi.Game.Charts.Events;
 
 public interface IHasMedia
 {
