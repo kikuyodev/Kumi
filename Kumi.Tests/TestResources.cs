@@ -32,10 +32,28 @@ public class TestResources
         
         using (var stream = GetResourceStore().GetStream(@$"Resources/{relativePath}"))
         using (var fileStream = File.OpenWrite(temporaryPath))
-                stream.CopyTo(fileStream);
+            stream.CopyTo(fileStream);
         
         return File.OpenRead(temporaryPath);
     }
+    
+    /// <summary>
+    /// Opens a resource from the test resource store, then returns the path to the temporary file.
+    /// </summary>
+    /// <param name="relativePath">The relative path in the store.</param>
+    public static string OpenResourcePath(string relativePath)
+    {
+        string temporaryPath = getTempFile(getExtensionFromName(relativePath));
+        
+        using (var stream = GetResourceStore().GetStream(@$"Resources/{relativePath}"))
+        using (var fileStream = File.OpenWrite(temporaryPath))
+            stream.CopyTo(fileStream);
+
+        return temporaryPath;
+    }
+
+    public static Stream OpenTestBeatmapStream() => OpenResource("Archives/MuryokuP - Sweet Sweet Cendrillion Drug (Author).kcs");
+    public static string GetTemporaryPathForBeatmap() => OpenResourcePath("Archives/MuryokuP - Sweet Sweet Cendrillion Drug (Author).kcs");
 
     public static Stream OpenWritableTemporaryFile(string name)
     {
