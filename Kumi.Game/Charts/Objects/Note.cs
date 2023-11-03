@@ -17,6 +17,11 @@ public class Note : INote, IHasTime
     /// The scale or a note with <see cref="NoteFlags.Big"/> set.
     /// </summary>
     public const float BIG_NOTE_SCALE = 0.0f;
+        
+    /// <summary>
+    /// The delimiter used to split the input string.
+    /// </summary>
+    public const char DELIMITER = ',';
 
     public NoteType Type
     {

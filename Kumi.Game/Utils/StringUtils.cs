@@ -26,4 +26,49 @@ public static class StringUtils
             return false;
         }
     }
+    
+    /// <summary>
+    /// A more complex version of the standard <see cref="string.Split(string)"/> method that splits the input string by the <see cref="Delimiter"/>.
+    /// This function can handle strings that contain the delimiter as part of the value.
+    /// </summary>
+    public static IEnumerable<string> SplitComplex(this string input, char delimiter)
+    {
+        string? currentValue = null;
+
+        for (int i = 0; i < input.Length; i++)
+        {
+            char character = input[i];
+
+            if (character == delimiter)
+            {
+                if (currentValue != null)
+                {
+                    yield return currentValue;
+                    currentValue = null;
+                }
+
+                continue;
+            }
+
+            if (character == '"')
+            {
+                var nextQuoteIndex = input.IndexOf('"', i + 1);
+                
+                if (nextQuoteIndex == -1)
+                    throw new ArgumentException($"Could not find the closing quote for the value starting at index {i}.");
+                
+                currentValue = input[(i + 1)..nextQuoteIndex];
+                i = nextQuoteIndex;
+            }
+            else
+            {
+                currentValue ??= string.Empty;
+                currentValue += character;
+            }
+        }
+        
+        // add the last value if it exists
+        if (currentValue != null)
+            yield return currentValue;
+    }
 }

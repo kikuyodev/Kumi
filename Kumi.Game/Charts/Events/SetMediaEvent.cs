@@ -18,10 +18,25 @@ public class SetMediaEvent : MediaEvent
     internal SetMediaEvent()
         : base(-1)
     {
+        
+    }
+
+    public override void ParseFrom(string[] input)
+    {
+        if (input.Length != ExpectedLength + 1)
+            throw new ArgumentException($"Expected {ExpectedLength + 2} values for the event {nameof(Event)}, but got {input.Length}.");
+
+        if (!Enum.TryParse(input[0], out EventType type))
+            throw new ArgumentException($"Could not parse the event type from the input string: {input[0]}.");
+
+        if (type != ExpectedType)
+            throw new ArgumentException($"Expected the event type to be {ExpectedType}, but got {type}.");
+
+        Type = type;
+        FileName = input[1];
     }
 
     protected override void Parse(string[] input)
     {
-        FileName = input[0];
     }
 }

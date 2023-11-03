@@ -8,6 +8,11 @@ namespace Kumi.Game.Charts.Timings;
 /// </summary>
 public abstract class TimingPoint : ITimingPoint, IComparablyEquatable<TimingPoint>
 {
+    /// <summary>
+    /// The delimiter used to split the input string.
+    /// </summary>
+    public const char DELIMITER = ',';
+    
     public TimingPointType PointType { get; set; }
     public TimingFlags Flags { get; set; }
     public int Volume { get; set; }
