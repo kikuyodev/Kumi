@@ -2,7 +2,7 @@
 using osu.Framework.IO.Stores;
 using osu.Framework.Testing;
 
-namespace Kumi.Tests.Resources;
+namespace Kumi.Tests;
 
 /// <summary>
 /// Represents a collection of resources used for testing.

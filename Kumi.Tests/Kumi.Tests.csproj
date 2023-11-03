@@ -6,7 +6,7 @@
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
         <LangVersion>11</LangVersion>
-        <StartupObject>Kumi.Tests.Program</StartupObject>
+        <StartupObject>Kumi.Tests.VisualTestRunner</StartupObject>
     </PropertyGroup>
 
     <ItemGroup>

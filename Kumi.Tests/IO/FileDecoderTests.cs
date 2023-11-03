@@ -1,6 +1,5 @@
 ﻿using System.Text.RegularExpressions;
 using Kumi.Game.IO.Formats;
-using Kumi.Tests.Resources;
 using NUnit.Framework;
 
 namespace Kumi.Tests.IO;
