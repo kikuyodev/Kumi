@@ -86,7 +86,7 @@ public class WorkingChartCache : IChartResourceProvider, IWorkingChartCache
             chartInfo = chartInfo.Detach();
             workingCache.Add(working = new ChartManagerWorkingChart(chartInfo, this));
 
-            GlobalStatistics.Get<int>("Beatmaps", $"Cached {nameof(WorkingChart)}s").Value = workingCache.Count();
+            GlobalStatistics.Get<int>("Charts", $"Cached {nameof(WorkingChart)}s").Value = workingCache.Count();
 
             return working;
         }

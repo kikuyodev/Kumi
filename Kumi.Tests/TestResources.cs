@@ -52,8 +52,8 @@ public class TestResources
         return temporaryPath;
     }
 
-    public static Stream OpenTestBeatmapStream() => OpenResource("Archives/MuryokuP - Sweet Sweet Cendrillion Drug (Author).kcs");
-    public static string GetTemporaryPathForBeatmap() => OpenResourcePath("Archives/MuryokuP - Sweet Sweet Cendrillion Drug (Author).kcs");
+    public static Stream OpenTestChartStream() => OpenResource("Archives/MuryokuP - Sweet Sweet Cendrillion Drug (Author).kcs");
+    public static string GetTemporaryPathForChart() => OpenResourcePath("Archives/MuryokuP - Sweet Sweet Cendrillion Drug (Author).kcs");
 
     public static Stream OpenWritableTemporaryFile(string name)
     {
