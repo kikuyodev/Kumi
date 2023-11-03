@@ -25,16 +25,17 @@ public interface INote : IHasTime
     NoteWindows Windows { get; set; }
 }
 
-public enum NoteType
+public enum NoteType : int
 {
-    Don,
-    Kat,
-    Drumroll,
-    Balloon,
+    Don = 0,
+    Kat = 1,
+    Drumroll = 2,
+    Balloon = 3,
 }
 
 [Flags]
 public enum NoteFlags
 {
+    None = 0,
     Big = 1 << 0,
 }

@@ -6,4 +6,9 @@
 public class DrumHit : Note
 {
     // We don't need to implement anything here, since we're just inheriting from Note.
+
+    public DrumHit(float startTime)
+        : base(startTime)
+    {
+    }
 }

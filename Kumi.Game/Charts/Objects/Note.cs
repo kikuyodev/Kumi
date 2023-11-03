@@ -44,8 +44,9 @@ public class Note : INote, IHasTime
 
     public NoteWindows Windows { get; set; }
 
-    public Note()
+    protected Note(float startTime)
     {
+        StartTime = startTime;
         _typeBindable.ValueChanged += v => NoteColor = getColorFromType(v.NewValue);
     }
 

@@ -10,6 +10,11 @@ public class Balloon : Note, IHasEndTime
         get => _endTimeBindable.Value;
         set => _endTimeBindable.Value = value;
     }
+
+    public Balloon(float startTime)
+        : base(startTime)
+    {
+    }
     
     private Bindable<float> _endTimeBindable = new();
 }
