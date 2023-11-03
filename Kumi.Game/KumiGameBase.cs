@@ -32,7 +32,7 @@ public partial class KumiGameBase : osu.Framework.Game
     {
         base.Content.Add(Content = new DrawSizePreservingFillContainer
         {
-            TargetDrawSize = new Vector2(1920, 1080)
+            TargetDrawSize = new Vector2(1280, 720)
         });
     }
 
