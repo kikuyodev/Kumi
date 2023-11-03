@@ -10,6 +10,11 @@ namespace Kumi.Game.Charts;
 
 public class Chart<T> : IChart<T>
 {
+    /// <summary>
+    /// 1 - Initial Version
+    /// </summary>
+    public const int CURRENT_VERSION = 1;
+    
     public ChartInfo ChartInfo { get; set; }
     public List<IEvent> Events { get; } = new List<IEvent>();
     public TimingPointHandler TimingHandler { get; } = new TimingPointHandler();
@@ -35,7 +40,12 @@ public class Chart<T> : IChart<T>
     [JsonIgnore]
     public ChartMetadata Metadata => ChartInfo.Metadata;
 
-    public int Version { get; internal set; }
+    public int Version
+    {
+        get => ChartInfo.ChartVersion;
+        set => ChartInfo.ChartVersion = value;
+    }
+    
     public bool IsProcessed { get; internal set; }
 
     #region IChart implementation

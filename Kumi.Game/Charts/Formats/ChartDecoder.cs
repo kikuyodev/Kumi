@@ -11,13 +11,8 @@ namespace Kumi.Game.Charts.Formats;
 
 public class ChartDecoder : FileDecoder<Chart, ChartSections>
 {
-    /// <summary>
-    /// 1 - Initial version
-    /// </summary>
-    private const int current_version = 1;
-
     public ChartDecoder()
-        : base(current_version)
+        : base(Chart.CURRENT_VERSION)
     {
     }
 
