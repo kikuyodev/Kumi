@@ -8,7 +8,7 @@ namespace Kumi.Game.Charts;
 
 public class ChartImporter : RealmModelImporter<ChartSetInfo>
 {
-    private const string kumi_archive = ".kar";
+    private const string kumi_archive = ".kcs";
     private const string kumi_chart = ".kch";
     
     public override IEnumerable<string> HandledFileExtensions => new[] { kumi_archive };
