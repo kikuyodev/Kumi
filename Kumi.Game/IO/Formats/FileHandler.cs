@@ -38,7 +38,7 @@ public abstract class FileHandler<T> : IFileHandler<T>
         Version = version;
     }
 
-    protected abstract void Process(T input);
+    protected abstract void PreProcess(T input);
     
     /// <summary>
     /// Runs further processing on the output, once parsing is complete.

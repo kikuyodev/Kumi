@@ -20,9 +20,9 @@ public abstract class FileEncoder<TInput, TSection> : FileEncoder<TInput>, IFile
         HandleSection(section);
     }
 
-    protected override void Process(TInput input)
+    protected override void PreProcess(TInput input)
     {
-        base.Process(input);
+        base.PreProcess(input);
 
         foreach (var section in Enum.GetValues(typeof(TSection)).Cast<TSection>())
         {
@@ -65,7 +65,7 @@ public abstract class FileEncoder<TInput> : FileHandler<TInput>
         stream = writableStream;
         Writer = new StreamWriter(stream);
 
-        Process(input);
+        PreProcess(input);
         PostProcess();
 
         Writer.Flush();
@@ -75,7 +75,7 @@ public abstract class FileEncoder<TInput> : FileHandler<TInput>
     }
 
 
-    protected override void Process(TInput input)
+    protected override void PreProcess(TInput input)
     {
         Current = input;
 
