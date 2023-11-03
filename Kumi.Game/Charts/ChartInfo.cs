@@ -40,6 +40,8 @@ public class ChartInfo : RealmObject, IHasGuidPrimaryKey, IChartInfo, IEquatable
     
     public string Hash { get; set; } = string.Empty;
 
+    public int ChartVersion { get; set; }
+
     public bool Equals(ChartInfo? other)
     {
         if (ReferenceEquals(this, other)) return true;
