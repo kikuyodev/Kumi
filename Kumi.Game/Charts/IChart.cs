@@ -1,4 +1,5 @@
 ﻿using Kumi.Game.Charts;
+using Kumi.Game.Charts.Events;
 using Kumi.Game.Charts.Objects;
 using Kumi.Game.Charts.Timings;
 using Kumi.Game.IO.Formats;
@@ -25,12 +26,12 @@ public interface IChart : IDecodable
     /// <summary>
     /// A <see cref="TimingPointHandler"/> that handles all timing points in this <see cref="IChart{T}"/>.
     /// </summary>
-    TimingPointHandler TimingPoints { get; }
+    IReadOnlyList<ITimingPoint> TimingPoints { get; }
 
     /// <summary>
     /// The <see cref="IReadOnlyList{T}"/> of <see cref="INote"/>s in this <see cref="IChart{T}"/>.
     /// </summary>
-    IReadOnlyList<Note> Notes { get; }
+    IReadOnlyList<INote> Notes { get; }
 }
 
 public interface IChart<out T> : IChart

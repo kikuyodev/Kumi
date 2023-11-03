@@ -10,7 +10,7 @@ public class TimingPointHandler
     /// <summary>
     /// A list of all timing points in the <see cref="IChart"/>.
     /// </summary>
-    public IBindableList<TimingPoint> TimingPoints { get; } = new BindableList<TimingPoint>();
+    public BindableList<TimingPoint> TimingPoints { get; } = new BindableList<TimingPoint>();
 
     /// <summary>
     /// Gets any timing point at a given time.
