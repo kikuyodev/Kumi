@@ -1,10 +1,11 @@
 ﻿using Kumi.Game.Models;
 using Newtonsoft.Json;
 using Realms;
+using SixLabors.ImageSharp;
 
 namespace Kumi.Game.Charts;
 
-public class ChartMetadata : RealmObject, IChartMetadata
+public class ChartMetadata : RealmObject, IChartMetadata, IDeepCloneable<ChartMetadata>
 {
     public string Artist { get; set; } = string.Empty;
 
@@ -26,5 +27,25 @@ public class ChartMetadata : RealmObject, IChartMetadata
 
     public string AudioFile { get; set; } = string.Empty;
     public string BackgroundFile { get; set; } = string.Empty;
+
+    public ChartMetadata DeepClone()
+        => new ChartMetadata
+        {
+            Artist = Artist,
+            ArtistRomanised = ArtistRomanised,
+            Title = Title,
+            TitleRomanised = TitleRomanised,
+            Author = new RealmUser
+            {
+                Id = Author.Id,
+                Username = Author.Username,
+            },
+            Source = Source,
+            Genre = Genre,
+            Tags = Tags,
+            PreviewTime = PreviewTime,
+            AudioFile = AudioFile,
+            BackgroundFile = BackgroundFile,
+        };
 }
 
