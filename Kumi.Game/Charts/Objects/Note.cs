@@ -7,6 +7,8 @@ namespace Kumi.Game.Charts.Objects;
 
 /// <summary>
 /// A representation of a clickable object in a <see cref="IChart"/>.
+///
+/// A majority of the properties are bindable, so that they can be used in the editor.
 /// </summary>
 public class Note : INote, IHasTime
 {
@@ -19,6 +21,12 @@ public class Note : INote, IHasTime
     {
         get => _typeBindable.Value;
         set => _typeBindable.Value = value;
+    }
+
+    public NoteFlags Flags
+    {
+        get => _flagsBindable.Value;
+        set => _flagsBindable.Value = value;
     }
 
     public float StartTime
