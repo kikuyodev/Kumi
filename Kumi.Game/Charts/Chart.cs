@@ -1,4 +1,5 @@
 ﻿using Kumi.Game.Charts.Data;
+using Kumi.Game.Charts.Timings;
 using Kumi.Game.IO.Formats;
 using Newtonsoft.Json;
 
@@ -8,8 +9,9 @@ public class Chart<T> : IChart<T>
 {
     public ChartInfo ChartInfo { get; set; }
 
-    // TODO do something with this.
     public List<IEvent> Events { get; } = new List<IEvent>();
+    
+    public TimingPointHandler TimingPoints { get; } = new TimingPointHandler();
 
     protected Chart()
     {
