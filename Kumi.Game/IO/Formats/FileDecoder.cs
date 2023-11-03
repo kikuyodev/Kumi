@@ -11,7 +11,7 @@ namespace Kumi.Game.IO.Formats;
 /// <typeparam name="T">The class to parse into.</typeparam>
 /// <typeparam name="TSection">An enum of sections that are parseable</typeparam>
 public abstract class FileDecoder<T, TSection> : FileHandler<T, TSection>
-    where T : new()
+    where T : class, IDecodable, new()
     where TSection : struct
 {
     protected FileDecoder(int version)
@@ -182,7 +182,7 @@ public abstract class FileDecoder<T, TSection> : FileHandler<T, TSection>
 /// </summary>
 /// <typeparam name="T"></typeparam>
 public abstract class FileDecoder<T> : FileHandler<T>
-    where T : new()
+    where T : class, IDecodable, new()
 {
     public FileDecoder(int version)
         : base(version)
@@ -199,14 +199,20 @@ public abstract class FileDecoder<T> : FileHandler<T>
     {
         using var reader = new LineBufferedReader(stream);
         
-        string header = reader.ReadLine();
+        if (reader.PeekLine() == null)
+            throw new InvalidDataException($"The file being parsed by {nameof(FileDecoder<T>)} is empty.");
+        
+        string header = reader.ReadLine()!;
         if (!ValidateHeader(header))
+            throw new InvalidDataException($"The header of the file being parsed by {nameof(FileDecoder<T>)} is invalid: {header}");
+
+        if (!int.TryParse(header.AsSpan("#KUMI v".Length), out var fileVersion))
             throw new InvalidDataException($"The header of the file being parsed by {nameof(FileDecoder<T>)} is invalid: {header}");
         
         Current = input;
-        string line;
-        
-        while ((line = reader.ReadLine()) != null)
+        Current.Version = fileVersion;
+
+        while (reader.ReadLine() is { } line)
         {
             if (ShouldIgnoreLine(line))
                 continue;
@@ -224,7 +230,8 @@ public abstract class FileDecoder<T> : FileHandler<T>
         }
         
         PostProcess();
-
+        
+        Current.IsProcessed = true;
         return Current;
     }
 
