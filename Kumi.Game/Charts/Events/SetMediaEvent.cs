@@ -1,6 +1,6 @@
 ﻿using osu.Framework.Platform;
 
-namespace Kumi.Game.Charts.Data.Events;
+namespace Kumi.Game.Charts.Events;
 
 /// <summary>
 /// Sets the initial background or video in the <see cref="IChart"/>.

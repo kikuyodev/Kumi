@@ -1,6 +1,6 @@
 ﻿using Kumi.Game.Utils;
 
-namespace Kumi.Game.Charts.Data.Events;
+namespace Kumi.Game.Charts.Events;
 
 /// <summary>
 /// An event that defines a break in the <see cref="IChart"/>.

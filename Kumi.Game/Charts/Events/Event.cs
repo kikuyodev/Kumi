@@ -1,4 +1,4 @@
-﻿namespace Kumi.Game.Charts.Data;
+﻿namespace Kumi.Game.Charts;
 
 /// <summary>
 /// An event that occurs at a specific time.

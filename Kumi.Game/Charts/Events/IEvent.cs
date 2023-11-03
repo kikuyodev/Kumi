@@ -1,6 +1,6 @@
 ﻿using Kumi.Game.IO.Formats;
 
-namespace Kumi.Game.Charts.Data;
+namespace Kumi.Game.Charts;
 
 public interface IEvent : IHasTime, ICanParse<string>
 {

@@ -1,4 +1,4 @@
-﻿namespace Kumi.Game.Charts.Data;
+﻿namespace Kumi.Game.Charts;
 
 public interface IHasEndTime
 {

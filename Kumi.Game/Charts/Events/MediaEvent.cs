@@ -1,6 +1,6 @@
 ﻿using osu.Framework.Platform;
 
-namespace Kumi.Game.Charts.Data.Events;
+namespace Kumi.Game.Charts.Events;
 
 /// <summary>
 /// An event that uses a media file (video or image) in the <see cref="IChart"/>.

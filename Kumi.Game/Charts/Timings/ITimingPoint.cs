@@ -1,4 +1,4 @@
-﻿using Kumi.Game.Charts.Data;
+﻿using Kumi.Game.Charts;
 
 namespace Kumi.Game.Charts.Timings;
 

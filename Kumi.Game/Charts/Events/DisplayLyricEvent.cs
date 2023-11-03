@@ -2,7 +2,7 @@
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Transforms;
 
-namespace Kumi.Game.Charts.Data.Events;
+namespace Kumi.Game.Charts.Events;
 
 /// <summary>
 /// An event that displays a lyric on the screen during a certain time.

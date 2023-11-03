@@ -2,7 +2,7 @@
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Transforms;
 
-namespace Kumi.Game.Charts.Data.Events;
+namespace Kumi.Game.Charts.Events;
 
 /// <summary>
 /// A media event that can be used to switch the background or video in the <see cref="IChart"/>.
