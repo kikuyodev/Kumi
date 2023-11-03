@@ -16,6 +16,6 @@ public enum EventType : int
     SetMedia = 0,
     SwitchMedia = 1,
     Break = 2,
-    Kiai = 3,
+    KiaiTime = 3,
     DisplayLyric = 4
 }
