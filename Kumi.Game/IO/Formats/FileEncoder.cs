@@ -7,7 +7,7 @@ public abstract class FileEncoder<TInput, TSection> : FileEncoder<TInput>, IFile
     where TSection : struct
 {
     public TSection CurrentSection { get; set; }
-    protected abstract IFileHandler<TInput, TSection>.SectionHeaderValues SectionHeader { get; }
+    protected virtual IFileHandler<TInput, TSection>.SectionHeaderValues SectionHeader => IFileHandler<TInput, TSection>.DefaultHeaders;
 
     protected FileEncoder(int version, bool closeStreamUponProcessed = true)
         : base(version, closeStreamUponProcessed)

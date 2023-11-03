@@ -1,10 +1,11 @@
 ﻿namespace Kumi.Game.IO.Formats;
 
 public abstract class FileHandler<T, TSection> : FileHandler<T>, IFileHandler<T, TSection>
+    where T : class
     where TSection : struct
 {
     public TSection CurrentSection { get; set; }
-    protected abstract IFileHandler<T, TSection>.SectionHeaderValues SectionHeader { get; }
+    protected virtual IFileHandler<T, TSection>.SectionHeaderValues SectionHeader => IFileHandler<T, TSection>.DefaultHeaders;
 
     public bool CloseStreamUponProcessed { get; set; }
 
@@ -22,6 +23,7 @@ public abstract class FileHandler<T, TSection> : FileHandler<T>, IFileHandler<T,
 }
 
 public abstract class FileHandler<T> : IFileHandler<T>
+    where T : class
 {
     /// <summary>
     /// The characters used to denote a comment.
