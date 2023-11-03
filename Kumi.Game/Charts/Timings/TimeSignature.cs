@@ -22,4 +22,6 @@ public class TimeSignature
     }
     
     public float NoteSubdivision => (float)Numerator / Denominator;
+
+    public override string ToString() => $"{Numerator}/{Denominator}";
 }

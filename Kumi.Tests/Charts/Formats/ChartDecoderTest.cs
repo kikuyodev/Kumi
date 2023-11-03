@@ -6,6 +6,7 @@ using osu.Framework.Utils;
 
 namespace Kumi.Tests.Charts.Formats;
 
+[TestFixture]
 public class ChartDecoderTest
 {
     private ChartDecoder? decoder;
@@ -25,10 +26,11 @@ public class ChartDecoderTest
         var chart = decoder!.Decode(testResource);
         
         Assert.IsTrue(chart.IsProcessed);
+        
         Assert.AreEqual(2, chart.Notes.Count);
         Assert.AreEqual(1, chart.Events.Count);
         Assert.AreEqual(1, chart.TimingPoints.Count);
-        
+
         Assert.AreEqual("Sweet Sweet Cendrillion Drug", chart.Metadata.Title);
         Assert.AreEqual("Sweet Sweet Cendrillion Drug", chart.Metadata.TitleRomanised);
         Assert.AreEqual("Oni", chart.ChartInfo.DifficultyName);

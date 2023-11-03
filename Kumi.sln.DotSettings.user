@@ -7,5 +7,6 @@
 	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=adbbcf96_002D529d_002D491d_002D874a_002Da5c5ce33e55e/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" IsActive="True" Name="TestDecode" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
   &lt;TestAncestor&gt;&#xD;
     &lt;TestId&gt;NUnit3x::9925D022-0C0A-492C-A899-7FCA04A17A3B::net7.0::Kumi.Tests.Charts.Formats.ChartDecoderTest.TestDecode&lt;/TestId&gt;&#xD;
+    &lt;TestId&gt;NUnit3x::9925D022-0C0A-492C-A899-7FCA04A17A3B::net7.0::Kumi.Tests.Charts.Formats.ChartEncoderTest.TestEncode&lt;/TestId&gt;&#xD;
   &lt;/TestAncestor&gt;&#xD;
 &lt;/SessionState&gt;</s:String></wpf:ResourceDictionary>

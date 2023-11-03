@@ -11,12 +11,12 @@ public class SetMediaEvent : MediaEvent
     protected override int ExpectedLength => 1;
     
     public SetMediaEvent(string filename)
-        : base(filename, -1)
+        : base(filename, 0)
     {
     }
 
     internal SetMediaEvent()
-        : base(-1)
+        : base(0)
     {
         
     }

@@ -37,6 +37,9 @@ public abstract class FileDecoder<T, TSection> : FileHandler<T, TSection>
 
         CurrentSection = default;
         Current = input;
+        
+        // TODO: Figure out the file version from the header.
+        
         string line;
 
         PreProcess(input);
@@ -210,11 +213,7 @@ public abstract class FileDecoder<T> : FileHandler<T>
         if (!ValidateHeader(header))
             throw new InvalidDataException($"The header of the file being parsed by {nameof(FileDecoder<T>)} is invalid: {header}");
 
-        if (!int.TryParse(header.AsSpan("#KUMI v".Length), out var fileVersion))
-            throw new InvalidDataException($"The header of the file being parsed by {nameof(FileDecoder<T>)} is invalid: {header}");
-
         Current = input;
-        Current.Version = fileVersion;
 
         while (reader.ReadLine() is { } line)
         {

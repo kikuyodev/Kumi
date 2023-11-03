@@ -28,6 +28,7 @@ public abstract class FileEncoder<TInput, TSection> : FileEncoder<TInput>, IFile
         {
             // Write the section header
             var sectionName = section.ToString();
+            WriteLine(string.Empty);
             WriteLine($"{SectionHeader.Start}{sectionName!.ToScreamingSnakeCase()}{SectionHeader.End}");
             WriteSection(section);
         }
