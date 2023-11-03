@@ -21,5 +21,5 @@ public class TimeSignature
         Denominator = denominator;
     }
     
-    public float NoteSubdivision => Numerator / Denominator;
+    public float NoteSubdivision => (float)Numerator / Denominator;
 }
