@@ -1,5 +1,6 @@
 ﻿using Kumi.Game.Charts.Data;
 using Kumi.Game.Charts.Objects.Windows;
+using Kumi.Game.Graphics;
 using osu.Framework.Bindables;
 using osuTK.Graphics;
 
@@ -43,6 +44,11 @@ public class Note : INote, IHasTime
 
     public NoteWindows Windows { get; set; }
 
+    public Note()
+    {
+        _typeBindable.ValueChanged += v => NoteColor = getColorFromType(v.NewValue);
+    }
+
     private Bindable<NoteType> _typeBindable = new();
     private Bindable<float> _startTimeBindable = new();
     private Bindable<Color4> _noteColorBindable = new();
@@ -67,4 +73,18 @@ public class Note : INote, IHasTime
     /// ...I'm not sure if this is useful, but it's here just in case.
     /// </summary>
     public float GetDuration() => this is IHasEndTime ? (this as IHasEndTime)!.EndTime - StartTime : 0.0f;
+
+    private Color4 getColorFromType(NoteType type)
+    {
+        switch (type)
+        {
+            case NoteType.Don:
+                return Colors.DonColor;
+            
+            case NoteType.Kat:
+                return Colors.KatColor;
+        }
+        
+        return Color4.White;
+    }
 }
