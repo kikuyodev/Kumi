@@ -13,14 +13,9 @@ public class SwitchMediaEvent : MediaEvent, IHasEndTime
     protected override int ExpectedLength => 3;
 
     public float EndTime { get; private set; }
-    public IEasingFunction Easing { get; private set; } = null!;
+    public Easing Easing { get; private set; }
 
-    public SwitchMediaEvent(string filename, float startTime, float endTime, Easing easing = osu.Framework.Graphics.Easing.None)
-        : this(filename, startTime, endTime, new DefaultEasingFunction(easing))
-    {
-    }
-
-    public SwitchMediaEvent(string filename, float startTime, float endTime, IEasingFunction easing)
+    public SwitchMediaEvent(string filename, float startTime, float endTime, Easing easing = Easing.None)
         : base(filename, startTime)
     {
         EndTime = endTime;
@@ -37,6 +32,6 @@ public class SwitchMediaEvent : MediaEvent, IHasEndTime
     {
         EndTime = StartTime + StringUtils.AssertAndFetch<float>(input[0]);
         FileName = input[1];
-        Easing = new DefaultEasingFunction(Enum.Parse<Easing>(input[2]));
+        Easing = Enum.Parse<Easing>(input[2]);
     }
 }

@@ -15,15 +15,10 @@ public class DisplayLyricEvent : Event, IHasEndTime
     public float StartTime { get; }
     public float EndTime { get; private set; }
     public float CrossfadeTime { get; private set; }
-    public IEasingFunction Easing { get; private set; } = null!;
+    public Easing Easing { get; private set; }
     public string Lyric { get; private set; } = null!;
 
-    public DisplayLyricEvent(string lyric, float startTime, float endTime, float crossfadeTime, Easing easing = osu.Framework.Graphics.Easing.None)
-        : this(lyric, startTime, endTime, crossfadeTime, new DefaultEasingFunction(easing))
-    {
-    }
-
-    public DisplayLyricEvent(string lyric, float startTime, float endTime, float crossfadeTime, IEasingFunction easing)
+    public DisplayLyricEvent(string lyric, float startTime, float endTime, float crossfadeTime, Easing easing = Easing.None)
         : base(startTime)
     {
         Lyric = lyric;
@@ -41,8 +36,8 @@ public class DisplayLyricEvent : Event, IHasEndTime
     protected override void Parse(string[] input)
     {
         EndTime = StartTime + StringUtils.AssertAndFetch<float>(input[0]);
-        CrossfadeTime = StringUtils.AssertAndFetch<float>(input[1]);
-        Easing = new DefaultEasingFunction(Enum.Parse<Easing>(input[2]));
+        Easing = Enum.Parse<Easing>(input[1]);
+        CrossfadeTime = StringUtils.AssertAndFetch<float>(input[2]);
         Lyric = input[3];
     }
 }
