@@ -1,0 +1,9 @@
+﻿namespace Kumi.Game.Charts.Data;
+
+public interface IHasTime
+{
+    /// <summary>
+    /// The time in milliseconds at which this <see cref="IHasTime"/> starts.
+    /// </summary>
+    float StartTime { get; }
+}

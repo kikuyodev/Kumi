@@ -16,6 +16,7 @@ public class ChartSetInfo : RealmObject, IHasGuidPrimaryKey, IChartSetInfo, ISof
     public DateTimeOffset DateAdded { get; set; }
 
     [JsonIgnore]
+    [Ignored]
     public ChartMetadata Metadata => Charts.FirstOrDefault()?.Metadata ?? new ChartMetadata();
     
     public IList<ChartInfo> Charts { get; } = null!;

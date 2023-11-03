@@ -1,6 +1,9 @@
-﻿namespace Kumi.Game.Charts;
+﻿using Kumi.Game.Charts.Data;
+using Kumi.Game.IO.Formats;
 
-public interface IChart
+namespace Kumi.Game.Charts;
+
+public interface IChart : IDecodable
 {
     /// <summary>
     /// The <see cref="ChartInfo"/> of this <see cref="IChart{T}"/>.
@@ -12,7 +15,10 @@ public interface IChart
     /// </summary>
     ChartMetadata Metadata { get; }
     
-    // todo...
+    /// <summary>
+    /// The <see cref="IEvent"/>s that occur throughout this <see cref="IChart{T}"/>.
+    /// </summary>
+    IReadOnlyList<IEvent> Events { get; }
 }
 
 public interface IChart<out T> : IChart
