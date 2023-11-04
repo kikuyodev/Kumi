@@ -20,7 +20,7 @@ public class RealmBackedDefaultStoreTest : RealmTest
             var store = new TestDefaultStore(realm);
             store!.RegisterDefaults();
         
-            Assert.AreEqual(2, store.GetAll().Count);
+            Assert.AreEqual(2, store.GetAll().Count());
             Assert.AreEqual("Test", store.GetAll().First().Name);
             Assert.AreEqual("Test2", store.GetAll().Last().Name);
         });
@@ -34,7 +34,7 @@ public class RealmBackedDefaultStoreTest : RealmTest
             var store = new TestDefaultStore(realm);
             store!.RegisterDefaults();
         
-            Assert.AreEqual(2, store.GetAll().Count);
+            Assert.AreEqual(2, store.GetAll().Count());
             Assert.AreEqual("Test", store.Get(t => t.Name == "Test")!.Name);
             Assert.AreEqual("Test2", store.GetAll().Last().Name);
             
@@ -53,7 +53,7 @@ public class RealmBackedDefaultStoreTest : RealmTest
             var store = new TestDefaultStore(realm);
             store!.RegisterDefaults();
         
-            Assert.AreEqual(2, store.GetAll().Count);
+            Assert.AreEqual(2, store.GetAll().Count());
             Assert.AreEqual("Test", store.Get(t => t.Name == "Test")!.Name);
             Assert.AreEqual("Test2", store.GetAll().Last().Name);
             
@@ -64,7 +64,7 @@ public class RealmBackedDefaultStoreTest : RealmTest
             
             store.Reset();
             
-            Assert.AreEqual(2, store.GetAll().Count);
+            Assert.AreEqual(2, store.GetAll().Count());
             Assert.AreEqual("Test", store.Get(t => t.Name == "Test")!.Name);
         });
     }
