@@ -1,4 +1,6 @@
-﻿using Kumi.Game.IO.Archives;
+﻿// Copyright (c) ppy Pty Ltd <contact@ppy.sh>. Licensed under the MIT Licence.
+// See the PPY-LICENCE file in the repository root for full licence text.
+using Kumi.Game.IO.Archives;
 using Kumi.Game.Utils;
 using osu.Framework.Extensions;
 using SharpCompress.Common;

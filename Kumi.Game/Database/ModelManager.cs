@@ -1,4 +1,6 @@
-﻿using System.Diagnostics;
+﻿// Copyright (c) ppy Pty Ltd <contact@ppy.sh>. Licensed under the MIT Licence.
+// See the PPY-LICENCE file in the repository root for full licence text.
+using System.Diagnostics;
 using Kumi.Game.Extensions;
 using Kumi.Game.IO;
 using Kumi.Game.Models;

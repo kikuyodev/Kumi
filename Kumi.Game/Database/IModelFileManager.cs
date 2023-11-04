@@ -1,4 +1,6 @@
-﻿namespace Kumi.Game.Database;
+﻿// Copyright (c) ppy Pty Ltd <contact@ppy.sh>. Licensed under the MIT Licence.
+// See the PPY-LICENCE file in the repository root for full licence text.
+namespace Kumi.Game.Database;
 
 public interface IModelFileManager<in TModel, in TFileModel>
     where TModel : class

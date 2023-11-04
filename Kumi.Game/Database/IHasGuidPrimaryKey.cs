@@ -3,7 +3,6 @@ using Realms;
 
 namespace Kumi.Game.Database;
 
-
 public interface IHasGuidPrimaryKey
 {
     [JsonIgnore]
