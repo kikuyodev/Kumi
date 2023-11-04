@@ -105,10 +105,21 @@ public class RealmAccess : IDisposable
         where TModel : RealmObject
     {
         if (ThreadSafety.IsUpdateThread)
-            return Realm.All<TModel>().Where(query).AsQueryable().SubscribeForNotifications(action);
+            return Realm.All<TModel>().SubscribeForNotifications(handleSubscription);
 
         using var r = getInstance();
-        return r.All<TModel>().Where(query).AsQueryable().SubscribeForNotifications(action);
+        return r.All<TModel>().SubscribeForNotifications(handleSubscription);
+
+        void handleSubscription(IRealmCollection<TModel> sender, ChangeSet? changes)
+        {
+            if (changes == null)
+                return;
+
+            if (sender.Where(query).Any())
+                return;
+            
+            action(sender, changes);
+        }
     }
 
     public bool Compact()
