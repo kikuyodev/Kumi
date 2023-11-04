@@ -8,7 +8,7 @@ namespace Kumi.Game.Input;
 /// A key binding container that is backed by a Realm database.
 /// </summary>
 /// <typeparam name="T">The actions this container handles.</typeparam>
-public abstract partial class RealmBackedKeyBindingContainer<T> : KeyBindingContainer<T>, IStoreDefaults<Keybind>
+public abstract partial class RealmBackedKeyBindingContainer<T> : KeyBindingContainer<T>, IHasDefaults<Keybind>
     where T : struct
 {
     /// <summary>
