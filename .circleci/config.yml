@@ -24,7 +24,6 @@ jobs:
           command: |
             export PATH="$PATH:/root/.dotnet/tools"
             dotnet tool install -g trx2junit
-            ls -la Kumi.Tests
             trx2junit Kumi.Tests/TestResults/*.trx
       - store_test_results:
           path: Kumi.Tests/TestResults
