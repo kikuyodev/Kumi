@@ -33,9 +33,6 @@ public partial class Background : CompositeDrawable, IEquatable<Background>
         });
     }
 
-    [Resolved]
-    private IRenderer renderer { get; set; }
-
     /// <summary>
     /// Sets the background to a texture.
     /// </summary>
