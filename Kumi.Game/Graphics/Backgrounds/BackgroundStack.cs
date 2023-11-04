@@ -21,13 +21,35 @@ public partial class BackgroundStack : CompositeDrawable
     /// </summary>
     public Background? CurrentBackground { get; private set; }
 
+    private float blurAmount;
+
+    public float BlurAmount
+    {
+        get => blurAmount;
+        set
+        {
+            if (blurAmount == value)
+                return;
+            
+            blurAmount = value;
+            blurContainer?.FinishTransforms();
+            blurContainer?.BlurTo(new Vector2(blurAmount), ParallaxContainer.PARALLAX_DURATION, Easing.OutQuint);
+        }
+    }
+
+    private readonly BufferedContainer? blurContainer;
+    
     public BackgroundStack()
     {
-        AddInternal(Parallax = new ParallaxContainer()
+        AddInternal(blurContainer = new BufferedContainer
         {
             RelativeSizeAxes = Axes.Both,
-            Anchor = Anchor.Centre,
-            Origin = Anchor.Centre,
+            Child = Parallax = new ParallaxContainer
+            {
+                RelativeSizeAxes = Axes.Both,
+                Anchor = Anchor.Centre,
+                Origin = Anchor.Centre,
+            }
         });
     }
 
