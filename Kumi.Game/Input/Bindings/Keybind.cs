@@ -16,6 +16,7 @@ public class Keybind : RealmObject, IHasGuidPrimaryKey
     /// <summary>
     /// The type of keybind this is.
     /// </summary>
+    [Ignored]
     public KeybindType Type
     {
         get => (KeybindType)TypeInt;
