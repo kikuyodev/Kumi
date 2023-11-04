@@ -6,6 +6,11 @@ public interface IRealmBackedDefaultStore<TModel>
     where TModel : class
 {
     /// <summary>
+    /// Default values for this store.
+    /// </summary>
+    public IEnumerable<TModel> DefaultValues { get; set; }
+    
+    /// <summary>
     /// Safely gets an item from the database.
     /// </summary>
     /// <param name="query"></param>
@@ -27,7 +32,7 @@ public interface IRealmBackedDefaultStore<TModel>
     /// <summary>
     /// Returns the default values for this store.
     /// </summary>
-    IEnumerable<TModel> GetDefaultValues();
+    void AssignDefaults();
     
     /// <summary>
     /// Registers the default values for this store.

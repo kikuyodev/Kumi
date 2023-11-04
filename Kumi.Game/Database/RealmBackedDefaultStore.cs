@@ -9,9 +9,11 @@ namespace Kumi.Game.Database;
 public abstract class RealmBackedDefaultStore<TModel> : IRealmBackedDefaultStore<TModel>
     where TModel : RealmObject, IHasGuidPrimaryKey
 {
-    public RealmBackedDefaultStore(RealmAccess realmAccss)
+    public IEnumerable<TModel> DefaultValues { get; set; } = new List<TModel>();
+
+    public RealmBackedDefaultStore(RealmAccess realmAccess)
     {
-        realm = realmAccss;
+        realm = realmAccess;
     }
     
     private readonly RealmAccess realm;
@@ -37,10 +39,10 @@ public abstract class RealmBackedDefaultStore<TModel> : IRealmBackedDefaultStore
     {
         realm.Write(r =>
         {
-            var defaultValues = GetDefaultValues();
+            AssignDefaults();
             var existing = r.All<TModel>().ToList();
 
-            foreach (var item in defaultValues)
+            foreach (var item in DefaultValues)
             {
                 if (existing.Any(e => Compare(e, item)))
                 {
@@ -51,7 +53,20 @@ public abstract class RealmBackedDefaultStore<TModel> : IRealmBackedDefaultStore
             }
         });
     }
-    public abstract IEnumerable<TModel> GetDefaultValues();
+    public abstract void AssignDefaults();
+    
+    /// <summary>
+    /// Gets default values from an instance of <see cref="IStoreDefaults{TModel}"/>.
+    /// </summary>
+    /// <param name="defaults">The instance.</param>
+    public void AssignDefaultsFor(IStoreDefaults<TModel> defaults)
+    {
+        foreach (var item in defaults.GetDefaultValues())
+        {
+            DefaultValues.Append(item);
+        }
+    }
+    
     
     public virtual bool Compare(TModel model, TModel other)
     {
