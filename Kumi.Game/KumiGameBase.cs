@@ -1,6 +1,8 @@
 ﻿using Kumi.Game.Charts;
 using Kumi.Game.Database;
 using Kumi.Game.Graphics;
+using Kumi.Game.Screens;
+using Kumi.Game.Screens.Backgrounds;
 using Kumi.Resources;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
@@ -17,6 +19,7 @@ public partial class KumiGameBase : osu.Framework.Game
     
     private RealmAccess realm = null!;
     private ChartManager chartManager = null!;
+    protected KumiScreenStack ScreenStack = null!;
     protected Colors GameColors { get; private set; }
     protected override Container<Drawable> Content { get; }
 
@@ -39,16 +42,21 @@ public partial class KumiGameBase : osu.Framework.Game
     [BackgroundDependencyLoader]
     private void load()
     {
+        // Resources
         Resources.AddStore(new DllResourceStore(KumiResources.Assembly));
+        dependencies.Cache(GameColors = new Colors());
         
+        // Realm Database & Storage
         dependencies.Cache(realm = new RealmAccess(Storage));
-        
         dependencies.CacheAs(Storage);
-
         var defaultChart = new DummyWorkingChart(Audio, Textures);
         dependencies.Cache(chartManager = new ChartManager(Storage, realm, Audio, Resources, Host, defaultChart));
         
-        dependencies.Cache(GameColors = new Colors());
+        dependencies.Cache(ScreenStack = new KumiScreenStack()
+        {
+            RelativeSizeAxes = Axes.Both
+        });
+        dependencies.CacheAs(ScreenStack.BackgroundStack);
     }
 
     public override void SetHost(GameHost host)

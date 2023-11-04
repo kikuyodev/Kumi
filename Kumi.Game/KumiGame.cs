@@ -1,4 +1,5 @@
-﻿using osu.Framework.Allocation;
+﻿using Kumi.Game.Screens;
+using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Screens;
 
@@ -11,7 +12,10 @@ public partial class KumiGame : KumiGameBase
     [BackgroundDependencyLoader]
     private void load()
     {
-        Child = screenStack = new ScreenStack { RelativeSizeAxes = Axes.Both };
+        /*AddRange(new Drawable[]
+        {
+            screenStack = ScreenStack
+        });*/
     }
 
     protected override void LoadComplete()
