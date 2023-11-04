@@ -4,7 +4,6 @@ using Kumi.Game.Database;
 using osu.Framework.Graphics;
 using osu.Framework.Logging;
 using osu.Framework.Platform;
-using osu.Framework.Threading;
 
 namespace Kumi.Game.Tests;
 

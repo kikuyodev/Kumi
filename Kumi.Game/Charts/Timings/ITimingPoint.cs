@@ -1,6 +1,4 @@
-﻿using Kumi.Game.Charts;
-
-namespace Kumi.Game.Charts.Timings;
+﻿namespace Kumi.Game.Charts.Timings;
 
 public interface ITimingPoint : IHasTime
 {   

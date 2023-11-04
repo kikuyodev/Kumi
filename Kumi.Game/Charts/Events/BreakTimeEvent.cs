@@ -1,5 +1,4 @@
-﻿using Kumi.Game.IO.Formats;
-using Kumi.Game.Utils;
+﻿using Kumi.Game.Utils;
 
 namespace Kumi.Game.Charts.Events;
 

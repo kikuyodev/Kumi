@@ -1,6 +1,4 @@
-﻿using Kumi.Game.Charts;
-using osu.Framework.Bindables;
-using osuTK.Graphics;
+﻿using osu.Framework.Bindables;
 
 namespace Kumi.Game.Charts.Objects;
 

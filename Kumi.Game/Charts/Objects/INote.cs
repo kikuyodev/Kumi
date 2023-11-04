@@ -1,5 +1,4 @@
-﻿using Kumi.Game.Charts;
-using Kumi.Game.Charts.Objects.Windows;
+﻿using Kumi.Game.Charts.Objects.Windows;
 using osuTK.Graphics;
 
 namespace Kumi.Game.Charts.Objects;
