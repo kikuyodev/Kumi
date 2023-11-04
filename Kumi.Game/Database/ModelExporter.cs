@@ -15,25 +15,32 @@ public abstract class ModelExporter<TModel> : IModelExporter<TModel>
     /// The extension that this importer can handle.
     /// </summary>
     protected abstract string Extension { get; }
-    
+
     /// <summary>
     /// The user's data storage.
     /// </summary>
     protected readonly UserDataStorage Files;
 
+    private readonly RealmAccess realm;
+
     protected ModelExporter(Storage storage, RealmAccess realm)
     {
+        this.realm = realm;
+        
         exportLocation = storage.GetStorageForDirectory("export");
         Files = new UserDataStorage(realm, storage);
     }
-    
+
     private readonly Storage exportLocation;
 
     public async Task Export(TModel model)
     {
-        string endfile = $@"{model.GetModelDisplayString()}";
-        IEnumerable<string> existing = exportLocation.GetFiles(string.Empty, $@"{endfile}*{Extension}");
+        if (!model.IsManaged)
+            model = realm.Realm.Find<TModel>(model.ID)!;
         
+        string endfile = $@"{model.GetModelDisplayString(realm.Realm)}";
+        IEnumerable<string> existing = exportLocation.GetFiles(string.Empty, $@"{endfile}*{Extension}");
+
         if (existing.Any())
         {
             var existingCount = existing.Count();
@@ -42,7 +49,7 @@ public abstract class ModelExporter<TModel> : IModelExporter<TModel>
 
         try
         {
-            using (var stream = exportLocation.CreateFileSafely($@"{endfile}*{Extension}"))
+            using (var stream = exportLocation.CreateFileSafely($@"{endfile}{Extension}"))
             {
                 await ExportModelToStream(model, stream);
             }
@@ -62,7 +69,7 @@ public abstract class ModelExporter<TModel> : IModelExporter<TModel>
 
                 if (stream == null)
                     continue;
-                
+
                 writer.Write(file.FileName, stream, DateTime.Now);
             }
         }

@@ -1,5 +1,6 @@
 ﻿using Kumi.Game.Charts.Formats;
 using Kumi.Game.Database;
+using Kumi.Game.Extensions;
 using Kumi.Game.IO.Archives;
 using osu.Framework.Extensions;
 using osu.Framework.Logging;
@@ -55,6 +56,7 @@ public class ChartImporter : RealmModelImporter<ChartSetInfo>
                     {
                         using var stream = archive.GetStream(chartFile)!;
                         imported.Hash = stream.ComputeSHA2Hash();
+                        imported.File!.FileName = imported.GetModelDisplayString(realm) + kumi_chart;
                         model.Charts.Add(imported);
                     }
                 }
@@ -98,7 +100,7 @@ public class ChartImporter : RealmModelImporter<ChartSetInfo>
         {
             Logger.Error(e, $"Failed to import chart {name} in set {set.ID}");
         }
-        
+
         return null;
     }
 }

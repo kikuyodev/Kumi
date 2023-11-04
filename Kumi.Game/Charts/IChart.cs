@@ -33,8 +33,3 @@ public interface IChart : IDecodable
     /// </summary>
     IReadOnlyList<INote> Notes { get; }
 }
-
-public interface IChart<out T> : IChart
-{
-    // todo...
-}

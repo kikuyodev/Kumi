@@ -8,7 +8,7 @@ using osu.Framework.Bindables;
 
 namespace Kumi.Game.Charts;
 
-public class Chart<T> : IChart<T>
+public class Chart : IChart
 {
     /// <summary>
     /// 1 - Initial Version
@@ -22,7 +22,7 @@ public class Chart<T> : IChart<T>
 
     public BindableList<TimingPoint> TimingPoints;
 
-    protected Chart()
+    public Chart()
     {
         ChartInfo = new ChartInfo
         {
@@ -72,8 +72,4 @@ public class Chart<T> : IChart<T>
     }
 
     #endregion
-}
-
-public class Chart : Chart<dynamic>
-{
 }
