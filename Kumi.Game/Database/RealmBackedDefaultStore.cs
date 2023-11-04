@@ -56,10 +56,10 @@ public abstract class RealmBackedDefaultStore<TModel> : IRealmBackedDefaultStore
     public abstract void AssignDefaults();
     
     /// <summary>
-    /// Gets default values from an instance of <see cref="IStoreDefaults{TModel}"/>.
+    /// Gets default values from an instance of <see cref="IHasDefaults{T}"/>.
     /// </summary>
     /// <param name="defaults">The instance.</param>
-    public void AssignDefaultsFor(IStoreDefaults<TModel> defaults)
+    public void AssignDefaultsFor(IHasDefaults<TModel> defaults)
     {
         foreach (var item in defaults.GetDefaultValues())
         {

@@ -3,7 +3,7 @@
 /// <summary>
 /// An interface for a class that stores default values for a type.
 /// </summary>
-public interface IStoreDefaults<T>
+public interface IHasDefaults<T>
     where T : class
 {
     /// <summary>
