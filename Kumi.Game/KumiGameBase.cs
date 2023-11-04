@@ -1,6 +1,7 @@
 ﻿using Kumi.Game.Charts;
 using Kumi.Game.Database;
 using Kumi.Game.Graphics;
+using Kumi.Game.Input;
 using Kumi.Game.Screens;
 using Kumi.Game.Screens.Backgrounds;
 using Kumi.Resources;
