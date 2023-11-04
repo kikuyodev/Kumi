@@ -53,6 +53,29 @@ public class UserDataStorage
         
         return file;
     }
+
+    public Stream GetStreamFor(RealmNamedFileUsage namedFile) => GetStreamFor(namedFile.File);
+    
+    /// <summary>
+    /// Gets an open stream for the given <see cref="RealmFile"/>.
+    /// </summary>
+    /// <param name="file">The file.</param>
+    /// <exception cref="InvalidOperationException">Thrown when the file doesn't exist.</exception>
+    public Stream GetStreamFor(RealmFile file)
+    {
+        if (!checkExists(file))
+            throw new InvalidOperationException($"File {file.Hash} does not exist in the storage.");
+
+        return Store.GetStream(file.GetStoragePath());
+    }
+    
+    public string GetPathFor(RealmFile file)
+    {
+        if (!checkExists(file))
+            throw new InvalidOperationException($"File {file.Hash} does not exist in the storage.");
+
+        return file.GetStoragePath();
+    }
     
     private void copyToStorage(RealmFile file, Stream data)
     {
