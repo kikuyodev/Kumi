@@ -1,4 +1,5 @@
 ﻿using osu.Framework.Bindables;
+using osu.Framework.Utils;
 
 namespace Kumi.Game.Charts.Timings;
 
@@ -16,12 +17,12 @@ public class TimingPointHandler
     /// Gets any timing point at a given time.
     /// </summary>
     /// <param name="time">The time.</param>
-    public TimingPoint GetTimingPointAt(float time) => searchForPoint<UninheritedTimingPoint>(time, null);
+    public TimingPoint GetTimingPointAt(float time) => searchForPoint<TimingPoint>(time, null);
     
     /// <summary>
     /// Gets a specific kind of timing point at a given time.
     /// </summary>
-    /// <param name="time"></param>
+    /// <param name="time">The time.</param>
     /// <typeparam name="T"></typeparam>
     /// <returns></returns>
     public T GetTimingPointAt<T>(float time, TimingPointType? pointType)
@@ -31,35 +32,36 @@ public class TimingPointHandler
     /// <summary>
     /// Gets the scroll speed at a given time.
     /// </summary>
-    /// <param name="time"></param>
-    /// <returns></returns>
+    /// <param name="time">The time.</param>
     public float GetScrollSpeedAt(float time) => searchForPoint<TimingPoint>(time, null).RelativeScrollSpeed;
+    
+    /// <summary>
+    /// Gets the BPM at a given time.
+    /// </summary>
+    /// <param name="time">The time.</param>
+    public float GetBPMAt(float time) => searchForPoint<UninheritedTimingPoint>(time, TimingPointType.Uninherited).BPM;
+    
+    /// <summary>
+    /// Gets the beat length at a given time.
+    /// </summary>
+    /// <param name="time">The time.</param>
+    public float GetBeatLengthAt(float time) => searchForPoint<UninheritedTimingPoint>(time, TimingPointType.Uninherited).MillisecondsPerBeat;
+
+    /// <summary>
+    /// Clears all timing points.
+    /// </summary>
+    public void Clear()
+    {
+        TimingPoints.Clear();
+    }
     
     private T searchForPoint<T>(float time, TimingPointType? pointType)
         where T : TimingPoint
-    {
-        int l = 0;
-        int r = TimingPoints.Count - 1;
+    { 
+        var idx = TimingPoints.BinarySearch(new TimingPoint(time));
+        if (idx < 0)
+            idx = ~idx - 1;
         
-        while (l <= r)
-        {
-            int m = l + (r - l) / 2;
-
-            if (TimingPoints[m].StartTime <= time && time < TimingPoints[m + 1].StartTime)
-            {
-                if (pointType == null || TimingPoints[m].PointType == pointType)
-                    return TimingPoints[m] as T;
-                
-                // There's no point in continuing the search if that condition isn't met.
-                return TimingPoint.DEFAULT as T;
-            }
-            
-            if (TimingPoints[m].StartTime < time)
-                l = m + 1;
-            else
-                r = m - 1;
-        }
-        
-        return TimingPoint.DEFAULT as T;
+        return (TimingPoints[idx] is T point && (pointType == null || point.PointType == pointType) ? point : TimingPoint.DEFAULT as T)!;
     }
 }

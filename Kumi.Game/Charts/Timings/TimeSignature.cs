@@ -15,6 +15,9 @@ public class TimeSignature
     /// </summary>
     public int Denominator { get; }
     
+    public static readonly TimeSignature COMMON_TIME = new(4, 4);
+    public static readonly TimeSignature WALTZ_TIME = new(3, 4);
+    
     public TimeSignature(int numerator, int denominator)
     {
         Numerator = numerator;

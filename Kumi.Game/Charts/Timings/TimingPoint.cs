@@ -6,7 +6,7 @@ namespace Kumi.Game.Charts.Timings;
 /// <summary>
 /// A point in time that affects the chart in some way, i.e. BPM changes, scroll speed changes, etc.
 /// </summary>
-public abstract class TimingPoint : ITimingPoint, IComparablyEquatable<TimingPoint>
+public class TimingPoint : ITimingPoint, IComparablyEquatable<TimingPoint>
 {
     /// <summary>
     /// The delimiter used to split the input string.
@@ -19,14 +19,14 @@ public abstract class TimingPoint : ITimingPoint, IComparablyEquatable<TimingPoi
     public float RelativeScrollSpeed { get; set; }
     public float StartTime { get; }
     
-    protected TimingPoint(float time)
+    internal TimingPoint(float time)
     {
         StartTime = time;
     }
     
     public static readonly TimingPoint DEFAULT = new DefaultTimingPoint(0);
     
-    public int CompareTo(TimingPoint? other) => StartTime.CompareTo(other?.StartTime);
+    public int CompareTo(TimingPoint? other) => StartTime < other!.StartTime ? -1 : StartTime > other.StartTime ? 1 : 0;
     public bool Equals(TimingPoint? other)
     {
         if (ReferenceEquals(other, null))

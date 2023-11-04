@@ -19,7 +19,7 @@ public class UninheritedTimingPoint : TimingPoint
     /// <summary>
     /// The time signature of this timing point.
     /// </summary>
-    public TimeSignature TimeSignature { get; set; }
+    public TimeSignature TimeSignature { get; set; } = TimeSignature.COMMON_TIME;
     
     public UninheritedTimingPoint(float time)
         : base(time)
