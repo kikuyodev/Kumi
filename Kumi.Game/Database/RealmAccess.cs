@@ -85,6 +85,42 @@ public class RealmAccess : IDisposable
             write(r, action);
         }
     }
+    
+    /// <summary>
+    /// Subscribes to notifications for all objects of type <typeparamref name="TModel"/> that match the query.
+    /// </summary>
+    /// <param name="action">The action to execute.</param>
+    /// <typeparam name="TModel">The model.</typeparam>
+    public IDisposable Subscribe<TModel>(NotificationCallbackDelegate<TModel> action) 
+        where TModel : RealmObject
+        => Subscribe(_ => true, action);
+    
+    /// <summary>
+    /// Subscribes to notifications for all objects of type <typeparamref name="TModel"/> that match the query.
+    /// </summary>
+    /// <param name="query">The query to use.</param>
+    /// <param name="action">The action to execute.</param>
+    /// <typeparam name="TModel">The model.</typeparam>
+    public IDisposable Subscribe<TModel>(Func<TModel, bool> query, NotificationCallbackDelegate<TModel> action)
+        where TModel : RealmObject
+    {
+        if (ThreadSafety.IsUpdateThread)
+            return Realm.All<TModel>().SubscribeForNotifications(handleSubscription);
+
+        using var r = getInstance();
+        return r.All<TModel>().SubscribeForNotifications(handleSubscription);
+
+        void handleSubscription(IRealmCollection<TModel> sender, ChangeSet? changes)
+        {
+            if (changes == null)
+                return;
+
+            if (sender.Where(query).Any())
+                return;
+            
+            action(sender, changes);
+        }
+    }
 
     public bool Compact()
     {
