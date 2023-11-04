@@ -27,7 +27,7 @@ jobs:
           name: NUnit Tests
           path: Kumi.Tests/TestResults/*.trx
           reporter: dotnet-trx
-      - name: upload Artifacts
+      - name: Upload Artifacts
         uses: actions/upload-artifact@v3
         with:
           name: artifacts
