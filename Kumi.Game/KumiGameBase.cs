@@ -3,11 +3,11 @@ using Kumi.Game.Database;
 using Kumi.Game.Graphics;
 using Kumi.Game.Input;
 using Kumi.Game.Screens;
-using Kumi.Game.Screens.Backgrounds;
 using Kumi.Resources;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
+using osu.Framework.Graphics.Textures;
 using osu.Framework.IO.Stores;
 using osu.Framework.Platform;
 using osuTK;
@@ -54,7 +54,10 @@ public partial class KumiGameBase : osu.Framework.Game
         dependencies.CacheAs(Storage);
         var defaultChart = new DummyWorkingChart(Audio, Textures);
         dependencies.Cache(chartManager = new ChartManager(Storage, realm, Audio, Resources, Host, defaultChart));
-        
+
+        var largeStore = new LargeTextureStore(Host.Renderer, Host.CreateTextureLoaderStore(new NamespacedResourceStore<byte[]>(Resources, "Textures")));
+        largeStore.AddTextureSource(Host.CreateTextureLoaderStore(new OnlineStore()));
+        dependencies.Cache(largeStore);
 
         dependencies.Cache(ScreenStack = new KumiScreenStack()
         {
