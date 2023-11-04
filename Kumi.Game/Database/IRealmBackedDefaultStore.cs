@@ -22,12 +22,12 @@ public interface IRealmBackedDefaultStore<TModel>
     /// <summary>
     /// Gets all of the items in the database.
     /// </summary>
-    ICollection<TModel> GetAll();
+    IEnumerable<TModel> GetAll();
     
     /// <summary>
     /// Returns the default values for this store.
     /// </summary>
-    ICollection<TModel> GetDefaultValues();
+    IEnumerable<TModel> GetDefaultValues();
     
     /// <summary>
     /// Registers the default values for this store.

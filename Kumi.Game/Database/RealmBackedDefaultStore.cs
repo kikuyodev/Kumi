@@ -18,7 +18,7 @@ public abstract class RealmBackedDefaultStore<TModel> : IRealmBackedDefaultStore
     
     public TModel? Get(Func<TModel, bool> query) => realm.Run(r => r.All<TModel>().First(query));
     
-    public ICollection<TModel> GetAll() => realm.Run(r => r.All<TModel>().ToList());
+    public IEnumerable<TModel> GetAll() => realm.Run(r => r.All<TModel>().ToList());
     
     public void Write(Func<TModel, bool> query, Action<TModel> action)
     {
@@ -51,7 +51,7 @@ public abstract class RealmBackedDefaultStore<TModel> : IRealmBackedDefaultStore
             }
         });
     }
-    public abstract ICollection<TModel> GetDefaultValues();
+    public abstract IEnumerable<TModel> GetDefaultValues();
     
     public virtual bool Compare(TModel model, TModel other)
     {
