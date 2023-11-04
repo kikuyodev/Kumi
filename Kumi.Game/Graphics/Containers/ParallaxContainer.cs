@@ -43,7 +43,7 @@ public partial class ParallaxContainer : Container, IRequireHighFrequencyMousePo
         });
     }
     
-    private Bindable<bool> enabledBindable = new Bindable<bool>(true);
+    private Bindable<bool> enabledBindable = new Bindable<bool>(false);
     private readonly Container content;
     protected override Container<Drawable> Content => content;
     
@@ -57,7 +57,14 @@ public partial class ParallaxContainer : Container, IRequireHighFrequencyMousePo
                 // Set the position to the centre of the container.
                 content.MoveTo(Vector2.Zero, PARALLAX_BOUNCEBACK_VALUE, Easing.OutQuint);
             }
+            else
+            {
+                content.ScaleTo(1f + Amount, PARALLAX_BOUNCEBACK_VALUE, Easing.OutQuint);
+            }
         };
+
+        // Force a change to the bindable to set the initial state.
+        enabledBindable.Value = true;
     }
 
     protected override void Update()
