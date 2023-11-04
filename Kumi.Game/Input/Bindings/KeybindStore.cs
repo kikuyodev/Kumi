@@ -12,18 +12,8 @@ public class KeybindStore : RealmBackedDefaultStore<Keybind>
     {
     }
     
-    [Resolved]
-    private GlobalKeybindContainer keybindContainer { get; set; }
-    
-    public override IEnumerable<Keybind> GetDefaultValues()
+    public override void AssignDefaults()
     {
-        var keybinds = new List<Keybind>();
-        
-        foreach (var binding in keybindContainer.DefaultKeyBindings)
-        {
-            keybinds.Add(new Keybind(KeybindType.Global, (int)binding.Action, binding.KeyCombination));
-        }
-        
-        return keybinds;
+        return;
     }
 }

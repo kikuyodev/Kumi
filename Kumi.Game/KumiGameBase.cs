@@ -71,7 +71,7 @@ public partial class KumiGameBase : osu.Framework.Game
         
         dependencies.Cache(globalKeybindContainer);
         dependencies.Cache(keybindStore = new KeybindStore(realm));
-        keybindStore.RegisterDefaults();
+        keybindStore.AssignDefaultsFor(globalKeybindContainer);
     }
 
     public override void SetHost(GameHost host)

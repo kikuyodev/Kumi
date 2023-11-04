@@ -8,7 +8,7 @@ namespace Kumi.Game.Input;
 /// A key binding container that is backed by a Realm database.
 /// </summary>
 /// <typeparam name="T">The actions this container handles.</typeparam>
-public abstract partial class RealmBackedKeyBindingContainer<T> : KeyBindingContainer<T>
+public abstract partial class RealmBackedKeyBindingContainer<T> : KeyBindingContainer<T>, IStoreDefaults<Keybind>
     where T : struct
 {
     /// <summary>
@@ -42,4 +42,6 @@ public abstract partial class RealmBackedKeyBindingContainer<T> : KeyBindingCont
 
     private void ReloadMappings(IEnumerable<Keybind> keybinds) =>
         KeyBindings = keybinds.Where(b => b.Type == Type).Select(b => new KeyBinding(b.KeyCombination, b.Action));
+    
+    public IEnumerable<Keybind> GetDefaultValues() => DefaultKeyBindings.Select(b => new Keybind(Type, (int)b.Action, b.KeyCombination));
 }
