@@ -22,6 +22,9 @@ public class ChartSetInfo : RealmObject, IHasGuidPrimaryKey, IChartSetInfo, ISof
     public IList<ChartInfo> Charts { get; } = null!;
     public IList<RealmNamedFileUsage> Files { get; } = null!;
 
+    [Ignored]
+    public RealmUser Creator => Metadata.Creator;
+
     public string Hash { get; set; } = string.Empty;
     
     public bool DeletePending { get; set; }

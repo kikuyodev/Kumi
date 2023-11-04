@@ -45,7 +45,7 @@ public class ChartManager : ModelManager<ChartSetInfo>, IModelImporter<ChartSetI
         var metadata = new ChartMetadata
         {
             // TODO: Fetch the logged in user instead.
-            Author = new RealmUser
+            Creator = new RealmUser
             {
                 Username = "Yourself!"
             }

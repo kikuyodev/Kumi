@@ -43,7 +43,7 @@ public class ChartEncoder : FileEncoder<Chart, ChartSections>
         WriteLine($"SOURCE = {Current.Metadata.Source}");
         WriteLine($"GENRE = {Current.Metadata.Genre}");
         WriteLine($"TAGS = {Current.Metadata.Tags}");
-        WriteLine($"CREATOR = {Current.Metadata.Author.Username}");
+        WriteLine($"CREATOR = {Current.Metadata.Creator.Username}");
         WriteLine($"DIFFICULTY_NAME = {Current.ChartInfo.DifficultyName}");
         WriteLine($"PREVIEW_POINT = {Current.Metadata.PreviewTime}");
     }
