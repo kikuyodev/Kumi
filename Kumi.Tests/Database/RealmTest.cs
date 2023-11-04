@@ -18,8 +18,8 @@ public abstract partial class RealmTest
 
     protected RealmTestGame Game => game ??= new RealmTestGame();
 
-    [SetUp]
-    public void SetupGame()
+    [TearDown]
+    public void TeardownGame()
     {
         // Dispose any resources from previous tests
         game?.Dispose();

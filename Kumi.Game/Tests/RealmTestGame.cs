@@ -1,33 +1,44 @@
 ﻿using System.Runtime.CompilerServices;
 using JetBrains.Annotations;
 using Kumi.Game.Database;
+using osu.Framework.Graphics;
 using osu.Framework.Logging;
 using osu.Framework.Platform;
+using osu.Framework.Threading;
 
 namespace Kumi.Game.Tests;
 
 public partial class RealmTestGame : osu.Framework.Game
 {
     private GameHost GameHost => new CleanRunHeadlessGameHost(callingMethodName: "");
-    private bool IsRunning => Scheduler.HasPendingTasks;
-    public RealmTestGame()
+
+    private List<Action> scheduledTasks = new();
+    private bool isRunning;
+
+    private void scheduleTask(Action task)
     {
+        if (LoadState != LoadState.Loaded)
+            scheduledTasks.Add(task);
+        else
+            Scheduler.Add(task);
     }
 
     public void Add([InstantHandle] Action action)
     {
-        Scheduler.Add(() =>
+        scheduleTask(() =>
         {
             action();
+            isRunning = false;
             Exit();
         });
     }
 
     public void Add([InstantHandle] Func<Task> action)
     {
-        Scheduler.Add(async () =>
+        scheduleTask(async () =>
         {
             await action().ConfigureAwait(true);
+            isRunning = false;
             Exit();
         });
     }
@@ -36,7 +47,7 @@ public partial class RealmTestGame : osu.Framework.Game
     {
         Add(() =>
         {
-            var defaultStorage = GameHost.Storage;
+            var defaultStorage = (Storage)Dependencies.Get(typeof(Storage));
             var testStorage = defaultStorage.GetStorageForDirectory("test");
 
             using (var realm = new RealmAccess(testStorage, $"{Guid.NewGuid().ToString()}.realm"))
@@ -44,16 +55,15 @@ public partial class RealmTestGame : osu.Framework.Game
                 Logger.Log($"Running test using realm file {testStorage.GetFullPath(realm.FileName)}");
                 testAction(realm, testStorage);
 
-                realm.Dispose();
-
                 Logger.Log($"Final database size: {GetFileSize(testStorage, realm)}");
                 realm.Compact();
                 Logger.Log($"Final database size after compact: {GetFileSize(testStorage, realm)}");
             }
         });
-        
-        if (!IsRunning)
+
+        if (!isRunning)
         {
+            isRunning = true;
             GameHost.Run(this);
         }
     }
@@ -62,14 +72,12 @@ public partial class RealmTestGame : osu.Framework.Game
     {
         Add(async () =>
         {
-            var testStorage = GameHost.Storage;
+            var testStorage = (Storage)Dependencies.Get(typeof(Storage));
 
             using (var realm = new RealmAccess(testStorage, $"{Guid.NewGuid().ToString()}.realm"))
             {
                 Logger.Log($"Running test using realm file {testStorage.GetFullPath(realm.FileName)}");
                 await testAction(realm, testStorage);
-
-                realm.Dispose();
 
                 Logger.Log($"Final database size: {GetFileSize(testStorage, realm)}");
                 realm.Compact();
@@ -77,9 +85,22 @@ public partial class RealmTestGame : osu.Framework.Game
             }
         });
 
-        if (!IsRunning)
+        if (!isRunning)
         {
+            isRunning = true;
             GameHost.Run(this);
+        }
+    }
+
+    protected override void LoadComplete()
+    {
+        base.LoadComplete();
+
+        if (scheduledTasks.Count > 0)
+        {
+            foreach (var task in scheduledTasks)
+                Scheduler.Add(task);
+            scheduledTasks.Clear();
         }
     }
 

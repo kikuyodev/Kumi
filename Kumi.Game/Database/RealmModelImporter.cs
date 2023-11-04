@@ -159,7 +159,7 @@ public abstract class RealmModelImporter<TModel> : IModelImporter<TModel>
                 throw;
             }
             
-            return item;
+            return item.Detach();
         });
     
     protected abstract string[] HashableFileTypes { get; }

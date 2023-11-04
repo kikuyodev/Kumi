@@ -1,6 +1,9 @@
 ﻿using System.Reflection;
+using Kumi.Game.Charts;
+using Kumi.Game.Models;
 using osu.Framework.IO.Stores;
 using osu.Framework.Testing;
+using osu.Framework.Utils;
 
 namespace Kumi.Tests;
 
@@ -86,6 +89,36 @@ public class TestResources
 
     public static string GetTemporaryFilename(string extension)
         => Guid.NewGuid() + "." + extension;
+
+    public static ChartSetInfo CreateChartSet(int difficulties = 10)
+    {
+        var metadata = new ChartMetadata
+        {
+            Artist = $"Test Artist {RNG.Next(0, 50)}",
+            Title = $"Test Title {RNG.Next(0, 50)}",
+            Author = new RealmUser { Username = $"Test Author {RNG.Next(0, 50)}" }
+        };
+        
+        var chartSetInfo = new ChartSetInfo();
+
+        for (int i = 0; i < difficulties; i++)
+            createChartInfo();
+        
+        void createChartInfo()
+        {
+            var chartInfo = new ChartInfo
+            {
+                DifficultyName = $"Test Difficulty {Guid.NewGuid().ToString()}",
+                InitialScrollSpeed = 1.2f,
+                Metadata = metadata!.DeepClone()
+            };
+        
+            chartSetInfo!.Charts.Add(chartInfo);
+            chartInfo.ChartSet = chartSetInfo;
+        }
+
+        return chartSetInfo;
+    }
     
     public static void Cleanup()
     {
