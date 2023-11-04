@@ -1,0 +1,35 @@
+version: 2.1
+
+jobs:
+  build:
+    docker:
+      - image: mcr.microsoft.com/dotnet/sdk:7.0
+    steps:
+      - run:
+          name: Install ssh client
+          command: apt-get update && apt-get install -y openssh-client
+      - checkout
+      - run:
+          name: Restore packages
+          command: dotnet restore
+      - run:
+          name: Build
+          command: dotnet build -c Release
+      - run:
+          name: Test
+          command: dotnet test "Kumi.Tests/Kumi.Tests.csproj" -c Release --no-restore --no-build --logger "trx"
+      - run:
+          name: Upload results
+          when: always
+          command: |
+            export PATH="$PATH:/root/.dotnet/tools"
+            dotnet tool install -g trx2junit
+            ls -la Kumi.Tests
+            trx2junit Kumi.Tests/TestResults/*.trx
+      - store_test_results:
+          path: Kumi.Tests/TestResults
+      - store_artifacts:
+          path: Kumi.Game/bin/Release/net7.0/Kumi.Game.dll
+      - store_artifacts:
+          path: Kumi.Tests/TestResults
+          destination: test-results
