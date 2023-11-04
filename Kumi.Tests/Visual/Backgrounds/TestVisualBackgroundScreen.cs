@@ -18,16 +18,21 @@ public partial class TestVisualBackgroundScreen : KumiTestScene
     [SetUpSteps]
     public void SetUpSteps()
     {
-        AddStep("create background stack", () => Child = stack = new BackgroundScreenStack());
-        AddStep("create background screen", () => stack.Push(backgroundScreen = new TestBackgroundScreen()));
+        Add(stack = new BackgroundScreenStack());
+        stack.Push(backgroundScreen = new TestBackgroundScreen());
+        
         AddUntilStep("wait until the screen is loaded", () => backgroundScreen.IsLoaded);
         AddUntilStep("wait until the current screen is changed", () => backgroundScreen.IsCurrentScreen());
+        
+        AddSliderStep("blur amount", 0f, 100f, 0f, value => backgroundScreen.BackgroundStack.BlurAmount = value);
+        AddSliderStep("parallax amount", -1, 1, 0.015f, value => backgroundScreen.BackgroundStack.Parallax.Amount = value);
+        AddToggleStep("toggle parallax", value => backgroundScreen.BackgroundStack.Parallax.Enabled = value);
     }
 
     private partial class TestBackgroundScreen : BackgroundScreen
     {
-        private Background background;
-        private Background secondBackground;
+        private readonly Background background;
+        private readonly Background secondBackground;
         public TestBackgroundScreen()
         {
             SetBackgroundImmediately(background = new Background());

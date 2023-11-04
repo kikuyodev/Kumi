@@ -56,10 +56,11 @@ public partial class ParallaxContainer : Container, IRequireHighFrequencyMousePo
             {
                 // Set the position to the centre of the container.
                 content.MoveTo(Vector2.Zero, PARALLAX_BOUNCEBACK_VALUE, Easing.OutQuint);
+                content.ScaleTo(1f, PARALLAX_BOUNCEBACK_VALUE, Easing.OutQuint);
             }
             else
             {
-                content.ScaleTo(1f + Amount, PARALLAX_BOUNCEBACK_VALUE, Easing.OutQuint);
+                content.ScaleTo(1 + Math.Abs(Amount), PARALLAX_BOUNCEBACK_VALUE, Easing.OutQuint);
             }
         };
 
@@ -81,5 +82,6 @@ public partial class ParallaxContainer : Container, IRequireHighFrequencyMousePo
         
         // Move the content by the calculated amount.
         content.MoveTo(-amountToMove, PARALLAX_DURATION, Easing.OutQuint);
+        content.ScaleTo(new Vector2(1 + Math.Abs(Amount)), PARALLAX_DURATION, Easing.OutQuint);
     }
 }
