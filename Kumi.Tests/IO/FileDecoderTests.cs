@@ -1,6 +1,5 @@
 ﻿using System.Text.RegularExpressions;
 using Kumi.Game.IO.Formats;
-using Kumi.Tests.Resources;
 using NUnit.Framework;
 
 namespace Kumi.Tests.IO;
@@ -15,9 +14,10 @@ public class FileDecoderTests
     public void TestDecoding()
     {
         var input = decoder.Decode(testResource);
-        
+
+        Assert.IsTrue(input.IsProcessed);
         Assert.IsTrue(input.Sections.ContainsKey(TestSection.SectionOne));
-        
+
         for (var i = 0; i < input.Sections[TestSection.SectionOne].Count; i++)
         {
             var pair = input.Sections[TestSection.SectionOne][i];
@@ -34,12 +34,6 @@ public class FileDecoderTests
             
         }
 
-        protected override IFileHandler<TestInput, TestSection>.SectionHeaderValues SectionHeader => new IFileHandler<TestInput, TestSection>.SectionHeaderValues
-        {
-            Start = "[#",
-            End = "]"
-        };
-        
         protected override void ProcessLine(string line)
         {
             if (!Current.Sections.ContainsKey(CurrentSection))
@@ -53,18 +47,14 @@ public class FileDecoderTests
             // add pair to current section
             Current.Sections[CurrentSection].Add(new KeyValuePair<string, string>(pair[0], pair[1]));
         }
-
-        protected override void PostProcess()
-        {
-            Current.Processed = true;
-        }
     }
     
-    private class TestInput
+    private class TestInput : IDecodable
     {
         public Dictionary<TestSection, List<KeyValuePair<string, string>>> Sections { get; set; } = new();
-
-        public bool Processed { get; set; } = false;
+        
+        public int Version { get; set; }
+        public bool IsProcessed { get; set; }
     }
 
     private enum TestSection

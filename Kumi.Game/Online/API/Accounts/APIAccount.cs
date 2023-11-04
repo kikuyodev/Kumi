@@ -1,8 +1,8 @@
 ﻿using Newtonsoft.Json;
 
-namespace Kumi.Game.Online.API.Users;
+namespace Kumi.Game.Online.API.Accounts;
 
-public class APIAccount
+public class APIAccount : IUser
 {
     /// <summary>
     /// A special ID used to represent the system users, or any other user that is not logged in.

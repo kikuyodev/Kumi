@@ -5,6 +5,7 @@
         <OutputType>Library</OutputType>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
+        <LangVersion>11</LangVersion>
     </PropertyGroup>
     
     <PropertyGroup Label="Nuget">
@@ -15,7 +16,11 @@
     </PropertyGroup>
 
     <ItemGroup>
+      <PackageReference Include="AutoMapper" Version="12.0.1" />
+      <PackageReference Include="Microsoft.Toolkit.HighPerformance" Version="7.1.2" />
       <PackageReference Include="ppy.osu.Framework" Version="2023.1012.0" />
+      <PackageReference Include="Realm" Version="11.5.0" />
+      <PackageReference Include="SharpCompress" Version="0.34.1" />
     </ItemGroup>
 
     <ItemGroup>

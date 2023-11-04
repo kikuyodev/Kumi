@@ -1,8 +1,11 @@
 ﻿using System.Reflection;
+using Kumi.Game.Charts;
+using Kumi.Game.Models;
 using osu.Framework.IO.Stores;
 using osu.Framework.Testing;
+using osu.Framework.Utils;
 
-namespace Kumi.Tests.Resources;
+namespace Kumi.Tests;
 
 /// <summary>
 /// Represents a collection of resources used for testing.
@@ -32,10 +35,28 @@ public class TestResources
         
         using (var stream = GetResourceStore().GetStream(@$"Resources/{relativePath}"))
         using (var fileStream = File.OpenWrite(temporaryPath))
-                stream.CopyTo(fileStream);
+            stream.CopyTo(fileStream);
         
         return File.OpenRead(temporaryPath);
     }
+    
+    /// <summary>
+    /// Opens a resource from the test resource store, then returns the path to the temporary file.
+    /// </summary>
+    /// <param name="relativePath">The relative path in the store.</param>
+    public static string OpenResourcePath(string relativePath)
+    {
+        string temporaryPath = getTempFile(getExtensionFromName(relativePath));
+        
+        using (var stream = GetResourceStore().GetStream(@$"Resources/{relativePath}"))
+        using (var fileStream = File.OpenWrite(temporaryPath))
+            stream.CopyTo(fileStream);
+
+        return temporaryPath;
+    }
+
+    public static Stream OpenTestChartStream() => OpenResource("Archives/MuryokuP - Sweet Sweet Cendrillion Drug (Author).kcs");
+    public static string GetTemporaryPathForChart() => OpenResourcePath("Archives/MuryokuP - Sweet Sweet Cendrillion Drug (Author).kcs");
 
     public static Stream OpenWritableTemporaryFile(string name)
     {
@@ -68,6 +89,36 @@ public class TestResources
 
     public static string GetTemporaryFilename(string extension)
         => Guid.NewGuid() + "." + extension;
+
+    public static ChartSetInfo CreateChartSet(int difficulties = 10)
+    {
+        var metadata = new ChartMetadata
+        {
+            Artist = $"Test Artist {RNG.Next(0, 50)}",
+            Title = $"Test Title {RNG.Next(0, 50)}",
+            Creator = new RealmUser { Username = $"Test Author {RNG.Next(0, 50)}" }
+        };
+        
+        var chartSetInfo = new ChartSetInfo();
+
+        for (int i = 0; i < difficulties; i++)
+            createChartInfo();
+        
+        void createChartInfo()
+        {
+            var chartInfo = new ChartInfo
+            {
+                DifficultyName = $"Test Difficulty {Guid.NewGuid().ToString()}",
+                InitialScrollSpeed = 1.2f,
+                Metadata = metadata!.DeepClone()
+            };
+        
+            chartSetInfo!.Charts.Add(chartInfo);
+            chartInfo.ChartSet = chartSetInfo;
+        }
+
+        return chartSetInfo;
+    }
     
     public static void Cleanup()
     {

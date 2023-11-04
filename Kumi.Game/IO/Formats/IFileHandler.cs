@@ -31,6 +31,12 @@ public interface IFileHandler<T, TSection> : IFileHandler<T>
         public string Start { get; set;  }
         public string End { get; set;  }
     }
+    
+    public static SectionHeaderValues DefaultHeaders => new SectionHeaderValues
+    {
+        Start = "[#",
+        End = "]"
+    };
 }
 
 public interface IFileHandler<T> : IDisposable

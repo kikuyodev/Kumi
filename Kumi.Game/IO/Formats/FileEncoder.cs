@@ -7,7 +7,7 @@ public abstract class FileEncoder<TInput, TSection> : FileEncoder<TInput>, IFile
     where TSection : struct
 {
     public TSection CurrentSection { get; set; }
-    protected abstract IFileHandler<TInput, TSection>.SectionHeaderValues SectionHeader { get; }
+    protected virtual IFileHandler<TInput, TSection>.SectionHeaderValues SectionHeader => IFileHandler<TInput, TSection>.DefaultHeaders;
 
     protected FileEncoder(int version, bool closeStreamUponProcessed = true)
         : base(version, closeStreamUponProcessed)
@@ -20,14 +20,15 @@ public abstract class FileEncoder<TInput, TSection> : FileEncoder<TInput>, IFile
         HandleSection(section);
     }
 
-    protected override void Process(TInput input)
+    protected override void PreProcess(TInput input)
     {
-        base.Process(input);
+        base.PreProcess(input);
 
         foreach (var section in Enum.GetValues(typeof(TSection)).Cast<TSection>())
         {
             // Write the section header
             var sectionName = section.ToString();
+            WriteLine(string.Empty);
             WriteLine($"{SectionHeader.Start}{sectionName!.ToScreamingSnakeCase()}{SectionHeader.End}");
             WriteSection(section);
         }
@@ -65,7 +66,7 @@ public abstract class FileEncoder<TInput> : FileHandler<TInput>
         stream = writableStream;
         Writer = new StreamWriter(stream);
 
-        Process(input);
+        PreProcess(input);
         PostProcess();
 
         Writer.Flush();
@@ -75,7 +76,7 @@ public abstract class FileEncoder<TInput> : FileHandler<TInput>
     }
 
 
-    protected override void Process(TInput input)
+    protected override void PreProcess(TInput input)
     {
         Current = input;
 
