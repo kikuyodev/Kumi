@@ -76,9 +76,9 @@ public class RealmBackedDefaultStoreTest : RealmTest
         {
         }
         
-        public override ICollection<TestModel> GetDefaultValues()
+        public override void AssignDefaults()
         {
-            return new List<TestModel>
+            DefaultValues =  new List<TestModel>
             {
                 new TestModel { Name = "Test" },
                 new TestModel { Name = "Test2" }
