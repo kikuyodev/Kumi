@@ -1,7 +1,10 @@
 ﻿using System.Reflection;
 using Kumi.Game.Charts;
 using Kumi.Game.Models;
+using osu.Framework.Graphics.Rendering;
+using osu.Framework.Graphics.Textures;
 using osu.Framework.IO.Stores;
+using osu.Framework.Platform;
 using osu.Framework.Testing;
 using osu.Framework.Utils;
 
@@ -25,6 +28,8 @@ public class TestResources
     /// </summary>
     public static DllResourceStore GetResourceStore() => new DllResourceStore(assembly);
     
+    public static TextureStore GetTextureStore(IRenderer renderer, GameHost host) => new TextureStore(renderer, host.CreateTextureLoaderStore(new NamespacedResourceStore<byte[]>(GetResourceStore(), "Resources")));
+    
     /// <summary>
     /// Opens a resource from the test resource store.
     /// </summary>
@@ -39,7 +44,7 @@ public class TestResources
         
         return File.OpenRead(temporaryPath);
     }
-    
+
     /// <summary>
     /// Opens a resource from the test resource store, then returns the path to the temporary file.
     /// </summary>
@@ -54,6 +59,8 @@ public class TestResources
 
         return temporaryPath;
     }
+
+    public static Texture OpenTexture(IRenderer renderer, GameHost host, string relativePath) => GetTextureStore(renderer, host).Get(relativePath);
 
     public static Stream OpenTestChartStream() => OpenResource("Archives/MuryokuP - Sweet Sweet Cendrillion Drug (Author).kcs");
     public static string GetTemporaryPathForChart() => OpenResourcePath("Archives/MuryokuP - Sweet Sweet Cendrillion Drug (Author).kcs");
