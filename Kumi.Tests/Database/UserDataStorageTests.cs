@@ -79,14 +79,16 @@ public class UserDataStorageTests : RealmTest
             var data = new MemoryStream("kumi"u8.ToArray());
             var file = realm.Write(() => files.Add(data, realm));
             
+            var path = file.GetStoragePath();
+            
             Assert.True(realm.All<RealmFile>().Any());
-            Assert.True(files.Storage.Exists(file.GetStoragePath()));
+            Assert.True(files.Storage.Exists(path));
             
             files.Cleanup();
             
             Assert.False(realm.All<RealmFile>().Any());
             Assert.False(file.IsValid);
-            Assert.False(files.Storage.Exists(file.GetStoragePath()));
+            Assert.False(files.Storage.Exists(path));
         });
     }
 }

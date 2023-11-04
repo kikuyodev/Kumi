@@ -1,5 +1,4 @@
-﻿using Kumi.Game.Charts;
-using Kumi.Game.Extensions;
+﻿using Kumi.Game.Extensions;
 using Kumi.Game.IO;
 using osu.Framework.Platform;
 using Realms;

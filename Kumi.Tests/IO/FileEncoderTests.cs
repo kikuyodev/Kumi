@@ -39,7 +39,9 @@ public class FileEncoderTests
         string contents = new StreamReader(TestResources.OpenReadableTemporaryFile(fileName)).ReadToEnd().Trim();
         string expected = """
 #KUMI v1
+
 [#SECTION_ONE]
+
 [#SECTION_TWO]
 """;
         

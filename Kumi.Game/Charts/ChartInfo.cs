@@ -4,7 +4,6 @@ using Kumi.Game.Database;
 using Kumi.Game.Extensions;
 using Kumi.Game.Models;
 using Realms;
-using SixLabors.ImageSharp;
 
 namespace Kumi.Game.Charts;
 
