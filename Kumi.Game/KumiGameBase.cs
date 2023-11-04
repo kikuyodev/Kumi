@@ -42,16 +42,36 @@ public partial class KumiGameBase : osu.Framework.Game
     private void load()
     {
         Resources.AddStore(new DllResourceStore(KumiResources.Assembly));
+        dependencies.Cache(GameColors = new Colors());
         
         dependencies.Cache(realm = new RealmAccess(Storage));
-        
         dependencies.CacheAs(Storage);
 
         var defaultChart = new DummyWorkingChart(Audio, Textures);
         dependencies.Cache(chartManager = new ChartManager(Storage, realm, Audio, Resources, Host, defaultChart));
-        dependencies.Cache(keybindStore = new KeybindStore(realm));
         
-        dependencies.Cache(GameColors = new Colors());
+        GlobalKeybindContainer globalKeybindContainer;
+        
+        base.Content.Add(new SafeAreaContainer()
+        {
+            RelativeSizeAxes = Axes.Both,
+            Child = new DrawSizePreservingFillContainer() // TODO: Add a way to change the resolution and UI scale dynamically.
+            {
+                TargetDrawSize = new Vector2(1920, 1080),
+                RelativeSizeAxes = Axes.Both,
+                Children = new Drawable[]
+                {
+                    globalKeybindContainer = new GlobalKeybindContainer()
+                    {
+                        RelativeSizeAxes = Axes.Both,
+                    },
+                }
+            }
+        });
+        
+        dependencies.Cache(globalKeybindContainer);
+        dependencies.Cache(keybindStore = new KeybindStore(realm));
+        keybindStore.RegisterDefaults();
     }
 
     public override void SetHost(GameHost host)
