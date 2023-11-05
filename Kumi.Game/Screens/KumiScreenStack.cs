@@ -1,5 +1,4 @@
 ﻿using Kumi.Game.Screens.Backgrounds;
-using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Screens;
 
@@ -17,7 +16,7 @@ public partial class KumiScreenStack : ScreenStack
 
     public KumiScreenStack()
     {
-        InternalChild = BackgroundStack = new BackgroundScreenStack()
+        InternalChild = BackgroundStack = new BackgroundScreenStack
         {
             RelativeSizeAxes = Axes.Both,
             Origin = Anchor.Centre,
