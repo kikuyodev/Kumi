@@ -5,6 +5,8 @@ using Kumi.Game.Input;
 using Kumi.Game.Screens;
 using Kumi.Resources;
 using osu.Framework.Allocation;
+using osu.Framework.Audio;
+using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Textures;
@@ -21,9 +23,10 @@ public partial class KumiGameBase : osu.Framework.Game
     private RealmAccess realm = null!;
     private ChartManager chartManager = null!;
     private KeybindStore keybindStore = null!;
-    
-    protected KumiScreenStack ScreenStack = null!;
+
     protected Colors GameColors { get; private set; } = null!;
+    protected Bindable<WorkingChart> Chart { get; private set; }
+    protected KumiScreenStack ScreenStack = null!;
     protected override Container<Drawable> Content { get; }
 
     protected DependencyContainer DependencyContainer = null!;
@@ -58,8 +61,14 @@ public partial class KumiGameBase : osu.Framework.Game
         // Realm Database, Storage, and Charts
         DependencyContainer.Cache(realm = new RealmAccess(Storage));
         DependencyContainer.CacheAs(Storage);
+        
         var defaultChart = new DummyWorkingChart(Audio, Textures);
         DependencyContainer.Cache(chartManager = new ChartManager(Storage, realm, Audio, Resources, Host, defaultChart));
+
+        Chart = new NonNullableBindable<WorkingChart>(defaultChart);
+        
+        DependencyContainer.CacheAs<IBindable<WorkingChart>>(Chart);
+        DependencyContainer.CacheAs(Chart);
 
         var largeStore = new LargeTextureStore(Host.Renderer, Host.CreateTextureLoaderStore(new NamespacedResourceStore<byte[]>(Resources, "Textures")));
         largeStore.AddTextureSource(Host.CreateTextureLoaderStore(new OnlineStore()));
