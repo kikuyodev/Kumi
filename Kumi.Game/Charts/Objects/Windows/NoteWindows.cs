@@ -50,7 +50,7 @@ public class NoteWindows
     /// Gets the <see cref="NoteHitResult"/> for a given delta.
     /// </summary>
     /// <param name="delta">The time this note was hit.</param>
-    public NoteHitResult? Result(float delta)
+    public NoteHitResult? Result(double delta)
     {
         if (!IsWithinWindow(delta))
             return null;
@@ -68,5 +68,16 @@ public class NoteWindows
     /// Determines whether a given delta is within the note windows.
     /// </summary>
     /// <param name="delta">The time this note was hit.</param>
-    public bool IsWithinWindow(float delta) => delta >= WindowRanges[0].Min && delta <= WindowRanges[0].Max;
+    public bool IsWithinWindow(double delta) => delta >= WindowRanges[0].Min && delta <= WindowRanges[0].Max;
+
+    public float WindowFor(NoteHitResult result)
+    {
+        return result switch
+        {
+            NoteHitResult.Good => WindowRanges[2].Max,
+            NoteHitResult.Ok => WindowRanges[1].Max,
+            NoteHitResult.Bad => WindowRanges[0].Max,
+            _ => throw new ArgumentException("Invalid NoteHitResult", nameof(result))
+        };
+    }
 }
