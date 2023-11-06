@@ -1,4 +1,5 @@
-﻿using Kumi.Game.Charts.Events;
+﻿using JetBrains.Annotations;
+using Kumi.Game.Charts.Events;
 using Kumi.Game.Charts.Objects;
 using Kumi.Game.Charts.Timings;
 using Kumi.Game.IO.Formats;
@@ -14,16 +15,16 @@ public class Chart : IChart
     /// </summary>
     public const int CURRENT_VERSION = 1;
     
-    public ChartInfo ChartInfo { get; set; }
+    public ChartInfo ChartInfo { get; set; } = null!;
     public List<IEvent> Events { get; } = new List<IEvent>();
     public TimingPointHandler TimingHandler { get; } = new TimingPointHandler();
-    public List<Note> Notes { get; } = new List<Note>();
+    public List<INote> Notes { get; } = new List<INote>();
 
-    public BindableList<TimingPoint> TimingPoints;
+    public BindableList<TimingPoint> TimingPoints = null!;
 
-    public Chart()
+    public Chart(ChartInfo? chartInfo = null)
     {
-        ChartInfo = new ChartInfo
+        ChartInfo = chartInfo ?? new ChartInfo
         {
             Metadata = new ChartMetadata
             {
@@ -34,6 +35,11 @@ public class Chart : IChart
         };
 
         TimingPoints = TimingHandler.TimingPoints.GetBoundCopy();
+    }
+
+    [UsedImplicitly]
+    public Chart()
+    {
     }
 
     [JsonIgnore]
