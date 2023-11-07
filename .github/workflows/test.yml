@@ -28,7 +28,7 @@ jobs:
         uses: dorny/test-reporter@v1.7.0
         if: success() || failure()
         with:
-          name: NUnit Tests
+          name: NUnit Tests (${{matrix.os}})
           path: Kumi.Tests/TestResults/*.trx
           reporter: dotnet-trx
       - name: Upload Artifacts
