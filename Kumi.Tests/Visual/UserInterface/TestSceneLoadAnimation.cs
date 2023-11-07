@@ -1,4 +1,5 @@
 using Kumi.Game.Graphics.Sprites;
+using Kumi.Game.Tests;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Textures;

@@ -1,5 +1,6 @@
 ﻿using Kumi.Game.Graphics.Backgrounds;
 using Kumi.Game.Screens.Backgrounds;
+using Kumi.Game.Tests;
 using NUnit.Framework;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics.Rendering;

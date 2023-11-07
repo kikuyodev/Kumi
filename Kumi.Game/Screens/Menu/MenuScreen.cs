@@ -1,8 +1,10 @@
 using Kumi.Game.Graphics.Backgrounds;
+using Kumi.Game.Overlays;
 using Kumi.Game.Screens.Backgrounds;
 using osu.Framework.Allocation;
 using osu.Framework.Extensions.Color4Extensions;
 using osu.Framework.Graphics;
+using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Sprites;
 using osu.Framework.Graphics.Textures;
 using osu.Framework.Screens;
@@ -16,6 +18,9 @@ public partial class MenuScreen : KumiScreen
     private Sprite logo = null!;
     private Sprite logoShadow = null!;
     
+    [Resolved]
+    private MusicController musicController { get; set; } = null!;
+    
     public override BackgroundScreen CreateBackground() => new MenuBackground();
 
     [BackgroundDependencyLoader]
@@ -23,23 +28,41 @@ public partial class MenuScreen : KumiScreen
     {
         AddRangeInternal(new Drawable[]
         {
-            logoShadow = new Sprite
+            new Container
             {
+                RelativeSizeAxes = Axes.Both,
                 Anchor = Anchor.Centre,
                 Origin = Anchor.Centre,
-                RelativeSizeAxes = Axes.Both,
-                Texture = store.Get("Logo/logo_shadow"),
-                Alpha = 0
+                Name = "Logo container",
+                Children = new Drawable[]
+                {
+                    logoShadow = new Sprite
+                    {
+                        Anchor = Anchor.Centre,
+                        Origin = Anchor.Centre,
+                        RelativeSizeAxes = Axes.Both,
+                        Texture = store.Get("Logo/logo_shadow"),
+                        Alpha = 0
+                    },
+                    logo = new Sprite
+                    {
+                        Anchor = Anchor.Centre,
+                        Origin = Anchor.Centre,
+                        RelativeSizeAxes = Axes.Both,
+                        FillMode = FillMode.Fit,
+                        Scale = new Vector2(0.3f),
+                        Texture = store.Get("Logo/logo_coloured"),
+                        Alpha = 0
+                    }
+                }
             },
-            logo = new Sprite
+            new MenuMusicOverlay
             {
-                Anchor = Anchor.Centre,
-                Origin = Anchor.Centre,
-                RelativeSizeAxes = Axes.Both,
-                FillMode = FillMode.Fit,
-                Scale = new Vector2(0.3f),
-                Texture = store.Get("Logo/logo_coloured"),
-                Alpha = 0
+                Margin = new MarginPadding
+                {
+                    Horizontal = 32,
+                    Vertical = 40
+                }
             }
         });
     }
@@ -53,6 +76,8 @@ public partial class MenuScreen : KumiScreen
         logo.FadeInFromZero(1000, Easing.OutQuint);
         logo.ScaleTo(0.2f, 1000, Easing.OutQuint);
         logoShadow.FadeInFromZero(1000, Easing.OutQuint);
+        
+        musicController.EnsurePlayingSong();
     }
 
     private partial class MenuBackground : BackgroundScreen

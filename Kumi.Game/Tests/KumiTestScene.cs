@@ -1,11 +1,10 @@
-﻿using Kumi.Game;
-using Kumi.Game.Online.API;
+﻿using Kumi.Game.Online.API;
 using osu.Framework.Allocation;
 using osu.Framework.Audio;
 using osu.Framework.Graphics.Textures;
 using osu.Framework.Testing;
 
-namespace Kumi.Tests.Visual;
+namespace Kumi.Game.Tests;
 
 public partial class KumiTestScene : TestScene
 {

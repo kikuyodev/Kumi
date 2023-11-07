@@ -1,4 +1,5 @@
 ﻿using Kumi.Game;
+using Kumi.Game.Tests;
 using NUnit.Framework;
 using osu.Framework.Allocation;
 using osu.Framework.Platform;

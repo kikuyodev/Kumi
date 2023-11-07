@@ -14,7 +14,7 @@ public partial class KumiTestBrowser : KumiGameBase
         
         AddRange(new Drawable[]
         {
-            new TestBrowser("Kumi"),
+            new TestBrowser("Kumi.Tests"),
             new CursorContainer()
         });
     }
