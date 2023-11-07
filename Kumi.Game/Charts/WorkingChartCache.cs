@@ -149,12 +149,12 @@ public class WorkingChartCache : IChartResourceProvider, IWorkingChartCache
 
             try
             {
-                var fileStorePath = ChartSetInfo.GetPathForFile(Metadata.AudioFile);
+                var fileStorePath = ChartSetInfo.GetPathForFile(Metadata.BackgroundFile);
                 var texture = resources.LargeTextureStore.Get(fileStorePath);
                 
                 if (texture == null)
                 {
-                    Logger.Log($"Chart background failed to load (file {Metadata.AudioFile} not found on disk at expected location {fileStorePath}).", level: LogLevel.Error);
+                    Logger.Log($"Chart background failed to load (file {Metadata.BackgroundFile} not found on disk at expected location {fileStorePath}).", level: LogLevel.Error);
                     return null;
                 }
 

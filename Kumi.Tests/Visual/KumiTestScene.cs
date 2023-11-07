@@ -1,6 +1,8 @@
 ﻿using Kumi.Game;
 using Kumi.Game.Online.API;
 using osu.Framework.Allocation;
+using osu.Framework.Audio;
+using osu.Framework.Graphics.Textures;
 using osu.Framework.Testing;
 
 namespace Kumi.Tests.Visual;
@@ -10,6 +12,8 @@ public partial class KumiTestScene : TestScene
     private DummyAPIConnection localDummyProvider;
     
     protected IAPIConnectionProvider Provider => localDummyProvider;
+    protected AudioManager AudioManager => Dependencies.Get<AudioManager>();
+    protected LargeTextureStore LargeTextureStore => Dependencies.Get<LargeTextureStore>();
     
     protected override ITestSceneTestRunner CreateRunner() => new KumiTestSceneTestRunner();
 

@@ -5,6 +5,8 @@
 /// </summary>
 public enum NoteHitResult
 {
+    None,
+    Miss,
     Bad,
     Ok,
     Good

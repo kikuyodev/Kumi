@@ -1,6 +1,8 @@
 ﻿using System.Reflection;
 using Kumi.Game.Charts;
 using Kumi.Game.Models;
+using Kumi.Game.Tests;
+using osu.Framework.Audio;
 using osu.Framework.Graphics.Rendering;
 using osu.Framework.Graphics.Textures;
 using osu.Framework.IO.Stores;
@@ -125,6 +127,16 @@ public class TestResources
         }
 
         return chartSetInfo;
+    }
+
+    public static TestWorkingChart CreateWorkingChart(AudioManager audio, TextureStore textures, Action<Chart> createChartData)
+    {
+        var setInfo = CreateChartSet(1);
+        var chart = new Chart(setInfo.Charts.First());
+        
+        createChartData(chart);
+        
+        return new TestWorkingChart(chart, audio, textures);
     }
     
     public static void Cleanup()
