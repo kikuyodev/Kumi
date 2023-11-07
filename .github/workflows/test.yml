@@ -4,6 +4,10 @@ on:
   push:
   pull_request:
 
+permissions:
+  contents: read
+  checks: write # Allows for the test reporter to upload its reports.
+
 jobs:
   build-test:
     name: Build and Test
