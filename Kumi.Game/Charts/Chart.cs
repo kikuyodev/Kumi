@@ -15,16 +15,23 @@ public class Chart : IChart
     /// </summary>
     public const int CURRENT_VERSION = 1;
     
-    public ChartInfo ChartInfo { get; set; } = null!;
+    public ChartInfo ChartInfo { get; set; }
     public List<IEvent> Events { get; } = new List<IEvent>();
     public TimingPointHandler TimingHandler { get; } = new TimingPointHandler();
     public List<INote> Notes { get; } = new List<INote>();
 
-    public BindableList<TimingPoint> TimingPoints = null!;
+    public readonly BindableList<TimingPoint> TimingPoints;
 
-    public Chart(ChartInfo? chartInfo = null)
+    public Chart(ChartInfo chartInfo)
+        : this()
     {
-        ChartInfo = chartInfo ?? new ChartInfo
+        ChartInfo = chartInfo;
+    }
+
+    [UsedImplicitly]
+    public Chart()
+    {
+        ChartInfo = new ChartInfo
         {
             Metadata = new ChartMetadata
             {
@@ -35,11 +42,6 @@ public class Chart : IChart
         };
 
         TimingPoints = TimingHandler.TimingPoints.GetBoundCopy();
-    }
-
-    [UsedImplicitly]
-    public Chart()
-    {
     }
 
     [JsonIgnore]

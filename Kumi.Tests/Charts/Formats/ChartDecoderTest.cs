@@ -1,4 +1,5 @@
-﻿using Kumi.Game.Charts.Formats;
+﻿using Kumi.Game.Charts;
+using Kumi.Game.Charts.Formats;
 using Kumi.Game.Charts.Objects;
 using Kumi.Game.Charts.Timings;
 using NUnit.Framework;
