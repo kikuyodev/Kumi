@@ -6,12 +6,12 @@ public class ServerConfiguration
     /// The base URL for the central REST API.
     /// </summary>
     public string APIUri { get; set; } = string.Empty;
-    
+
     /// <summary>
     /// The base URL for the central SignalR server.
     /// </summary>
     public string WebsocketUri { get; set; } = string.Empty;
-    
+
     /// <summary>
     /// The base URL for the website.
     /// </summary>

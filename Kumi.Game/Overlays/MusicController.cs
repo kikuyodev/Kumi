@@ -22,7 +22,7 @@ public partial class MusicController : CompositeComponent
     [Resolved]
     private RealmAccess realm { get; set; } = null!;
 
-    public event Action<WorkingChart>? TrackChanged; 
+    public event Action<WorkingChart>? TrackChanged;
 
     public DrawableTrack CurrentTrack { get; private set; } = new DrawableTrack(new TrackVirtual(1000));
 
@@ -31,7 +31,7 @@ public partial class MusicController : CompositeComponent
     protected override void LoadComplete()
     {
         base.LoadComplete();
-        
+
         chart.BindValueChanged(c => changeChart(c.NewValue), true);
     }
 
@@ -41,10 +41,11 @@ public partial class MusicController : CompositeComponent
         {
             if (chart.Disabled)
                 return;
-            
+
             Logger.Log($"{nameof(MusicController)} skipping dummy track.");
             Next();
-        } else if (!IsPlaying)
+        }
+        else if (!IsPlaying)
         {
             Logger.Log($"{nameof(MusicController)} starting playback to ensure something is playing.");
             Play();
@@ -57,8 +58,7 @@ public partial class MusicController : CompositeComponent
             if (chart.Disabled)
                 return;
 
-            var playableSet = getChartSets().AsEnumerable().SkipWhile(i => !i.Equals(current.ChartSetInfo)).ElementAtOrDefault(1)
-                              ?? getChartSets().FirstOrDefault();
+            var playableSet = getChartSets().AsEnumerable().SkipWhile(i => !i.Equals(current.ChartSetInfo)).ElementAtOrDefault(1) ?? getChartSets().FirstOrDefault();
             var playableChart = playableSet?.Charts.FirstOrDefault();
 
             if (playableChart == null)
@@ -103,7 +103,7 @@ public partial class MusicController : CompositeComponent
     }
 
     private WorkingChart current = null!;
-    
+
     private void changeChart(WorkingChart newChart)
     {
         if (newChart == current)
@@ -111,11 +111,11 @@ public partial class MusicController : CompositeComponent
 
         var last = current;
         current = newChart;
-        
+
         // ReSharper disable once ConditionIsAlwaysTrueOrFalseAccordingToNullableAPIContract
         if (last == null || !last.TryTransferTrack(current))
             changeTrack();
-        
+
         TrackChanged?.Invoke(current);
 
         if (chart.Value != current && chart is Bindable<WorkingChart> working)

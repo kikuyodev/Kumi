@@ -20,7 +20,8 @@ public class ChartManager : ModelManager<ChartSetInfo>, IModelImporter<ChartSetI
 
     public Action<ChartSetInfo>? ProcessChart { private get; set; }
 
-    public ChartManager(Storage storage, RealmAccess realm, AudioManager audioManager, IResourceStore<byte[]> gameResources, GameHost? host = null, WorkingChart? defaultChart = null)
+    public ChartManager(Storage storage, RealmAccess realm, AudioManager audioManager, IResourceStore<byte[]> gameResources, GameHost? host = null,
+                        WorkingChart? defaultChart = null)
         : base(storage, realm)
     {
         var userResources = new UserDataStorage(realm, storage).Store;
@@ -34,7 +35,7 @@ public class ChartManager : ModelManager<ChartSetInfo>, IModelImporter<ChartSetI
     }
 
     protected virtual WorkingChartCache CreateWorkingChartCache(AudioManager audioManager, IResourceStore<byte[]> resources, IResourceStore<byte[]> storage,
-        WorkingChart? defaultChart, GameHost? host)
+                                                                WorkingChart? defaultChart, GameHost? host)
         => new WorkingChartCache(ChartTrackStore, audioManager, resources, storage, defaultChart, host);
 
     protected virtual ChartImporter CreateChartImporter(Storage storage, RealmAccess realm)
@@ -134,7 +135,7 @@ public class ChartManager : ModelManager<ChartSetInfo>, IModelImporter<ChartSetI
         Debug.Assert(set != null);
 
         chartContent.ChartInfo = chartInfo;
-        
+
         // todo
     }
 
@@ -146,7 +147,7 @@ public class ChartManager : ModelManager<ChartSetInfo>, IModelImporter<ChartSetI
 
     public Task<ChartSetInfo?> Import(ImportTask task, CancellationToken cancellationToken = default)
         => chartImporter.Import(task, cancellationToken);
-    
+
     public ChartSetInfo ImportModel(ChartSetInfo item, ArchiveReader? archiveReader = null, CancellationToken cancellationToken = default)
         => chartImporter.ImportModel(item, archiveReader, cancellationToken);
 
@@ -170,18 +171,18 @@ public class ChartManager : ModelManager<ChartSetInfo>, IModelImporter<ChartSetI
                 var id = chartInfo.ID;
                 chartInfo = Realm.Run(r => r.Find<ChartInfo>(id)?.Detach()) ?? chartInfo;
             }
-            
+
             Debug.Assert(chartInfo.IsManaged != true);
         }
 
         return workingChartCache.GetWorkingChart(chartInfo)!;
     }
-    
+
     WorkingChart IWorkingChartCache.GetWorkingChart(ChartInfo? chartInfo) => GetWorkingChart(chartInfo);
 
     void IWorkingChartCache.Invalidate(ChartSetInfo chart) => workingChartCache.Invalidate(chart);
     void IWorkingChartCache.Invalidate(ChartInfo chart) => workingChartCache.Invalidate(chart);
-    
+
     public event Action<WorkingChart>? OnInvalidated
     {
         add => workingChartCache.OnInvalidated += value;
@@ -189,4 +190,5 @@ public class ChartManager : ModelManager<ChartSetInfo>, IModelImporter<ChartSetI
     }
 
     #endregion
+
 }

@@ -20,7 +20,7 @@ public partial class KumiScreenStack : ScreenStack
         {
             RelativeSizeAxes = Axes.Both,
             Origin = Anchor.Centre,
-            Anchor = Anchor.Centre,
+            Anchor = Anchor.Centre
         };
     }
 }

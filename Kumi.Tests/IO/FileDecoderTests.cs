@@ -9,7 +9,7 @@ public class FileDecoderTests
 {
     private Stream testResource => TestResources.OpenResource("Formats/test_format.tst");
     private TestDecoder decoder => new TestDecoder();
-    
+
     [Test]
     public void TestDecoding()
     {
@@ -31,28 +31,26 @@ public class FileDecoderTests
         public TestDecoder()
             : base(1)
         {
-            
+
         }
 
         protected override void ProcessLine(string line)
         {
             if (!Current.Sections.ContainsKey(CurrentSection))
-            {
                 Current.Sections.Add(CurrentSection, new List<KeyValuePair<string, string>>());
-            }
-            
+
             // split pair by ':'
             var pair = new Regex(@":\s?").Split(line);
-            
+
             // add pair to current section
             Current.Sections[CurrentSection].Add(new KeyValuePair<string, string>(pair[0], pair[1]));
         }
     }
-    
+
     private class TestInput : IDecodable
     {
-        public Dictionary<TestSection, List<KeyValuePair<string, string>>> Sections { get; set; } = new Dictionary<TestSection, List<KeyValuePair<string, string>>>();
-        
+        public Dictionary<TestSection, List<KeyValuePair<string, string>>> Sections { get; } = new Dictionary<TestSection, List<KeyValuePair<string, string>>>();
+
         public int Version { get; set; }
         public bool IsProcessed { get; set; }
     }

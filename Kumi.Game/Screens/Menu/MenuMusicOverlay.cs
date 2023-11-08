@@ -33,7 +33,7 @@ public partial class MenuMusicOverlay : FillFlowContainer
             },
             title = new SpriteText
             {
-                Font = KumiFonts.GetFont(FontFamily.Montserrat, FontWeight.Bold, size: 20),
+                Font = KumiFonts.GetFont(FontFamily.Montserrat, FontWeight.Bold, 20),
                 Shadow = true
             },
             artist = new SpriteText

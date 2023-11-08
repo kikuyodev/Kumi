@@ -16,7 +16,7 @@ public partial class TestDummyAPIConnection : KumiTestScene
             // Login to the API.
             Provider.Login("username", "password");
         });
-        
+
         var account = Provider.LocalAccount;
 
         AddAssert("is online", () => Provider.State.Value == APIState.Online);
@@ -34,10 +34,12 @@ public partial class TestDummyAPIConnection : KumiTestScene
         AddStep("assign request handler", () => dummy!.HandleRequest = _ => !shouldFail);
         AddAssert("request is null", () => request == null);
         AddStep("make request", () => dummy!.Perform(request = new TestAPIRequest()));
-        AddAssert($"request {(shouldFail ? "failed" : "succeeded")}", () => request != null && request.CompletionState == (shouldFail ? APICompletionState.Failed : APICompletionState.Completed));
+        AddAssert($"request {(shouldFail ? "failed" : "succeeded")}",
+            () => request != null && request.CompletionState == (shouldFail ? APICompletionState.Failed : APICompletionState.Completed));
         AddStep("clear request", () => request = null);
         AddStep("make request async", () => dummy!.PerformAsync(request = new TestAPIRequest()));
-        AddUntilStep($"request {(shouldFail ? "failed" : "succeeded")}", () => request != null && request.CompletionState == (shouldFail ? APICompletionState.Failed : APICompletionState.Completed));
+        AddUntilStep($"request {(shouldFail ? "failed" : "succeeded")}",
+            () => request != null && request.CompletionState == (shouldFail ? APICompletionState.Failed : APICompletionState.Completed));
     }
 
     [TestCase(1)]
@@ -62,9 +64,9 @@ public partial class TestDummyAPIConnection : KumiTestScene
             for (var i = 0; i < amount; i++)
                 dummy!.Queue(new TestAPIRequest());
         });
-        AddAssert("front item has ID -1", () => ((TestAPIRequest)dummy!.RequestQueue.Peek()).Id == -1);
+        AddAssert("front item has ID -1", () => ((TestAPIRequest) dummy!.RequestQueue.Peek()).Id == -1);
         AddStep("queue request at front", () => dummy!.ForceDequeue(new TestAPIRequest(1)));
-        AddAssert("front item has ID 1", () => ((TestAPIRequest)dummy!.RequestQueue.Peek()).Id == 1);
+        AddAssert("front item has ID 1", () => ((TestAPIRequest) dummy!.RequestQueue.Peek()).Id == 1);
         AddStep("flush queue", () => dummy!.PauseQueue = false);
         AddUntilStep("wait until empty", () => dummy!.RequestQueue.Count == 0);
     }

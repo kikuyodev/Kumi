@@ -7,7 +7,7 @@ public static class KumiFonts
     // This value is used to scale the font size to match figma's font size.
     // This is due to how osu!framework renders fonts.
     private const float font_scalar = 1.2f;
-    
+
     public static FontUsage GetFont(FontFamily family = FontFamily.Inter, FontWeight weight = FontWeight.Regular, float size = 16f, bool italics = false)
         => new FontUsage(getFontName(family, weight, italics), size * font_scalar);
 

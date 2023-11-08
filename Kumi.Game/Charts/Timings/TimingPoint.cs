@@ -11,21 +11,22 @@ public class TimingPoint : ITimingPoint, IComparablyEquatable<TimingPoint>
     /// The delimiter used to split the input string.
     /// </summary>
     public const char DELIMITER = ',';
-    
+
     public TimingPointType PointType { get; set; }
     public TimingFlags Flags { get; set; }
     public int Volume { get; set; }
     public float RelativeScrollSpeed { get; set; }
     public float StartTime { get; }
-    
+
     internal TimingPoint(float time)
     {
         StartTime = time;
     }
-    
+
     public static readonly TimingPoint DEFAULT = new DefaultTimingPoint(0);
-    
+
     public int CompareTo(TimingPoint? other) => StartTime < other!.StartTime ? -1 : StartTime > other.StartTime ? 1 : 0;
+
     public bool Equals(TimingPoint? other)
     {
         if (ReferenceEquals(other, null))
@@ -33,10 +34,10 @@ public class TimingPoint : ITimingPoint, IComparablyEquatable<TimingPoint>
 
         if (ReferenceEquals(other, this))
             return false;
-        
+
         return StartTime.Equals(other.StartTime);
     }
-    
+
     internal class DefaultTimingPoint : UninheritedTimingPoint
     {
         public DefaultTimingPoint(float time)

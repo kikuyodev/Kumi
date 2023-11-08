@@ -11,7 +11,8 @@ public class APIWebRequest<T> : APIWebRequest
 {
     public APIWebRequest(string? uri)
         : base(uri)
-    {}
+    {
+    }
 
     protected override void ProcessResponse()
     {
@@ -22,15 +23,13 @@ public class APIWebRequest<T> : APIWebRequest
             base.ProcessResponse();
             return;
         }
-        
+
         if (!string.IsNullOrEmpty(response))
-        {
             ResponseObject = JsonConvert.DeserializeObject<T>(response);
-        }
-        
+
         base.ProcessResponse();
     }
-    
+
     public T? ResponseObject { get; private set; }
 }
 
@@ -40,9 +39,9 @@ public class APIWebRequest<T> : APIWebRequest
 public class APIWebRequest : WebRequest
 {
     public event APIRequestFailed? Failure;
-    
+
     public event APIRequestSucceeded? Success;
-    
+
     public APIWebRequest(string? uri)
         : base(uri)
     {
@@ -52,7 +51,7 @@ public class APIWebRequest : WebRequest
     protected override void ProcessResponse()
     {
         base.ProcessResponse();
-        
+
         Success?.Invoke();
     }
 
@@ -69,9 +68,7 @@ public class APIWebRequest : WebRequest
 
             // If the response string is not null or empty, try to deserialize it.
             if (!string.IsNullOrEmpty(response))
-            {
                 LastError = JsonConvert.DeserializeObject<APIError>(response);
-            }
         }
 
         // Execute the failure event.
@@ -79,5 +76,6 @@ public class APIWebRequest : WebRequest
     }
 
     public delegate void APIRequestFailed(Exception e);
+
     public delegate void APIRequestSucceeded();
 }

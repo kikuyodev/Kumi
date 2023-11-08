@@ -24,7 +24,7 @@ public abstract partial class RealmBackedKeyBindingContainer<T> : KeyBindingCont
     {
         Type = type;
     }
-    
+
     [Resolved]
     private RealmAccess realm { get; set; } = null!;
 
@@ -34,15 +34,15 @@ public abstract partial class RealmBackedKeyBindingContainer<T> : KeyBindingCont
         {
             if (changes == null)
                 return;
-            
+
             ReloadMappings(sender.AsEnumerable());
         });
     }
-    
+
     protected override void ReloadMappings() => ReloadMappings(realm.Run(r => r.All<Keybind>().Where(b => b.Type == Type)));
 
     private void ReloadMappings(IEnumerable<Keybind> keybinds) =>
         KeyBindings = keybinds.Where(b => b.Type == Type).Select(b => new KeyBinding(b.KeyCombination, b.Action));
-    
-    public IEnumerable<Keybind> GetDefaultValues() => DefaultKeyBindings.Select(b => new Keybind(Type, (int)b.Action, b.KeyCombination));
+
+    public IEnumerable<Keybind> GetDefaultValues() => DefaultKeyBindings.Select(b => new Keybind(Type, (int) b.Action, b.KeyCombination));
 }

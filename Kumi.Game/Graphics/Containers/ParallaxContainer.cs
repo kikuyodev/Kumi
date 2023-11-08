@@ -18,7 +18,7 @@ public partial class ParallaxContainer : Container, IRequireHighFrequencyMousePo
     /// The duration it takes to move the parallax effect.
     /// </summary>
     public const int PARALLAX_DURATION = 250;
-    
+
     /// <summary>
     /// The current strength of the parallax effect.
     /// </summary>
@@ -42,15 +42,15 @@ public partial class ParallaxContainer : Container, IRequireHighFrequencyMousePo
             Origin = Anchor.Centre
         });
     }
-    
-    private readonly Bindable<bool> enabledBindable = new Bindable<bool>(false);
+
+    private readonly Bindable<bool> enabledBindable = new Bindable<bool>();
     private readonly Container content;
     protected override Container<Drawable> Content => content;
-    
+
     [BackgroundDependencyLoader]
     private void load()
     {
-        enabledBindable.ValueChanged += (v) =>
+        enabledBindable.ValueChanged += v =>
         {
             if (v.NewValue == false)
             {
@@ -71,15 +71,15 @@ public partial class ParallaxContainer : Container, IRequireHighFrequencyMousePo
     protected override void Update()
     {
         base.Update();
-        
+
         if (!Enabled)
             return;
-        
+
         var mousePos = ToLocalSpace(GetContainingInputManager().CurrentState.Mouse.Position);
-        
+
         // Calculate the amount to move the content by.
         var amountToMove = (mousePos - DrawSize / 2) * Amount;
-        
+
         // Move the content by the calculated amount.
         content.MoveTo(-amountToMove, PARALLAX_DURATION, Easing.OutQuint);
         content.ScaleTo(new Vector2(1 + Math.Abs(Amount)), PARALLAX_DURATION, Easing.OutQuint);

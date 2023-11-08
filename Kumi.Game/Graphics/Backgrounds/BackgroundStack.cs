@@ -7,14 +7,14 @@ using osuTK;
 namespace Kumi.Game.Graphics.Backgrounds;
 
 /// <summary>
-/// A stack of backgrounds that can be displayed by a <see cref="BackgroundScreen"/>, also there
+/// A stack of backgrounds that can be displayed by a <see cref="BackgroundScreen" />, also there
 /// for handling transitions between backgrounds; as well as any effects that may be applied to
 /// them.
 /// </summary>
 public partial class BackgroundStack : CompositeDrawable
 {
-    public ParallaxContainer Parallax { get; private set; }
-    
+    public ParallaxContainer Parallax { get; }
+
     /// <summary>
     /// The current background that is being displayed.
     /// </summary>
@@ -29,7 +29,7 @@ public partial class BackgroundStack : CompositeDrawable
         {
             if (blurAmount == value)
                 return;
-            
+
             blurAmount = value;
             blurContainer?.FinishTransforms();
             blurContainer?.BlurTo(new Vector2(blurAmount), ParallaxContainer.PARALLAX_DURATION, Easing.OutQuint);
@@ -37,7 +37,7 @@ public partial class BackgroundStack : CompositeDrawable
     }
 
     private readonly BufferedContainer? blurContainer;
-    
+
     public BackgroundStack()
     {
         AddInternal(blurContainer = new BufferedContainer
@@ -47,7 +47,7 @@ public partial class BackgroundStack : CompositeDrawable
             {
                 RelativeSizeAxes = Axes.Both,
                 Anchor = Anchor.Centre,
-                Origin = Anchor.Centre,
+                Origin = Anchor.Centre
             }
         });
     }
@@ -56,19 +56,19 @@ public partial class BackgroundStack : CompositeDrawable
     {
         if (background.Equals(CurrentBackground))
             return;
-        
+
         if (CurrentBackground == null)
         {
             SetBackgroundImmediately(background);
             return;
         }
-        
+
         switch (type)
         {
             case BackgroundTransitionType.Fade:
                 background.Alpha = 0;
                 Parallax.Add(background);
-                
+
                 background.FadeIn(duration, easing);
                 CurrentBackground.FadeOut(duration, easing);
                 CurrentBackground = background;
@@ -88,5 +88,5 @@ public partial class BackgroundStack : CompositeDrawable
 
 public enum BackgroundTransitionType
 {
-    Fade,
+    Fade
 }

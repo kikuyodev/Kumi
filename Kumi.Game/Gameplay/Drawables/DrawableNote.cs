@@ -15,7 +15,7 @@ public partial class DrawableNote : CompositeDrawable
     public override bool RemoveWhenNotAlive => false;
     public override bool RemoveCompletedTransforms => false;
 
-    public event Action<DrawableNote, Judgement>? OnNewJudgement; 
+    public event Action<DrawableNote, Judgement>? OnNewJudgement;
 
     private readonly Bindable<NoteState> state = new Bindable<NoteState>();
 
@@ -25,7 +25,7 @@ public partial class DrawableNote : CompositeDrawable
     {
         Note = note;
         AlwaysPresent = true;
-        
+
         Judgement = new Judgement(Note);
     }
 
@@ -58,14 +58,20 @@ public partial class DrawableNote : CompositeDrawable
         base.ClearTransformsAfter(double.MinValue, true);
 
         using (BeginAbsoluteSequence(initialTime))
+        {
             InitialTransforms();
+        }
 
         using (BeginAbsoluteSequence(StateChangeTime))
+        {
             StartTimeTransforms();
+        }
 
         using (BeginAbsoluteSequence(HitStateUpdateTime))
+        {
             UpdateHitStateTransforms(newState);
-        
+        }
+
         state.Value = newState;
     }
 
@@ -76,7 +82,7 @@ public partial class DrawableNote : CompositeDrawable
     protected virtual void StartTimeTransforms()
     {
     }
-    
+
     protected virtual void UpdateHitStateTransforms(NoteState newState)
     {
     }
@@ -99,7 +105,7 @@ public partial class DrawableNote : CompositeDrawable
     {
         if (Judgement.HasResult)
             throw new InvalidOperationException("Cannot apply judgement to a note that has already been judged");
-        
+
         Judgement.ApplyResult(result, Time.Current);
 
         if (!Judgement.HasResult)
@@ -109,7 +115,7 @@ public partial class DrawableNote : CompositeDrawable
 
         OnNewJudgement?.Invoke(this, Judgement);
     }
-    
+
     protected bool UpdateResult(bool userTriggered)
     {
         if (Judged)

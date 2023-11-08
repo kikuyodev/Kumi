@@ -21,4 +21,3 @@ public class ByteArrayArchiveReader : ArchiveReader
 
     public override IEnumerable<string> FileNames => new[] { Path.GetFileName(ArchivePath!) };
 }
-

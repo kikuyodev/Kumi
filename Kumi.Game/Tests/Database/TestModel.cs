@@ -9,9 +9,9 @@ internal class TestModel : RealmObject, IHasGuidPrimaryKey
 {
     [PrimaryKey]
     public Guid ID { get; }
-        
+
     public string? Name { get; set; }
-   
+
     [UsedImplicitly]
     public TestModel()
     {

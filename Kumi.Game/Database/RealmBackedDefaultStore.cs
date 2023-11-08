@@ -15,13 +15,13 @@ public abstract class RealmBackedDefaultStore<TModel> : IRealmBackedDefaultStore
     {
         realm = realmAccess;
     }
-    
+
     private readonly RealmAccess realm;
-    
+
     public TModel Get(Func<TModel, bool> query) => realm.Run(r => r.All<TModel>().First(query));
-    
+
     public IEnumerable<TModel> GetAll() => realm.Run(r => r.All<TModel>().ToList());
-    
+
     public void Write(Func<TModel, bool> query, Action<TModel> action)
     {
         realm.Write(r =>
@@ -30,7 +30,7 @@ public abstract class RealmBackedDefaultStore<TModel> : IRealmBackedDefaultStore
             action(item);
         });
     }
-    
+
     public void RegisterDefaults()
     {
         realm.Write(r =>
@@ -41,44 +41,36 @@ public abstract class RealmBackedDefaultStore<TModel> : IRealmBackedDefaultStore
             foreach (var item in DefaultValues)
             {
                 if (existing.Any(e => Compare(e, item)))
-                {
                     continue;
-                }
 
                 r.Add(item);
             }
         });
     }
+
     public abstract void AssignDefaults();
-    
+
     /// <summary>
-    /// Gets default values from an instance of <see cref="IHasDefaults{T}"/>.
+    /// Gets default values from an instance of <see cref="IHasDefaults{T}" />.
     /// </summary>
     /// <param name="defaults">The instance.</param>
     public void AssignDefaultsFor(IHasDefaults<TModel> defaults)
     {
         foreach (var item in defaults.GetDefaultValues())
-        {
             DefaultValues = DefaultValues.Append(item);
-        }
     }
-    
-    
-    public virtual bool Compare(TModel model, TModel other)
-    {
-        return model.Equals(other);
-    }
+
+
+    public virtual bool Compare(TModel model, TModel other) => model.Equals(other);
 
     public void Reset()
     {
         realm.Write(r =>
         {
             foreach (var item in r.All<TModel>())
-            {
                 r.Remove(item);
-            }
         });
-        
+
         RegisterDefaults();
     }
 }

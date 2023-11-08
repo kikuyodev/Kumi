@@ -26,13 +26,11 @@ public static class RealmObjectUtils
            .AfterMap((_, d) =>
             {
                 for (var i = 0; i < d.ChartSet?.Charts.Count; i++)
-                {
                     if (d.ChartSet.Charts[i].Equals(d))
                     {
                         d.ChartSet.Charts[i] = d;
                         break;
                     }
-                }
             });
     }).CreateMapper();
 
@@ -53,12 +51,12 @@ public static class RealmObjectUtils
            .MaxDepth(1)
            .ForMember(m => m.ChartSet, cc => cc.Ignore());
     }).CreateMapper();
-    
+
     private static void setConfiguration(IMapperConfigurationExpression c)
     {
         c.ShouldMapField = _ => false;
         c.ShouldMapProperty = p => p.GetMethod?.IsPublic == true;
-        
+
         c.Internal().ForAllMaps((_, ex) =>
         {
             ex.ForAllMembers(m =>
@@ -83,13 +81,13 @@ public static class RealmObjectUtils
 
         return list;
     }
-    
+
     public static T Detach<T>(this T item)
         where T : RealmObjectBase
     {
         if (!item.IsManaged)
             return item;
-        
+
         if (item is ChartSetInfo set)
             return set_mapper.Map<T>(set);
 

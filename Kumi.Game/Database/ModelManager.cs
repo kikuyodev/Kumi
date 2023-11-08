@@ -1,6 +1,6 @@
 ﻿/*
     Copyright (c) ppy Pty Ltd <contact@ppy.sh>. Licensed under the MIT Licence.
- 
+
      Permission is hereby granted, free of charge, to any person obtaining a copy
     of this software and associated documentation files (the "Software"), to deal
     in the Software without restriction, including without limitation the rights
@@ -48,14 +48,13 @@ public class ModelManager<TModel> : IModelManager<TModel>, IModelFileManager<TMo
 
     public void ReplaceFile(TModel item, RealmNamedFileUsage file, Stream contents)
         => performFileOperation(item, managed => ReplaceFile(file, contents, managed.Realm!));
-    
+
     public void AddFile(TModel item, Stream contents, string filename)
         => performFileOperation(item, managed => AddFile(managed, contents, filename, managed.Realm!));
 
     private void performFileOperation(TModel item, Action<TModel> operation)
     {
         if (!item.IsManaged)
-        {
             Realm.Write(realm =>
             {
                 var managed = realm.Find<TModel>(item.ID);
@@ -65,7 +64,6 @@ public class ModelManager<TModel> : IModelManager<TModel>, IModelFileManager<TMo
                 item.Files.Clear();
                 item.Files.AddRange(managed.Files.Detach());
             });
-        }
         else
             operation(item);
     }
@@ -92,7 +90,7 @@ public class ModelManager<TModel> : IModelManager<TModel>, IModelFileManager<TMo
 
         var file = userDataStorage.Add(contents, realm);
         var namedUsage = new RealmNamedFileUsage(file, filename);
-        
+
         item.Files.Add(namedUsage);
     }
 
@@ -103,7 +101,7 @@ public class ModelManager<TModel> : IModelManager<TModel>, IModelFileManager<TMo
         foreach (var item in items)
             Delete(item);
     }
-    
+
     public bool Delete(TModel item)
     {
         return Realm.Write(r =>
@@ -126,7 +124,7 @@ public class ModelManager<TModel> : IModelManager<TModel>, IModelFileManager<TMo
         foreach (var item in items)
             Undelete(item);
     }
-    
+
     public bool Undelete(TModel item)
     {
         return Realm.Write(r =>

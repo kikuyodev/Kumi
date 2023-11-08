@@ -7,7 +7,7 @@ using osu.Framework.Logging;
 
 namespace Kumi.Game.Online.Server;
 
-public class ServerConnector : IServerConnector//, IDisposable
+public class ServerConnector : IServerConnector //, IDisposable
 {
     public ServerConnection? CurrentConnection { get; private set; }
     public IAPIConnectionProvider Provider { get; }
@@ -17,7 +17,7 @@ public class ServerConnector : IServerConnector//, IDisposable
 
     public Dictionary<ServerPacketOpCode, List<Action<ServerPacket>>> PacketHandlers { get; } = new Dictionary<ServerPacketOpCode, List<Action<ServerPacket>>>();
     public CancellationTokenSource CancellationToken { get; private set; } = new CancellationTokenSource();
-    
+
     public ServerConnector(IAPIConnectionProvider provider, bool autoStart = true)
     {
         Provider = provider;
@@ -25,20 +25,17 @@ public class ServerConnector : IServerConnector//, IDisposable
         AutoStart = autoStart;
 
         if (AutoStart)
-        {
             Start();
-        }
     }
-    
+
     private readonly IBindable<APIState> apiState = new Bindable<APIState>();
     private readonly SemaphoreSlim connectionLock = new SemaphoreSlim(1);
-    private readonly IDictionary<ServerPacketOpCode, ICollection<Action<ServerPacket>>> packetHandlers = new Dictionary<ServerPacketOpCode, ICollection<Action<ServerPacket>>>();
 
     public void Start()
     {
         if (Started)
             return;
-        
+
         apiState.BindValueChanged(c =>
         {
             switch (c.NewValue)
@@ -47,15 +44,16 @@ public class ServerConnector : IServerConnector//, IDisposable
                 case APIState.Offline:
                     disconnect();
                     break;
-                
+
                 case APIState.Online:
                     connect();
                     break;
             }
         });
-        
+
         Started = true;
     }
+
     public void RegisterPacketHandler<T>(ServerPacketOpCode opCode, Action<T> handler)
         where T : ServerPacket
     {
@@ -85,7 +83,7 @@ public class ServerConnector : IServerConnector//, IDisposable
             handlers = new List<Action<ServerPacket>>();
             PacketHandlers.Add(opCode, handlers);
         }
-        
+
         // Add the handler to the list.
         handlers.Add(castingHandler);
     }
@@ -93,7 +91,7 @@ public class ServerConnector : IServerConnector//, IDisposable
     private async Task connect()
     {
         cancelExistingConnection();
-        
+
         if (!await connectionLock.WaitAsync(1000))
             throw new TimeoutException("Failed to acquire connection lock, likely due to a deadlock.");
 
@@ -107,53 +105,56 @@ public class ServerConnector : IServerConnector//, IDisposable
                 State.Value = ServerConnectionState.Connecting;
                 CurrentConnection = new ServerConnection(this);
                 await CurrentConnection.ConnectAsync(cancellationToken).ConfigureAwait(false);
-                
+
                 CurrentConnection.Closed += e =>
                 {
                     if (e != null)
                         Logger.Log($"Connection closed: {e.Message}", LoggingTarget.Network);
-                    
+
                     if (cancellationToken.IsCancellationRequested)
                         return true;
-                    
+
                     State.Value = ServerConnectionState.Disconnected;
                     return true;
                 };
-                
+
                 CurrentConnection.PacketReceived += packet =>
                 {
                     if (PacketHandlers.TryGetValue(packet.OpCode, out var handlers))
-                    {
                         foreach (var handler in handlers)
                             handler(packet);
-                    }
                 };
 
                 State.Value = ServerConnectionState.Connected;
                 cancellationToken.ThrowIfCancellationRequested();
-            } catch (OperationCanceledException)
+            }
+            catch (OperationCanceledException)
             {
                 // The connection was cancelled.
-            } catch (Exception e)
+            }
+            catch (Exception e)
             {
                 // The connection failed.
                 Logger.Log($"Failed to connect to the server: {e.Message}", LoggingTarget.Network);
                 State.Value = ServerConnectionState.Failed;
             }
-        } catch (OperationCanceledException)
+        }
+        catch (OperationCanceledException)
         {
             // The connection was cancelled.
-        } catch (Exception e)
+        }
+        catch (Exception e)
         {
             // The connection failed.
             Logger.Log($"Failed to connect to the server: {e.Message}", LoggingTarget.Network);
             State.Value = ServerConnectionState.Failed;
-        } finally
+        }
+        finally
         {
             connectionLock.Release();
         }
     }
-    
+
     private async Task disconnect()
     {
         cancelExistingConnection();
@@ -161,19 +162,20 @@ public class ServerConnector : IServerConnector//, IDisposable
         try
         {
             if (CurrentConnection != null)
-            {
                 await CurrentConnection.DisposeAsync();
-            }
-        } finally {
+        }
+        finally
+        {
             CurrentConnection = null;
         }
     }
-    
+
     private void cancelExistingConnection()
     {
         CancellationToken.Cancel();
         CancellationToken = new CancellationTokenSource();
     }
 
-    IDictionary<ServerPacketOpCode, ICollection<Action<ServerPacket>>> IServerConnector.PacketHandlers => packetHandlers;
+    IDictionary<ServerPacketOpCode, ICollection<Action<ServerPacket>>> IServerConnector.PacketHandlers { get; } =
+        new Dictionary<ServerPacketOpCode, ICollection<Action<ServerPacket>>>();
 }

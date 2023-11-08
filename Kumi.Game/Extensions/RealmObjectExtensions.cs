@@ -14,12 +14,10 @@ public static class RealmObjectExtensions
     {
         if (!model.IsManaged)
             model = realm.Find<T>(model.ID)!;
-        
+
         if (model is not IHasGuidPrimaryKey modelPrimary)
-        {
             return model.GetType().Name;
-        }
-        
+
         switch (model)
         {
             case ChartSetInfo setInfo:

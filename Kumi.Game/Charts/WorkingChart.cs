@@ -10,13 +10,13 @@ public abstract class WorkingChart : IWorkingChart
 {
     public readonly ChartInfo ChartInfo;
     public readonly ChartSetInfo ChartSetInfo;
-    
+
     public ChartMetadata Metadata => ChartInfo.Metadata;
-    
+
     private AudioManager audioManager { get; }
-    
+
     private CancellationTokenSource? loadCancellationSource = new CancellationTokenSource();
-    
+
     private readonly object chartFetchLock = new object();
 
     private Track? track;
@@ -31,13 +31,13 @@ public abstract class WorkingChart : IWorkingChart
     }
 
     #region Resource getters
-    
+
     protected virtual Waveform? GetWaveform() => new Waveform(null);
     protected abstract IChart? GetChart();
     protected abstract Track? GetChartTrack();
 
     public abstract Texture? GetBackground();
-    
+
     #endregion
 
     #region Async load control
@@ -57,7 +57,7 @@ public abstract class WorkingChart : IWorkingChart
     }
 
     #endregion
-    
+
     #region Track
 
     public bool TrackLoaded => track != null;
@@ -65,13 +65,13 @@ public abstract class WorkingChart : IWorkingChart
     public Track LoadChartTrack()
     {
         track = GetChartTrack() ?? GetVirtualTrack(1000);
-        
+
         waveform?.Dispose();
         waveform = null;
 
         return track;
     }
-    
+
     public void PrepareTrackForPreview(bool looping, double offsetFromPreviewPoint = 0)
     {
         Track.Looping = looping;
@@ -80,23 +80,21 @@ public abstract class WorkingChart : IWorkingChart
         if (Track.RestartPoint == -1)
         {
             if (!Track.IsLoaded)
-            {
                 // force length to be populated (https://github.com/ppy/osu-framework/issues/4202)
                 Track.Seek(Track.CurrentTime);
-            }
 
             Track.RestartPoint = 0.4f * Track.Length;
         }
 
         Track.RestartPoint += offsetFromPreviewPoint;
     }
-    
+
     /// <summary>
     /// Attempts to transfer the audio track to a target working chart, if valid for transferring.
     /// Used as an optimisation to avoid reload / track swap across charts.
     /// </summary>
     /// <param name="target">The target working chart to transfer this track to.</param>
-    /// <returns>Whether the track has been transferred to the <paramref name="target"/>.</returns>
+    /// <returns>Whether the track has been transferred to the <paramref name="target" />.</returns>
     public virtual bool TryTransferTrack(WorkingChart target)
     {
         if (ChartInfo.AudioEquals(target.ChartInfo) != true || Track.IsDummyDevice)
@@ -105,7 +103,7 @@ public abstract class WorkingChart : IWorkingChart
         target.track = Track;
         return true;
     }
-    
+
     public Track Track
     {
         get
@@ -116,7 +114,7 @@ public abstract class WorkingChart : IWorkingChart
             return track!;
         }
     }
-    
+
     protected Track GetVirtualTrack(double emptyLength = 0)
     {
         const double excess_length = 1000;
@@ -126,13 +124,13 @@ public abstract class WorkingChart : IWorkingChart
     }
 
     #endregion
-    
+
     #region Waveform
 
     public Waveform Waveform => waveform ?? GetWaveform()!;
 
     #endregion
-    
+
     #region Chart
 
     public virtual bool ChartLoaded => chartLoadTask?.IsCompleted ?? false;
@@ -150,7 +148,7 @@ public abstract class WorkingChart : IWorkingChart
                 // This is the exception that is generally expected here, which occurs via natural cancellation of the asynchronous load
                 if (ae.InnerExceptions.FirstOrDefault() is TaskCanceledException)
                     return null!;
-                
+
                 Logger.Error(ae, "Chart failed to load");
                 return null!;
             }
@@ -176,10 +174,10 @@ public abstract class WorkingChart : IWorkingChart
             });
         }
     }
-    
+
     #endregion
 
     public abstract Stream? GetStream(string storagePath);
-    
+
     ChartInfo IWorkingChart.ChartInfo => ChartInfo;
 }

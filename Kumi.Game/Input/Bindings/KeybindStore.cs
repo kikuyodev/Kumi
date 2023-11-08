@@ -10,7 +10,7 @@ public class KeybindStore : RealmBackedDefaultStore<Keybind>
     public KeybindStore(RealmAccess realmAccess) : base(realmAccess)
     {
     }
-    
+
     public override void AssignDefaults()
     {
     }

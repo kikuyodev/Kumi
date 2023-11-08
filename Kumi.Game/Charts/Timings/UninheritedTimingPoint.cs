@@ -20,17 +20,17 @@ public class UninheritedTimingPoint : TimingPoint
     /// The time signature of this timing point.
     /// </summary>
     public TimeSignature TimeSignature { get; set; } = TimeSignature.COMMON_TIME;
-    
+
     public UninheritedTimingPoint(float time)
         : base(time)
     {
     }
-    
+
     /// <summary>
     /// The milliseconds necessary to elapse a beat for this timing point.
     /// </summary>
-    public float MillisecondsPerBeat => (60000f / BPM) * TimeSignature.NoteSubdivision;
-    
+    public float MillisecondsPerBeat => 60000f / BPM * TimeSignature.NoteSubdivision;
+
     public Bindable<float> GetBindableBPM() => bpmBindable;
 
     private readonly Bindable<float> bpmBindable = new Bindable<float>();

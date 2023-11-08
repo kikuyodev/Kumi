@@ -10,16 +10,16 @@ public partial class BackgroundScreen : Screen
     /// The stack of backgrounds that this screen will display.
     /// </summary>
     public BackgroundStack BackgroundStack { get; }
-    
+
     public BackgroundScreen()
     {
-        InternalChild = BackgroundStack = new BackgroundStack()
+        InternalChild = BackgroundStack = new BackgroundStack
         {
             RelativeSizeAxes = Axes.Both,
             Anchor = Anchor.Centre,
-            Origin = Anchor.Centre,
+            Origin = Anchor.Centre
         };
     }
-    
+
     public void SetBackgroundImmediately(Background background) => BackgroundStack.SetBackgroundImmediately(background);
 }

@@ -65,7 +65,7 @@ public partial class KumiGame : KumiGameBase
         where T : Drawable, new()
     {
         public T Drawable { get; }
-        public Action<Drawable>? LoadComplete { get; set; }
+        public Action<Drawable>? LoadComplete { get; }
 
         private readonly bool cache;
 

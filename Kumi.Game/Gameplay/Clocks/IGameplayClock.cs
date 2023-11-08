@@ -6,6 +6,6 @@ namespace Kumi.Game.Gameplay.Clocks;
 public interface IGameplayClock : IFrameBasedClock
 {
     double StartTime { get; }
-    
+
     IBindable<bool> IsPaused { get; }
 }

@@ -59,7 +59,7 @@ public class WorkingChartCache : IChartResourceProvider, IWorkingChartCache
         lock (workingCache)
         {
             var working = workingCache.FirstOrDefault(w => info.Equals(w.ChartInfo));
-            
+
             if (working != null)
             {
                 Logger.Log($"Invalidating working chart cache for {info}");
@@ -141,7 +141,7 @@ public class WorkingChartCache : IChartResourceProvider, IWorkingChartCache
                 return null;
             }
         }
-        
+
         public override Texture? GetBackground()
         {
             if (string.IsNullOrEmpty(Metadata.BackgroundFile))
@@ -151,10 +151,11 @@ public class WorkingChartCache : IChartResourceProvider, IWorkingChartCache
             {
                 var fileStorePath = ChartSetInfo.GetPathForFile(Metadata.BackgroundFile);
                 var texture = resources.LargeTextureStore.Get(fileStorePath);
-                
+
                 if (texture == null)
                 {
-                    Logger.Log($"Chart background failed to load (file {Metadata.BackgroundFile} not found on disk at expected location {fileStorePath}).", level: LogLevel.Error);
+                    Logger.Log($"Chart background failed to load (file {Metadata.BackgroundFile} not found on disk at expected location {fileStorePath}).",
+                        level: LogLevel.Error);
                     return null;
                 }
 
@@ -179,7 +180,7 @@ public class WorkingChartCache : IChartResourceProvider, IWorkingChartCache
             {
                 var fileStorePath = ChartSetInfo.GetPathForFile(Metadata.AudioFile);
                 var track = resources.Tracks.Get(fileStorePath);
-                
+
                 if (track == null)
                 {
                     Logger.Log($"Chart track failed to load (file {Metadata.AudioFile} not found on disk at expected location {fileStorePath}).", level: LogLevel.Error);

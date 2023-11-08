@@ -29,7 +29,7 @@ public class UserDataStorage
     public UserDataStorage(RealmAccess realmAccess, Storage storage)
     {
         this.realmAccess = realmAccess;
-        
+
         Storage = storage.GetStorageForDirectory("data");
         Store = new StorageBackedResourceStore(Storage);
     }
@@ -42,21 +42,21 @@ public class UserDataStorage
     {
         var hash = data.ComputeSHA2Hash();
         var existing = realm.Find<RealmFile>(hash);
-        var file = existing ?? new RealmFile { Hash = hash, };
+        var file = existing ?? new RealmFile { Hash = hash };
 
         if (!checkExists(file))
             copyToStorage(file, data);
 
         if (addToRealm && !file.IsManaged)
             realm.Add(file);
-        
+
         return file;
     }
 
     public Stream GetStreamFor(RealmNamedFileUsage namedFile) => GetStreamFor(namedFile.File);
-    
+
     /// <summary>
-    /// Gets an open stream for the given <see cref="RealmFile"/>.
+    /// Gets an open stream for the given <see cref="RealmFile" />.
     /// </summary>
     /// <param name="file">The file.</param>
     /// <exception cref="InvalidOperationException">Thrown when the file doesn't exist.</exception>
@@ -67,7 +67,7 @@ public class UserDataStorage
 
         return Store.GetStream(file.GetStoragePath());
     }
-    
+
     public string GetPathFor(RealmFile file)
     {
         if (!checkExists(file))
@@ -75,17 +75,19 @@ public class UserDataStorage
 
         return file.GetStoragePath();
     }
-    
+
     private void copyToStorage(IFileInfo file, Stream data)
     {
         data.Seek(0, SeekOrigin.Begin);
 
         using (var output = Storage.CreateFileSafely(file.GetStoragePath()))
+        {
             data.CopyTo(output);
-        
+        }
+
         data.Seek(0, SeekOrigin.Begin);
     }
-    
+
     private bool checkExists(IFileInfo file)
     {
         var path = file.GetStoragePath();
@@ -111,7 +113,7 @@ public class UserDataStorage
             foreach (var file in files)
             {
                 totalFiles++;
-                
+
                 if (file.BacklinksCount > 0)
                     // File is still being used in a model somewhere...
                     continue;
@@ -121,7 +123,8 @@ public class UserDataStorage
                     removedFiles++;
                     Storage.Delete(file.GetStoragePath());
                     r.Remove(file);
-                } catch (Exception e)
+                }
+                catch (Exception e)
                 {
                     Logger.Error(e, $"Could not delete databased file {file.Hash}");
                 }

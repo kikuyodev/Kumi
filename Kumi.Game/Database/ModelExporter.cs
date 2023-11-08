@@ -26,7 +26,7 @@ public abstract class ModelExporter<TModel> : IModelExporter<TModel>
     protected ModelExporter(Storage storage, RealmAccess realm)
     {
         this.realm = realm;
-        
+
         exportLocation = storage.GetStorageForDirectory("export");
         Files = new UserDataStorage(realm, storage);
     }
@@ -37,7 +37,7 @@ public abstract class ModelExporter<TModel> : IModelExporter<TModel>
     {
         if (!model.IsManaged)
             model = realm.Realm.Find<TModel>(model.ID)!;
-        
+
         var endFile = $@"{model.GetModelDisplayString(realm.Realm)}";
         IEnumerable<string> existing = exportLocation.GetFiles(string.Empty, $@"{endFile}*{Extension}");
 
@@ -53,7 +53,8 @@ public abstract class ModelExporter<TModel> : IModelExporter<TModel>
             {
                 await ExportModelToStream(model, stream);
             }
-        } catch
+        }
+        catch
         {
             exportLocation.Delete($@"{endFile}*{Extension}");
         }
@@ -64,7 +65,6 @@ public abstract class ModelExporter<TModel> : IModelExporter<TModel>
         using (var writer = new ZipWriter(output, new ZipWriterOptions(CompressionType.Deflate)))
         {
             foreach (var file in model.Files)
-            {
                 try
                 {
                     var stream = Files.GetStreamFor(file.File);
@@ -74,7 +74,6 @@ public abstract class ModelExporter<TModel> : IModelExporter<TModel>
                 {
                     Logger.Error(e, $"Failed to export {file.FileName}.");
                 }
-            }
         }
 
         return Task.CompletedTask;

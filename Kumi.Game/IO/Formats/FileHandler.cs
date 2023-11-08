@@ -14,12 +14,13 @@ public abstract class FileHandler<T, TSection> : FileHandler<T>, IFileHandler<T,
     {
         CloseStreamUponProcessed = closeStreamUponProcessed;
     }
-    
+
     #region IFileHandler implementation
 
     IFileHandler<T, TSection>.SectionHeaderValues IFileHandler<T, TSection>.SectionHeader => SectionHeader;
 
     #endregion
+
 }
 
 public abstract class FileHandler<T> : IFileHandler<T>
@@ -39,7 +40,7 @@ public abstract class FileHandler<T> : IFileHandler<T>
     }
 
     protected abstract void PreProcess(T input);
-    
+
     /// <summary>
     /// Runs further processing on the output, once parsing is complete.
     /// </summary>
@@ -52,8 +53,9 @@ public abstract class FileHandler<T> : IFileHandler<T>
     }
 
     #region IFileHandler implementation
-    
+
     void IFileHandler<T>.PostProcess() => PostProcess();
 
     #endregion
+
 }

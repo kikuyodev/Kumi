@@ -14,7 +14,6 @@ public class Balloon : Note, IHasEndTime
         : base(startTime)
     {
     }
-    
+
     private readonly Bindable<float> endTimeBindable = new Bindable<float>();
 }
-

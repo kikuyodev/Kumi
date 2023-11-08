@@ -12,22 +12,22 @@ public interface IStorageResourceProvider
     /// The game renderer.
     /// </summary>
     IRenderer Renderer { get; }
-    
+
     /// <summary>
     /// Retrieve the game-wide audio manager.
     /// </summary>
     AudioManager? AudioManager { get; }
-    
+
     /// <summary>
     /// Access game-wide user files.
     /// </summary>
     IResourceStore<byte[]> Files { get; }
-    
+
     /// <summary>
     /// Access game-wide resources.
     /// </summary>
     IResourceStore<byte[]> Resources { get; }
-    
+
     /// <summary>
     /// Access realm.
     /// </summary>

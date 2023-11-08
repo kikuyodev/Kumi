@@ -6,17 +6,16 @@ using osuTK.Graphics;
 namespace Kumi.Game.Charts.Objects;
 
 /// <summary>
-/// A representation of a clickable object in a <see cref="IChart"/>.
-///
+/// A representation of a clickable object in a <see cref="IChart" />.
 /// A majority of the properties are bindable, so that they can be used in the editor.
 /// </summary>
 public class Note : INote
 {
     /// <summary>
-    /// The scale or a note with <see cref="NoteFlags.Big"/> set.
+    /// The scale or a note with <see cref="NoteFlags.Big" /> set.
     /// </summary>
     public const float BIG_NOTE_SCALE = 0.0f;
-        
+
     /// <summary>
     /// The delimiter used to split the input string.
     /// </summary>
@@ -60,12 +59,11 @@ public class Note : INote
     private readonly Bindable<float> startTimeBindable = new Bindable<float>();
     private readonly Bindable<Color4> noteColorBindable = new Bindable<Color4>();
     private readonly Bindable<NoteFlags> flagsBindable = new Bindable<NoteFlags>();
-    
+
     /// <summary>
-    /// A function that applies various defaults to an object within a <see cref="IChart"/>.
-    ///
+    /// A function that applies various defaults to an object within a <see cref="IChart" />.
     /// This is primarily for figuring out which of the two windows to use for a note, between
-    /// an upper range and a lower range. The ranges for difficulty are defined in <see cref="NoteWindows"/>.
+    /// an upper range and a lower range. The ranges for difficulty are defined in <see cref="NoteWindows" />.
     /// </summary>
     /// <param name="chart"></param>
     public void ApplyChartDefaults(IChart chart)
@@ -76,7 +74,6 @@ public class Note : INote
 
     /// <summary>
     /// Gets the total duration of this note.
-    ///
     /// ...I'm not sure if this is useful, but it's here just in case.
     /// </summary>
     public float GetDuration() => this is IHasEndTime ? (this as IHasEndTime)!.EndTime - StartTime : 0.0f;
@@ -87,11 +84,11 @@ public class Note : INote
         {
             case NoteType.Don:
                 return Colors.DonColor;
-            
+
             case NoteType.Kat:
                 return Colors.KatColor;
         }
-        
+
         return Color4.White;
     }
 }

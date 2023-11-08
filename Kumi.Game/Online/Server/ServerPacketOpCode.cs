@@ -6,5 +6,5 @@ namespace Kumi.Game.Online.Server;
 [JsonConverter(typeof(StringEnumConverter))]
 public enum ServerPacketOpCode
 {
-    Hello = 0x00,
+    Hello = 0x00
 }

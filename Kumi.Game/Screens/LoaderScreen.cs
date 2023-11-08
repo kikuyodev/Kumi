@@ -12,7 +12,7 @@ public partial class LoaderScreen : KumiScreen
 {
     private LoadAnimation loadAnimation = null!;
     private Sprite logo = null!;
-    
+
     [BackgroundDependencyLoader]
     private void load(LargeTextureStore store)
     {
@@ -47,7 +47,7 @@ public partial class LoaderScreen : KumiScreen
         logo.ScaleTo(0.2f, 1000, Easing.OutQuint);
         loadAnimation.FadeOut(1000, Easing.OutQuint);
         loadAnimation.ScaleTo(0.2f, 1000, Easing.OutQuint);
-        
+
         return base.OnExiting(e);
     }
 

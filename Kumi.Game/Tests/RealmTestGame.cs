@@ -46,7 +46,7 @@ public partial class RealmTestGame : osu.Framework.Game
     {
         Add(() =>
         {
-            var defaultStorage = (Storage)Dependencies.Get(typeof(Storage));
+            var defaultStorage = (Storage) Dependencies.Get(typeof(Storage));
             var testStorage = defaultStorage.GetStorageForDirectory("test");
 
             using (var realm = new RealmAccess(testStorage, $"{Guid.NewGuid().ToString()}.realm"))
@@ -71,7 +71,7 @@ public partial class RealmTestGame : osu.Framework.Game
     {
         Add(async () =>
         {
-            var testStorage = (Storage)Dependencies.Get(typeof(Storage));
+            var testStorage = (Storage) Dependencies.Get(typeof(Storage));
 
             using (var realm = new RealmAccess(testStorage, $"{Guid.NewGuid().ToString()}.realm"))
             {
@@ -108,8 +108,11 @@ public partial class RealmTestGame : osu.Framework.Game
         try
         {
             using (var stream = testStorage.GetStream(realm.FileName))
+            {
                 return stream?.Length ?? 0;
-        } catch
+            }
+        }
+        catch
         {
             return 0;
         }

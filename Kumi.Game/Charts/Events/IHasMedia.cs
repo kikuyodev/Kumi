@@ -8,10 +8,10 @@ public interface IHasMedia
     /// The file name of the media.
     /// </summary>
     string FileName { get; }
-    
+
     bool FileExists(Storage chartStorage);
     Stream? GetStream(Storage chartStorage);
-    
+
     bool IsVideoFile();
     bool IsImageFile();
 }

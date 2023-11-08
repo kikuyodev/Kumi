@@ -13,7 +13,7 @@ public class ChartMetadata : RealmObject, IChartMetadata, IDeepCloneable<ChartMe
     public string ArtistRomanised { get; set; } = string.Empty;
 
     public string Title { get; set; } = string.Empty;
-    
+
     [JsonProperty("title_romanised")]
     public string TitleRomanised { get; set; } = string.Empty;
 
@@ -38,14 +38,13 @@ public class ChartMetadata : RealmObject, IChartMetadata, IDeepCloneable<ChartMe
             Creator = new RealmUser
             {
                 Id = Creator.Id,
-                Username = Creator.Username,
+                Username = Creator.Username
             },
             Source = Source,
             Genre = Genre,
             Tags = Tags,
             PreviewTime = PreviewTime,
             AudioFile = AudioFile,
-            BackgroundFile = BackgroundFile,
+            BackgroundFile = BackgroundFile
         };
 }
-

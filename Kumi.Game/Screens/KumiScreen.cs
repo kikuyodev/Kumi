@@ -12,7 +12,7 @@ public partial class KumiScreen : Screen
 
     public virtual float ParallaxAmount => 0.015f;
     public virtual float BlurAmount => 0f;
-    
+
     public KumiScreen()
     {
         Anchor = Anchor.Centre;
@@ -24,16 +24,16 @@ public partial class KumiScreen : Screen
     {
         LoadComponent(CurrentBackground = CreateBackground());
     }
-    
+
     [Resolved]
     private BackgroundScreenStack stack { get; set; } = null!;
 
     public override void OnEntering(ScreenTransitionEvent e)
     {
         base.OnEntering(e);
-        
+
         stack.Push(CurrentBackground);
-        
+
         CurrentBackground.BackgroundStack.Parallax.Amount = ParallaxAmount;
         CurrentBackground.BackgroundStack.BlurAmount = BlurAmount;
     }

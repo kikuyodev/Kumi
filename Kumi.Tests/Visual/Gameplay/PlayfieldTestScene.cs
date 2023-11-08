@@ -47,7 +47,7 @@ public partial class PlayfieldTestScene : KumiTestScene
                 }
             });
 
-            workingChart = TestResources.CreateWorkingChart(AudioManager, LargeTextureStore, (c) =>
+            workingChart = TestResources.CreateWorkingChart(AudioManager, LargeTextureStore, c =>
             {
                 c.Notes.Add(new TestNote
                 {
@@ -130,7 +130,7 @@ public partial class PlayfieldTestScene : KumiTestScene
     private partial class TestDrawableNote : DrawableNote<TestNote>
     {
         private Circle circle = null!;
-        
+
         public TestDrawableNote(TestNote note)
             : base(note)
         {
@@ -167,13 +167,14 @@ public partial class PlayfieldTestScene : KumiTestScene
                     circle.ScaleTo(1.5f).Then().ScaleTo(1f, 1000);
                     circle.FadeColour(Color4.Lime, 250, Easing.OutQuint);
                     circle.FadeOut(250);
-                    
+
                     this.Delay(250).Expire();
                     break;
+
                 case NoteState.Miss:
                     circle.FadeColour(Color4.White).Then().FadeColour(Color4.Red, 250, Easing.OutQuint);
                     circle.FadeOut(250);
-                    
+
                     this.Delay(250).Expire();
                     break;
             }
@@ -187,14 +188,14 @@ public partial class PlayfieldTestScene : KumiTestScene
             {
                 if (Time.Current > Note.StartTime - Note.Windows.WindowFor(NoteHitResult.Bad) && !Note.Windows.IsWithinWindow(deltaTime))
                     ApplyResult(NoteHitResult.Miss);
-                
+
                 return;
             }
 
             var result = Note.Windows.Result(deltaTime)!;
             if (result == null)
                 return;
-            
+
             ApplyResult(result.Value);
         }
 
@@ -205,7 +206,7 @@ public partial class PlayfieldTestScene : KumiTestScene
 
             if ((e.Key == Key.F || e.Key == Key.J) && !e.Repeat)
                 return UpdateResult(true);
-            
+
             return false;
         }
     }

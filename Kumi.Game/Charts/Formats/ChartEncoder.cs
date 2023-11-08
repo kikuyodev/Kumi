@@ -11,7 +11,7 @@ public class ChartEncoder : FileEncoder<Chart, ChartSections>
         : base(Chart.CURRENT_VERSION)
     {
     }
-    
+
     protected override void HandleSection(ChartSections section)
     {
         switch (section)
@@ -19,15 +19,19 @@ public class ChartEncoder : FileEncoder<Chart, ChartSections>
             case ChartSections.Metadata:
                 handleMetadata();
                 break;
+
             case ChartSections.Chart:
                 handleChart();
                 break;
+
             case ChartSections.Events:
                 handleEvents();
                 break;
+
             case ChartSections.Timings:
                 handleTimings();
                 break;
+
             case ChartSections.Notes:
                 handleNotes();
                 break;
@@ -63,19 +67,19 @@ public class ChartEncoder : FileEncoder<Chart, ChartSections>
         {
             if (e is SetMediaEvent setMedia)
             {
-                WriteLine($"{((int)e.Type).ToString()},{encodeString(setMedia.FileName)}");
+                WriteLine($"{((int) e.Type).ToString()},{encodeString(setMedia.FileName)}");
                 continue;
             }
-            
+
             var values = new List<string>
             {
-                ((int)e.Type).ToString(),
-                e.StartTime.ToString(CultureInfo.InvariantCulture),
+                ((int) e.Type).ToString(),
+                e.StartTime.ToString(CultureInfo.InvariantCulture)
             };
 
             if (e is IHasEndTime endTime)
                 values.Add(endTime.EndTime.ToString(CultureInfo.InvariantCulture));
-            
+
             if (e is IHasMedia media)
                 values.Add(encodeString(media.FileName));
 
@@ -90,7 +94,7 @@ public class ChartEncoder : FileEncoder<Chart, ChartSections>
                 values.Add(lyricEvent.CrossfadeTime.ToString(CultureInfo.InvariantCulture));
                 values.Add(encodeString(lyricEvent.Lyric));
             }
-            
+
             WriteLine(string.Join(",", values));
         }
     }
@@ -101,8 +105,8 @@ public class ChartEncoder : FileEncoder<Chart, ChartSections>
         {
             var values = new List<string>
             {
-                ((int)point.PointType).ToString(),
-                point.StartTime.ToString(CultureInfo.InvariantCulture),
+                ((int) point.PointType).ToString(),
+                point.StartTime.ToString(CultureInfo.InvariantCulture)
             };
 
             if (point is UninheritedTimingPoint uninherited)
@@ -110,11 +114,11 @@ public class ChartEncoder : FileEncoder<Chart, ChartSections>
                 values.Add(uninherited.BPM.ToString(CultureInfo.InvariantCulture));
                 values.Add(uninherited.TimeSignature.ToString());
             }
-            
+
             values.Add(point.RelativeScrollSpeed.ToString(CultureInfo.InvariantCulture));
             values.Add(point.Volume.ToString(CultureInfo.InvariantCulture));
-            values.Add(((int)point.Flags).ToString());
-            
+            values.Add(((int) point.Flags).ToString());
+
             WriteLine(string.Join(",", values));
         }
     }
@@ -125,19 +129,19 @@ public class ChartEncoder : FileEncoder<Chart, ChartSections>
         {
             var values = new List<string>
             {
-                ((int)note.Type).ToString(),
-                note.StartTime.ToString(CultureInfo.InvariantCulture),
+                ((int) note.Type).ToString(),
+                note.StartTime.ToString(CultureInfo.InvariantCulture)
             };
-            
+
             if (note is IHasEndTime endTime)
                 values.Add(endTime.EndTime.ToString(CultureInfo.InvariantCulture));
-            
-            values.Add(((int)note.Flags).ToString());
-            
+
+            values.Add(((int) note.Flags).ToString());
+
             WriteLine(string.Join(",", values));
         }
     }
-    
+
     private string encodeString(string input)
         => $"\"{input}\"";
 

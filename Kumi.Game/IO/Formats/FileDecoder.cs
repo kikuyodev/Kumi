@@ -6,7 +6,7 @@ using osu.Framework.Logging;
 namespace Kumi.Game.IO.Formats;
 
 /// <summary>
-/// A parser for a file format, which can be used to parse a file into a <see cref="T"/>.
+/// A parser for a file format, which can be used to parse a file into a <see cref="T" />.
 /// </summary>
 /// <typeparam name="T">The class to parse into.</typeparam>
 /// <typeparam name="TSection">An enum of sections that are parseable</typeparam>
@@ -23,7 +23,7 @@ public abstract partial class FileDecoder<T, TSection> : FileHandler<T, TSection
     public T Decode(Stream stream) => Decode(stream, new T());
 
     /// <summary>
-    /// Parses a readable stream into a designated output of type <see cref="T"/>.
+    /// Parses a readable stream into a designated output of type <see cref="T" />.
     /// </summary>
     /// <param name="stream">The stream to parse.</param>
     /// <param name="input">The input to parse to</param>
@@ -155,10 +155,8 @@ public abstract partial class FileDecoder<T, TSection> : FileHandler<T, TSection
         }
 
         if (sectionName.IsCamelCase())
-        {
             // Should just be able to capitalize the first letter.
             return $"{char.ToUpper(sectionName[0])}{sectionName.Substring(1)}";
-        }
 
         // If it's not camel or snake case, just return the line as-is.
         // I'm sure we're past the point of caring anymore.
@@ -192,7 +190,7 @@ public abstract partial class FileDecoder<T> : FileHandler<T>
     public T Decode(Stream stream) => Decode(stream, new T());
 
     /// <summary>
-    /// Parses a readable stream into a designated output of type <see cref="T"/>.
+    /// Parses a readable stream into a designated output of type <see cref="T" />.
     /// </summary>
     /// <param name="stream">The stream to parse.</param>
     /// <param name="input">The input to parse to.</param>

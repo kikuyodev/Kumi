@@ -16,12 +16,13 @@ public abstract class Event : IEvent
     public const char DELIMITER = ',';
 
     /// <summary>
-    /// The expected length of the input string once it has been split, excluding the <see cref="EventType"/> and <see cref="StartTime"/>.
+    /// The expected length of the input string once it has been split, excluding the <see cref="EventType" /> and
+    /// <see cref="StartTime" />.
     /// </summary>
     protected virtual int ExpectedLength => 0;
 
     /// <summary>
-    /// The expected <see cref="EventType"/> of the event.
+    /// The expected <see cref="EventType" /> of the event.
     /// </summary>
     protected virtual EventType ExpectedType => EventType.Unknown;
 
@@ -50,10 +51,11 @@ public abstract class Event : IEvent
     }
 
     /// <summary>
-    /// An internal method that is called by <see cref="ParseFrom(string)"/> to parse the input string.
-    ///
-    /// The input string is guaranteed to be split by <see cref="DELIMITER"/> and have a length of <see cref="ExpectedLength"/>.
-    /// The first two values are the <see cref="EventType"/> and the <see cref="StartTime"/> respectively; and are already parsed;
+    /// An internal method that is called by <see cref="ParseFrom(string)" /> to parse the input string.
+    /// The input string is guaranteed to be split by <see cref="DELIMITER" /> and have a length of
+    /// <see cref="ExpectedLength" />.
+    /// The first two values are the <see cref="EventType" /> and the <see cref="StartTime" /> respectively; and are already
+    /// parsed;
     /// and the remaining values passed to this function are the values that need to be parsed.
     /// </summary>
     /// <param name="input">The input remaining to be parsed.</param>

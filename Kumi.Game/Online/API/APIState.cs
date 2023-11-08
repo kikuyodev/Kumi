@@ -5,5 +5,5 @@ public enum APIState
     Failed,
     Offline,
     Connecting,
-    Online,
+    Online
 }

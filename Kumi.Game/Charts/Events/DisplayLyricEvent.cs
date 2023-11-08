@@ -25,12 +25,12 @@ public class DisplayLyricEvent : Event, IHasEndTime
         CrossfadeTime = crossfadeTime;
         Easing = easing;
     }
-    
+
     internal DisplayLyricEvent()
         : base(-1)
     {
     }
-    
+
     protected override void Parse(string[] input)
     {
         EndTime = StartTime + StringUtils.AssertAndFetch<float>(input[0]);

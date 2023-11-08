@@ -29,7 +29,7 @@ public class ServerPacket
 {
     [JsonProperty("op")]
     public ServerPacketOpCode OpCode { get; set; }
-    
+
     public string RawData { get; set; } = string.Empty;
 
     public ServerPacket()

@@ -22,7 +22,7 @@ public abstract class ArchiveReader : IResourceStore<byte[]>
     /// The names of the files available in the archive.
     /// </summary>
     public abstract IEnumerable<string> FileNames { get; }
-    
+
     protected ArchiveReader(Stream stream)
     {
         Stream = stream;
@@ -32,18 +32,18 @@ public abstract class ArchiveReader : IResourceStore<byte[]>
     {
         ArchivePath = Path.GetFullPath(path);
     }
-    
+
     /// <summary>
     /// Gets a stream for the given file name.
     /// </summary>
     /// <param name="name">The file name.</param>
     public abstract Stream? GetStream(string name);
-    
+
     /// <summary>
     /// Gets the available resources in the archive.
     /// </summary>
     public IEnumerable<string> GetAvailableResources() => FileNames;
-    
+
     /// <summary>
     /// Gets the bytes for the given file name.
     /// </summary>
@@ -53,7 +53,7 @@ public abstract class ArchiveReader : IResourceStore<byte[]>
         using var stream = GetStream(name);
         return stream?.ReadAllBytesToArray()!;
     }
-    
+
     /// <summary>
     /// Gets the bytes for the given file name asynchronously.
     /// </summary>
@@ -64,6 +64,6 @@ public abstract class ArchiveReader : IResourceStore<byte[]>
         await using var stream = GetStream(name);
         return await stream!.ReadAllBytesToArrayAsync(cancellationToken);
     }
-    
+
     public abstract void Dispose();
 }

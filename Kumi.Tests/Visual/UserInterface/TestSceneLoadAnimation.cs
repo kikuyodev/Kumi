@@ -13,7 +13,7 @@ public partial class TestSceneLoadAnimation : KumiTestScene
     private void load(LargeTextureStore textures)
     {
         LoadAnimation animation;
-        
+
         Add(animation = new LoadAnimation
         {
             RelativeSizeAxes = Axes.Both,
@@ -21,7 +21,7 @@ public partial class TestSceneLoadAnimation : KumiTestScene
             Texture = textures.Get("Logo/logo_animation"),
             Colour = Color4.White
         });
-        
+
         AddSliderStep("Progress", 0f, 1f, 0f, v => animation.AnimationProgress = v);
     }
 }

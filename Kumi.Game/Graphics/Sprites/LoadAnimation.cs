@@ -34,7 +34,7 @@ public partial class LoadAnimation : Sprite
             Invalidate(Invalidation.DrawInfo);
         }
     }
-    
+
     public override bool IsPresent => true;
 
     protected override DrawNode CreateDrawNode() => new LoadAnimationDrawNode(this);

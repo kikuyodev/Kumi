@@ -60,9 +60,11 @@ public class ChartImporter : RealmModelImporter<ChartSetInfo>
                         model.Charts.Add(imported);
                     }
                 }
-            } catch (TaskCanceledException)
+            }
+            catch (TaskCanceledException)
             {
-            } catch (Exception e)
+            }
+            catch (Exception e)
             {
                 Logger.Error(e, $"Failed to populate chart set {model.ID}");
                 throw;
@@ -96,7 +98,8 @@ public class ChartImporter : RealmModelImporter<ChartSetInfo>
             realm.Add(metadata);
             realm.Add(chartInfo);
             return chartInfo;
-        } catch (Exception e)
+        }
+        catch (Exception e)
         {
             Logger.Error(e, $"Failed to import chart {name} in set {set.ID}");
         }
