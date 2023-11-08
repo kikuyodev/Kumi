@@ -1,6 +1,5 @@
 ﻿using Kumi.Game.Online.API;
 using Kumi.Game.Tests;
-using Kumi.Tests.Visual;
 using NUnit.Framework;
 using osu.Framework.Testing;
 

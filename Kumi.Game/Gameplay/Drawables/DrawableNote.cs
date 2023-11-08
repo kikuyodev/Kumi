@@ -4,7 +4,6 @@ using Kumi.Game.Gameplay.Judgements;
 using osu.Framework.Bindables;
 using osu.Framework.Extensions.TypeExtensions;
 using osu.Framework.Graphics.Containers;
-using osu.Framework.Logging;
 
 namespace Kumi.Game.Gameplay.Drawables;
 

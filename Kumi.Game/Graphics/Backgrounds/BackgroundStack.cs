@@ -1,6 +1,5 @@
 ﻿using Kumi.Game.Graphics.Containers;
 using Kumi.Game.Screens.Backgrounds;
-using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osuTK;

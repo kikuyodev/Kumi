@@ -1,5 +1,4 @@
 ﻿using Kumi.Game.Database;
-using osu.Framework.Allocation;
 
 namespace Kumi.Game.Input;
 

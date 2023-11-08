@@ -1,6 +1,4 @@
-﻿using JetBrains.Annotations;
-using Kumi.Game.Charts.Objects;
-using NUnit.Framework;
+﻿using Kumi.Game.Charts.Objects;
 
 namespace Kumi.Game.Gameplay.Difficulty.Objects;
 
