@@ -9,6 +9,7 @@ using Kumi.Game.Graphics;
 using Kumi.Game.Tests;
 using NUnit.Framework;
 using osu.Framework.Allocation;
+using osu.Framework.Development;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Shapes;
 using osu.Framework.Graphics.Sprites;
@@ -32,35 +33,39 @@ public partial class PlayfieldTestScene : KumiTestScene
     [SetUp]
     public void Setup()
     {
-        Clear();
-
-        AddRange(new Drawable[]
+        Schedule(() =>
         {
-            timeText = new SpriteText
-            {
-                Margin = new MarginPadding(12),
-                Font = KumiFonts.GetFont(size: 14)
-            }
-        });
+            Debug.Assert(ThreadSafety.IsUpdateThread);
+            Clear();
 
-        workingChart = TestResources.CreateWorkingChart(AudioManager, LargeTextureStore, (c) =>
-        {
-            c.Notes.Add(new TestNote
+            AddRange(new Drawable[]
             {
-                StartTime = 500,
-                Type = NoteType.Don,
-                Flags = NoteFlags.None,
-                NoteColor = Color4.White,
-                Windows = new NoteWindows()
+                timeText = new SpriteText
+                {
+                    Margin = new MarginPadding(12),
+                    Font = KumiFonts.GetFont(size: 14)
+                }
             });
-            
-            c.Notes.Add(new TestNote
+
+            workingChart = TestResources.CreateWorkingChart(AudioManager, LargeTextureStore, (c) =>
             {
-                StartTime = 2000,
-                Type = NoteType.Don,
-                Flags = NoteFlags.None,
-                NoteColor = Color4.White,
-                Windows = new NoteWindows()
+                c.Notes.Add(new TestNote
+                {
+                    StartTime = 500,
+                    Type = NoteType.Don,
+                    Flags = NoteFlags.None,
+                    NoteColor = Color4.White,
+                    Windows = new NoteWindows()
+                });
+
+                c.Notes.Add(new TestNote
+                {
+                    StartTime = 2000,
+                    Type = NoteType.Don,
+                    Flags = NoteFlags.None,
+                    NoteColor = Color4.White,
+                    Windows = new NoteWindows()
+                });
             });
         });
     }
