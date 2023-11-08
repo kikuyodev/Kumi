@@ -28,16 +28,16 @@ public static class StringUtils
     }
     
     /// <summary>
-    /// A more complex version of the standard <see cref="string.Split(string)"/> method that splits the input string by the <see cref="Delimiter"/>.
+    /// A more complex version of the standard <see cref="string.Split(char,int,System.StringSplitOptions)"/> method that splits the input string by the <paramref name="delimiter"/>.
     /// This function can handle strings that contain the delimiter as part of the value.
     /// </summary>
     public static IEnumerable<string> SplitComplex(this string input, char delimiter)
     {
         string? currentValue = null;
-
-        for (int i = 0; i < input.Length; i++)
+        
+        for (var i = 0; i < input.Length; i++)
         {
-            char character = input[i];
+            var character = input[i];
 
             if (character == delimiter)
             {

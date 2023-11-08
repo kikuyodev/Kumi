@@ -12,8 +12,8 @@ public class UninheritedTimingPoint : TimingPoint
     /// </summary>
     public float BPM
     {
-        get => _bpmBindable.Value;
-        set => _bpmBindable.Value = value;
+        get => bpmBindable.Value;
+        set => bpmBindable.Value = value;
     }
 
     /// <summary>
@@ -31,7 +31,7 @@ public class UninheritedTimingPoint : TimingPoint
     /// </summary>
     public float MillisecondsPerBeat => (60000f / BPM) * TimeSignature.NoteSubdivision;
     
-    public Bindable<float> GetBindableBPM() => _bpmBindable;
+    public Bindable<float> GetBindableBPM() => bpmBindable;
 
-    private Bindable<float> _bpmBindable = new();
+    private readonly Bindable<float> bpmBindable = new Bindable<float>();
 }

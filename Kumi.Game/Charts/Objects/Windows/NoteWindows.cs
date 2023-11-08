@@ -26,17 +26,12 @@ public class NoteWindows
     /// The final difficulty rating used to calculate these note windows.
     /// </summary>
     public float DifficultyRating { get; set; }
-    
+
     /// <summary>
     /// The note windows for this difficulty rating.
     /// </summary>
     public NoteWindowRange[] WindowRanges => DifficultyRating <= 6.0f ? LOWER_NOTE_WINDOWS : UPPER_NOTE_WINDOWS;
 
-    public NoteWindows()
-    {
-        DifficultyRating = 0;
-    }
-    
     /// <summary>
     /// Applies a difficulty rating to this <see cref="NoteWindows"/> instance.
     /// </summary>

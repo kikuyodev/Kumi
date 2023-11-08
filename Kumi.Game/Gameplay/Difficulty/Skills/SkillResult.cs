@@ -13,5 +13,5 @@ public class SkillResult
     /// <summary>
     /// The skill that calculated the result.
     /// </summary>
-    public Skill Skill { get; set; }
+    public Skill Skill { get; set; } = null!;
 }

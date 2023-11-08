@@ -127,43 +127,25 @@ public class ChartDecoder : FileDecoder<Chart, ChartSections>
     {
         var args = line.SplitComplex(Event.DELIMITER).ToArray();
         var typeValue = (EventType)StringUtils.AssertAndFetch<int>(args[0]);
-        Event? ev = null;
-
-        switch (typeValue)
+        Event ev = typeValue switch
         {
-            case EventType.SetMedia:
-                ev = new SetMediaEvent();
-                break;
+            EventType.SetMedia => new SetMediaEvent(),
+            EventType.SwitchMedia => new SwitchMediaEvent(),
+            EventType.Break => new BreakTimeEvent(),
+            EventType.KiaiTime => new KiaiTimeEvent(),
+            EventType.DisplayLyric => new DisplayLyricEvent(),
+            _ => throw new InvalidDataException($"Invalid event type: {typeValue}")
+        };
 
-            case EventType.SwitchMedia:
-                ev = new SwitchMediaEvent();
-                break;
-
-            case EventType.Break:
-                ev = new BreakTimeEvent();
-                break;
-
-            case EventType.KiaiTime:
-                ev = new KiaiTimeEvent();
-                break;
-
-            case EventType.DisplayLyric:
-                ev = new DisplayLyricEvent();
-                break;
-
-            default:
-                throw new InvalidDataException($"Invalid event type: {typeValue}");
-        }
-
-        ev?.ParseFrom(args);
-        Current.Events.Add(ev!);
+        ev.ParseFrom(args);
+        Current.Events.Add(ev);
     }
 
     private void processTimings(string line)
     {
         var args = line.SplitComplex(TimingPoint.DELIMITER).ToArray();
         var typeValue = (TimingPointType)StringUtils.AssertAndFetch<int>(args[0]);
-        TimingPoint? tp = null;
+        TimingPoint? tp;
 
         switch (typeValue)
         {
@@ -209,7 +191,7 @@ public class ChartDecoder : FileDecoder<Chart, ChartSections>
     {
         var args = line.SplitComplex(Note.DELIMITER).ToArray();
         var typeValue = (NoteType)StringUtils.AssertAndFetch<int>(args[0]);
-        Note? note = null;
+        Note? note;
 
         switch (typeValue)
         {
@@ -251,8 +233,8 @@ public class ChartDecoder : FileDecoder<Chart, ChartSections>
         if (split.Length != 2)
             throw new InvalidDataException($"Invalid line: {line}");
 
-        string key = split[0].ToLower().Trim();
-        string value = split[1].Trim();
+        var key = split[0].ToLower().Trim();
+        var value = split[1].Trim();
 
         return new KeyValuePair<string, string>(key, value);
     }

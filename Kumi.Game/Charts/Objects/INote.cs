@@ -10,7 +10,6 @@ public interface INote : IHasTime
     /// </summary>
     NoteType Type { get; set; }
     
-    
     NoteFlags Flags { get; set; }
 
     /// <summary>
@@ -24,7 +23,7 @@ public interface INote : IHasTime
     NoteWindows Windows { get; set; }
 }
 
-public enum NoteType : int
+public enum NoteType
 {
     Don = 0,
     Kat = 1,

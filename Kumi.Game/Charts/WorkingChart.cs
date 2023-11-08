@@ -11,7 +11,7 @@ public abstract class WorkingChart : IWorkingChart
     public readonly ChartInfo ChartInfo;
     public readonly ChartSetInfo ChartSetInfo;
     
-    public ChartMetadata? Metadata => ChartInfo.Metadata;
+    public ChartMetadata Metadata => ChartInfo.Metadata;
     
     private AudioManager audioManager { get; }
     
@@ -75,7 +75,7 @@ public abstract class WorkingChart : IWorkingChart
     public void PrepareTrackForPreview(bool looping, double offsetFromPreviewPoint = 0)
     {
         Track.Looping = looping;
-        Track.RestartPoint = Metadata!.PreviewTime;
+        Track.RestartPoint = Metadata.PreviewTime;
 
         if (Track.RestartPoint == -1)
         {
@@ -99,7 +99,7 @@ public abstract class WorkingChart : IWorkingChart
     /// <returns>Whether the track has been transferred to the <paramref name="target"/>.</returns>
     public virtual bool TryTransferTrack(WorkingChart target)
     {
-        if (ChartInfo?.AudioEquals(target.ChartInfo) != true || Track.IsDummyDevice)
+        if (ChartInfo.AudioEquals(target.ChartInfo) != true || Track.IsDummyDevice)
             return false;
 
         target.track = Track;
@@ -129,7 +129,7 @@ public abstract class WorkingChart : IWorkingChart
     
     #region Waveform
 
-    public Waveform? Waveform => waveform ?? GetWaveform()!;
+    public Waveform Waveform => waveform ?? GetWaveform()!;
 
     #endregion
     

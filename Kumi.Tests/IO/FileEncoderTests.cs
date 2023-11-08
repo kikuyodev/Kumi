@@ -23,8 +23,8 @@ public class FileEncoderTests
         using var writable = TestResources.OpenWritableTemporaryFile(fileName);
         encoder!.Encode(testInput, writable);
         
-        string contents = new StreamReader(TestResources.OpenReadableTemporaryFile(fileName)).ReadToEnd();
-        string expected = new StreamReader(testResource!).ReadToEnd();
+        var contents = new StreamReader(TestResources.OpenReadableTemporaryFile(fileName)).ReadToEnd();
+        var expected = new StreamReader(testResource!).ReadToEnd();
         
         Assert.AreEqual(expected, contents);
     }
@@ -36,14 +36,14 @@ public class FileEncoderTests
         using var writable = TestResources.OpenWritableTemporaryFile(fileName);
         encoder!.Encode(new TestInput(), writable);
         
-        string contents = new StreamReader(TestResources.OpenReadableTemporaryFile(fileName)).ReadToEnd().Trim();
-        string expected = """
-#KUMI v1
+        var contents = new StreamReader(TestResources.OpenReadableTemporaryFile(fileName)).ReadToEnd().Trim();
+        var expected = """
+                       #KUMI v1
 
-[#SECTION_ONE]
+                       [#SECTION_ONE]
 
-[#SECTION_TWO]
-""";
+                       [#SECTION_TWO]
+                       """;
         
         Assert.AreEqual(expected, contents);
     }

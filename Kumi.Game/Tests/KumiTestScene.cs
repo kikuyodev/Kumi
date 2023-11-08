@@ -8,7 +8,7 @@ namespace Kumi.Game.Tests;
 
 public partial class KumiTestScene : TestScene
 {
-    private DummyAPIConnection localDummyProvider;
+    private DummyAPIConnection localDummyProvider = null!;
     
     protected IAPIConnectionProvider Provider => localDummyProvider;
     protected AudioManager AudioManager => Dependencies.Get<AudioManager>();

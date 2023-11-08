@@ -19,7 +19,7 @@ public class WorkingChartCache : IChartResourceProvider, IWorkingChartCache
     private readonly WeakList<ChartManagerWorkingChart> workingCache = new WeakList<ChartManagerWorkingChart>();
 
     // Chart files may specify this filename to denote that they don't have an audio track.
-    private const string virtual_track_filename = @"virtual";
+    private const string virtual_track_filename = "virtual";
 
     /// <summary>
     /// A default representation of a WorkingChart to use when no chart is available.
@@ -98,7 +98,7 @@ public class WorkingChartCache : IChartResourceProvider, IWorkingChartCache
     ITrackStore IChartResourceProvider.Tracks => trackStore;
     IRenderer IStorageResourceProvider.Renderer => host?.Renderer ?? new DummyRenderer();
     AudioManager IStorageResourceProvider.AudioManager => audioManager;
-    RealmAccess IStorageResourceProvider.RealmAccess => null;
+    RealmAccess IStorageResourceProvider.RealmAccess => null!;
     IResourceStore<byte[]> IStorageResourceProvider.Files => files;
     IResourceStore<byte[]> IStorageResourceProvider.Resources => resources;
     IResourceStore<TextureUpload>? IStorageResourceProvider.CreateTextureLoaderStore(IResourceStore<byte[]> underlyingStore) => host?.CreateTextureLoaderStore(underlyingStore);
@@ -144,7 +144,7 @@ public class WorkingChartCache : IChartResourceProvider, IWorkingChartCache
         
         public override Texture? GetBackground()
         {
-            if (string.IsNullOrEmpty(Metadata?.BackgroundFile))
+            if (string.IsNullOrEmpty(Metadata.BackgroundFile))
                 return null;
 
             try
@@ -169,7 +169,7 @@ public class WorkingChartCache : IChartResourceProvider, IWorkingChartCache
 
         protected override Track? GetChartTrack()
         {
-            if (string.IsNullOrEmpty(Metadata?.AudioFile))
+            if (string.IsNullOrEmpty(Metadata.AudioFile))
                 return null;
 
             if (Metadata.AudioFile == virtual_track_filename)
@@ -197,7 +197,7 @@ public class WorkingChartCache : IChartResourceProvider, IWorkingChartCache
 
         protected override Waveform? GetWaveform()
         {
-            if (string.IsNullOrEmpty(Metadata?.AudioFile))
+            if (string.IsNullOrEmpty(Metadata.AudioFile))
                 return null;
 
             if (Metadata.AudioFile == virtual_track_filename)

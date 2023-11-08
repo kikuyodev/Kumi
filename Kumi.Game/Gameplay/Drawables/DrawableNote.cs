@@ -77,7 +77,7 @@ public partial class DrawableNote : CompositeDrawable
     {
     }
     
-    protected virtual void UpdateHitStateTransforms(NoteState state)
+    protected virtual void UpdateHitStateTransforms(NoteState newState)
     {
     }
 

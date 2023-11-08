@@ -88,7 +88,7 @@ public partial class KumiGame : KumiGameBase
             if (!cache)
                 return;
 
-            container.CacheAs<T>(Drawable);
+            container.CacheAs(Drawable);
         }
     }
 }

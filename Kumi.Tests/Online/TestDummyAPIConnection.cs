@@ -50,7 +50,7 @@ public partial class TestDummyAPIConnection : KumiTestScene
         AddAssert("queue is empty", () => dummy!.RequestQueue.Count == 0);
         AddStep("queue requests", () =>
         {
-            for (int i = 0; i < amount; i++)
+            for (var i = 0; i < amount; i++)
                 dummy!.Queue(new TestAPIRequest());
         });
         AddAssert($"queue has {amount} requests", () => dummy!.RequestQueue.Count == amount);
@@ -59,7 +59,7 @@ public partial class TestDummyAPIConnection : KumiTestScene
         AddStep("pause queue", () => dummy!.PauseQueue = true);
         AddStep("queue requests", () =>
         {
-            for (int i = 0; i < amount; i++)
+            for (var i = 0; i < amount; i++)
                 dummy!.Queue(new TestAPIRequest());
         });
         AddAssert("front item has ID -1", () => ((TestAPIRequest)dummy!.RequestQueue.Peek()).Id == -1);

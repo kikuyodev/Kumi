@@ -18,7 +18,7 @@ namespace Kumi.Tests;
 public class TestResources
 {
     private static Assembly assembly { get; } = typeof(TestResources).Assembly;
-    private static List<KeyValuePair<string, string>> temporaryFiles { get; } = new();
+    private static List<KeyValuePair<string, string>> temporaryFiles { get; } = new List<KeyValuePair<string, string>>();
     
     /// <summary>
     /// Gets a temporary storage for testing.
@@ -38,7 +38,7 @@ public class TestResources
     /// <param name="relativePath">The relative path in the store.</param>
     public static Stream OpenResource(string relativePath)
     {
-        string temporaryPath = getTempFile(getExtensionFromName(relativePath));
+        var temporaryPath = getTempFile(getExtensionFromName(relativePath));
         
         using (var stream = GetResourceStore().GetStream(@$"Resources/{relativePath}"))
         using (var fileStream = File.OpenWrite(temporaryPath))
@@ -53,7 +53,7 @@ public class TestResources
     /// <param name="relativePath">The relative path in the store.</param>
     public static string OpenResourcePath(string relativePath)
     {
-        string temporaryPath = getTempFile(getExtensionFromName(relativePath));
+        var temporaryPath = getTempFile(getExtensionFromName(relativePath));
         
         using (var stream = GetResourceStore().GetStream(@$"Resources/{relativePath}"))
         using (var fileStream = File.OpenWrite(temporaryPath))
@@ -75,7 +75,7 @@ public class TestResources
         if (temporaryFiles.Any(x => x.Key == name))
             return File.OpenWrite(temporaryFiles.First(x => x.Key == name).Value);
         
-        string temporaryPath = getTempFile(getExtensionFromName(name));
+        var temporaryPath = getTempFile(getExtensionFromName(name));
         Stream stream = File.OpenWrite(temporaryPath);
         
         temporaryFiles.Add(new KeyValuePair<string, string>(name, temporaryPath));
@@ -89,7 +89,7 @@ public class TestResources
         if (temporaryFiles.Any(x => x.Key == name))
             return File.OpenRead(temporaryFiles.First(x => x.Key == name).Value);
         
-        string temporaryPath = getTempFile(getExtensionFromName(name));
+        var temporaryPath = getTempFile(getExtensionFromName(name));
         Stream stream = File.OpenRead(temporaryPath);
         
         temporaryFiles.Add(new KeyValuePair<string, string>(name, temporaryPath));
@@ -110,7 +110,7 @@ public class TestResources
         
         var chartSetInfo = new ChartSetInfo();
 
-        for (int i = 0; i < difficulties; i++)
+        for (var i = 0; i < difficulties; i++)
             createChartInfo();
         
         void createChartInfo()

@@ -28,6 +28,7 @@ public class CleanRunHeadlessGameHost : TestRunHeadlessGameHost
             }
             catch
             {
+                // ignored
             }
         }
         

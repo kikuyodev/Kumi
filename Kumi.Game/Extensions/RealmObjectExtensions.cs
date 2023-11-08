@@ -15,22 +15,22 @@ public static class RealmObjectExtensions
         if (!model.IsManaged)
             model = realm.Find<T>(model.ID)!;
         
-        if (!(model is IHasGuidPrimaryKey modelPrimary))
+        if (model is not IHasGuidPrimaryKey modelPrimary)
         {
             return model.GetType().Name;
         }
         
-        if (model is ChartSetInfo setInfo)
+        switch (model)
         {
-            return $"{setInfo.Metadata.ArtistRomanised} - {setInfo.Metadata.TitleRomanised} [{setInfo.Creator.Username}]";
-        } 
-        
-        if (model is ChartInfo chart)
-        {
-            return $"{chart.Metadata.ArtistRomanised} - {chart.Metadata.TitleRomanised} [{chart.Metadata.Creator.Username}] ({chart.DifficultyName})";
-        }
+            case ChartSetInfo setInfo:
+                return $"{setInfo.Metadata.ArtistRomanised} - {setInfo.Metadata.TitleRomanised} [{setInfo.Creator.Username}]";
 
-        // Should never happen
-        return $"{modelPrimary.GetType().Name} {modelPrimary.ID}";
+            case ChartInfo chart:
+                return $"{chart.Metadata.ArtistRomanised} - {chart.Metadata.TitleRomanised} [{chart.Metadata.Creator.Username}] ({chart.DifficultyName})";
+
+            default:
+                // Should never happen
+                return $"{modelPrimary.GetType().Name} {modelPrimary.ID}";
+        }
     }
 }

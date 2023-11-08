@@ -43,7 +43,7 @@ public partial class ParallaxContainer : Container, IRequireHighFrequencyMousePo
         });
     }
     
-    private Bindable<bool> enabledBindable = new Bindable<bool>(false);
+    private readonly Bindable<bool> enabledBindable = new Bindable<bool>(false);
     private readonly Container content;
     protected override Container<Drawable> Content => content;
     
@@ -75,10 +75,10 @@ public partial class ParallaxContainer : Container, IRequireHighFrequencyMousePo
         if (!Enabled)
             return;
         
-        Vector2 mousePos = ToLocalSpace(GetContainingInputManager().CurrentState.Mouse.Position);
+        var mousePos = ToLocalSpace(GetContainingInputManager().CurrentState.Mouse.Position);
         
         // Calculate the amount to move the content by.
-        Vector2 amountToMove = (mousePos - DrawSize / 2) * Amount;
+        var amountToMove = (mousePos - DrawSize / 2) * Amount;
         
         // Move the content by the calculated amount.
         content.MoveTo(-amountToMove, PARALLAX_DURATION, Easing.OutQuint);

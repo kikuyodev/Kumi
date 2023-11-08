@@ -59,10 +59,10 @@ public abstract class ArchiveReader : IResourceStore<byte[]>
     /// </summary>
     /// <param name="name">The file name.</param>
     /// <param name="cancellationToken">The cancellation token.</param>
-    public Task<byte[]>? GetAsync(string name, CancellationToken cancellationToken = new CancellationToken())
+    public async Task<byte[]> GetAsync(string name, CancellationToken cancellationToken = new CancellationToken())
     {
-        using var stream = GetStream(name);
-        return stream?.ReadAllBytesToArrayAsync(cancellationToken);
+        await using var stream = GetStream(name);
+        return await stream!.ReadAllBytesToArrayAsync(cancellationToken);
     }
     
     public abstract void Dispose();

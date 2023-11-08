@@ -9,9 +9,9 @@ namespace Kumi.Game.Tests;
 
 public partial class RealmTestGame : osu.Framework.Game
 {
-    private GameHost GameHost => new CleanRunHeadlessGameHost(callingMethodName: "");
+    private GameHost GameHost => new CleanRunHeadlessGameHost();
 
-    private List<Action> scheduledTasks = new();
+    private readonly List<Action> scheduledTasks = new List<Action>();
     private bool isRunning;
 
     private void scheduleTask(Action task)

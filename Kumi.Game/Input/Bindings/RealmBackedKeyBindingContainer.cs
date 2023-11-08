@@ -2,7 +2,7 @@
 using osu.Framework.Allocation;
 using osu.Framework.Input.Bindings;
 
-namespace Kumi.Game.Input;
+namespace Kumi.Game.Input.Bindings;
 
 /// <summary>
 /// A key binding container that is backed by a Realm database.
@@ -15,17 +15,18 @@ public abstract partial class RealmBackedKeyBindingContainer<T> : KeyBindingCont
     /// The type of keybinds this container handles.
     /// </summary>
     public KeybindType Type { get; }
-    
-    public RealmBackedKeyBindingContainer(
+
+    protected RealmBackedKeyBindingContainer(
+        KeybindType type,
         SimultaneousBindingMode simultaneousMode = SimultaneousBindingMode.None,
         KeyCombinationMatchingMode matchingMode = KeyCombinationMatchingMode.Any)
         : base(simultaneousMode, matchingMode)
     {
-        
+        Type = type;
     }
     
     [Resolved]
-    private RealmAccess realm { get; set; }
+    private RealmAccess realm { get; set; } = null!;
 
     protected override void LoadComplete()
     {

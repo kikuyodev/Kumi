@@ -13,7 +13,8 @@ public class WorkingDifficultyCalculator : DifficultyCalculator
         : base(chart)
     {
     }
-    public override IEnumerable<Skill> CreateSkills() => new List<Skill>()
+
+    public override IEnumerable<Skill> CreateSkills() => new List<Skill>
     {
 
     };

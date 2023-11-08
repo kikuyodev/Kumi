@@ -36,8 +36,8 @@ public abstract class DifficultyCalculator
     /// The chart currently being processed.
     /// </summary>
     public IChart CurrentChart { get; }
-    
-    public DifficultyCalculator(IChart chart)
+
+    protected DifficultyCalculator(IChart chart)
     {
         // TODO: Use WorkingChart when we can make a playable chart from a chart.
         CurrentChart = chart;
@@ -65,7 +65,7 @@ public abstract class DifficultyCalculator
         if (CurrentChart.Notes.Count == 0)
             return createEmptyResult();
         
-        List<SkillResult> skillResults = new();
+        var skillResults = new List<SkillResult>();
 
         foreach (var skill in CreateSkills())
         {
@@ -101,11 +101,11 @@ public abstract class DifficultyCalculator
                 // TODO: Implement other note types.
                 case NoteType.Kat:
                 case NoteType.Don:
-                    new CalculableDrumNote(note, notes, notes.Count);
+                    notes.Add(new CalculableDrumNote(note, notes, notes.Count));
                     break;
 
                 default:
-                    new CalculableNote(note, notes, notes.Count);
+                    notes.Add(new CalculableNote(note, notes, notes.Count));
                     break;
             }
         }

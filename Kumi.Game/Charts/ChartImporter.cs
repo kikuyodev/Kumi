@@ -27,7 +27,7 @@ public class ChartImporter : RealmModelImporter<ChartSetInfo>
 
     protected override ChartSetInfo? CreateModel(ArchiveReader archive)
     {
-        string? chartsExists = archive.FileNames.FirstOrDefault(f => f.EndsWith(kumi_chart, StringComparison.OrdinalIgnoreCase));
+        var chartsExists = archive.FileNames.FirstOrDefault(f => f.EndsWith(kumi_chart, StringComparison.OrdinalIgnoreCase));
 
         if (string.IsNullOrEmpty(chartsExists))
         {
@@ -48,7 +48,7 @@ public class ChartImporter : RealmModelImporter<ChartSetInfo>
 
             try
             {
-                foreach (string chartFile in chartFiles)
+                foreach (var chartFile in chartFiles)
                 {
                     var imported = importChart(model, archive, realm, chartFile);
 

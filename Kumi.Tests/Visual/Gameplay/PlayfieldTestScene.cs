@@ -159,9 +159,9 @@ public partial class PlayfieldTestScene : KumiTestScene
             circle.FadeIn(1000 - Note.Windows.WindowFor(NoteHitResult.Bad)).Then().FadeColour(Color4.Blue, Note.Windows.WindowFor(NoteHitResult.Bad));
         }
 
-        protected override void UpdateHitStateTransforms(NoteState state)
+        protected override void UpdateHitStateTransforms(NoteState newState)
         {
-            switch (state)
+            switch (newState)
             {
                 case NoteState.Hit:
                     circle.ScaleTo(1.5f).Then().ScaleTo(1f, 1000);

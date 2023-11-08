@@ -51,7 +51,7 @@ public class FileDecoderTests
     
     private class TestInput : IDecodable
     {
-        public Dictionary<TestSection, List<KeyValuePair<string, string>>> Sections { get; set; } = new();
+        public Dictionary<TestSection, List<KeyValuePair<string, string>>> Sections { get; set; } = new Dictionary<TestSection, List<KeyValuePair<string, string>>>();
         
         public int Version { get; set; }
         public bool IsProcessed { get; set; }

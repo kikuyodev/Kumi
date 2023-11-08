@@ -20,7 +20,6 @@
     THE SOFTWARE.
 */
 
-
 namespace Kumi.Game.Database;
 
 public interface IModelManager<TModel>

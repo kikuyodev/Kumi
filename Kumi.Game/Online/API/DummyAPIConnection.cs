@@ -18,7 +18,7 @@ public partial class DummyAPIConnection : Component, IAPIConnectionProvider
     
     public readonly Bindable<APIState> State = new Bindable<APIState>();
 
-    public string SessionToken { get; } = "dummy";
+    public string SessionToken => "dummy";
 
     /// <summary>
     /// Passes a function to be executed on the game's update thread, whenever a request is made and ready to be executed.
@@ -32,7 +32,7 @@ public partial class DummyAPIConnection : Component, IAPIConnectionProvider
         serverConnector = new ServerConnector(this, false);
     }
 
-    private IServerConnector? serverConnector;
+    private readonly IServerConnector? serverConnector;
 
     public void Queue(APIRequest request)
     {

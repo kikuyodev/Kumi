@@ -2,6 +2,7 @@
 using Kumi.Game.Database;
 using Kumi.Game.Graphics;
 using Kumi.Game.Input;
+using Kumi.Game.Input.Bindings;
 using Kumi.Game.Screens;
 using Kumi.Resources;
 using osu.Framework.Allocation;
@@ -18,14 +19,14 @@ namespace Kumi.Game;
 
 public partial class KumiGameBase : osu.Framework.Game
 {
-    protected Storage Storage { get; set; } = null!;
+    protected Storage? Storage { get; set; }
 
     private RealmAccess realm = null!;
     private ChartManager chartManager = null!;
     private KeybindStore keybindStore = null!;
 
     protected Colors GameColors { get; private set; } = null!;
-    protected Bindable<WorkingChart> Chart { get; private set; }
+    protected Bindable<WorkingChart> Chart { get; private set; } = null!;
     protected KumiScreenStack ScreenStack = null!;
     protected override Container<Drawable> Content { get; }
 
@@ -59,11 +60,11 @@ public partial class KumiGameBase : osu.Framework.Game
         loadFonts();
         
         // Realm Database, Storage, and Charts
-        DependencyContainer.Cache(realm = new RealmAccess(Storage));
+        DependencyContainer.Cache(realm = new RealmAccess(Storage!));
         DependencyContainer.CacheAs(Storage);
         
         var defaultChart = new DummyWorkingChart(Audio, Textures);
-        DependencyContainer.Cache(chartManager = new ChartManager(Storage, realm, Audio, Resources, Host, defaultChart));
+        DependencyContainer.Cache(chartManager = new ChartManager(Storage!, realm, Audio, Resources, Host, defaultChart));
 
         Chart = new NonNullableBindable<WorkingChart>(defaultChart);
         

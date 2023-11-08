@@ -11,14 +11,14 @@ public abstract class RealmBackedDefaultStore<TModel> : IRealmBackedDefaultStore
 {
     public IEnumerable<TModel> DefaultValues { get; set; } = new List<TModel>();
 
-    public RealmBackedDefaultStore(RealmAccess realmAccess)
+    protected RealmBackedDefaultStore(RealmAccess realmAccess)
     {
         realm = realmAccess;
     }
     
     private readonly RealmAccess realm;
     
-    public TModel? Get(Func<TModel, bool> query) => realm.Run(r => r.All<TModel>().First(query));
+    public TModel Get(Func<TModel, bool> query) => realm.Run(r => r.All<TModel>().First(query));
     
     public IEnumerable<TModel> GetAll() => realm.Run(r => r.All<TModel>().ToList());
     
@@ -27,10 +27,6 @@ public abstract class RealmBackedDefaultStore<TModel> : IRealmBackedDefaultStore
         realm.Write(r =>
         {
             var item = r.All<TModel>().First(query);
-
-            if (item == null)
-                return;
-            
             action(item);
         });
     }
@@ -63,14 +59,14 @@ public abstract class RealmBackedDefaultStore<TModel> : IRealmBackedDefaultStore
     {
         foreach (var item in defaults.GetDefaultValues())
         {
-            DefaultValues.Append(item);
+            DefaultValues = DefaultValues.Append(item);
         }
     }
     
     
     public virtual bool Compare(TModel model, TModel other)
     {
-        return model == other;
+        return model.Equals(other);
     }
 
     public void Reset()

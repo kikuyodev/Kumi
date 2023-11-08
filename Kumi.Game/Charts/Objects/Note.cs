@@ -10,7 +10,7 @@ namespace Kumi.Game.Charts.Objects;
 ///
 /// A majority of the properties are bindable, so that they can be used in the editor.
 /// </summary>
-public class Note : INote, IHasTime
+public class Note : INote
 {
     /// <summary>
     /// The scale or a note with <see cref="NoteFlags.Big"/> set.
@@ -24,40 +24,42 @@ public class Note : INote, IHasTime
 
     public NoteType Type
     {
-        get => _typeBindable.Value;
-        set => _typeBindable.Value = value;
+        get => typeBindable.Value;
+        set => typeBindable.Value = value;
     }
 
     public NoteFlags Flags
     {
-        get => _flagsBindable.Value;
-        set => _flagsBindable.Value = value;
+        get => flagsBindable.Value;
+        set => flagsBindable.Value = value;
     }
 
     public float StartTime
     {
-        get => _startTimeBindable.Value;
-        set => _startTimeBindable.Value = value;
+        get => startTimeBindable.Value;
+        set => startTimeBindable.Value = value;
     }
 
     public Color4 NoteColor
     {
-        get => _noteColorBindable.Value;
-        set => _noteColorBindable.Value = value;
+        get => noteColorBindable.Value;
+        set => noteColorBindable.Value = value;
     }
 
-    public NoteWindows Windows { get; set; }
+    // TODO: Initialize this somewhere, we're not guaranteed to have a window for every note,
+    //       especially when we're just decoding the chart.
+    public NoteWindows Windows { get; set; } = null!;
 
     protected Note(float startTime)
     {
         StartTime = startTime;
-        _typeBindable.ValueChanged += v => NoteColor = getColorFromType(v.NewValue);
+        typeBindable.ValueChanged += v => NoteColor = getColorFromType(v.NewValue);
     }
 
-    private Bindable<NoteType> _typeBindable = new();
-    private Bindable<float> _startTimeBindable = new();
-    private Bindable<Color4> _noteColorBindable = new();
-    private Bindable<NoteFlags> _flagsBindable = new();
+    private readonly Bindable<NoteType> typeBindable = new Bindable<NoteType>();
+    private readonly Bindable<float> startTimeBindable = new Bindable<float>();
+    private readonly Bindable<Color4> noteColorBindable = new Bindable<Color4>();
+    private readonly Bindable<NoteFlags> flagsBindable = new Bindable<NoteFlags>();
     
     /// <summary>
     /// A function that applies various defaults to an object within a <see cref="IChart"/>.

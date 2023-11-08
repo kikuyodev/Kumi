@@ -147,7 +147,7 @@ public class ChartManager : ModelManager<ChartSetInfo>, IModelImporter<ChartSetI
     public Task<ChartSetInfo?> Import(ImportTask task, CancellationToken cancellationToken = default)
         => chartImporter.Import(task, cancellationToken);
     
-    public ChartSetInfo? ImportModel(ChartSetInfo item, ArchiveReader? archiveReader = null, CancellationToken cancellationToken = default)
+    public ChartSetInfo ImportModel(ChartSetInfo item, ArchiveReader? archiveReader = null, CancellationToken cancellationToken = default)
         => chartImporter.ImportModel(item, archiveReader, cancellationToken);
 
     public IEnumerable<string> HandledFileExtensions => chartImporter.HandledFileExtensions;

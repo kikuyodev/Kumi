@@ -55,7 +55,7 @@ public class ZipArchiveReader : ArchiveReader
 
         protected override void Dispose(bool disposing)
         {
-            owner?.Dispose();
+            owner.Dispose();
             base.Dispose(disposing);
         }
 

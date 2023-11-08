@@ -104,14 +104,14 @@ public class ModelManager<TModel> : IModelManager<TModel>, IModelFileManager<TMo
             Delete(item);
     }
     
-    public bool Delete(TModel? item)
+    public bool Delete(TModel item)
     {
         return Realm.Write(r =>
         {
             if (!item.IsManaged)
-                item = r.Find<TModel>(item.ID);
+                item = r.Find<TModel>(item.ID)!;
 
-            if (item?.DeletePending != false)
+            if (item.DeletePending)
                 return false;
 
             item.DeletePending = true;
@@ -127,14 +127,14 @@ public class ModelManager<TModel> : IModelManager<TModel>, IModelFileManager<TMo
             Undelete(item);
     }
     
-    public bool Undelete(TModel? item)
+    public bool Undelete(TModel item)
     {
         return Realm.Write(r =>
         {
             if (!item.IsManaged)
-                item = r.Find<TModel>(item.ID);
+                item = r.Find<TModel>(item.ID)!;
 
-            if (item?.DeletePending != true)
+            if (item.DeletePending != true)
                 return false;
 
             item.DeletePending = false;

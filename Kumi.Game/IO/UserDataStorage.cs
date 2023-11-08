@@ -14,7 +14,7 @@ namespace Kumi.Game.IO;
 /// </summary>
 public class UserDataStorage
 {
-    private readonly RealmAccess realm;
+    private readonly RealmAccess realmAccess;
 
     /// <summary>
     /// The underlying resource store that fetches the data from the storage.
@@ -26,22 +26,21 @@ public class UserDataStorage
     /// </summary>
     public readonly Storage Storage;
 
-    public UserDataStorage(RealmAccess realm, Storage storage)
+    public UserDataStorage(RealmAccess realmAccess, Storage storage)
     {
-        this.realm = realm;
+        this.realmAccess = realmAccess;
         
         Storage = storage.GetStorageForDirectory("data");
         Store = new StorageBackedResourceStore(Storage);
     }
-    
+
     /// <summary>
     /// Stores a file in the user data storage, returning the file itself.
     /// This function copies the data to the storage if it is not already there.
     /// </summary>
-    /// <param name="data"></param>
     public RealmFile Add(Stream data, Realm realm, bool addToRealm = true)
     {
-        string hash = data.ComputeSHA2Hash();
+        var hash = data.ComputeSHA2Hash();
         var existing = realm.Find<RealmFile>(hash);
         var file = existing ?? new RealmFile { Hash = hash, };
 
@@ -77,7 +76,7 @@ public class UserDataStorage
         return file.GetStoragePath();
     }
     
-    private void copyToStorage(RealmFile file, Stream data)
+    private void copyToStorage(IFileInfo file, Stream data)
     {
         data.Seek(0, SeekOrigin.Begin);
 
@@ -87,7 +86,7 @@ public class UserDataStorage
         data.Seek(0, SeekOrigin.Begin);
     }
     
-    private bool checkExists(RealmFile file)
+    private bool checkExists(IFileInfo file)
     {
         var path = file.GetStoragePath();
 
@@ -105,7 +104,7 @@ public class UserDataStorage
         var totalFiles = 0;
         var removedFiles = 0;
 
-        realm.Write(r =>
+        realmAccess.Write(r =>
         {
             var files = r.All<RealmFile>().ToList();
 

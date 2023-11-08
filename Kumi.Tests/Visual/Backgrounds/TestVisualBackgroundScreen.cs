@@ -48,7 +48,7 @@ public partial class TestVisualBackgroundScreen : KumiTestScene
             
             Scheduler.AddDelayed(() =>
             {
-                this.BackgroundStack.Push(secondBackground);
+                BackgroundStack.Push(secondBackground);
             }, 5000);
         }
     }

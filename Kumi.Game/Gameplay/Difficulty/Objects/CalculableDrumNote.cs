@@ -7,7 +7,6 @@ namespace Kumi.Game.Gameplay.Difficulty.Objects;
 /// </summary>
 public class CalculableDrumNote : CalculableNote
 {
-
     public CalculableDrumNote(INote currentNote, List<CalculableNote> notes, int index)
         : base(currentNote, notes, index)
     {

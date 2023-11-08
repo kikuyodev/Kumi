@@ -24,23 +24,23 @@ public abstract class APIRequest
     /// An event that is triggered when this request has succeeded.
     /// When possible, this event will be triggered on the update thread.
     /// </summary>
-    public event APIWebRequest.APIRequestSucceeded Success;
+    public event APIWebRequest.APIRequestSucceeded? Success;
     
     /// <summary>
     /// An event that is triggered when this request has failed.
     /// When possible, this event will be triggered on the update thread.
     /// </summary>
-    public event APIWebRequest.APIRequestFailed Failure;
+    public event APIWebRequest.APIRequestFailed? Failure;
 
-    protected virtual string Uri => $@"{Provider.EndpointConfiguration.APIUri}/{Endpoint}";
+    protected virtual string Uri => $@"{Provider!.EndpointConfiguration.APIUri}/{Endpoint}";
 
     protected virtual APIWebRequest CreateWebRequest() => new APIWebRequest($@"{Uri}?{string.Join("&", QueryParameters.Select(x => $"{x.Key}={x.Value}"))}");
 
     protected IAPIConnectionProvider? Provider;
 
-    protected APIWebRequest Request;
+    protected APIWebRequest Request = null!;
     
-    private object completionStateMutex = new object();
+    private readonly object completionStateMutex = new object();
     
     /// <summary>
     /// Performs this request.
@@ -63,11 +63,12 @@ public abstract class APIRequest
         try
         {
             Request.Perform();
-        } catch (Exception e)
-        {
-            
         }
-        
+        catch
+        {
+            // ignored
+        }
+
         if (isFailing)
         {
             return;

@@ -11,7 +11,7 @@ public partial class TestDummyServerConnection : KumiTestScene
     [Test]
     public void TestCreateConnection()
     {
-        IServerConnector connector = connect();
+        var connector = connect();
         
         AddStep("login to account", () =>
         {
@@ -30,8 +30,8 @@ public partial class TestDummyServerConnection : KumiTestScene
     [Test]
     public void TestSendingAndRecievingData()
     {
-        IServerConnector connector = connect();
-        List<TestPacket> caughtPackets = new();
+        var connector = connect();
+        List<TestPacket> caughtPackets = new List<TestPacket>();
         
         AddStep("login to account", () =>
         {
@@ -57,7 +57,7 @@ public partial class TestDummyServerConnection : KumiTestScene
     
     private IServerConnector connect()
     {
-        IServerConnector connector = Provider.GetServerConnector();
+        var connector = Provider.GetServerConnector();
         
         AddStep("start the connector", () =>
         {

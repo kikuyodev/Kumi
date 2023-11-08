@@ -31,6 +31,9 @@ public class ChartEncoder : FileEncoder<Chart, ChartSections>
             case ChartSections.Notes:
                 handleNotes();
                 break;
+
+            default:
+                throw new ArgumentOutOfRangeException(nameof(section), section, null);
         }
     }
 

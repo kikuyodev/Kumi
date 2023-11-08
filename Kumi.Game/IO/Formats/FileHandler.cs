@@ -45,7 +45,6 @@ public abstract class FileHandler<T> : IFileHandler<T>
     /// </summary>
     protected virtual void PostProcess()
     {
-        return;
     }
 
     public virtual void Dispose()

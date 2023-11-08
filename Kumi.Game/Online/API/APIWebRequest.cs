@@ -15,7 +15,7 @@ public class APIWebRequest<T> : APIWebRequest
 
     protected override void ProcessResponse()
     {
-        string response = GetResponseString();
+        var response = GetResponseString();
 
         if (!typeof(T).IsClass)
         {
@@ -46,7 +46,7 @@ public class APIWebRequest : WebRequest
     public APIWebRequest(string? uri)
         : base(uri)
     {
-        this.Failed += onFailure;
+        Failed += onFailure;
     }
 
     protected override void ProcessResponse()
@@ -62,10 +62,10 @@ public class APIWebRequest : WebRequest
 
     private void onFailure(Exception e)
     {
-        if (!(e is OperationCanceledException))
+        if (e is not OperationCanceledException)
         {
             // Get the response string, if any.
-            string? response = GetResponseString();
+            var response = GetResponseString();
 
             // If the response string is not null or empty, try to deserialize it.
             if (!string.IsNullOrEmpty(response))

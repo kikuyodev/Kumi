@@ -9,8 +9,8 @@ public class DrumRoll : Note, IHasEndTime
 {
     public float EndTime
     {
-        get => _endTimeBindable.Value;
-        set => _endTimeBindable.Value = value;
+        get => endTimeBindable.Value;
+        set => endTimeBindable.Value = value;
     }
 
     public DrumRoll(float startTime)
@@ -18,5 +18,5 @@ public class DrumRoll : Note, IHasEndTime
     {
     }
 
-    private Bindable<float> _endTimeBindable = new();
+    private readonly Bindable<float> endTimeBindable = new Bindable<float>();
 }

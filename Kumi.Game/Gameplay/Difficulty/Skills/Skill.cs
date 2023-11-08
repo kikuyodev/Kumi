@@ -1,6 +1,4 @@
-﻿using Kumi.Game.Gameplay.Difficulty.Objects;
-
-namespace Kumi.Game.Gameplay.Difficulty.Skills;
+﻿namespace Kumi.Game.Gameplay.Difficulty.Skills;
 
 /// <summary>
 /// A basic representation of a skill that a player can have.
@@ -26,20 +24,20 @@ public abstract class Skill
     /// The length of each section of a map to generate strain peaks for.
     /// </summary>
     protected virtual int SectionLength => 500;
-    
-    public Skill()
+
+    protected Skill()
     {
         // TODO: Mods
     }
     
-    private List<float> strainPeaks { get; } = new();
+    private List<float> strainPeaks { get; } = new List<float>();
     private float currentSectionPeak { get; set; }
     private int currentSectionEnd { get; set; }
 
     public SkillResult Calculate()
     {
         float finalDifficulty = 0;
-        float weight = StrainDecayRate;
+        var weight = StrainDecayRate;
         
         foreach (var peak in strainPeaks.Where(p => p > 0).OrderDescending())
         {
@@ -72,7 +70,7 @@ public abstract class Skill
 
     private float initialStrain(CalculableNote current)
     {
-        float time = current.StartTime;
+        var time = current.StartTime;
         
         if (current.Index >= 0)
             time -= current.Previous(1)?.StartTime ?? 0.0f;

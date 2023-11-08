@@ -17,13 +17,12 @@ public class TimingPointHandler
     /// </summary>
     /// <param name="time">The time.</param>
     public TimingPoint GetTimingPointAt(float time) => searchForPoint<TimingPoint>(time, null);
-    
+
     /// <summary>
     /// Gets a specific kind of timing point at a given time.
     /// </summary>
     /// <param name="time">The time.</param>
-    /// <typeparam name="T"></typeparam>
-    /// <returns></returns>
+    /// <param name="pointType">The point type.</param>
     public T GetTimingPointAt<T>(float time, TimingPointType? pointType)
         where T : TimingPoint
         => searchForPoint<T>(time, pointType);

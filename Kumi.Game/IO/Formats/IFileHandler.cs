@@ -4,7 +4,7 @@
 /// A interface for a file format handler, which can be used to parse a file into a <see cref="T"/>; or to write a <see cref="T"/> to a file.
 /// </summary>
 /// <typeparam name="T">The type being handled.</typeparam>
-/// <typeparam name="TSection">The secionds of the file as an enum.</typeparam>
+/// <typeparam name="TSection">The section of the file as an enum.</typeparam>
 public interface IFileHandler<T, TSection> : IFileHandler<T>
     where TSection : struct
 {
@@ -28,8 +28,8 @@ public interface IFileHandler<T, TSection> : IFileHandler<T>
     /// </summary>
     public class SectionHeaderValues
     {
-        public string Start { get; set;  }
-        public string End { get; set;  }
+        public required string Start { get; set; }
+        public required string End { get; set; }
     }
     
     public static SectionHeaderValues DefaultHeaders => new SectionHeaderValues

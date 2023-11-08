@@ -1,12 +1,14 @@
-﻿using osu.Framework.Input.Bindings;
+﻿using Kumi.Game.Input.Bindings;
+using osu.Framework.Input.Bindings;
 
 namespace Kumi.Game.Input;
 
-public class GlobalKeybindContainer : RealmBackedKeyBindingContainer<GlobalAction>
+public partial class GlobalKeybindContainer : RealmBackedKeyBindingContainer<GlobalAction>
 {
+    public override IEnumerable<IKeyBinding> DefaultKeyBindings => Array.Empty<KeyBinding>();
 
-    public override IEnumerable<IKeyBinding> DefaultKeyBindings => new KeyBinding[]
+    public GlobalKeybindContainer()
+        : base(KeybindType.Global)
     {
-
-    };
+    }
 }

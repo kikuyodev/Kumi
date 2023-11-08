@@ -10,7 +10,7 @@ public interface IEvent : IHasTime, ICanParse<string>
     EventType Type { get; }
 }
 
-public enum EventType : int
+public enum EventType
 {
     Unknown = -1,
     SetMedia = 0,

@@ -3,14 +3,16 @@ using Newtonsoft.Json;
 using osu.Framework.Bindables;
 using osu.Framework.Logging;
 
+#pragma warning disable CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
+
 namespace Kumi.Game.Online.Server;
 
 public class ServerConnector : IServerConnector//, IDisposable
 {
-    public ServerConnection CurrentConnection { get; private set; }
+    public ServerConnection? CurrentConnection { get; private set; }
     public IAPIConnectionProvider Provider { get; }
     public bool Started { get; private set; }
-    public bool AutoStart { get; set; } = true;
+    public bool AutoStart { get; set; }
     public Bindable<ServerConnectionState> State { get; } = new Bindable<ServerConnectionState>(ServerConnectionState.Disconnected);
 
     public Dictionary<ServerPacketOpCode, List<Action<ServerPacket>>> PacketHandlers { get; } = new Dictionary<ServerPacketOpCode, List<Action<ServerPacket>>>();
@@ -30,7 +32,7 @@ public class ServerConnector : IServerConnector//, IDisposable
     
     private readonly IBindable<APIState> apiState = new Bindable<APIState>();
     private readonly SemaphoreSlim connectionLock = new SemaphoreSlim(1);
-    private IDictionary<ServerPacketOpCode, ICollection<Action<ServerPacket>>> packetHandlers = new Dictionary<ServerPacketOpCode, ICollection<Action<ServerPacket>>>();
+    private readonly IDictionary<ServerPacketOpCode, ICollection<Action<ServerPacket>>> packetHandlers = new Dictionary<ServerPacketOpCode, ICollection<Action<ServerPacket>>>();
 
     public void Start()
     {
@@ -57,24 +59,26 @@ public class ServerConnector : IServerConnector//, IDisposable
     public void RegisterPacketHandler<T>(ServerPacketOpCode opCode, Action<T> handler)
         where T : ServerPacket
     {
-        var castingHandler = (ServerPacket packet) =>
+        void castingHandler(ServerPacket packet)
         {
             try
             {
                 // Take the raw data and deserialize it into the specified type.
-                T data = JsonConvert.DeserializeObject<T>(packet.RawData);
-                data.RawData = packet.RawData;
-                
+                var data = JsonConvert.DeserializeObject<T>(packet.RawData);
+                data!.RawData = packet.RawData;
+
                 handler(data);
-            } catch (JsonException)
+            }
+            catch (JsonException)
             {
                 // Likely a malformed packet, or wasn't meant for this handler.
-            } catch (Exception e)
+            }
+            catch (Exception e)
             {
                 Logger.Error(e, $"Failed to handle packet {opCode}.");
             }
-        };
-        
+        }
+
         // Register the packet handler.
         if (!PacketHandlers.TryGetValue(opCode, out var handlers))
         {

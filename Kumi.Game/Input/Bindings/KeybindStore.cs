@@ -1,6 +1,6 @@
 ﻿using Kumi.Game.Database;
 
-namespace Kumi.Game.Input;
+namespace Kumi.Game.Input.Bindings;
 
 /// <summary>
 /// A store that stores all of the keybinds for the game.
@@ -13,6 +13,5 @@ public class KeybindStore : RealmBackedDefaultStore<Keybind>
     
     public override void AssignDefaults()
     {
-        return;
     }
 }

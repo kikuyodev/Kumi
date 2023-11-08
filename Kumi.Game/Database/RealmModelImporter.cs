@@ -186,7 +186,7 @@ public abstract class RealmModelImporter<TModel> : IModelImporter<TModel>
         if (!(prefix.EndsWith('/') || prefix.EndsWith('\\')))
             prefix = string.Empty;
 
-        foreach (string file in reader.FileNames)
+        foreach (var file in reader.FileNames)
             yield return (file, file.Substring(prefix.Length).ToStandardisedPath());
     }
 

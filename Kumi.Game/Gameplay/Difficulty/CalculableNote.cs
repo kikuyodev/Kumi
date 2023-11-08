@@ -1,6 +1,6 @@
 ﻿using Kumi.Game.Charts.Objects;
 
-namespace Kumi.Game.Gameplay.Difficulty.Objects;
+namespace Kumi.Game.Gameplay.Difficulty;
 
 /// <summary>
 /// A wrapper for a note that can be used in a <see cref="WorkingDifficultyCalculator"/>
@@ -42,7 +42,7 @@ public class CalculableNote
     public CalculableNote? Previous(int idx) => calculableNotes.ElementAtOrDefault(Index - idx);
     
     /// <summary>
-    /// Gets the numbe of calculable notes that are in the list.
+    /// Gets the number of calculable notes that are in the list.
     /// </summary>
     public int Count() => calculableNotes.Count;
 }

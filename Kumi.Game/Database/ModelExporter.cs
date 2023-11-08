@@ -1,5 +1,6 @@
 ﻿using Kumi.Game.Extensions;
 using Kumi.Game.IO;
+using osu.Framework.Logging;
 using osu.Framework.Platform;
 using Realms;
 using SharpCompress.Common;
@@ -37,40 +38,45 @@ public abstract class ModelExporter<TModel> : IModelExporter<TModel>
         if (!model.IsManaged)
             model = realm.Realm.Find<TModel>(model.ID)!;
         
-        string endfile = $@"{model.GetModelDisplayString(realm.Realm)}";
-        IEnumerable<string> existing = exportLocation.GetFiles(string.Empty, $@"{endfile}*{Extension}");
+        var endFile = $@"{model.GetModelDisplayString(realm.Realm)}";
+        IEnumerable<string> existing = exportLocation.GetFiles(string.Empty, $@"{endFile}*{Extension}");
 
         if (existing.Any())
         {
             var existingCount = existing.Count();
-            endfile += $" ({existingCount})";
+            endFile += $" ({existingCount})";
         }
 
         try
         {
-            using (var stream = exportLocation.CreateFileSafely($@"{endfile}{Extension}"))
+            await using (var stream = exportLocation.CreateFileSafely($@"{endFile}{Extension}"))
             {
                 await ExportModelToStream(model, stream);
             }
         } catch
         {
-            exportLocation.Delete($@"{endfile}*{Extension}");
+            exportLocation.Delete($@"{endFile}*{Extension}");
         }
     }
 
-    protected virtual async Task ExportModelToStream(TModel model, Stream output)
+    protected virtual Task ExportModelToStream(TModel model, Stream output)
     {
         using (var writer = new ZipWriter(output, new ZipWriterOptions(CompressionType.Deflate)))
         {
             foreach (var file in model.Files)
             {
-                var stream = Files.GetStreamFor(file.File);
-
-                if (stream == null)
-                    continue;
-
-                writer.Write(file.FileName, stream, DateTime.Now);
+                try
+                {
+                    var stream = Files.GetStreamFor(file.File);
+                    writer.Write(file.FileName, stream, DateTime.Now);
+                }
+                catch (Exception e)
+                {
+                    Logger.Error(e, $"Failed to export {file.FileName}.");
+                }
             }
         }
+
+        return Task.CompletedTask;
     }
 }
