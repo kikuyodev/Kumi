@@ -11,7 +11,7 @@ public static class ModelExtensions
 
     public static string? GetPathForFile(this IHasFiles model, string filename)
         => model.GetFile(filename)?.File.GetStoragePath();
-    
+
     public static RealmNamedFileUsage? GetFile(this IHasFiles model, string filename)
         => model.Files.SingleOrDefault(f => string.Equals(f.FileName, filename, StringComparison.OrdinalIgnoreCase));
 }

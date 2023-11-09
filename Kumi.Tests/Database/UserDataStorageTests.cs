@@ -17,10 +17,10 @@ public class UserDataStorageTests : RealmTest
             var data = new MemoryStream("kumi"u8.ToArray());
 
             realm.Realm.Write(() => files.Add(data, realm.Realm));
-            
+
             Assert.True(files.Storage.Exists(@"e5/5d/e55dfe4c54a6524b8e2bfab953aaf21ff43b900faae2dbb49d1b0861d647c15c"));
             Assert.True(files.Storage.Exists(realm.Realm.All<RealmFile>().First().GetStoragePath()));
-            
+
             var file = files.Storage.GetStream(@"e5/5d/e55dfe4c54a6524b8e2bfab953aaf21ff43b900faae2dbb49d1b0861d647c15c");
             Assert.NotNull(file);
             Assert.AreEqual("kumi"u8.ToArray(), file!.ReadAllBytesToArray());
@@ -58,10 +58,10 @@ public class UserDataStorageTests : RealmTest
                 set.Files.Add(new RealmNamedFileUsage(file, "resource"));
                 realm.Add(set);
             });
-            
+
             Assert.True(realm.All<RealmFile>().Any());
             Assert.True(files.Storage.Exists(file.GetStoragePath()));
-            
+
             files.Cleanup();
             Assert.True(realm.All<RealmFile>().Any());
             Assert.True(file.IsValid);
@@ -78,14 +78,14 @@ public class UserDataStorageTests : RealmTest
             var files = new UserDataStorage(realmAccess, storage);
             var data = new MemoryStream("kumi"u8.ToArray());
             var file = realm.Write(() => files.Add(data, realm));
-            
+
             var path = file.GetStoragePath();
-            
+
             Assert.True(realm.All<RealmFile>().Any());
             Assert.True(files.Storage.Exists(path));
-            
+
             files.Cleanup();
-            
+
             Assert.False(realm.All<RealmFile>().Any());
             Assert.False(file.IsValid);
             Assert.False(files.Storage.Exists(path));

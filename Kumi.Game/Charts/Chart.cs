@@ -14,17 +14,24 @@ public class Chart : IChart
     /// 1 - Initial Version
     /// </summary>
     public const int CURRENT_VERSION = 1;
-    
-    public ChartInfo ChartInfo { get; set; } = null!;
+
+    public ChartInfo ChartInfo { get; set; }
     public List<IEvent> Events { get; } = new List<IEvent>();
     public TimingPointHandler TimingHandler { get; } = new TimingPointHandler();
     public List<INote> Notes { get; } = new List<INote>();
 
-    public BindableList<TimingPoint> TimingPoints = null!;
+    public readonly BindableList<TimingPoint> TimingPoints;
 
-    public Chart(ChartInfo? chartInfo = null)
+    public Chart(ChartInfo chartInfo)
+        : this()
     {
-        ChartInfo = chartInfo ?? new ChartInfo
+        ChartInfo = chartInfo;
+    }
+
+    [UsedImplicitly]
+    public Chart()
+    {
+        ChartInfo = new ChartInfo
         {
             Metadata = new ChartMetadata
             {
@@ -37,11 +44,6 @@ public class Chart : IChart
         TimingPoints = TimingHandler.TimingPoints.GetBoundCopy();
     }
 
-    [UsedImplicitly]
-    public Chart()
-    {
-    }
-
     [JsonIgnore]
     public ChartMetadata Metadata => ChartInfo.Metadata;
 
@@ -50,14 +52,14 @@ public class Chart : IChart
         get => ChartInfo.ChartVersion;
         set => ChartInfo.ChartVersion = value;
     }
-    
+
     public bool IsProcessed { get; internal set; }
 
     #region IChart implementation
-    
+
     IReadOnlyList<IEvent> IChart.Events => Events;
     IReadOnlyList<INote> IChart.Notes => Notes;
-    
+
     IReadOnlyList<ITimingPoint> IChart.TimingPoints => TimingHandler.TimingPoints;
 
     #endregion
@@ -69,7 +71,7 @@ public class Chart : IChart
         get => Version;
         set => Version = value;
     }
-    
+
     bool IDecodable.IsProcessed
     {
         get => IsProcessed;
@@ -77,4 +79,5 @@ public class Chart : IChart
     }
 
     #endregion
+
 }

@@ -10,11 +10,10 @@ public class ServerPacket<T> : ServerPacket
     where T : class
 {
     [JsonProperty("d")]
-    public new T Data { get; set; }
-    
+    public T Data { get; set; } = null!;
+
     public ServerPacket()
     {
-        
     }
 
     public ServerPacket(ServerPacket<T> parent)
@@ -30,12 +29,11 @@ public class ServerPacket
 {
     [JsonProperty("op")]
     public ServerPacketOpCode OpCode { get; set; }
-    
+
     public string RawData { get; set; } = string.Empty;
 
     public ServerPacket()
     {
-        
     }
 
     public ServerPacket(ServerPacket parent)

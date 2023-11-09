@@ -16,7 +16,7 @@ public partial class TestSceneKumiGame : KumiTestScene
     {
         game = new KumiGame();
         game.SetHost(host);
-        
+
         AddGame(game);
     }
 }

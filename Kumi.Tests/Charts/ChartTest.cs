@@ -27,9 +27,9 @@ public class ChartTest : RealmTest
             var exporter = new ChartExporter(storage, realm);
             var importer = new ChartImporter(storage, realm);
             var chartSet = await importer.Import(new ImportTask(TestResources.OpenTestChartStream(), "test.kcs"));
-            
+
             await exporter.Export(chartSet!);
-            
+
             Assert.AreEqual(1, storage.GetFiles(string.Empty, "export/*.kcs").Count());
         });
     }

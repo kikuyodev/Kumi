@@ -9,7 +9,7 @@ public static class StringUtils
     {
         if (!AssertProperty<T>(value))
             throw new InvalidDataException($"Invalid property value, expected {typeof(T).Name} but got {value}");
-        
+
         return (T) Convert.ChangeType(value, typeof(T), CultureInfo.InvariantCulture);
     }
 
@@ -21,29 +21,32 @@ public static class StringUtils
             // ReSharper disable once ReturnValueOfPureMethodIsNotUsed
             Convert.ChangeType(value, typeof(T), CultureInfo.InvariantCulture);
             return true;
-        } catch
+        }
+        catch
         {
             return false;
         }
     }
-    
+
     /// <summary>
-    /// A more complex version of the standard <see cref="string.Split(string)"/> method that splits the input string by the <see cref="Delimiter"/>.
+    /// A more complex version of the standard <see cref="string.Split(char,int,System.StringSplitOptions)" /> method that
+    /// splits the input string by the <paramref name="delimiter" />.
     /// This function can handle strings that contain the delimiter as part of the value.
     /// </summary>
     public static IEnumerable<string> SplitComplex(this string input, char delimiter)
     {
         string? currentValue = null;
 
-        for (int i = 0; i < input.Length; i++)
+        for (var i = 0; i < input.Length; i++)
         {
-            char character = input[i];
+            var character = input[i];
 
             if (character == delimiter)
             {
                 if (currentValue != null)
                 {
                     yield return currentValue;
+
                     currentValue = null;
                 }
 
@@ -53,10 +56,10 @@ public static class StringUtils
             if (character == '"')
             {
                 var nextQuoteIndex = input.IndexOf('"', i + 1);
-                
+
                 if (nextQuoteIndex == -1)
                     throw new ArgumentException($"Could not find the closing quote for the value starting at index {i}.");
-                
+
                 currentValue = input[(i + 1)..nextQuoteIndex];
                 i = nextQuoteIndex;
             }
@@ -66,7 +69,7 @@ public static class StringUtils
                 currentValue += character;
             }
         }
-        
+
         // add the last value if it exists
         if (currentValue != null)
             yield return currentValue;

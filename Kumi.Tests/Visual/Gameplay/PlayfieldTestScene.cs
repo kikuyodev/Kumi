@@ -9,6 +9,7 @@ using Kumi.Game.Graphics;
 using Kumi.Game.Tests;
 using NUnit.Framework;
 using osu.Framework.Allocation;
+using osu.Framework.Development;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Shapes;
 using osu.Framework.Graphics.Sprites;
@@ -32,35 +33,39 @@ public partial class PlayfieldTestScene : KumiTestScene
     [SetUp]
     public void Setup()
     {
-        Clear();
-
-        AddRange(new Drawable[]
+        Schedule(() =>
         {
-            timeText = new SpriteText
-            {
-                Margin = new MarginPadding(12),
-                Font = KumiFonts.GetFont(size: 14)
-            }
-        });
+            Debug.Assert(ThreadSafety.IsUpdateThread);
+            Clear();
 
-        workingChart = TestResources.CreateWorkingChart(AudioManager, LargeTextureStore, (c) =>
-        {
-            c.Notes.Add(new TestNote
+            AddRange(new Drawable[]
             {
-                StartTime = 500,
-                Type = NoteType.Don,
-                Flags = NoteFlags.None,
-                NoteColor = Color4.White,
-                Windows = new NoteWindows()
+                timeText = new SpriteText
+                {
+                    Margin = new MarginPadding(12),
+                    Font = KumiFonts.GetFont(size: 14)
+                }
             });
-            
-            c.Notes.Add(new TestNote
+
+            workingChart = TestResources.CreateWorkingChart(AudioManager, LargeTextureStore, c =>
             {
-                StartTime = 2000,
-                Type = NoteType.Don,
-                Flags = NoteFlags.None,
-                NoteColor = Color4.White,
-                Windows = new NoteWindows()
+                c.Notes.Add(new TestNote
+                {
+                    StartTime = 500,
+                    Type = NoteType.Don,
+                    Flags = NoteFlags.None,
+                    NoteColor = Color4.White,
+                    Windows = new NoteWindows()
+                });
+
+                c.Notes.Add(new TestNote
+                {
+                    StartTime = 2000,
+                    Type = NoteType.Don,
+                    Flags = NoteFlags.None,
+                    NoteColor = Color4.White,
+                    Windows = new NoteWindows()
+                });
             });
         });
     }
@@ -125,7 +130,7 @@ public partial class PlayfieldTestScene : KumiTestScene
     private partial class TestDrawableNote : DrawableNote<TestNote>
     {
         private Circle circle = null!;
-        
+
         public TestDrawableNote(TestNote note)
             : base(note)
         {
@@ -154,21 +159,22 @@ public partial class PlayfieldTestScene : KumiTestScene
             circle.FadeIn(1000 - Note.Windows.WindowFor(NoteHitResult.Bad)).Then().FadeColour(Color4.Blue, Note.Windows.WindowFor(NoteHitResult.Bad));
         }
 
-        protected override void UpdateHitStateTransforms(NoteState state)
+        protected override void UpdateHitStateTransforms(NoteState newState)
         {
-            switch (state)
+            switch (newState)
             {
                 case NoteState.Hit:
                     circle.ScaleTo(1.5f).Then().ScaleTo(1f, 1000);
                     circle.FadeColour(Color4.Lime, 250, Easing.OutQuint);
                     circle.FadeOut(250);
-                    
+
                     this.Delay(250).Expire();
                     break;
+
                 case NoteState.Miss:
                     circle.FadeColour(Color4.White).Then().FadeColour(Color4.Red, 250, Easing.OutQuint);
                     circle.FadeOut(250);
-                    
+
                     this.Delay(250).Expire();
                     break;
             }
@@ -182,14 +188,14 @@ public partial class PlayfieldTestScene : KumiTestScene
             {
                 if (Time.Current > Note.StartTime - Note.Windows.WindowFor(NoteHitResult.Bad) && !Note.Windows.IsWithinWindow(deltaTime))
                     ApplyResult(NoteHitResult.Miss);
-                
+
                 return;
             }
 
             var result = Note.Windows.Result(deltaTime)!;
             if (result == null)
                 return;
-            
+
             ApplyResult(result.Value);
         }
 
@@ -200,7 +206,7 @@ public partial class PlayfieldTestScene : KumiTestScene
 
             if ((e.Key == Key.F || e.Key == Key.J) && !e.Repeat)
                 return UpdateResult(true);
-            
+
             return false;
         }
     }

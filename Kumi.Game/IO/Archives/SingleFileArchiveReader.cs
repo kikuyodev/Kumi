@@ -15,4 +15,3 @@ public class SingleFileArchiveReader : ArchiveReader
 
     public override IEnumerable<string> FileNames => new[] { Path.GetFileName(ArchivePath!) };
 }
-

@@ -9,7 +9,7 @@ public class TestWorkingChart : WorkingChart
 {
     private readonly IChart chart;
     private readonly TextureStore textures;
-    
+
     public TestWorkingChart(IChart chart, AudioManager audio, TextureStore textures)
         : base(chart.ChartInfo, audio)
     {

@@ -26,9 +26,11 @@ public class ZipArchiveReader : ArchiveReader
             return null;
 
         var owner = MemoryAllocator.Default.Allocate<byte>((int) entry.Size);
-        
+
         using (var s = entry.OpenEntryStream())
+        {
             s.ReadToFill(owner.Memory.Span);
+        }
 
         return new MemoryOwnerMemoryStream(owner);
     }
@@ -55,7 +57,7 @@ public class ZipArchiveReader : ArchiveReader
 
         protected override void Dispose(bool disposing)
         {
-            owner?.Dispose();
+            owner.Dispose();
             base.Dispose(disposing);
         }
 
@@ -68,7 +70,7 @@ public class ZipArchiveReader : ArchiveReader
         public override bool CanSeek => stream.CanSeek;
         public override bool CanWrite => stream.CanWrite;
         public override long Length => stream.Length;
-        
+
         public override long Position
         {
             get => stream.Position;

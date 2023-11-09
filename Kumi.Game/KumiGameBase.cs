@@ -2,6 +2,7 @@
 using Kumi.Game.Database;
 using Kumi.Game.Graphics;
 using Kumi.Game.Input;
+using Kumi.Game.Input.Bindings;
 using Kumi.Game.Screens;
 using Kumi.Resources;
 using osu.Framework.Allocation;
@@ -18,19 +19,19 @@ namespace Kumi.Game;
 
 public partial class KumiGameBase : osu.Framework.Game
 {
-    protected Storage Storage { get; set; } = null!;
+    protected Storage? Storage { get; set; }
 
     private RealmAccess realm = null!;
     private ChartManager chartManager = null!;
     private KeybindStore keybindStore = null!;
 
     protected Colors GameColors { get; private set; } = null!;
-    protected Bindable<WorkingChart> Chart { get; private set; }
+    protected Bindable<WorkingChart> Chart { get; private set; } = null!;
     protected KumiScreenStack ScreenStack = null!;
     protected override Container<Drawable> Content { get; }
 
     protected DependencyContainer DependencyContainer = null!;
-    
+
     protected override IReadOnlyDependencyContainer CreateChildDependencies(IReadOnlyDependencyContainer parent)
     {
         DependencyContainer = new DependencyContainer(base.CreateChildDependencies(parent));
@@ -51,22 +52,22 @@ public partial class KumiGameBase : osu.Framework.Game
         // Resources
         Resources.AddStore(new DllResourceStore(KumiResources.Assembly));
         DependencyContainer.Cache(GameColors = new Colors());
-        
+
         Audio.Tracks.AddAdjustment(AdjustableProperty.Volume, new BindableDouble(0.8));
-        
+
         DependencyContainer.CacheAs(this);
-        
+
         loadFonts();
-        
+
         // Realm Database, Storage, and Charts
-        DependencyContainer.Cache(realm = new RealmAccess(Storage));
+        DependencyContainer.Cache(realm = new RealmAccess(Storage!));
         DependencyContainer.CacheAs(Storage);
-        
+
         var defaultChart = new DummyWorkingChart(Audio, Textures);
-        DependencyContainer.Cache(chartManager = new ChartManager(Storage, realm, Audio, Resources, Host, defaultChart));
+        DependencyContainer.Cache(chartManager = new ChartManager(Storage!, realm, Audio, Resources, Host, defaultChart));
 
         Chart = new NonNullableBindable<WorkingChart>(defaultChart);
-        
+
         DependencyContainer.CacheAs<IBindable<WorkingChart>>(Chart);
         DependencyContainer.CacheAs(Chart);
 
@@ -75,7 +76,7 @@ public partial class KumiGameBase : osu.Framework.Game
         DependencyContainer.Cache(largeStore);
 
         GlobalKeybindContainer globalKeybindContainer;
-        
+
         base.Content.Add(new SafeAreaContainer
         {
             RelativeSizeAxes = Axes.Both,
@@ -85,14 +86,14 @@ public partial class KumiGameBase : osu.Framework.Game
                 RelativeSizeAxes = Axes.Both,
                 Children = new Drawable[]
                 {
-                    globalKeybindContainer = new GlobalKeybindContainer()
+                    globalKeybindContainer = new GlobalKeybindContainer
                     {
-                        RelativeSizeAxes = Axes.Both,
-                    },
+                        RelativeSizeAxes = Axes.Both
+                    }
                 }
             }
         });
-        
+
         DependencyContainer.Cache(globalKeybindContainer);
         DependencyContainer.Cache(keybindStore = new KeybindStore(realm));
         keybindStore.AssignDefaultsFor(globalKeybindContainer);
@@ -119,7 +120,7 @@ public partial class KumiGameBase : osu.Framework.Game
         AddFont(Resources, @"Fonts/Inter/Inter-ExtraBoldItalic");
         AddFont(Resources, @"Fonts/Inter/Inter-Black");
         AddFont(Resources, @"Fonts/Inter/Inter-BlackItalic");
-        
+
         AddFont(Resources, @"Fonts/Montserrat/Montserrat-Thin");
         AddFont(Resources, @"Fonts/Montserrat/Montserrat-ThinItalic");
         AddFont(Resources, @"Fonts/Montserrat/Montserrat-ExtraLight");

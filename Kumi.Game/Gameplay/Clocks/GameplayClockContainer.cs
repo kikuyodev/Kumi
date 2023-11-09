@@ -13,7 +13,7 @@ public partial class GameplayClockContainer : Container, IAdjustableClock, IGame
 
     private readonly BindableBool isPaused = new BindableBool(true);
     private readonly DecouplingFramedClock clock;
-    
+
     public GameplayClockContainer(IClock sourceClock)
     {
         RelativeSizeAxes = Axes.Both;
@@ -38,10 +38,7 @@ public partial class GameplayClockContainer : Container, IAdjustableClock, IGame
         });
     }
 
-    public bool Seek(double position)
-    {
-        return clock.Seek(position);
-    }
+    public bool Seek(double position) => clock.Seek(position);
 
     public void Stop()
     {
@@ -55,14 +52,14 @@ public partial class GameplayClockContainer : Container, IAdjustableClock, IGame
     public void Reset(double? time = null, bool startClock = false)
     {
         var wasPaused = isPaused.Value;
-        
+
         clock.Stop();
 
         if (time != null)
             StartTime = time.Value;
 
         Seek(StartTime);
-        
+
         if (!wasPaused || startClock)
             Start();
     }

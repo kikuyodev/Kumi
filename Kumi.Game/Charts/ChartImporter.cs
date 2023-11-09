@@ -27,7 +27,7 @@ public class ChartImporter : RealmModelImporter<ChartSetInfo>
 
     protected override ChartSetInfo? CreateModel(ArchiveReader archive)
     {
-        string? chartsExists = archive.FileNames.FirstOrDefault(f => f.EndsWith(kumi_chart, StringComparison.OrdinalIgnoreCase));
+        var chartsExists = archive.FileNames.FirstOrDefault(f => f.EndsWith(kumi_chart, StringComparison.OrdinalIgnoreCase));
 
         if (string.IsNullOrEmpty(chartsExists))
         {
@@ -48,7 +48,7 @@ public class ChartImporter : RealmModelImporter<ChartSetInfo>
 
             try
             {
-                foreach (string chartFile in chartFiles)
+                foreach (var chartFile in chartFiles)
                 {
                     var imported = importChart(model, archive, realm, chartFile);
 
@@ -60,9 +60,11 @@ public class ChartImporter : RealmModelImporter<ChartSetInfo>
                         model.Charts.Add(imported);
                     }
                 }
-            } catch (TaskCanceledException)
+            }
+            catch (TaskCanceledException)
             {
-            } catch (Exception e)
+            }
+            catch (Exception e)
             {
                 Logger.Error(e, $"Failed to populate chart set {model.ID}");
                 throw;
@@ -96,7 +98,8 @@ public class ChartImporter : RealmModelImporter<ChartSetInfo>
             realm.Add(metadata);
             realm.Add(chartInfo);
             return chartInfo;
-        } catch (Exception e)
+        }
+        catch (Exception e)
         {
             Logger.Error(e, $"Failed to import chart {name} in set {set.ID}");
         }

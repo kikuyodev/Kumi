@@ -1,15 +1,13 @@
-﻿using Realms;
+﻿namespace Kumi.Game.Database;
 
-namespace Kumi.Game.Database;
-
-public interface IRealmBackedDefaultStore<TModel> 
+public interface IRealmBackedDefaultStore<TModel>
     where TModel : class
 {
     /// <summary>
     /// Default values for this store.
     /// </summary>
     public IEnumerable<TModel> DefaultValues { get; set; }
-    
+
     /// <summary>
     /// Safely gets an item from the database.
     /// </summary>
@@ -23,22 +21,22 @@ public interface IRealmBackedDefaultStore<TModel>
     /// <param name="query">The query to get the item.</param>
     /// <param name="action">The action to commit.</param>
     void Write(Func<TModel, bool> query, Action<TModel> action);
-    
+
     /// <summary>
     /// Gets all of the items in the database.
     /// </summary>
     IEnumerable<TModel> GetAll();
-    
+
     /// <summary>
     /// Returns the default values for this store.
     /// </summary>
     void AssignDefaults();
-    
+
     /// <summary>
     /// Registers the default values for this store.
     /// </summary>
     void RegisterDefaults();
-    
+
     /// <summary>
     /// Compares two objects to see if they are the same.
     /// </summary>

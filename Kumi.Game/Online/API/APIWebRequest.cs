@@ -11,26 +11,25 @@ public class APIWebRequest<T> : APIWebRequest
 {
     public APIWebRequest(string? uri)
         : base(uri)
-    {}
+    {
+    }
 
     protected override void ProcessResponse()
     {
-        string response = GetResponseString();
+        var response = GetResponseString();
 
         if (!typeof(T).IsClass)
         {
             base.ProcessResponse();
             return;
         }
-        
+
         if (!string.IsNullOrEmpty(response))
-        {
             ResponseObject = JsonConvert.DeserializeObject<T>(response);
-        }
-        
+
         base.ProcessResponse();
     }
-    
+
     public T? ResponseObject { get; private set; }
 }
 
@@ -40,19 +39,19 @@ public class APIWebRequest<T> : APIWebRequest
 public class APIWebRequest : WebRequest
 {
     public event APIRequestFailed? Failure;
-    
+
     public event APIRequestSucceeded? Success;
-    
+
     public APIWebRequest(string? uri)
         : base(uri)
     {
-        this.Failed += onFailure;
+        Failed += onFailure;
     }
 
     protected override void ProcessResponse()
     {
         base.ProcessResponse();
-        
+
         Success?.Invoke();
     }
 
@@ -62,16 +61,14 @@ public class APIWebRequest : WebRequest
 
     private void onFailure(Exception e)
     {
-        if (!(e is OperationCanceledException))
+        if (e is not OperationCanceledException)
         {
             // Get the response string, if any.
-            string? response = GetResponseString();
+            var response = GetResponseString();
 
             // If the response string is not null or empty, try to deserialize it.
             if (!string.IsNullOrEmpty(response))
-            {
                 LastError = JsonConvert.DeserializeObject<APIError>(response);
-            }
         }
 
         // Execute the failure event.
@@ -79,5 +76,6 @@ public class APIWebRequest : WebRequest
     }
 
     public delegate void APIRequestFailed(Exception e);
+
     public delegate void APIRequestSucceeded();
 }

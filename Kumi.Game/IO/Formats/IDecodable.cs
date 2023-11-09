@@ -5,8 +5,8 @@ public interface IDecodable
     /// <summary>
     /// The version of the file.
     /// </summary>
-    int Version { get; set;  }
-    
+    int Version { get; set; }
+
     /// <summary>
     /// Whether the file has been processed.
     /// </summary>

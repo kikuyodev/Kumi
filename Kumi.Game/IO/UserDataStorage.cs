@@ -14,7 +14,7 @@ namespace Kumi.Game.IO;
 /// </summary>
 public class UserDataStorage
 {
-    private readonly RealmAccess realm;
+    private readonly RealmAccess realmAccess;
 
     /// <summary>
     /// The underlying resource store that fetches the data from the storage.
@@ -26,38 +26,37 @@ public class UserDataStorage
     /// </summary>
     public readonly Storage Storage;
 
-    public UserDataStorage(RealmAccess realm, Storage storage)
+    public UserDataStorage(RealmAccess realmAccess, Storage storage)
     {
-        this.realm = realm;
-        
+        this.realmAccess = realmAccess;
+
         Storage = storage.GetStorageForDirectory("data");
         Store = new StorageBackedResourceStore(Storage);
     }
-    
+
     /// <summary>
     /// Stores a file in the user data storage, returning the file itself.
     /// This function copies the data to the storage if it is not already there.
     /// </summary>
-    /// <param name="data"></param>
     public RealmFile Add(Stream data, Realm realm, bool addToRealm = true)
     {
-        string hash = data.ComputeSHA2Hash();
+        var hash = data.ComputeSHA2Hash();
         var existing = realm.Find<RealmFile>(hash);
-        var file = existing ?? new RealmFile { Hash = hash, };
+        var file = existing ?? new RealmFile { Hash = hash };
 
         if (!checkExists(file))
             copyToStorage(file, data);
 
         if (addToRealm && !file.IsManaged)
             realm.Add(file);
-        
+
         return file;
     }
 
     public Stream GetStreamFor(RealmNamedFileUsage namedFile) => GetStreamFor(namedFile.File);
-    
+
     /// <summary>
-    /// Gets an open stream for the given <see cref="RealmFile"/>.
+    /// Gets an open stream for the given <see cref="RealmFile" />.
     /// </summary>
     /// <param name="file">The file.</param>
     /// <exception cref="InvalidOperationException">Thrown when the file doesn't exist.</exception>
@@ -68,7 +67,7 @@ public class UserDataStorage
 
         return Store.GetStream(file.GetStoragePath());
     }
-    
+
     public string GetPathFor(RealmFile file)
     {
         if (!checkExists(file))
@@ -76,18 +75,20 @@ public class UserDataStorage
 
         return file.GetStoragePath();
     }
-    
-    private void copyToStorage(RealmFile file, Stream data)
+
+    private void copyToStorage(IFileInfo file, Stream data)
     {
         data.Seek(0, SeekOrigin.Begin);
 
         using (var output = Storage.CreateFileSafely(file.GetStoragePath()))
+        {
             data.CopyTo(output);
-        
+        }
+
         data.Seek(0, SeekOrigin.Begin);
     }
-    
-    private bool checkExists(RealmFile file)
+
+    private bool checkExists(IFileInfo file)
     {
         var path = file.GetStoragePath();
 
@@ -105,14 +106,14 @@ public class UserDataStorage
         var totalFiles = 0;
         var removedFiles = 0;
 
-        realm.Write(r =>
+        realmAccess.Write(r =>
         {
             var files = r.All<RealmFile>().ToList();
 
             foreach (var file in files)
             {
                 totalFiles++;
-                
+
                 if (file.BacklinksCount > 0)
                     // File is still being used in a model somewhere...
                     continue;
@@ -122,7 +123,8 @@ public class UserDataStorage
                     removedFiles++;
                     Storage.Delete(file.GetStoragePath());
                     r.Remove(file);
-                } catch (Exception e)
+                }
+                catch (Exception e)
                 {
                     Logger.Error(e, $"Could not delete databased file {file.Hash}");
                 }

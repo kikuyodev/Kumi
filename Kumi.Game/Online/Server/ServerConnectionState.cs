@@ -5,5 +5,5 @@ public enum ServerConnectionState
     Failed,
     Disconnected,
     Connecting,
-    Connected,
+    Connected
 }

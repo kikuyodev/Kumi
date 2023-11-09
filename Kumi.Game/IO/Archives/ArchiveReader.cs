@@ -22,7 +22,7 @@ public abstract class ArchiveReader : IResourceStore<byte[]>
     /// The names of the files available in the archive.
     /// </summary>
     public abstract IEnumerable<string> FileNames { get; }
-    
+
     protected ArchiveReader(Stream stream)
     {
         Stream = stream;
@@ -32,18 +32,18 @@ public abstract class ArchiveReader : IResourceStore<byte[]>
     {
         ArchivePath = Path.GetFullPath(path);
     }
-    
+
     /// <summary>
     /// Gets a stream for the given file name.
     /// </summary>
     /// <param name="name">The file name.</param>
     public abstract Stream? GetStream(string name);
-    
+
     /// <summary>
     /// Gets the available resources in the archive.
     /// </summary>
     public IEnumerable<string> GetAvailableResources() => FileNames;
-    
+
     /// <summary>
     /// Gets the bytes for the given file name.
     /// </summary>
@@ -53,17 +53,17 @@ public abstract class ArchiveReader : IResourceStore<byte[]>
         using var stream = GetStream(name);
         return stream?.ReadAllBytesToArray()!;
     }
-    
+
     /// <summary>
     /// Gets the bytes for the given file name asynchronously.
     /// </summary>
     /// <param name="name">The file name.</param>
     /// <param name="cancellationToken">The cancellation token.</param>
-    public Task<byte[]>? GetAsync(string name, CancellationToken cancellationToken = new CancellationToken())
+    public async Task<byte[]> GetAsync(string name, CancellationToken cancellationToken = new CancellationToken())
     {
-        using var stream = GetStream(name);
-        return stream?.ReadAllBytesToArrayAsync(cancellationToken);
+        await using var stream = GetStream(name);
+        return await stream!.ReadAllBytesToArrayAsync(cancellationToken);
     }
-    
+
     public abstract void Dispose();
 }

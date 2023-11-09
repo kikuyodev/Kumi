@@ -49,12 +49,12 @@ public class ChartDecoder : FileDecoder<Chart, ChartSections>
             if (bgEvent == null)
                 return;
 
-            Current.Metadata.BackgroundFile = ((SetMediaEvent)bgEvent).FileName;
+            Current.Metadata.BackgroundFile = ((SetMediaEvent) bgEvent).FileName;
         }
-        
+
         if (string.IsNullOrEmpty(Current.Metadata.ArtistRomanised))
             Current.Metadata.ArtistRomanised = Current.Metadata.Artist;
-        
+
         if (string.IsNullOrEmpty(Current.Metadata.TitleRomanised))
             Current.Metadata.TitleRomanised = Current.Metadata.Title;
     }
@@ -126,44 +126,26 @@ public class ChartDecoder : FileDecoder<Chart, ChartSections>
     private void processEvents(string line)
     {
         var args = line.SplitComplex(Event.DELIMITER).ToArray();
-        var typeValue = (EventType)StringUtils.AssertAndFetch<int>(args[0]);
-        Event? ev = null;
-
-        switch (typeValue)
+        var typeValue = (EventType) StringUtils.AssertAndFetch<int>(args[0]);
+        Event ev = typeValue switch
         {
-            case EventType.SetMedia:
-                ev = new SetMediaEvent();
-                break;
+            EventType.SetMedia => new SetMediaEvent(),
+            EventType.SwitchMedia => new SwitchMediaEvent(),
+            EventType.Break => new BreakTimeEvent(),
+            EventType.KiaiTime => new KiaiTimeEvent(),
+            EventType.DisplayLyric => new DisplayLyricEvent(),
+            _ => throw new InvalidDataException($"Invalid event type: {typeValue}")
+        };
 
-            case EventType.SwitchMedia:
-                ev = new SwitchMediaEvent();
-                break;
-
-            case EventType.Break:
-                ev = new BreakTimeEvent();
-                break;
-
-            case EventType.KiaiTime:
-                ev = new KiaiTimeEvent();
-                break;
-
-            case EventType.DisplayLyric:
-                ev = new DisplayLyricEvent();
-                break;
-
-            default:
-                throw new InvalidDataException($"Invalid event type: {typeValue}");
-        }
-
-        ev?.ParseFrom(args);
-        Current.Events.Add(ev!);
+        ev.ParseFrom(args);
+        Current.Events.Add(ev);
     }
 
     private void processTimings(string line)
     {
         var args = line.SplitComplex(TimingPoint.DELIMITER).ToArray();
-        var typeValue = (TimingPointType)StringUtils.AssertAndFetch<int>(args[0]);
-        TimingPoint? tp = null;
+        var typeValue = (TimingPointType) StringUtils.AssertAndFetch<int>(args[0]);
+        TimingPoint? tp;
 
         switch (typeValue)
         {
@@ -171,7 +153,7 @@ public class ChartDecoder : FileDecoder<Chart, ChartSections>
                 tp = new InheritedTimingPoint(StringUtils.AssertAndFetch<float>(args[1]));
                 tp.RelativeScrollSpeed = StringUtils.AssertAndFetch<float>(args[2]);
                 tp.Volume = StringUtils.AssertAndFetch<int>(args[3]);
-                tp.Flags = (TimingFlags)StringUtils.AssertAndFetch<int>(args[4]);
+                tp.Flags = (TimingFlags) StringUtils.AssertAndFetch<int>(args[4]);
                 break;
 
             case TimingPointType.Uninherited:
@@ -193,7 +175,7 @@ public class ChartDecoder : FileDecoder<Chart, ChartSections>
 
                 timingPoint.RelativeScrollSpeed = StringUtils.AssertAndFetch<float>(args[4]);
                 timingPoint.Volume = StringUtils.AssertAndFetch<int>(args[5]);
-                timingPoint.Flags = (TimingFlags)StringUtils.AssertAndFetch<int>(args[6]);
+                timingPoint.Flags = (TimingFlags) StringUtils.AssertAndFetch<int>(args[6]);
 
                 tp = timingPoint;
                 break;
@@ -208,37 +190,37 @@ public class ChartDecoder : FileDecoder<Chart, ChartSections>
     private void processNotes(string line)
     {
         var args = line.SplitComplex(Note.DELIMITER).ToArray();
-        var typeValue = (NoteType)StringUtils.AssertAndFetch<int>(args[0]);
-        Note? note = null;
+        var typeValue = (NoteType) StringUtils.AssertAndFetch<int>(args[0]);
+        Note? note;
 
         switch (typeValue)
         {
             case NoteType.Don:
             case NoteType.Kat:
                 note = new DrumHit(StringUtils.AssertAndFetch<float>(args[1]));
-                note.Flags = (NoteFlags)StringUtils.AssertAndFetch<int>(args[2]);
+                note.Flags = (NoteFlags) StringUtils.AssertAndFetch<int>(args[2]);
                 break;
 
             case NoteType.Drumroll:
                 var drumroll = new DrumRoll(StringUtils.AssertAndFetch<float>(args[1]));
                 drumroll.EndTime = StringUtils.AssertAndFetch<float>(args[2]);
-                drumroll.Flags = (NoteFlags)StringUtils.AssertAndFetch<int>(args[3]);
-                
+                drumroll.Flags = (NoteFlags) StringUtils.AssertAndFetch<int>(args[3]);
+
                 note = drumroll;
                 break;
-            
+
             case NoteType.Balloon:
                 var balloon = new Balloon(StringUtils.AssertAndFetch<float>(args[1]));
                 balloon.EndTime = StringUtils.AssertAndFetch<float>(args[2]);
-                balloon.Flags = (NoteFlags)StringUtils.AssertAndFetch<int>(args[3]);
-                
+                balloon.Flags = (NoteFlags) StringUtils.AssertAndFetch<int>(args[3]);
+
                 note = balloon;
                 break;
-            
+
             default:
                 throw new InvalidDataException($"Invalid note type: {typeValue}");
         }
-        
+
         note.Type = typeValue;
         Current.Notes.Add(note);
     }
@@ -247,12 +229,12 @@ public class ChartDecoder : FileDecoder<Chart, ChartSections>
 
     private KeyValuePair<string, string> parseKeyValuePair(string line)
     {
-        string[] split = line.Split('=');
+        var split = line.Split('=');
         if (split.Length != 2)
             throw new InvalidDataException($"Invalid line: {line}");
 
-        string key = split[0].ToLower().Trim();
-        string value = split[1].Trim();
+        var key = split[0].ToLower().Trim();
+        var value = split[1].Trim();
 
         return new KeyValuePair<string, string>(key, value);
     }

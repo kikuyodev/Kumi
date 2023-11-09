@@ -17,10 +17,10 @@ public partial class MenuScreen : KumiScreen
 {
     private Sprite logo = null!;
     private Sprite logoShadow = null!;
-    
+
     [Resolved]
     private MusicController musicController { get; set; } = null!;
-    
+
     public override BackgroundScreen CreateBackground() => new MenuBackground();
 
     [BackgroundDependencyLoader]
@@ -76,7 +76,7 @@ public partial class MenuScreen : KumiScreen
         logo.FadeInFromZero(1000, Easing.OutQuint);
         logo.ScaleTo(0.2f, 1000, Easing.OutQuint);
         logoShadow.FadeInFromZero(1000, Easing.OutQuint);
-        
+
         musicController.EnsurePlayingSong();
     }
 

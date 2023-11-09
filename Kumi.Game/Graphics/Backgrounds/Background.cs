@@ -1,15 +1,13 @@
 ﻿using Kumi.Game.Screens.Backgrounds;
-using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
-using osu.Framework.Graphics.Rendering;
 using osu.Framework.Graphics.Sprites;
 using osu.Framework.Graphics.Textures;
 
 namespace Kumi.Game.Graphics.Backgrounds;
 
 /// <summary>
-/// A representation of a background, which can be used in a <see cref="BackgroundScreen"/>.
+/// A representation of a background, which can be used in a <see cref="BackgroundScreen" />.
 /// </summary>
 public partial class Background : CompositeDrawable, IEquatable<Background>
 {
@@ -23,13 +21,13 @@ public partial class Background : CompositeDrawable, IEquatable<Background>
         RelativeSizeAxes = Axes.Both;
         Anchor = Anchor.Centre;
         Origin = Anchor.Centre;
-            
-        AddInternal(Sprite = new Sprite()
+
+        AddInternal(Sprite = new Sprite
         {
             RelativeSizeAxes = Axes.Both,
             Anchor = Anchor.Centre,
             Origin = Anchor.Centre,
-            FillMode = FillMode.Fill,
+            FillMode = FillMode.Fill
         });
     }
 
@@ -38,7 +36,7 @@ public partial class Background : CompositeDrawable, IEquatable<Background>
     /// </summary>
     /// <param name="texture">The texture to set.</param>
     public void SetBackground(Texture texture) => Sprite.Texture = texture;
-    
+
     public bool Equals(Background? other)
     {
         if (ReferenceEquals(null, other))
@@ -48,18 +46,18 @@ public partial class Background : CompositeDrawable, IEquatable<Background>
 
         return Sprite.Equals(other.Sprite);
     }
-    
+
     public override bool Equals(object? obj)
     {
         if (ReferenceEquals(null, obj))
             return false;
         if (ReferenceEquals(this, obj))
             return true;
-        if (obj.GetType() != this.GetType())
+        if (obj.GetType() != GetType())
             return false;
 
-        return Equals((Background)obj);
+        return Equals((Background) obj);
     }
-    
+
     public override int GetHashCode() => Sprite.GetHashCode();
 }

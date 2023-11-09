@@ -6,11 +6,11 @@ using osu.Framework.Logging;
 namespace Kumi.Game.IO.Formats;
 
 /// <summary>
-/// A parser for a file format, which can be used to parse a file into a <see cref="T"/>.
+/// A parser for a file format, which can be used to parse a file into a <see cref="T" />.
 /// </summary>
 /// <typeparam name="T">The class to parse into.</typeparam>
 /// <typeparam name="TSection">An enum of sections that are parseable</typeparam>
-public abstract class FileDecoder<T, TSection> : FileHandler<T, TSection>
+public abstract partial class FileDecoder<T, TSection> : FileHandler<T, TSection>
     where T : class, IDecodable, new()
     where TSection : struct
 {
@@ -20,31 +20,30 @@ public abstract class FileDecoder<T, TSection> : FileHandler<T, TSection>
 
     }
 
-    public new T Decode(Stream stream) => Decode(stream, new T());
+    public T Decode(Stream stream) => Decode(stream, new T());
 
     /// <summary>
-    /// Parses a readable stream into a designated output of type <see cref="T"/>.
+    /// Parses a readable stream into a designated output of type <see cref="T" />.
     /// </summary>
     /// <param name="stream">The stream to parse.</param>
-    public new T Decode(Stream stream, T input)
+    /// <param name="input">The input to parse to</param>
+    public T Decode(Stream stream, T input)
     {
         // TODO: Split this more to make it less boilerplate-y.
         using var reader = new LineBufferedReader(stream);
 
-        string header = reader.ReadLine();
+        var header = reader.ReadLine();
         if (!ValidateHeader(header))
             throw new InvalidDataException($"The header of the file being parsed by {nameof(FileDecoder<T, TSection>)} is invalid: {header}");
 
         CurrentSection = default;
         Current = input;
-        
+
         // TODO: Figure out the file version from the header.
-        
-        string line;
 
         PreProcess(input);
 
-        while ((line = reader.ReadLine()) != null)
+        while (reader.ReadLine() is { } line)
         {
             if (ShouldIgnoreLine(line))
                 continue;
@@ -58,9 +57,7 @@ public abstract class FileDecoder<T, TSection> : FileHandler<T, TSection>
             // TODO: Potentially make this more dynamic if we make formats with more than one section header.
             if (isSectionHeader(line))
             {
-                TSection section = default;
-
-                if (!tryGetSection(line.ToLower(), out section))
+                if (!tryGetSection(line.ToLower(), out var section))
                     Logger.Log($"An unknown section was found: {line}", LoggingTarget.Runtime, LogLevel.Important);
 
                 if (CurrentSection.Equals(section))
@@ -73,7 +70,8 @@ public abstract class FileDecoder<T, TSection> : FileHandler<T, TSection>
             try
             {
                 ProcessLine(line);
-            } catch (Exception e)
+            }
+            catch (Exception e)
             {
                 Logger.Error(e, $"An error occurred while parsing a line: {line}");
             }
@@ -90,7 +88,6 @@ public abstract class FileDecoder<T, TSection> : FileHandler<T, TSection>
     /// </summary>
     protected override void PreProcess(T input)
     {
-        return;
     }
 
     /// <summary>
@@ -99,7 +96,6 @@ public abstract class FileDecoder<T, TSection> : FileHandler<T, TSection>
     /// <param name="line">The line being processed.</param>
     protected virtual void ProcessLine(string line)
     {
-        return;
     }
 
     /// <summary>
@@ -118,26 +114,20 @@ public abstract class FileDecoder<T, TSection> : FileHandler<T, TSection>
     /// Safely validates the header of a file if it is the expected format.
     /// </summary>
     /// <param name="header">The header to expect.</param>
-    protected virtual bool ValidateHeader(string header) => !string.IsNullOrWhiteSpace(header) && new Regex(@"^#KUMI\sv[0-9]+$").IsMatch(header);
+    protected virtual bool ValidateHeader(string? header) => !string.IsNullOrWhiteSpace(header) && headerValidationRegex().IsMatch(header);
 
     protected bool isSectionHeader(string line) => line.StartsWith(SectionHeader.Start) && line.EndsWith(SectionHeader.End);
 
     private bool tryGetSection(string line, out TSection section)
     {
         section = default;
-        if (!isSectionHeader(line))
-            return false;
-
-        return Enum.TryParse(sanitizeHeader(line), out section);
+        return isSectionHeader(line) && Enum.TryParse(sanitizeHeader(line), out section);
     }
 
     private string stripComments(string line)
     {
         var commentIndex = line.IndexOf(CommentCharacter, StringComparison.Ordinal);
-        if (commentIndex == -1)
-            return line;
-
-        return line.Substring(0, commentIndex);
+        return commentIndex == -1 ? line : line[..commentIndex];
     }
 
     private string sanitizeHeader(string line)
@@ -158,17 +148,15 @@ public abstract class FileDecoder<T, TSection> : FileHandler<T, TSection>
             foreach (var word in words)
             {
                 sb.Append(char.ToUpper(word[0]));
-                sb.Append(word.Substring(1));
+                sb.Append(word.AsSpan(1));
             }
 
             return $"{sb}";
         }
 
         if (sectionName.IsCamelCase())
-        {
             // Should just be able to capitalize the first letter.
             return $"{char.ToUpper(sectionName[0])}{sectionName.Substring(1)}";
-        }
 
         // If it's not camel or snake case, just return the line as-is.
         // I'm sure we're past the point of caring anymore.
@@ -182,16 +170,19 @@ public abstract class FileDecoder<T, TSection> : FileHandler<T, TSection>
 
         return line.Substring(SectionHeader.Start.Length, line.Length - SectionHeader.End.Length - SectionHeader.Start.Length);
     }
+
+    [GeneratedRegex("^#KUMI\\sv[0-9]+$")]
+    private static partial Regex headerValidationRegex();
 }
 
 /// <summary>
 /// A line-based file decoder for a specific file format.
 /// </summary>
 /// <typeparam name="T"></typeparam>
-public abstract class FileDecoder<T> : FileHandler<T>
+public abstract partial class FileDecoder<T> : FileHandler<T>
     where T : class, IDecodable, new()
 {
-    public FileDecoder(int version)
+    protected FileDecoder(int version)
         : base(version)
     {
     }
@@ -199,9 +190,10 @@ public abstract class FileDecoder<T> : FileHandler<T>
     public T Decode(Stream stream) => Decode(stream, new T());
 
     /// <summary>
-    /// Parses a readable stream into a designated output of type <see cref="T"/>.
+    /// Parses a readable stream into a designated output of type <see cref="T" />.
     /// </summary>
     /// <param name="stream">The stream to parse.</param>
+    /// <param name="input">The input to parse to.</param>
     public virtual T Decode(Stream stream, T input)
     {
         using var reader = new LineBufferedReader(stream);
@@ -209,7 +201,7 @@ public abstract class FileDecoder<T> : FileHandler<T>
         if (reader.PeekLine() == null)
             throw new InvalidDataException($"The file being parsed by {nameof(FileDecoder<T>)} is empty.");
 
-        string header = reader.ReadLine()!;
+        var header = reader.ReadLine()!;
         if (!ValidateHeader(header))
             throw new InvalidDataException($"The header of the file being parsed by {nameof(FileDecoder<T>)} is invalid: {header}");
 
@@ -225,7 +217,8 @@ public abstract class FileDecoder<T> : FileHandler<T>
             try
             {
                 ProcessLine(line);
-            } catch (Exception e)
+            }
+            catch (Exception e)
             {
                 Logger.Log($"An error occurred while parsing a line: {line}", LoggingTarget.Runtime, LogLevel.Error);
                 Logger.Log(e.Message, LoggingTarget.Runtime, LogLevel.Error);
@@ -242,7 +235,7 @@ public abstract class FileDecoder<T> : FileHandler<T>
     /// Safely validates the header of a file if it is the expected format.
     /// </summary>
     /// <param name="header">The header to expect.</param>
-    protected virtual bool ValidateHeader(string header) => !string.IsNullOrWhiteSpace(header) && new Regex(@"^#KUMI\sv[0-9]+$").IsMatch(header);
+    protected virtual bool ValidateHeader(string header) => !string.IsNullOrWhiteSpace(header) && headerValidationRegex().IsMatch(header);
 
     /// <summary>
     /// Processes a line of the file.
@@ -250,7 +243,6 @@ public abstract class FileDecoder<T> : FileHandler<T>
     /// <param name="line">The line being processed.</param>
     protected virtual void ProcessLine(string line)
     {
-        return;
     }
 
     /// <summary>
@@ -259,13 +251,6 @@ public abstract class FileDecoder<T> : FileHandler<T>
     /// <param name="line">The line being checked.</param>
     protected virtual bool ShouldIgnoreLine(string line) => string.IsNullOrWhiteSpace(line) || line.StartsWith("#");
 
-    private string stripComments(string line)
-    {
-        var commentIndex = line.IndexOf(CommentCharacter, StringComparison.Ordinal);
-        if (commentIndex == -1)
-            return line;
-
-        return line.Substring(0, commentIndex);
-    }
-
+    [GeneratedRegex("^#KUMI\\sv[0-9]+$")]
+    private static partial Regex headerValidationRegex();
 }

@@ -41,7 +41,7 @@ public abstract partial class Playfield : Container
             {
                 RelativeSizeAxes = Axes.Both,
                 Anchor = Anchor.Centre,
-                Origin = Anchor.Centre,
+                Origin = Anchor.Centre
             }
         };
     }

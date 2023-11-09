@@ -1,7 +1,7 @@
 ﻿namespace Kumi.Game.Charts.Timings;
 
 public interface ITimingPoint : IHasTime
-{   
+{
     /// <summary>
     /// The type of timing point this is.
     /// </summary>
@@ -16,11 +16,10 @@ public interface ITimingPoint : IHasTime
     /// The volume of this timing point.
     /// </summary>
     int Volume { get; }
-    
+
     /// <summary>
     /// Gets the relative scroll speed of this timing point.
-    ///
-    /// This can be used to calculate the scroll speed of a <see cref="IHasTime"/> object.
+    /// This can be used to calculate the scroll speed of a <see cref="IHasTime" /> object.
     /// </summary>
     float RelativeScrollSpeed { get; }
 }
@@ -36,5 +35,5 @@ public enum TimingFlags
 {
     ResetBarline = 1 << 0,
     ShowBarline = 1 << 1,
-    HideBarline = 1 << 2,
+    HideBarline = 1 << 2
 }

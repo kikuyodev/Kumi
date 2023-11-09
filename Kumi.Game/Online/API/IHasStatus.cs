@@ -12,7 +12,7 @@ public interface IHasStatus
     /// </summary>
     [JsonProperty("code")]
     public int StatusCode { get; set; }
-    
+
     /// <summary>
     /// A possible error message, just in case the status code is not 200.
     /// </summary>

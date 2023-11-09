@@ -18,7 +18,7 @@ public class ChartSetInfo : RealmObject, IHasGuidPrimaryKey, IChartSetInfo, ISof
     [JsonIgnore]
     [Ignored]
     public ChartMetadata Metadata => Charts.FirstOrDefault()?.Metadata ?? new ChartMetadata();
-    
+
     public IList<ChartInfo> Charts { get; } = null!;
     public IList<RealmNamedFileUsage> Files { get; } = null!;
 
@@ -26,7 +26,7 @@ public class ChartSetInfo : RealmObject, IHasGuidPrimaryKey, IChartSetInfo, ISof
     public RealmUser Creator => Metadata.Creator;
 
     public string Hash { get; set; } = string.Empty;
-    
+
     public bool DeletePending { get; set; }
 
     public ChartSetInfo(IEnumerable<ChartInfo>? charts = null)
@@ -45,7 +45,7 @@ public class ChartSetInfo : RealmObject, IHasGuidPrimaryKey, IChartSetInfo, ISof
     {
         if (ReferenceEquals(this, other)) return true;
         if (other == null) return false;
-        
+
         return ID == other.ID;
     }
 
@@ -57,5 +57,5 @@ public class ChartSetInfo : RealmObject, IHasGuidPrimaryKey, IChartSetInfo, ISof
     IEnumerable<IChartInfo> IChartSetInfo.Charts => Charts;
 
     #endregion
-}
 
+}

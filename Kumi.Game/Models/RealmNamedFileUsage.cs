@@ -15,11 +15,11 @@ public class RealmNamedFileUsage : EmbeddedObject, INamedFileUsage
         File = file ?? throw new ArgumentNullException(nameof(file));
         FileName = fileName ?? throw new ArgumentNullException(nameof(fileName));
     }
-    
+
     [UsedImplicitly]
     private RealmNamedFileUsage()
     {
     }
-    
+
     IFileInfo INamedFileUsage.File => File;
 }

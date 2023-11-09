@@ -15,10 +15,10 @@ public partial class DummyAPIConnection : Component, IAPIConnectionProvider
     internal bool PauseQueue = false;
 
     public readonly Bindable<APIAccount> LocalAccount = new Bindable<APIAccount>(new GuestAccount());
-    
+
     public readonly Bindable<APIState> State = new Bindable<APIState>();
 
-    public string SessionToken { get; } = "dummy";
+    public string SessionToken => "dummy";
 
     /// <summary>
     /// Passes a function to be executed on the game's update thread, whenever a request is made and ready to be executed.
@@ -32,7 +32,7 @@ public partial class DummyAPIConnection : Component, IAPIConnectionProvider
         serverConnector = new ServerConnector(this, false);
     }
 
-    private IServerConnector? serverConnector;
+    private readonly IServerConnector? serverConnector;
 
     public void Queue(APIRequest request)
     {
@@ -44,10 +44,10 @@ public partial class DummyAPIConnection : Component, IAPIConnectionProvider
         // reconstruct the queue to place the request at the front.
         var queue = new Queue<APIRequest>();
         queue.Enqueue(request);
-        
+
         while (RequestQueue.Count > 0)
             queue.Enqueue(RequestQueue.Dequeue());
-        
+
         RequestQueue = queue;
     }
 
@@ -56,7 +56,7 @@ public partial class DummyAPIConnection : Component, IAPIConnectionProvider
 
     public void PerformAsync(APIRequest request)
         => Task.Factory.StartNew(() => perform(request));
-    
+
     public void Login(string username, string password)
     {
         State.Value = APIState.Connecting;
@@ -65,11 +65,12 @@ public partial class DummyAPIConnection : Component, IAPIConnectionProvider
         LocalAccount.Value = new APIAccount
         {
             Id = 1,
-            Username = "Dummy",
+            Username = "Dummy"
         };
 
         State.Value = APIState.Online;
     }
+
     public void Logout()
     {
         State.Value = APIState.Offline;
@@ -85,7 +86,7 @@ public partial class DummyAPIConnection : Component, IAPIConnectionProvider
         if (RequestQueue.Count > 0 && !PauseQueue)
             while (RequestQueue.TryDequeue(out var request))
                 Perform(request);
-        
+
         // Update the state of the connector
     }
 
@@ -93,16 +94,14 @@ public partial class DummyAPIConnection : Component, IAPIConnectionProvider
     {
         //If the request is not handled, throw an exception.
         if (HandleRequest == null)
-        {
             request.TriggerFailure(new InvalidOperationException($@"The {nameof(DummyAPIConnection)} cannot execute requests currently."));
-        }
-        
+
         if (HandleRequest?.Invoke(request) == false)
             request.TriggerFailure(new InvalidOperationException($@"The {nameof(DummyAPIConnection)} cannot execute requests currently."));
         else
             request.TriggerSuccess();
     }
-    
+
     IBindable<APIAccount> IAPIConnectionProvider.LocalAccount => LocalAccount;
     IBindable<APIState> IAPIConnectionProvider.State => State;
 

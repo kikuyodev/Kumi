@@ -8,11 +8,11 @@ public class Judgement
     public NoteHitResult Result;
 
     public readonly INote Note;
-    
+
     public double? AbsoluteTime { get; set; }
-    
+
     public double DeltaTime => AbsoluteTime ?? 0 - Note.StartTime;
-    
+
     public bool HasResult => Result > NoteHitResult.None;
 
     public bool IsHit => Result > NoteHitResult.Miss;
@@ -21,7 +21,7 @@ public class Judgement
     {
         Note = note;
     }
-    
+
     public void ApplyResult(NoteHitResult result, double currentTime)
     {
         Result = result;

@@ -1,6 +1,6 @@
 ﻿/*
     Copyright (c) ppy Pty Ltd <contact@ppy.sh>. Licensed under the MIT Licence.
- 
+
      Permission is hereby granted, free of charge, to any person obtaining a copy
     of this software and associated documentation files (the "Software"), to deal
     in the Software without restriction, including without limitation the rights
@@ -36,4 +36,3 @@ public interface IHasFiles
     /// </summary>
     public string Hash { get; set; }
 }
-

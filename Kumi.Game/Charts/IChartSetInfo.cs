@@ -11,7 +11,7 @@ public interface IChartSetInfo : IHasFiles, IEquatable<IChartSetInfo>
     /// The date and time this set was added to the database.
     /// </summary>
     DateTimeOffset DateAdded { get; }
-    
+
     /// <summary>
     /// The metadata representing this set.
     /// </summary>
@@ -20,10 +20,9 @@ public interface IChartSetInfo : IHasFiles, IEquatable<IChartSetInfo>
     /// Only the first chart in the set is used to determine the metadata.
     /// </remarks>
     IChartMetadata Metadata { get; }
-    
+
     /// <summary>
     /// The collection of charts in this set.
     /// </summary>
     IEnumerable<IChartInfo> Charts { get; }
 }
-
