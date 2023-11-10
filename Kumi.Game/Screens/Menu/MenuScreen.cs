@@ -1,3 +1,4 @@
+using Kumi.Game.Graphics;
 using Kumi.Game.Graphics.Backgrounds;
 using Kumi.Game.Overlays;
 using Kumi.Game.Screens.Backgrounds;
@@ -63,6 +64,15 @@ public partial class MenuScreen : KumiScreen
                     Horizontal = 32,
                     Vertical = 40
                 }
+            },
+            new SpriteText
+            {
+                Shadow = true,
+                Anchor = Anchor.BottomCentre,
+                Origin = Anchor.BottomCentre,
+                Y = -32,
+                Text = "Press any key",
+                Font = KumiFonts.GetFont(size: 20)
             }
         });
     }
