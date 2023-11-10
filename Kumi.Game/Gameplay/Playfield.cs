@@ -14,18 +14,26 @@ public abstract partial class Playfield : Container
     protected IChart Chart { get; set; } = null!;
 
     protected readonly Container<DrawableNote> NoteContainer;
-
+    
     protected override Container<Drawable> Content => content;
 
     private bool firstLoad;
     private Container content = null!;
     private GameplayClockContainer gameplayClockContainer = null!;
+    
+    // Testing purposes
+    internal GameplayClockContainer GameplayClockContainer => gameplayClockContainer;
+    internal Container<DrawableNote> NoteContainerInternal => NoteContainer;
 
     protected Playfield(WorkingChart workingChart)
     {
         RelativeSizeAxes = Axes.Both;
 
-        NoteContainer = new Container<DrawableNote> { Name = "Notes", RelativeSizeAxes = Axes.Both };
+        NoteContainer = CreateNoteContainer().With(c =>
+        {
+            c.Name = "Notes";
+            c.RelativeSizeAxes = Axes.Both;
+        });
 
         WorkingChart = workingChart;
         workingChart.BeginAsyncLoad();
@@ -44,11 +52,6 @@ public abstract partial class Playfield : Container
                 Origin = Anchor.Centre
             }
         };
-    }
-
-    public void Reset()
-    {
-        gameplayClockContainer.Reset(startClock: true);
     }
 
     protected override void Update()
@@ -72,7 +75,6 @@ public abstract partial class Playfield : Container
         }
 
         gameplayClockContainer.StartTime = -3000;
-        gameplayClockContainer.Reset(startClock: true);
     }
 
     private DrawableNote createDrawableNote(INote note)
@@ -84,4 +86,6 @@ public abstract partial class Playfield : Container
     }
 
     protected abstract DrawableNote CreateDrawableNote(INote note);
+
+    protected virtual Container<DrawableNote> CreateNoteContainer() => new Container<DrawableNote>();
 }

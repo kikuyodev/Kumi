@@ -9,7 +9,7 @@ namespace Kumi.Game.Gameplay.Drawables;
 
 public partial class DrawableNote : CompositeDrawable
 {
-    protected INote Note { get; }
+    public INote Note { get; }
 
     public override bool IsPresent => base.IsPresent || (state.Value == NoteState.Idle && Clock.CurrentTime >= LifetimeStart);
     public override bool RemoveWhenNotAlive => false;
