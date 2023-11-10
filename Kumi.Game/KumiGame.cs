@@ -3,6 +3,7 @@ using Kumi.Game.Screens;
 using Kumi.Game.Screens.Menu;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
+using osu.Framework.Threading;
 
 namespace Kumi.Game;
 
@@ -33,54 +34,59 @@ public partial class KumiGame : KumiGameBase
 
         DependencyContainer.CacheAs(this);
 
-        loadComponents(new[]
+        Task.Factory.StartNew(() =>
         {
-            new ComponentLoadTask<MusicController>(loadComplete: Add)
-        }, () =>
-        {
-            LoadComponentAsync(new MenuScreen(), screenStack.Push);
+            loadComponents(new[]
+            {
+                new ComponentLoadTask(typeof(MusicController), loadComplete: Add),
+                new ComponentLoadTask(typeof(TaskbarOverlay)),
+            }, () =>
+            {
+                LoadComponentAsync(new MenuScreen(), c =>
+                {
+                    Scheduler.AddDelayed(() => screenStack.Push(c), 100); 
+                });
+            }, Scheduler);
         });
     }
 
-    private void loadComponents<T>(IReadOnlyList<ComponentLoadTask<T>> components, Action loadComplete)
-        where T : Drawable, new()
+    private void loadComponents(IReadOnlyList<ComponentLoadTask> components, Action loadComplete, Scheduler scheduler)
     {
         var amount = components.Count;
 
         for (var i = 0; i < amount; i++)
         {
             var component = components[i];
-            LoadComponentAsync(component.Drawable, c =>
+            LoadComponent(component.Drawable);
+
+            component.CacheDrawable(DependencyContainer);
+            var idx = i;
+            scheduler.Add(() =>
             {
-                component.CacheDrawable(DependencyContainer);
-                component.LoadComplete?.Invoke(c);
-            }).Wait();
-            loaderScreen.SetProgress((float) i / amount);
+                component.LoadComplete?.Invoke(component.Drawable);
+                loaderScreen.SetProgress((idx + 1) / (float)amount);
+            });
+            
+            Thread.Sleep(100);
         }
 
-        loadComplete();
+        scheduler.Add(loadComplete);
     }
 
-    private struct ComponentLoadTask<T>
-        where T : Drawable, new()
+    private readonly struct ComponentLoadTask
     {
-        public T Drawable { get; }
+        public Drawable Drawable { get; }
         public Action<Drawable>? LoadComplete { get; }
 
         private readonly bool cache;
+        private readonly Type type;
 
-        public ComponentLoadTask(bool cache = true, Action<Drawable>? loadComplete = null)
+        public ComponentLoadTask(Type type, bool cache = true, Action<Drawable>? loadComplete = null)
         {
             this.cache = cache;
+            this.type = type;
             LoadComplete = loadComplete;
-            Drawable = new T();
-        }
-
-        public ComponentLoadTask(T drawable, bool cache = true, Action<Drawable>? loadComplete = null)
-        {
-            this.cache = cache;
-            LoadComplete = loadComplete;
-            Drawable = drawable;
+            Drawable = (Drawable) Activator.CreateInstance(type)!;
         }
 
         public void CacheDrawable(DependencyContainer container)
@@ -88,7 +94,7 @@ public partial class KumiGame : KumiGameBase
             if (!cache)
                 return;
 
-            container.CacheAs(Drawable);
+            container.CacheAs(type, Drawable);
         }
     }
 }
