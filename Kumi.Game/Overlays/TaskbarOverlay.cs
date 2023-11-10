@@ -12,42 +12,72 @@ public partial class TaskbarOverlay : OverlayContainer
 {
     private FillFlowContainer leftFlow = null!;
     private FillFlowContainer rightFlow = null!;
+    private Container overlayContent = null!;
+    
+    private LoginOverlay loginOverlay = null!;
     
     protected override bool StartHidden => true;
 
     [BackgroundDependencyLoader]
     private void load()
     {
-        RelativeSizeAxes = Axes.X;
-        Height = 48;
+        RelativeSizeAxes = Axes.Both;
         
         Children = new Drawable[]
         {
-            new Box
-            {
-                RelativeSizeAxes = Axes.Both,
-                Colour = Color4Extensions.FromHex("0D0D0D")
-            },
             new Container
+            {
+                RelativeSizeAxes = Axes.X,
+                Height = 48,
+                Children = new Drawable[]
+                {
+                    new Box
+                    {
+                        RelativeSizeAxes = Axes.Both,
+                        Colour = Color4Extensions.FromHex("0D0D0D")
+                    },
+                    new Container
+                    {
+                        RelativeSizeAxes = Axes.Both,
+                        Padding = new MarginPadding
+                        {
+                            Horizontal = 40
+                        },
+                        Children = new Drawable[]
+                        {
+                            leftFlow = new FillFlowContainer
+                            {
+                                RelativeSizeAxes = Axes.Y,
+                                AutoSizeAxes = Axes.X
+                            },
+                            rightFlow = new FillFlowContainer
+                            {
+                                RelativeSizeAxes = Axes.Y,
+                                AutoSizeAxes = Axes.X,
+                                Anchor = Anchor.TopRight,
+                                Origin = Anchor.TopRight
+                            }
+                        }
+                    }
+                }
+            },
+            overlayContent = new Container
             {
                 RelativeSizeAxes = Axes.Both,
                 Padding = new MarginPadding
                 {
+                    Top = 48,
                     Horizontal = 40
                 },
                 Children = new Drawable[]
                 {
-                    leftFlow = new FillFlowContainer
+                    loginOverlay = new LoginOverlay
                     {
-                        RelativeSizeAxes = Axes.Y,
-                        AutoSizeAxes = Axes.X
-                    },
-                    rightFlow = new FillFlowContainer
-                    {
-                        RelativeSizeAxes = Axes.Y,
-                        AutoSizeAxes = Axes.X,
+                        Width = 208,
+                        AutoSizeAxes = Axes.Y,
                         Anchor = Anchor.TopRight,
-                        Origin = Anchor.TopRight
+                        Origin = Anchor.TopRight,
+                        Margin = new MarginPadding { Top = 4 }
                     }
                 }
             }
@@ -62,6 +92,11 @@ public partial class TaskbarOverlay : OverlayContainer
         addButton(new TaskbarUserButton
         {
             Alignment = TaskbarButtonAlignment.Right,
+        }, () =>
+        {
+            loginOverlay.State.Value = loginOverlay.State.Value == Visibility.Visible
+                ? Visibility.Hidden
+                : Visibility.Visible;
         });
     }
 
