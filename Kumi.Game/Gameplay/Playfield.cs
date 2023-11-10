@@ -14,7 +14,7 @@ public abstract partial class Playfield : Container
     protected IChart Chart { get; set; } = null!;
 
     protected readonly Container<DrawableNote> NoteContainer;
-
+    
     protected override Container<Drawable> Content => content;
 
     private bool firstLoad;
@@ -25,7 +25,11 @@ public abstract partial class Playfield : Container
     {
         RelativeSizeAxes = Axes.Both;
 
-        NoteContainer = new Container<DrawableNote> { Name = "Notes", RelativeSizeAxes = Axes.Both };
+        NoteContainer = CreateNoteContainer().With(c =>
+        {
+            c.Name = "Notes";
+            c.RelativeSizeAxes = Axes.Both;
+        });
 
         WorkingChart = workingChart;
         workingChart.BeginAsyncLoad();
@@ -84,4 +88,6 @@ public abstract partial class Playfield : Container
     }
 
     protected abstract DrawableNote CreateDrawableNote(INote note);
+
+    protected virtual Container<DrawableNote> CreateNoteContainer() => new Container<DrawableNote>();
 }
