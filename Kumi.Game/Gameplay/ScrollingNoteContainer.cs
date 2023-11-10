@@ -92,7 +92,6 @@ public partial class ScrollingNoteContainer : Container<DrawableNote>
     private void setLifetimeStart(DrawableNote note)
     {
         var computedStartTime = computeLifetimeStart(note);
-        Console.WriteLine(computedStartTime);
         note.LifetimeStart = Math.Min(note.Note.StartTime - note.Note.Windows.WindowFor(NoteHitResult.Bad), computedStartTime);
     }
 
