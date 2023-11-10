@@ -20,6 +20,10 @@ public abstract partial class Playfield : Container
     private bool firstLoad;
     private Container content = null!;
     private GameplayClockContainer gameplayClockContainer = null!;
+    
+    // Testing purposes
+    internal GameplayClockContainer GameplayClockContainer => gameplayClockContainer;
+    internal Container<DrawableNote> NoteContainerInternal => NoteContainer;
 
     protected Playfield(WorkingChart workingChart)
     {
@@ -50,11 +54,6 @@ public abstract partial class Playfield : Container
         };
     }
 
-    public void Reset()
-    {
-        gameplayClockContainer.Reset(startClock: true);
-    }
-
     protected override void Update()
     {
         if (WorkingChart.ChartLoaded && !firstLoad)
@@ -76,7 +75,6 @@ public abstract partial class Playfield : Container
         }
 
         gameplayClockContainer.StartTime = -3000;
-        gameplayClockContainer.Reset(startClock: true);
     }
 
     private DrawableNote createDrawableNote(INote note)
