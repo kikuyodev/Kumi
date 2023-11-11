@@ -3,6 +3,7 @@ using Kumi.Game.Database;
 using Kumi.Game.Graphics;
 using Kumi.Game.Input;
 using Kumi.Game.Input.Bindings;
+using Kumi.Game.Online.API;
 using Kumi.Game.Screens;
 using Kumi.Resources;
 using osu.Framework.Allocation;
@@ -26,6 +27,7 @@ public partial class KumiGameBase : osu.Framework.Game
     private KeybindStore keybindStore = null!;
 
     protected Colors GameColors { get; private set; } = null!;
+    protected IAPIConnectionProvider API { get; set; } = null!;
     protected Bindable<WorkingChart> Chart { get; private set; } = null!;
     protected KumiScreenStack ScreenStack = null!;
     protected override Container<Drawable> Content { get; }
@@ -62,6 +64,9 @@ public partial class KumiGameBase : osu.Framework.Game
         // Realm Database, Storage, and Charts
         DependencyContainer.Cache(realm = new RealmAccess(Storage!));
         DependencyContainer.CacheAs(Storage);
+
+        // TODO
+        // DependencyContainer.CacheAs(API = new APIConnection());
 
         var defaultChart = new DummyWorkingChart(Audio, Textures);
         DependencyContainer.Cache(chartManager = new ChartManager(Storage!, realm, Audio, Resources, Host, defaultChart));

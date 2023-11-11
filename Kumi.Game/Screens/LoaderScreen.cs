@@ -41,14 +41,14 @@ public partial class LoaderScreen : KumiScreen
         });
     }
 
-    public override bool OnExiting(ScreenExitEvent e)
+    public override void OnSuspending(ScreenTransitionEvent e)
     {
         logo.FadeOut(1000, Easing.OutQuint);
         logo.ScaleTo(0.2f, 1000, Easing.OutQuint);
         loadAnimation.FadeOut(1000, Easing.OutQuint);
         loadAnimation.ScaleTo(0.2f, 1000, Easing.OutQuint);
-
-        return base.OnExiting(e);
+        
+        base.OnSuspending(e);
     }
 
     public void SetProgress(float progress)

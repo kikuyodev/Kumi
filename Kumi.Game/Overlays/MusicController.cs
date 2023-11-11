@@ -11,7 +11,7 @@ using osu.Framework.Logging;
 
 namespace Kumi.Game.Overlays;
 
-public partial class MusicController : CompositeComponent
+public partial class MusicController : CompositeDrawable
 {
     [Resolved]
     private ChartManager charts { get; set; } = null!;
