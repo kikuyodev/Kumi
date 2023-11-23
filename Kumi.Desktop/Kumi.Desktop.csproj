@@ -10,17 +10,17 @@
         <Version>0.0.0</Version>
         <Version>0.0.0</Version>
     </PropertyGroup>
-    
+
     <PropertyGroup>
         <StartupObject>Kumi.Desktop.Program</StartupObject>
     </PropertyGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\Kumi.Game\Kumi.Game.csproj" />
+        <ProjectReference Include="..\Kumi.Game\Kumi.Game.csproj"/>
     </ItemGroup>
 
     <ItemGroup>
-      <PackageReference Include="Clowd.Squirrel" Version="2.9.42" />
+        <PackageReference Include="Clowd.Squirrel" Version="2.9.42"/>
     </ItemGroup>
 
 </Project>

@@ -9,11 +9,11 @@ public class CleanRunHeadlessGameHost : TestRunHeadlessGameHost
     private readonly bool bypassCleanupOnSetup;
 
     public CleanRunHeadlessGameHost(bool bindIPC = false, bool realtime = true, bool bypassCleanupOnSetup = false, bool bypassCleanupOnDispose = false,
-            [CallerMemberName] string callingMethodName = @"")
+                                    [CallerMemberName] string callingMethodName = @"")
         : base($"{callingMethodName}-{Guid.NewGuid()}", new HostOptions
         {
             BindIPC = bindIPC
-        }, bypassCleanup: bypassCleanupOnDispose, realtime: realtime)
+        }, bypassCleanupOnDispose, realtime)
     {
         this.bypassCleanupOnSetup = bypassCleanupOnSetup;
     }
@@ -21,16 +21,15 @@ public class CleanRunHeadlessGameHost : TestRunHeadlessGameHost
     protected override void SetupForRun()
     {
         if (!bypassCleanupOnSetup)
-        {
             try
             {
                 Storage.DeleteDirectory(string.Empty);
             }
             catch
             {
+                // ignored
             }
-        }
-        
+
         base.SetupForRun();
     }
 }

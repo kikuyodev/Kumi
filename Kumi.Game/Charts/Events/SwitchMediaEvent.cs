@@ -1,11 +1,10 @@
 ﻿using Kumi.Game.Utils;
 using osu.Framework.Graphics;
-using osu.Framework.Graphics.Transforms;
 
 namespace Kumi.Game.Charts.Events;
 
 /// <summary>
-/// A media event that can be used to switch the background or video in the <see cref="IChart"/>.
+/// A media event that can be used to switch the background or video in the <see cref="IChart" />.
 /// </summary>
 public class SwitchMediaEvent : MediaEvent, IHasEndTime
 {
@@ -25,7 +24,7 @@ public class SwitchMediaEvent : MediaEvent, IHasEndTime
     internal SwitchMediaEvent()
         : base(-1)
     {
-        
+
     }
 
     protected override void Parse(string[] input)

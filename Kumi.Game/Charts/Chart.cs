@@ -1,4 +1,4 @@
-﻿using Kumi.Game.Charts;
+﻿using JetBrains.Annotations;
 using Kumi.Game.Charts.Events;
 using Kumi.Game.Charts.Objects;
 using Kumi.Game.Charts.Timings;
@@ -14,14 +14,21 @@ public class Chart : IChart
     /// 1 - Initial Version
     /// </summary>
     public const int CURRENT_VERSION = 1;
-    
+
     public ChartInfo ChartInfo { get; set; }
     public List<IEvent> Events { get; } = new List<IEvent>();
     public TimingPointHandler TimingHandler { get; } = new TimingPointHandler();
-    public List<Note> Notes { get; } = new List<Note>();
+    public List<INote> Notes { get; } = new List<INote>();
 
-    public BindableList<TimingPoint> TimingPoints;
+    public readonly BindableList<TimingPoint> TimingPoints;
 
+    public Chart(ChartInfo chartInfo)
+        : this()
+    {
+        ChartInfo = chartInfo;
+    }
+
+    [UsedImplicitly]
     public Chart()
     {
         ChartInfo = new ChartInfo
@@ -45,14 +52,14 @@ public class Chart : IChart
         get => ChartInfo.ChartVersion;
         set => ChartInfo.ChartVersion = value;
     }
-    
+
     public bool IsProcessed { get; internal set; }
 
     #region IChart implementation
-    
+
     IReadOnlyList<IEvent> IChart.Events => Events;
     IReadOnlyList<INote> IChart.Notes => Notes;
-    
+
     IReadOnlyList<ITimingPoint> IChart.TimingPoints => TimingHandler.TimingPoints;
 
     #endregion
@@ -64,7 +71,7 @@ public class Chart : IChart
         get => Version;
         set => Version = value;
     }
-    
+
     bool IDecodable.IsProcessed
     {
         get => IsProcessed;
@@ -72,4 +79,5 @@ public class Chart : IChart
     }
 
     #endregion
+
 }

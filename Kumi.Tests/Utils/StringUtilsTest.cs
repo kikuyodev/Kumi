@@ -11,7 +11,7 @@ public class StringUtilsTest
     {
         const string input = "1,\"a, string\",enumValue,200,5000";
         var result = input.SplitComplex(',').ToArray();
-        
+
         Assert.AreEqual(5, result.Length);
         Assert.AreEqual("1", result[0]);
         Assert.AreEqual("a, string", result[1]);
@@ -36,7 +36,7 @@ public class StringUtilsTest
     {
         Assert.AreEqual(true, StringUtils.AssertAndFetch<bool>("true"));
         Assert.AreEqual(false, StringUtils.AssertAndFetch<bool>("false"));
-        
+
         Assert.AreEqual(1, StringUtils.AssertAndFetch<int>("1"));
         Assert.Throws<InvalidDataException>(() => StringUtils.AssertAndFetch<int>("1.1"));
     }

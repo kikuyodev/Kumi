@@ -12,26 +12,26 @@ public class UninheritedTimingPoint : TimingPoint
     /// </summary>
     public float BPM
     {
-        get => _bpmBindable.Value;
-        set => _bpmBindable.Value = value;
+        get => bpmBindable.Value;
+        set => bpmBindable.Value = value;
     }
 
     /// <summary>
     /// The time signature of this timing point.
     /// </summary>
     public TimeSignature TimeSignature { get; set; } = TimeSignature.COMMON_TIME;
-    
+
     public UninheritedTimingPoint(float time)
         : base(time)
     {
     }
-    
+
     /// <summary>
     /// The milliseconds necessary to elapse a beat for this timing point.
     /// </summary>
-    public float MillisecondsPerBeat => (60000f / BPM) * TimeSignature.NoteSubdivision;
-    
-    public Bindable<float> GetBindableBPM() => _bpmBindable;
+    public float MillisecondsPerBeat => 60000f / BPM * TimeSignature.NoteSubdivision;
 
-    private Bindable<float> _bpmBindable = new();
+    public Bindable<float> GetBindableBPM() => bpmBindable;
+
+    private readonly Bindable<float> bpmBindable = new Bindable<float>();
 }

@@ -1,15 +1,13 @@
-﻿using osu.Framework.Platform;
-
-namespace Kumi.Game.Charts.Events;
+﻿namespace Kumi.Game.Charts.Events;
 
 /// <summary>
-/// Sets the initial background or video in the <see cref="IChart"/>.
+/// Sets the initial background or video in the <see cref="IChart" />.
 /// </summary>
 public class SetMediaEvent : MediaEvent
 {
     protected override EventType ExpectedType => EventType.SetMedia;
     protected override int ExpectedLength => 1;
-    
+
     public SetMediaEvent(string filename)
         : base(filename, 0)
     {
@@ -18,7 +16,7 @@ public class SetMediaEvent : MediaEvent
     internal SetMediaEvent()
         : base(0)
     {
-        
+
     }
 
     public override void ParseFrom(string[] input)

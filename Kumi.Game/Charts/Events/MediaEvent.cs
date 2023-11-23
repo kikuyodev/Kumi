@@ -3,7 +3,7 @@
 namespace Kumi.Game.Charts.Events;
 
 /// <summary>
-/// An event that uses a media file (video or image) in the <see cref="IChart"/>.
+/// An event that uses a media file (video or image) in the <see cref="IChart" />.
 /// </summary>
 public abstract class MediaEvent : Event, IHasMedia
 {
@@ -15,7 +15,7 @@ public abstract class MediaEvent : Event, IHasMedia
         StartTime = time;
         FileName = filename;
     }
-    
+
     protected MediaEvent(float time)
         : base(time)
     {
@@ -24,19 +24,15 @@ public abstract class MediaEvent : Event, IHasMedia
 
     public bool FileExists(Storage chartStorage)
         => chartStorage.Exists(FileName);
-    
+
     public Stream? GetStream(Storage chartStorage)
         => chartStorage.GetStream(FileName);
 
-    public bool IsVideoFile()
-    {
+    public bool IsVideoFile() =>
         // todo
-        return false;
-    }
-    
-    public bool IsImageFile()
-    {
+        false;
+
+    public bool IsImageFile() =>
         // todo
-        return false;
-    }
+        false;
 }

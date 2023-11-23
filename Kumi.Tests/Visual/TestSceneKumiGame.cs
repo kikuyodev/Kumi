@@ -1,4 +1,5 @@
 ﻿using Kumi.Game;
+using Kumi.Game.Tests;
 using NUnit.Framework;
 using osu.Framework.Allocation;
 using osu.Framework.Platform;
@@ -15,7 +16,7 @@ public partial class TestSceneKumiGame : KumiTestScene
     {
         game = new KumiGame();
         game.SetHost(host);
-        
+
         AddGame(game);
     }
 }

@@ -11,10 +11,10 @@ public class LineBufferedReaderTests
     public void ReadLineByLine()
     {
         const string contents = """
-            hi
-            hewo
-            meow
-            """;
+                                hi
+                                hewo
+                                meow
+                                """;
 
         using var stream = new MemoryStream(Encoding.UTF8.GetBytes(contents));
         using var reader = new LineBufferedReader(stream);
@@ -29,10 +29,10 @@ public class LineBufferedReaderTests
     public void PeekLineMultipleTimes()
     {
         const string contents = """
-            hi
-            hewo
-            meow
-            """;
+                                hi
+                                hewo
+                                meow
+                                """;
 
         using var stream = new MemoryStream(Encoding.UTF8.GetBytes(contents));
         using var reader = new LineBufferedReader(stream);
@@ -51,9 +51,9 @@ public class LineBufferedReaderTests
     public void PeekAtEnd()
     {
         const string contents = """
-            hi
-            hewo
-            """;
+                                hi
+                                hewo
+                                """;
 
         using var stream = new MemoryStream(Encoding.UTF8.GetBytes(contents));
         using var reader = new LineBufferedReader(stream);
@@ -78,10 +78,10 @@ public class LineBufferedReaderTests
     public void ReadToEnd()
     {
         const string contents = """
-            hi
-            hewo
-            meow
-            """;
+                                hi
+                                hewo
+                                meow
+                                """;
 
         using var stream = new MemoryStream(Encoding.UTF8.GetBytes(contents));
         using var reader = new LineBufferedReader(stream);
@@ -93,11 +93,11 @@ public class LineBufferedReaderTests
     public void ReadToEndWithReadsAndPeeks()
     {
         const string content = """
-            line 1
-            line 2
-            line 3
-            line 4
-            """;
+                               line 1
+                               line 2
+                               line 3
+                               line 4
+                               """;
 
         using var stream = new MemoryStream(Encoding.UTF8.GetBytes(content));
         using var reader = new LineBufferedReader(stream);

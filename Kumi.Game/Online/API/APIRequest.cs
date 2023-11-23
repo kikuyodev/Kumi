@@ -14,34 +14,34 @@ public abstract class APIRequest
     /// The query parameters that this request will be sent with.
     /// </summary>
     public Dictionary<string, string> QueryParameters { get; } = new Dictionary<string, string>();
-    
+
     /// <summary>
     /// The current state of this request.
     /// </summary>
     public APICompletionState CompletionState { get; private set; } = APICompletionState.Performing;
-    
+
     /// <summary>
     /// An event that is triggered when this request has succeeded.
     /// When possible, this event will be triggered on the update thread.
     /// </summary>
-    public event APIWebRequest.APIRequestSucceeded Success;
-    
+    public event APIWebRequest.APIRequestSucceeded? Success;
+
     /// <summary>
     /// An event that is triggered when this request has failed.
     /// When possible, this event will be triggered on the update thread.
     /// </summary>
-    public event APIWebRequest.APIRequestFailed Failure;
+    public event APIWebRequest.APIRequestFailed? Failure;
 
-    protected virtual string Uri => $@"{Provider.EndpointConfiguration.APIUri}/{Endpoint}";
+    protected virtual string Uri => $@"{Provider!.EndpointConfiguration.APIUri}/{Endpoint}";
 
     protected virtual APIWebRequest CreateWebRequest() => new APIWebRequest($@"{Uri}?{string.Join("&", QueryParameters.Select(x => $"{x.Key}={x.Value}"))}");
 
     protected IAPIConnectionProvider? Provider;
 
-    protected APIWebRequest Request;
-    
-    private object completionStateMutex = new object();
-    
+    protected APIWebRequest Request = null!;
+
+    private readonly object completionStateMutex = new object();
+
     /// <summary>
     /// Performs this request.
     /// </summary>
@@ -49,35 +49,32 @@ public abstract class APIRequest
     {
         Provider = provider;
         Request = CreateWebRequest();
-        
+
         // Assign specific headers here.
         // TODO: Think of headers to assign.
         Request.Failure += TriggerFailure;
         Request.Success += TriggerSuccess;
 
         if (isFailing)
-        {
             return;
-        }
 
         try
         {
             Request.Perform();
-        } catch (Exception e)
-        {
-            
         }
-        
+        catch
+        {
+            // ignored
+        }
+
         if (isFailing)
-        {
             return;
-        }
-        
+
         TriggerSuccess();
     }
-    
+
     public void Cancel() => TriggerFailure(new OperationCanceledException("The request was manually cancelled."));
-    
+
     internal void TriggerSuccess()
     {
         lock (completionStateMutex)
@@ -89,13 +86,9 @@ public abstract class APIRequest
         }
 
         if (Provider != null)
-        {
             Provider.Schedule(() => Success?.Invoke());
-        }
         else
-        {
             Success?.Invoke();
-        }
     }
 
     internal void TriggerFailure(Exception e)
@@ -109,15 +102,11 @@ public abstract class APIRequest
         }
 
         if (Provider != null)
-        {
             Provider.Schedule(() => Failure?.Invoke(e));
-        }
         else
-        {
             Failure?.Invoke(e);
-        }
     }
-    
+
     private bool isFailing
     {
         get

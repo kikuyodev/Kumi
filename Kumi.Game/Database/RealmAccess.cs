@@ -15,7 +15,7 @@ public class RealmAccess : IDisposable
     /// </summary>
     private const int schema_version = 1;
 
-    public string FileName { get; private set; }
+    public string FileName { get; }
 
     private Realm? updateRealm;
 
@@ -42,7 +42,7 @@ public class RealmAccess : IDisposable
     {
         this.storage = storage;
         FileName = fileName;
-        
+
         cleanupPendingDeletions();
     }
 
@@ -58,7 +58,9 @@ public class RealmAccess : IDisposable
     public void Run(Action<Realm> action)
     {
         if (ThreadSafety.IsUpdateThread)
+        {
             action(Realm);
+        }
         else
         {
             using var r = getInstance();
@@ -70,15 +72,17 @@ public class RealmAccess : IDisposable
     {
         if (ThreadSafety.IsUpdateThread)
             return write(Realm, action);
-        
+
         using var r = getInstance();
         return write(r, action);
     }
-    
+
     public void Write(Action<Realm> action)
     {
         if (ThreadSafety.IsUpdateThread)
+        {
             write(Realm, action);
+        }
         else
         {
             using var r = getInstance();
@@ -86,10 +90,43 @@ public class RealmAccess : IDisposable
         }
     }
 
-    public bool Compact()
+    /// <summary>
+    /// Subscribes to notifications for all objects of type <typeparamref name="TModel" /> that match the query.
+    /// </summary>
+    /// <param name="action">The action to execute.</param>
+    /// <typeparam name="TModel">The model.</typeparam>
+    public IDisposable Subscribe<TModel>(NotificationCallbackDelegate<TModel> action)
+        where TModel : RealmObject
+        => Subscribe(_ => true, action);
+
+    /// <summary>
+    /// Subscribes to notifications for all objects of type <typeparamref name="TModel" /> that match the query.
+    /// </summary>
+    /// <param name="query">The query to use.</param>
+    /// <param name="action">The action to execute.</param>
+    /// <typeparam name="TModel">The model.</typeparam>
+    public IDisposable Subscribe<TModel>(Func<TModel, bool> query, NotificationCallbackDelegate<TModel> action)
+        where TModel : RealmObject
     {
-        return Realm.Compact(config);
+        if (ThreadSafety.IsUpdateThread)
+            return Realm.All<TModel>().SubscribeForNotifications(handleSubscription);
+
+        using var r = getInstance();
+        return r.All<TModel>().SubscribeForNotifications(handleSubscription);
+
+        void handleSubscription(IRealmCollection<TModel> sender, ChangeSet? changes)
+        {
+            if (changes == null)
+                return;
+
+            if (sender.Where(query).Any())
+                return;
+
+            action(sender, changes);
+        }
     }
+
+    public bool Compact() => Realm.Compact(config);
 
     private void onMigrate(Migration migration, ulong oldSchemaVersion)
     {
@@ -122,7 +159,7 @@ public class RealmAccess : IDisposable
             transaction?.Dispose();
         }
     }
-    
+
     private static void write(Realm realm, Action<Realm> action)
     {
         Transaction? transaction = null;
@@ -155,10 +192,10 @@ public class RealmAccess : IDisposable
 
                 foreach (var c in pendingDeletionCharts)
                     realm.Remove(c);
-            
+
                 transaction.Commit();
             }
-        
+
             new UserDataStorage(this, storage).Cleanup();
         }
         catch (Exception e)

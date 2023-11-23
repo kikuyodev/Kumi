@@ -19,7 +19,7 @@ public class WorkingChartCache : IChartResourceProvider, IWorkingChartCache
     private readonly WeakList<ChartManagerWorkingChart> workingCache = new WeakList<ChartManagerWorkingChart>();
 
     // Chart files may specify this filename to denote that they don't have an audio track.
-    private const string virtual_track_filename = @"virtual";
+    private const string virtual_track_filename = "virtual";
 
     /// <summary>
     /// A default representation of a WorkingChart to use when no chart is available.
@@ -59,7 +59,7 @@ public class WorkingChartCache : IChartResourceProvider, IWorkingChartCache
         lock (workingCache)
         {
             var working = workingCache.FirstOrDefault(w => info.Equals(w.ChartInfo));
-            
+
             if (working != null)
             {
                 Logger.Log($"Invalidating working chart cache for {info}");
@@ -98,7 +98,7 @@ public class WorkingChartCache : IChartResourceProvider, IWorkingChartCache
     ITrackStore IChartResourceProvider.Tracks => trackStore;
     IRenderer IStorageResourceProvider.Renderer => host?.Renderer ?? new DummyRenderer();
     AudioManager IStorageResourceProvider.AudioManager => audioManager;
-    RealmAccess IStorageResourceProvider.RealmAccess => null;
+    RealmAccess IStorageResourceProvider.RealmAccess => null!;
     IResourceStore<byte[]> IStorageResourceProvider.Files => files;
     IResourceStore<byte[]> IStorageResourceProvider.Resources => resources;
     IResourceStore<TextureUpload>? IStorageResourceProvider.CreateTextureLoaderStore(IResourceStore<byte[]> underlyingStore) => host?.CreateTextureLoaderStore(underlyingStore);
@@ -141,20 +141,21 @@ public class WorkingChartCache : IChartResourceProvider, IWorkingChartCache
                 return null;
             }
         }
-        
+
         public override Texture? GetBackground()
         {
-            if (string.IsNullOrEmpty(Metadata?.BackgroundFile))
+            if (string.IsNullOrEmpty(Metadata.BackgroundFile))
                 return null;
 
             try
             {
-                var fileStorePath = ChartSetInfo.GetPathForFile(Metadata.AudioFile);
+                var fileStorePath = ChartSetInfo.GetPathForFile(Metadata.BackgroundFile);
                 var texture = resources.LargeTextureStore.Get(fileStorePath);
-                
+
                 if (texture == null)
                 {
-                    Logger.Log($"Chart background failed to load (file {Metadata.AudioFile} not found on disk at expected location {fileStorePath}).", level: LogLevel.Error);
+                    Logger.Log($"Chart background failed to load (file {Metadata.BackgroundFile} not found on disk at expected location {fileStorePath}).",
+                        level: LogLevel.Error);
                     return null;
                 }
 
@@ -169,7 +170,7 @@ public class WorkingChartCache : IChartResourceProvider, IWorkingChartCache
 
         protected override Track? GetChartTrack()
         {
-            if (string.IsNullOrEmpty(Metadata?.AudioFile))
+            if (string.IsNullOrEmpty(Metadata.AudioFile))
                 return null;
 
             if (Metadata.AudioFile == virtual_track_filename)
@@ -179,7 +180,7 @@ public class WorkingChartCache : IChartResourceProvider, IWorkingChartCache
             {
                 var fileStorePath = ChartSetInfo.GetPathForFile(Metadata.AudioFile);
                 var track = resources.Tracks.Get(fileStorePath);
-                
+
                 if (track == null)
                 {
                     Logger.Log($"Chart track failed to load (file {Metadata.AudioFile} not found on disk at expected location {fileStorePath}).", level: LogLevel.Error);
@@ -197,7 +198,7 @@ public class WorkingChartCache : IChartResourceProvider, IWorkingChartCache
 
         protected override Waveform? GetWaveform()
         {
-            if (string.IsNullOrEmpty(Metadata?.AudioFile))
+            if (string.IsNullOrEmpty(Metadata.AudioFile))
                 return null;
 
             if (Metadata.AudioFile == virtual_track_filename)

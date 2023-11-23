@@ -1,6 +1,6 @@
 ﻿/*
     Copyright (c) ppy Pty Ltd <contact@ppy.sh>. Licensed under the MIT Licence.
- 
+
      Permission is hereby granted, free of charge, to any person obtaining a copy
     of this software and associated documentation files (the "Software"), to deal
     in the Software without restriction, including without limitation the rights
@@ -28,7 +28,7 @@ using SharpCompress.Common;
 namespace Kumi.Game.Database;
 
 /// <summary>
-/// An encapsulated import task to be imported to an <see cref="IModelImporter{TModel}"/>
+/// An encapsulated import task to be imported to an <see cref="IModelImporter{TModel}" />
 /// </summary>
 public class ImportTask
 {
@@ -69,7 +69,7 @@ public class ImportTask
                 return new DirectoryArchiveReader(Path);
             if (File.Exists(Path))
                 return new SingleFileArchiveReader(Path);
-            
+
             throw new InvalidFormatException($"{Path} is not a valid archive.");
         }
 

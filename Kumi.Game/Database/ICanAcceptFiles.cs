@@ -1,6 +1,6 @@
 ﻿/*
     Copyright (c) ppy Pty Ltd <contact@ppy.sh>. Licensed under the MIT Licence.
- 
+
      Permission is hereby granted, free of charge, to any person obtaining a copy
     of this software and associated documentation files (the "Software"), to deal
     in the Software without restriction, including without limitation the rights
@@ -20,7 +20,6 @@
     THE SOFTWARE.
 */
 
-
 namespace Kumi.Game.Database;
 
 /// <summary>
@@ -39,7 +38,7 @@ public interface ICanAcceptFiles
     /// </summary>
     /// <param name="tasks">The tasks which will be imported.</param>
     Task Import(ImportTask[] tasks);
-    
+
     /// <summary>
     /// An array of file extensions that this importer can handle.
     /// </summary>

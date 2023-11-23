@@ -50,10 +50,12 @@ public abstract class RealmModelImporter<TModel> : IModelImporter<TModel>
                     if (model != null)
                         imported.Add(model);
                 }
-            } catch (OperationCanceledException)
+            }
+            catch (OperationCanceledException)
             {
                 // Cancelled, so we don't care.
-            } catch (Exception e)
+            }
+            catch (Exception e)
             {
                 Logger.Error(e, $"Could not import ({task})", LoggingTarget.Database);
             }
@@ -69,7 +71,9 @@ public abstract class RealmModelImporter<TModel> : IModelImporter<TModel>
         TModel? import;
 
         using (var reader = task.GetReader())
+        {
             import = await importFromArchive(reader, cancellationToken).ConfigureAwait(false);
+        }
 
         return import;
     }
@@ -86,9 +90,11 @@ public abstract class RealmModelImporter<TModel> : IModelImporter<TModel>
 
             if (model == null)
                 return null;
-        } catch (TaskCanceledException)
+        }
+        catch (TaskCanceledException)
         {
-        } catch (Exception e)
+        }
+        catch (Exception e)
         {
             Logger.Error(e, $"Could not import ({archive.ArchivePath})", LoggingTarget.Database);
         }
@@ -118,22 +124,18 @@ public abstract class RealmModelImporter<TModel> : IModelImporter<TModel>
                 var files = new List<RealmNamedFileUsage>();
 
                 if (archive != null)
-                {
                     foreach (var filenames in getShortenedFilenames(archive))
-                    {
                         using (var s = archive.GetStream(filenames.original)!)
+                        {
                             files.Add(new RealmNamedFileUsage(Files.Add(s, realm, false), filenames.shortened));
-                    }
-                }
+                        }
 
                 using (var transaction = realm.BeginWrite())
                 {
                     foreach (var file in files)
-                    {
                         if (!file.File.IsManaged)
                             realm.Add(file.File, true);
-                    }
-                    
+
                     transaction.Commit();
                 }
 
@@ -146,22 +148,23 @@ public abstract class RealmModelImporter<TModel> : IModelImporter<TModel>
                     PreImport(item, realm);
                     realm.Add(item);
                     PostImport(item, realm);
-                    
+
                     transaction.Commit();
                 }
-                
+
                 Logger.Log("Import successfully completed!", LoggingTarget.Database);
-            } catch (Exception e)
+            }
+            catch (Exception e)
             {
                 if (!(e is TaskCanceledException))
-                    Logger.Error(e, $"Database import or population failed.", LoggingTarget.Database);
-                
+                    Logger.Error(e, "Database import or population failed.", LoggingTarget.Database);
+
                 throw;
             }
-            
+
             return item.Detach();
         });
-    
+
     protected abstract string[] HashableFileTypes { get; }
 
     public string ComputeHash(TModel item)
@@ -169,10 +172,10 @@ public abstract class RealmModelImporter<TModel> : IModelImporter<TModel>
         var hashable = new MemoryStream();
 
         foreach (var file in item.Files.Where(f => HashableFileTypes.Any(ext => f.FileName.EndsWith(ext, StringComparison.OrdinalIgnoreCase))).OrderBy(f => f.FileName))
-        {
             using (var s = Files.Store.GetStream(file.File.GetStoragePath()))
+            {
                 s.CopyTo(hashable);
-        }
+            }
 
         if (hashable.Length > 0)
             return hashable.ComputeSHA2Hash();
@@ -186,7 +189,7 @@ public abstract class RealmModelImporter<TModel> : IModelImporter<TModel>
         if (!(prefix.EndsWith('/') || prefix.EndsWith('\\')))
             prefix = string.Empty;
 
-        foreach (string file in reader.FileNames)
+        foreach (var file in reader.FileNames)
             yield return (file, file.Substring(prefix.Length).ToStandardisedPath());
     }
 

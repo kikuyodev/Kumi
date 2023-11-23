@@ -4,7 +4,6 @@ using Kumi.Game.Database;
 using Kumi.Game.Extensions;
 using Kumi.Game.Models;
 using Realms;
-using SixLabors.ImageSharp;
 
 namespace Kumi.Game.Charts;
 
@@ -38,7 +37,7 @@ public class ChartInfo : RealmObject, IHasGuidPrimaryKey, IChartInfo, IEquatable
 
     [Ignored]
     public string? Path => File?.FileName;
-    
+
     public string Hash { get; set; } = string.Empty;
 
     public int ChartVersion { get; set; }
@@ -47,7 +46,7 @@ public class ChartInfo : RealmObject, IHasGuidPrimaryKey, IChartInfo, IEquatable
     {
         if (ReferenceEquals(this, other)) return true;
         if (other == null) return false;
-        
+
         return ID == other.ID;
     }
 
@@ -80,5 +79,5 @@ public class ChartInfo : RealmObject, IHasGuidPrimaryKey, IChartInfo, IEquatable
     IChartSetInfo? IChartInfo.ChartSet => ChartSet;
 
     #endregion
-}
 
+}

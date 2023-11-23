@@ -9,12 +9,12 @@ public enum APICompletionState
     /// The request is currently being performed, or is waiting to be performed.
     /// </summary>
     Performing,
-    
+
     /// <summary>
     /// The request has been completed.
     /// </summary>
     Completed,
-    
+
     /// <summary>
     /// The request has failed.
     /// </summary>

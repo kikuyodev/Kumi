@@ -6,7 +6,7 @@ public interface INamedFileUsage
     /// The underlying file.
     /// </summary>
     IFileInfo File { get; }
-    
+
     /// <summary>
     /// The name of the file.
     /// </summary>

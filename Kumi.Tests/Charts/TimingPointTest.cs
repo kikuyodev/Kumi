@@ -6,19 +6,19 @@ namespace Kumi.Tests.Charts;
 [TestFixture]
 public class TimingPointTest
 {
-    private TimingPointHandler _handler = new TimingPointHandler();
-    
+    private readonly TimingPointHandler _handler = new TimingPointHandler();
+
     [Test]
     public void TestTimingPoints()
     {
         addTimingPoints();
-        
+
         Assert.AreEqual(180.0f, _handler.GetTimingPointAt<UninheritedTimingPoint>(0, TimingPointType.Uninherited).BPM);
         Assert.AreEqual(1.0f, _handler.GetTimingPointAt<UninheritedTimingPoint>(0, TimingPointType.Uninherited).RelativeScrollSpeed);
         Assert.AreEqual(2.0f, _handler.GetTimingPointAt(1000).RelativeScrollSpeed);
         Assert.AreEqual(180.0f, _handler.GetTimingPointAt<UninheritedTimingPoint>(200, TimingPointType.Uninherited).BPM);
         Assert.AreEqual(240.0f, _handler.GetTimingPointAt<UninheritedTimingPoint>(250, TimingPointType.Uninherited).BPM);
-        
+
         Assert.AreEqual(180.0f, _handler.GetBPMAt(0));
         Assert.AreEqual(333.333333333f, _handler.GetBeatLengthAt(0));
         Assert.AreEqual(1.0f, _handler.GetScrollSpeedAt(0));
@@ -33,7 +33,7 @@ public class TimingPointTest
     private void addTimingPoints()
     {
         _handler.Clear(); // just in case
-        
+
         _handler.TimingPoints.Add(new UninheritedTimingPoint(0)
         {
             BPM = 180.0f,
@@ -55,5 +55,5 @@ public class TimingPointTest
             RelativeScrollSpeed = 2.0f
         });
     }
-    
+
 }

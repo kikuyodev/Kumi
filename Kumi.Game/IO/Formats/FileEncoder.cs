@@ -39,10 +39,11 @@ public abstract class FileEncoder<TInput, TSection> : FileEncoder<TInput>, IFile
     #region IFileHandler implementation
 
     IFileHandler<TInput, TSection>.SectionHeaderValues IFileHandler<TInput, TSection>.SectionHeader => SectionHeader;
-    
+
     bool IFileHandler<TInput, TSection>.CloseStreamUponProcessed => CloseStreamUponProcessed;
 
     #endregion
+
 }
 
 public abstract class FileEncoder<TInput> : FileHandler<TInput>
@@ -60,7 +61,7 @@ public abstract class FileEncoder<TInput> : FileHandler<TInput>
     private Stream stream = null!;
 
     public void Encode(TInput input) => Encode(input, new MemoryStream());
-    
+
     public void Encode(TInput input, Stream writableStream)
     {
         stream = writableStream;
@@ -70,7 +71,7 @@ public abstract class FileEncoder<TInput> : FileHandler<TInput>
         PostProcess();
 
         Writer.Flush();
-        
+
         if (CloseStreamUponProcessed)
             Writer.Close();
     }

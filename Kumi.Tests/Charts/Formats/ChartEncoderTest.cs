@@ -28,15 +28,15 @@ public class ChartEncoderTest
         var filename = TestResources.GetTemporaryFilename("kch");
         using var writer = TestResources.OpenWritableTemporaryFile(filename);
         encoder!.Encode(chart, writer);
-        
+
         var contents = new StreamReader(TestResources.OpenReadableTemporaryFile(filename)).ReadToEnd();
         var expected = new StreamReader(TestResources.OpenResource("Charts/test_encode.kch")).ReadToEnd();
-        
+
         Assert.AreEqual(expected, contents);
-        
+
         using var decoder = new ChartDecoder();
         var decoded = decoder.Decode(TestResources.OpenReadableTemporaryFile(filename));
-        
+
         Assert.IsTrue(decoded.IsProcessed);
 
         Assert.AreEqual(chart.Events.Count, decoded.Events.Count);
@@ -49,17 +49,17 @@ public class ChartEncoderTest
         var chartSet = createChartSet();
         var chart = new Chart();
         chart.ChartInfo = chartSet.Charts[0];
-        
+
         // create events
         chart.Events.Add(new SetMediaEvent("bg.jpg"));
-        
+
         // create timings
         chart.TimingPoints.Add(new UninheritedTimingPoint(0)
         {
             BPM = 120.5f,
             TimeSignature = new TimeSignature(4, 4)
         });
-        
+
         // create notes
         chart.Notes.Add(new DrumHit(0)
         {
@@ -69,7 +69,7 @@ public class ChartEncoderTest
         {
             Type = NoteType.Kat
         });
-        
+
         return chart;
     }
 
@@ -88,7 +88,7 @@ public class ChartEncoderTest
             InitialScrollSpeed = 1.2f,
             Metadata = metadata.DeepClone()
         };
-        
+
         var chartSetInfo = new ChartSetInfo(new[] { chartInfo });
         chartInfo.ChartSet = chartSetInfo;
 

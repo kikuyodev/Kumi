@@ -6,20 +6,24 @@
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
     </PropertyGroup>
-    
+
     <PropertyGroup Label="NuGet">
         <Title>Kumi Resources</Title>
         <PackageId>Kikuyodev.Kumi.Resources</PackageId>
         <Version>0.0.0</Version>
         <IsPackable>true</IsPackable>
     </PropertyGroup>
-    
+
     <ItemGroup>
-        <EmbeddedResource Include="Textures/**/*" />
-        <EmbeddedResource Include="Fonts/**/*" />
-        <EmbeddedResource Include="Shaders/**/*" />
-        <EmbeddedResource Include="Audio/**/*" />
-        <EmbeddedResource Include="Music/**/*" />
+        <EmbeddedResource Include="Textures/**/*"/>
+        <EmbeddedResource Include="Fonts/**/*"/>
+        <EmbeddedResource Include="Shaders/**/*"/>
+        <EmbeddedResource Include="Audio/**/*"/>
+        <EmbeddedResource Include="Music/**/*"/>
+    </ItemGroup>
+
+    <ItemGroup>
+        <Folder Include="Textures\Backgrounds\"/>
     </ItemGroup>
 
 </Project>

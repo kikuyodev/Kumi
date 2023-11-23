@@ -4,15 +4,14 @@ using Kumi.Game.Database;
 using osu.Framework.Graphics;
 using osu.Framework.Logging;
 using osu.Framework.Platform;
-using osu.Framework.Threading;
 
 namespace Kumi.Game.Tests;
 
 public partial class RealmTestGame : osu.Framework.Game
 {
-    private GameHost GameHost => new CleanRunHeadlessGameHost(callingMethodName: "");
+    private GameHost GameHost => new CleanRunHeadlessGameHost();
 
-    private List<Action> scheduledTasks = new();
+    private readonly List<Action> scheduledTasks = new List<Action>();
     private bool isRunning;
 
     private void scheduleTask(Action task)
@@ -47,7 +46,7 @@ public partial class RealmTestGame : osu.Framework.Game
     {
         Add(() =>
         {
-            var defaultStorage = (Storage)Dependencies.Get(typeof(Storage));
+            var defaultStorage = (Storage) Dependencies.Get(typeof(Storage));
             var testStorage = defaultStorage.GetStorageForDirectory("test");
 
             using (var realm = new RealmAccess(testStorage, $"{Guid.NewGuid().ToString()}.realm"))
@@ -72,7 +71,7 @@ public partial class RealmTestGame : osu.Framework.Game
     {
         Add(async () =>
         {
-            var testStorage = (Storage)Dependencies.Get(typeof(Storage));
+            var testStorage = (Storage) Dependencies.Get(typeof(Storage));
 
             using (var realm = new RealmAccess(testStorage, $"{Guid.NewGuid().ToString()}.realm"))
             {
@@ -109,8 +108,11 @@ public partial class RealmTestGame : osu.Framework.Game
         try
         {
             using (var stream = testStorage.GetStream(realm.FileName))
+            {
                 return stream?.Length ?? 0;
-        } catch
+            }
+        }
+        catch
         {
             return 0;
         }

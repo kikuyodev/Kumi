@@ -11,10 +11,10 @@ public partial class KumiTestBrowser : KumiGameBase
     protected override void LoadComplete()
     {
         base.LoadComplete();
-        
+
         AddRange(new Drawable[]
         {
-            new TestBrowser("Kumi"),
+            new TestBrowser("Kumi.Tests"),
             new CursorContainer()
         });
     }

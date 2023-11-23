@@ -25,9 +25,9 @@ public class DummyWorkingChart : WorkingChart
         LoadChartTrack();
     }
 
-    protected override IChart? GetChart() => new Chart();
+    protected override IChart GetChart() => new Chart();
 
-    protected override Track? GetChartTrack() => GetVirtualTrack();
+    protected override Track GetChartTrack() => GetVirtualTrack();
 
     public override Texture GetBackground() => textures.Get("Backgrounds/default");
 

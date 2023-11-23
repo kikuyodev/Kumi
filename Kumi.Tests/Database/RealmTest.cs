@@ -1,13 +1,8 @@
-﻿using System.Runtime.CompilerServices;
-using JetBrains.Annotations;
-using Kumi.Game.Charts;
-using Kumi.Game.Database;
+﻿using Kumi.Game.Charts;
 using Kumi.Game.Models;
 using Kumi.Game.Tests;
 using NUnit.Framework;
 using osu.Framework.Extensions;
-using osu.Framework.Logging;
-using osu.Framework.Platform;
 
 namespace Kumi.Tests.Database;
 
@@ -33,7 +28,7 @@ public abstract partial class RealmTest
         var metadata = new ChartMetadata
         {
             Title = "Test Chart",
-            Artist = "Test Artist",
+            Artist = "Test Artist"
         };
 
         var chartSet = new ChartSetInfo
@@ -43,14 +38,14 @@ public abstract partial class RealmTest
                 new ChartInfo(metadata) { DifficultyName = "Easy" },
                 new ChartInfo(metadata) { DifficultyName = "Normal" },
                 new ChartInfo(metadata) { DifficultyName = "Hard" },
-                new ChartInfo(metadata) { DifficultyName = "Oni" },
+                new ChartInfo(metadata) { DifficultyName = "Oni" }
             },
             Files =
             {
                 new RealmNamedFileUsage(createRealmFile(), "test [easy].kch"),
                 new RealmNamedFileUsage(createRealmFile(), "test [normal].kch"),
                 new RealmNamedFileUsage(createRealmFile(), "test [hard].kch"),
-                new RealmNamedFileUsage(createRealmFile(), "test [oni].kch"),
+                new RealmNamedFileUsage(createRealmFile(), "test [oni].kch")
             }
         };
 

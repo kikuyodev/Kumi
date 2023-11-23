@@ -28,11 +28,11 @@ public class ServerConnection : IAsyncDisposable
 
     public bool IsConnected => Connection.State == WebSocketState.Open;
 
-    public event Func<Exception?, bool> Closed;
+    public event Func<Exception?, bool>? Closed;
 
-    public event Action<byte[]> RawMessageReceived;
+    public event Action<byte[]>? RawMessageReceived;
 
-    public event Action<ServerPacket> PacketReceived;
+    public event Action<ServerPacket>? PacketReceived;
 
     public ServerConnection(IServerConnector connector)
     {
@@ -42,22 +42,23 @@ public class ServerConnection : IAsyncDisposable
 
     private readonly Queue<byte[]> messageQueue = new Queue<byte[]>();
 
-    private CancellationToken cancellationToken { get; set; }
+    private readonly CancellationToken cancellationToken = default;
 
-    public async Task ConnectAsync(CancellationToken cancellationToken)
+    public async Task ConnectAsync(CancellationToken token)
     {
         ConnectionThread = new Thread(update)
         {
             IsBackground = true,
-            Name = "Server Connection Thread",
+            Name = "Server Connection Thread"
         };
 
         try
         {
             // Connect to the server.
-            await Connection.ConnectAsync(new Uri(Connector.Provider.EndpointConfiguration.WebsocketUri), cancellationToken);
+            await Connection.ConnectAsync(new Uri(Connector.Provider.EndpointConfiguration.WebsocketUri), token);
             ConnectionThread.Start();
-        } catch (Exception e)
+        }
+        catch (Exception e)
         {
             // Set the state to failed.
             Logger.Error(e, "Failed to connect to the server.");
@@ -69,7 +70,7 @@ public class ServerConnection : IAsyncDisposable
     public void Queue(ServerPacket packet)
     {
         // Serialize the packet.
-        string json = JsonConvert.SerializeObject(packet);
+        var json = JsonConvert.SerializeObject(packet);
 
         // Send the packet to the server.
         Queue(Encoding.UTF8.GetBytes(json));
@@ -90,9 +91,7 @@ public class ServerConnection : IAsyncDisposable
     {
         // Cancel the receive thread.
         if (!Connector.CancellationToken.IsCancellationRequested)
-        {
             Connector.CancellationToken.Cancel();
-        }
 
         ConnectionThread = null;
 
@@ -101,9 +100,7 @@ public class ServerConnection : IAsyncDisposable
 
         // Close the connection if it is open.
         if (Connection.State == WebSocketState.Open)
-        {
             await Connection.CloseAsync(WebSocketCloseStatus.NormalClosure, "Connection closed.", cancellationToken);
-        }
 
         // Dispose the connection.
         Connection.Dispose();
@@ -128,9 +125,7 @@ public class ServerConnection : IAsyncDisposable
             lock (messageQueue)
             {
                 while (messageQueue.Count > 0)
-                {
                     sendAsync(cancellationToken).Wait(cancellationToken);
-                }
             }
         }
     }
@@ -140,8 +135,8 @@ public class ServerConnection : IAsyncDisposable
         if (Connection.State != WebSocketState.Open || token.IsCancellationRequested)
             return;
 
-        string message = "";
-        bool endOfMessage = false;
+        var message = "";
+        var endOfMessage = false;
 
         while (!endOfMessage)
         {
@@ -162,32 +157,35 @@ public class ServerConnection : IAsyncDisposable
 
         try
         {
-            ServerPacket packet = JsonConvert.DeserializeObject<ServerPacket>(message);
-            packet.RawData = message;
+            var packet = JsonConvert.DeserializeObject<ServerPacket>(message);
+            packet!.RawData = message;
 
             PacketReceived?.Invoke(packet);
-        } catch (JsonReaderException)
+        }
+        catch (JsonReaderException)
         {
-        } catch (Exception e)
+        }
+        catch (Exception e)
         {
             Logger.Error(e, "Failed to deserialize packet.");
         }
     }
 
-    private async Task sendAsync(CancellationToken cancellationToken)
+    private async Task sendAsync(CancellationToken token)
     {
         // Check if the message queue is empty.
         if (messageQueue.Count == 0)
             return;
 
         // Dequeue the message.
-        byte[] message = messageQueue.Dequeue();
+        var message = messageQueue.Dequeue();
 
         // Send the message to the server.
         try
         {
-            await Connection.SendAsync(message, WebSocketMessageType.Binary, true, cancellationToken);
-        } catch (OperationCanceledException)
+            await Connection.SendAsync(message, WebSocketMessageType.Binary, true, token);
+        }
+        catch (OperationCanceledException)
         {
             // The connection was closed.
         }

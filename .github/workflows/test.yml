@@ -1,0 +1,41 @@
+name: build
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+  checks: write # Allows for the test reporter to upload its reports.
+
+jobs:
+  build-test:
+    name: Build and Test
+    runs-on: ${{ matrix.os}}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest, macOS-latest]
+
+    steps:
+      - uses: actions/checkout@v3
+      - name: Restore packages
+        run: dotnet restore
+      - name: Build
+        run: dotnet build -c Release
+      - name: Test
+        run: dotnet test "Kumi.Tests/Kumi.Tests.csproj" -c Release --no-restore --no-build --logger "trx;LogFileName=test-results.trx"
+      - name: Test Report
+        uses: dorny/test-reporter@v1.7.0
+        if: success() || failure()
+        with:
+          name: NUnit Tests (${{matrix.os}})
+          path: Kumi.Tests/TestResults/*.trx
+          reporter: dotnet-trx
+      - name: Upload Artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: artifacts
+          path: |
+            Kumi.Game/bin/Release/net7.0/Kumi.Game.dll
+            Kumi.Tests/TestResults/*.trx
