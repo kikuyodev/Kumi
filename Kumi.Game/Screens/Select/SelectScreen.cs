@@ -69,7 +69,7 @@ public partial class SelectScreen : KumiScreen
                             },
                             RowDimensions = new[]
                             {
-                                new Dimension(GridSizeMode.Absolute, 272),
+                                new Dimension(GridSizeMode.Absolute, 180),
                                 new Dimension(GridSizeMode.AutoSize),
                                 new Dimension(GridSizeMode.AutoSize)
                             },
