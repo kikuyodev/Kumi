@@ -14,6 +14,7 @@ public partial class ListItemGroup : CompositeDrawable
     public readonly Bindable<ChartInfo> SelectedChart = new Bindable<ChartInfo>();
 
     public Func<ChartInfo?, bool>? RequestSelect;
+    public Action<ChartInfo?>? OnSelectionChanged;
 
     private FillFlowContainer<ChartListItem> chartsContainer = null!;
     private ChartListItem? currentlySelected;
@@ -42,7 +43,7 @@ public partial class ListItemGroup : CompositeDrawable
                 new ChartSetListItem(ChartSetInfo)
                 {
                     Selected = { BindTarget = Selected },
-                    RequestSelect = onSetSelectRequest
+                    RequestSelect = onSelectRequest
                 },
                 chartsContainer = new FillFlowContainer<ChartListItem>
                 {
@@ -69,6 +70,8 @@ public partial class ListItemGroup : CompositeDrawable
                     
                     currentlySelected = chartsContainer.Children.First(c => c.ChartInfo.ID == chart.ID);
                     currentlySelected.Selected.Value = true;
+                    
+                    onSelectRequest();
                 }
             });
         
@@ -91,14 +94,24 @@ public partial class ListItemGroup : CompositeDrawable
             
             if (currentlySelected != null)
                 currentlySelected.Selected.Value = true;
+
+            changeSelection();
         }, true);
     }
-
-    private void onSetSelectRequest()
+    
+    private void onSelectRequest()
     {
         if (!RequestSelect?.Invoke(currentlySelected?.ChartInfo) ?? false)
             return;
+
+        changeSelection();
+    }
+
+    private void changeSelection()
+    {
+        if (!Selected.Value)
+            return;
         
-        // TODO: something
+        OnSelectionChanged?.Invoke(currentlySelected?.ChartInfo);
     }
 }

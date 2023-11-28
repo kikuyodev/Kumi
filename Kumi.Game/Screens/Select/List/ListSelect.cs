@@ -1,5 +1,4 @@
 ﻿using Kumi.Game.Charts;
-using Kumi.Game.Database;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
@@ -12,11 +11,9 @@ namespace Kumi.Game.Screens.Select.List;
 public partial class ListSelect : Container
 {
     private readonly FillFlowContainer<ListItemGroup> content;
-    private readonly Bindable<ChartInfo> selectedChart = new Bindable<ChartInfo>();
-
     private ListItemGroup currentlySelected = null!;
 
-    public IBindable<ChartInfo> SelectedChart => selectedChart;
+    public readonly Bindable<ChartInfo> SelectedChart = new Bindable<ChartInfo>();
 
     public ListSelect()
     {
@@ -35,20 +32,21 @@ public partial class ListSelect : Container
     [BackgroundDependencyLoader]
     private void load(ChartManager manager)
     {
-        var charts = manager.GetAllUsableCharts().Detach();
+        var charts = manager.GetAllUsableCharts();
+        charts = charts.Where(c => c.Charts.Any()).ToList();
 
         foreach (var chart in charts)
         {
             var item = new ListItemGroup(chart);
-            item.RequestSelect = info =>
+            item.RequestSelect = _ =>
             {
                 currentlySelected.Selected.Value = false;
                 currentlySelected = item;
                 currentlySelected.Selected.Value = true;
-
-                selectedChart.Value = info;
                 return true;
             };
+            
+            item.OnSelectionChanged = c => SelectedChart.Value = c;
 
             content.Add(item);
         }
