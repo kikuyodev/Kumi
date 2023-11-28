@@ -36,7 +36,6 @@ public partial class ListItemGroup : CompositeDrawable
             Direction = FillDirection.Vertical,
             AutoSizeDuration = 300,
             AutoSizeEasing = Easing.OutQuint,
-            Masking = true,
             Spacing = new Vector2(0, 4),
             Children = new Drawable[]
             {
