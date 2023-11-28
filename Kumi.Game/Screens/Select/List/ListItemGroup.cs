@@ -13,7 +13,7 @@ public partial class ListItemGroup : CompositeDrawable
     public readonly BindableBool Selected = new BindableBool();
     public readonly Bindable<ChartInfo> SelectedChart = new Bindable<ChartInfo>();
 
-    public Func<bool>? RequestSelect;
+    public Func<ChartInfo?, bool>? RequestSelect;
 
     private FillFlowContainer<ChartListItem> chartsContainer = null!;
     private ChartListItem? currentlySelected;
@@ -96,7 +96,7 @@ public partial class ListItemGroup : CompositeDrawable
 
     private void onSetSelectRequest()
     {
-        if (!RequestSelect?.Invoke() ?? false)
+        if (!RequestSelect?.Invoke(currentlySelected?.ChartInfo) ?? false)
             return;
         
         // TODO: something
