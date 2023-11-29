@@ -2,4 +2,8 @@
 
 public enum GameplayAction
 {
+    LeftRim,
+    LeftCentre,
+    RightCentre,
+    RightRim
 }
