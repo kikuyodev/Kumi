@@ -10,6 +10,8 @@ public abstract partial class ScrollingPlayfield : Playfield
         : base(workingChart)
     {
     }
+    
+    public ScrollingNoteContainer ScrollContainer => (ScrollingNoteContainer) NoteContainer;
 
     protected override Container<DrawableNote> CreateNoteContainer() => new ScrollingNoteContainer();
 }

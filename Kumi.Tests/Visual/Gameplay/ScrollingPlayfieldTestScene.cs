@@ -74,8 +74,7 @@ public partial class ScrollingPlayfieldTestScene : PlayfieldTestScene
                 }
             };
 
-            var scrollContainer = (ScrollingNoteContainer) NoteContainer;
-            scrollContainer.Algorithm.BindTo(algorithm);
+            ScrollContainer.Algorithm.BindTo(algorithm);
         }
 
         protected override DrawableNote CreateDrawableNote(INote note)
@@ -145,7 +144,7 @@ public partial class ScrollingPlayfieldTestScene : PlayfieldTestScene
                 return;
             }
 
-            var result = Note.Windows.Result(deltaTime)!;
+            var result = Note.Windows.ResultFor(deltaTime)!;
             if (result == null)
                 return;
 
