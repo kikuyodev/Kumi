@@ -109,7 +109,7 @@ public partial class GenericPlayfieldTestScene : PlayfieldTestScene
                 return;
             }
 
-            var result = Note.Windows.Result(deltaTime)!;
+            var result = Note.Windows.ResultFor(deltaTime)!;
             if (result == null)
                 return;
 

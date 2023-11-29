@@ -45,7 +45,7 @@ public class NoteWindows
     /// Gets the <see cref="NoteHitResult" /> for a given delta.
     /// </summary>
     /// <param name="delta">The time this note was hit.</param>
-    public NoteHitResult? Result(double delta)
+    public NoteHitResult? ResultFor(double delta)
     {
         if (!IsWithinWindow(delta))
             return null;

@@ -21,7 +21,7 @@ public partial class ScrollingNoteContainer : Container<DrawableNote>
         AddLayout(layoutCache);
     }
 
-    private const double time_range = 5000;
+    public double TimeRange = 5000;
 
     public override void Add(DrawableNote drawable)
     {
@@ -85,8 +85,8 @@ public partial class ScrollingNoteContainer : Container<DrawableNote>
         var boundingBox = getBoundingBox();
         var startOffset = -boundingBox.Left;
 
-        var adjustedTime = Algorithm.Value.TimeAt(-startOffset, note.Note.StartTime, time_range, DrawWidth);
-        return adjustedTime - time_range;
+        var adjustedTime = Algorithm.Value.TimeAt(-startOffset, note.Note.StartTime, TimeRange, DrawWidth);
+        return adjustedTime - TimeRange;
     }
     
     private void setLifetimeStart(DrawableNote note)
@@ -103,6 +103,6 @@ public partial class ScrollingNoteContainer : Container<DrawableNote>
 
     private float positionAtTime(double time, double currentTime)
     {
-        return Algorithm.Value.PositionAt(time, currentTime, time_range, DrawWidth);
+        return Algorithm.Value.PositionAt(time, currentTime, TimeRange, DrawWidth);
     }
 }
