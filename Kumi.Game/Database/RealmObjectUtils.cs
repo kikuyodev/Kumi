@@ -2,6 +2,7 @@
 using AutoMapper;
 using AutoMapper.Internal;
 using Kumi.Game.Charts;
+using Kumi.Game.Models;
 using Realms;
 
 namespace Kumi.Game.Database;
@@ -41,6 +42,7 @@ public static class RealmObjectUtils
         c.CreateMap<ChartSetInfo, ChartSetInfo>()
            .ConstructUsing(_ => new ChartSetInfo(null))
            .MaxDepth(2)
+           .ForMember(c => c.Files, cc => cc.Ignore())
            .AfterMap((_, d) =>
             {
                 foreach (var chart in d.Charts)
@@ -69,6 +71,9 @@ public static class RealmObjectUtils
         c.CreateMap<ChartInfo, ChartInfo>();
         c.CreateMap<ChartMetadata, ChartMetadata>();
         c.CreateMap<ChartSetInfo, ChartSetInfo>();
+        c.CreateMap<RealmUser, RealmUser>();
+        c.CreateMap<RealmFile, RealmFile>();
+        c.CreateMap<RealmNamedFileUsage, RealmNamedFileUsage>();
     }
 
     public static List<T> Detach<T>(this IEnumerable<T> items)
