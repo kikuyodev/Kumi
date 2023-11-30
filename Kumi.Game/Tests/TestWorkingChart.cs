@@ -23,7 +23,7 @@ public class TestWorkingChart : WorkingChart
 
     protected override Track? GetChartTrack() => GetVirtualTrack();
 
-    public override Texture? GetBackground() => textures.Get("Backgrounds/default");
+    public override Texture? GetBackground() => textures.Get("Backgrounds/bg1");
 
     public override Stream? GetStream(string storagePath) => null;
 }
