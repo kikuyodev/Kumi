@@ -1,10 +1,14 @@
 ﻿using Kumi.Game.Charts;
+using Kumi.Game.Gameplay;
 using Kumi.Game.Graphics.Backgrounds;
+using Kumi.Game.Graphics.Containers;
 using Kumi.Game.Overlays;
 using Kumi.Game.Screens.Backgrounds;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
+using osu.Framework.Graphics;
 using osu.Framework.Input.Events;
+using osu.Framework.Threading;
 using osuTK.Input;
 
 namespace Kumi.Game.Screens.Edit;
@@ -34,14 +38,35 @@ public partial class EditorScreen : KumiScreen
     }
 
     [Resolved(CanBeNull = true)]
-    private MusicController? musicController { get; set; } = null!;
+    private MusicController? musicController { get; set; }
 
+    private ScheduledDelegate? playfieldLoad;
+    
     protected override void LoadComplete()
     {
         base.LoadComplete();
 
         if (musicController != null)
             musicController.TrackChanged += onTrackChanged;
+
+        playfieldLoad = Scheduler.AddDelayed(() =>
+        {
+            if (!chart.Value.ChartLoaded)
+                return;
+
+            AddInternal(new InputBlockingContainer
+            {
+                RelativeSizeAxes = Axes.Both,
+                Child = new KumiPlayfield(chart.Value)
+                {
+                    Clock = clock,
+                    ProcessCustomClock = false
+                }
+            });
+            
+            playfieldLoad?.Cancel();
+            playfieldLoad = null;
+        }, 1, true);
     }
 
     protected override void Dispose(bool isDisposing)

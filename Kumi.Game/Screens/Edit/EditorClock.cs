@@ -41,13 +41,13 @@ public partial class EditorClock : CompositeComponent, IFrameBasedClock, IAdjust
         return underlyingClock.Seek(position);
     }
 
-    public void SeekForward(double amount = 1000)
+    public void SeekForward(double amount = 250)
         => seek(1, amount);
 
-    public void SeekBackward(double amount = 1000)
+    public void SeekBackward(double amount = 250)
         => seek(-1, amount);
 
-    private void seek(int direction, double amount = 1000)
+    private void seek(int direction, double amount = 250)
     {
         if (direction == 0)
             return;
