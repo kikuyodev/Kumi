@@ -60,7 +60,7 @@ public partial class DrawableDrumHit : DrawableNote<DrumHit>, IKeyBindingHandler
                 this.Delay(250).Expire();
                 break;
             case NoteState.Miss:
-                drumHitPart!.FadeColour(Color4Extensions.FromHex("0D0D0D").Opacity(0.5f), 100);
+                drumHitPart!.FadeColour(Color4Extensions.FromHex("0D0D0D").Opacity(0.5f), 100, Easing.OutQuint);
                 drumHitPart.FadeOut(100);
 
                 this.Delay(100).Expire();
