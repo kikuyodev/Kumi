@@ -3,6 +3,7 @@ using Kumi.Game.Charts;
 using Kumi.Game.Charts.Objects;
 using Kumi.Game.Charts.Objects.Windows;
 using Kumi.Game.Gameplay;
+using Kumi.Game.Gameplay.Clocks;
 using Kumi.Game.Gameplay.Drawables;
 using Kumi.Game.Graphics;
 using Kumi.Game.Input;
@@ -19,10 +20,11 @@ namespace Kumi.Tests.Visual.Gameplay;
 public partial class KumiPlayfieldTestScene : KumiTestScene
 {
     private Playfield? playfield;
+    private GameplayClockContainer gameplayClockContainer = null!;
     private TestWorkingChart? workingChart;
 
     private SpriteText timeText = null!;
-    
+
     [SetUp]
     public void Setup()
     {
@@ -47,11 +49,21 @@ public partial class KumiPlayfieldTestScene : KumiTestScene
     public void PlayfieldTests()
     {
         AddStep("load playfield", () => LoadComponent(playfield = new KumiPlayfield(workingChart!)));
-        AddStep("add playfield", () => Add(new GameplayKeybindContainer
+        AddStep("add playfield", () =>
         {
-            RelativeSizeAxes = Axes.Both,
-            Child = playfield
-        }));
+            Add(new GameplayKeybindContainer
+            {
+                RelativeSizeAxes = Axes.Both,
+                Child = gameplayClockContainer = new GameplayClockContainer(workingChart!.Track)
+                {
+                    RelativeSizeAxes = Axes.Both,
+                    Child = playfield
+                }
+            });
+
+            gameplayClockContainer.StartTime = -1000;
+        });
+
         AddAssert("notes loaded", () => playfield!.ChildrenOfType<DrawableNote>().Any());
 
         AddAssert("seek clock", () =>
@@ -59,7 +71,7 @@ public partial class KumiPlayfieldTestScene : KumiTestScene
             var note = playfield!.ChildrenOfType<DrawableNote>().FirstOrDefault();
             if (note == null) return false;
 
-            playfield!.GameplayClockContainer.Seek(note.Note.StartTime);
+            gameplayClockContainer.Seek(note.Note.StartTime);
             return true;
         });
 
@@ -69,9 +81,9 @@ public partial class KumiPlayfieldTestScene : KumiTestScene
             return note!.Time.Current == note.Note.StartTime;
         });
 
-        AddStep("reset clock", () => { playfield!.GameplayClockContainer.Reset(startClock: true); });
+        AddStep("reset clock", () => { gameplayClockContainer.Reset(startClock: true); });
     }
-    
+
     protected override void Update()
     {
         base.Update();
@@ -79,9 +91,9 @@ public partial class KumiPlayfieldTestScene : KumiTestScene
         if (playfield == null)
             return;
 
-        timeText.Text = $"Time: {playfield.GameplayClockContainer.Time.Current:N2}";
+        timeText.Text = $"Time: {gameplayClockContainer.Time.Current:N2}";
     }
-    
+
     protected virtual void CreateChartData(Chart chart)
     {
         chart.Notes.AddRange(new[]
