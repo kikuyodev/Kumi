@@ -1,6 +1,5 @@
 using Kumi.Game.Charts;
 using Kumi.Game.Charts.Objects;
-using Kumi.Game.Gameplay.Clocks;
 using Kumi.Game.Gameplay.Drawables;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
@@ -19,10 +18,8 @@ public abstract partial class Playfield : Container
 
     private bool firstLoad;
     private Container content = null!;
-    private GameplayClockContainer gameplayClockContainer = null!;
     
     // Testing purposes
-    internal GameplayClockContainer GameplayClockContainer => gameplayClockContainer;
     internal Container<DrawableNote> NoteContainerInternal => NoteContainer;
 
     protected Playfield(WorkingChart workingChart)
@@ -42,15 +39,11 @@ public abstract partial class Playfield : Container
     [BackgroundDependencyLoader]
     private void load()
     {
-        InternalChild = gameplayClockContainer = new GameplayClockContainer(WorkingChart.Track)
+        InternalChild = content = new Container
         {
             RelativeSizeAxes = Axes.Both,
-            Child = content = new Container
-            {
-                RelativeSizeAxes = Axes.Both,
-                Anchor = Anchor.Centre,
-                Origin = Anchor.Centre
-            }
+            Anchor = Anchor.Centre,
+            Origin = Anchor.Centre
         };
     }
 
@@ -73,8 +66,6 @@ public abstract partial class Playfield : Container
             var drawableNote = createDrawableNote(note);
             NoteContainer.Add(drawableNote);
         }
-
-        gameplayClockContainer.StartTime = -3000;
     }
 
     private DrawableNote createDrawableNote(INote note)

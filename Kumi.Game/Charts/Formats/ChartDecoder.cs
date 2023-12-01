@@ -1,6 +1,7 @@
 ﻿using System.Text.RegularExpressions;
 using Kumi.Game.Charts.Events;
 using Kumi.Game.Charts.Objects;
+using Kumi.Game.Charts.Objects.Windows;
 using Kumi.Game.Charts.Timings;
 using Kumi.Game.IO.Formats;
 using Kumi.Game.Models;
@@ -221,6 +222,8 @@ public class ChartDecoder : FileDecoder<Chart, ChartSections>
                 throw new InvalidDataException($"Invalid note type: {typeValue}");
         }
 
+        // TODO: Temporary
+        note.Windows = new NoteWindows();
         note.Type = typeValue;
         Current.Notes.Add(note);
     }

@@ -10,22 +10,24 @@ public partial class KumiTestScene : TestScene
 {
     private DummyAPIConnection localDummyProvider = null!;
 
+    protected new DependencyContainer Dependencies = null!;
+
     protected IAPIConnectionProvider Provider => localDummyProvider;
-    protected AudioManager AudioManager => Dependencies.Get<AudioManager>();
-    protected LargeTextureStore LargeTextureStore => Dependencies.Get<LargeTextureStore>();
+    protected AudioManager AudioManager => base.Dependencies.Get<AudioManager>();
+    protected LargeTextureStore LargeTextureStore => base.Dependencies.Get<LargeTextureStore>();
 
     protected override ITestSceneTestRunner CreateRunner() => new KumiTestSceneTestRunner();
 
     protected override IReadOnlyDependencyContainer CreateChildDependencies(IReadOnlyDependencyContainer parent)
     {
-        var dependencies = new DependencyContainer(parent);
+        Dependencies = new DependencyContainer(parent);
 
         localDummyProvider = new DummyAPIConnection();
-        dependencies.CacheAs<IAPIConnectionProvider>(localDummyProvider);
+        Dependencies.CacheAs<IAPIConnectionProvider>(localDummyProvider);
 
         LoadComponentAsync(localDummyProvider, Add);
 
-        return dependencies;
+        return Dependencies;
     }
 
     private partial class KumiTestSceneTestRunner : KumiGameBase, ITestSceneTestRunner
