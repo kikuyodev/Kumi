@@ -24,24 +24,29 @@ public partial class EditorScreen : KumiScreen
 
     private readonly Bindable<WorkingChart> chart = new Bindable<WorkingChart>();
 
-    private EditorClock clock = null!;
+    [Cached]
+    private EditorClock clock = new EditorClock();
 
     [BackgroundDependencyLoader]
     private void load(IBindable<WorkingChart> working)
     {
         chart.BindTarget = working;
 
-        clock = new EditorClock();
         clock.ChangeSource(chart.Value.Track);
-        
         AddInternal(clock);
+
+        AddInternal(new EditorOverlay
+        {
+            RelativeSizeAxes = Axes.Both,
+            Chart = { BindTarget = chart }
+        });
     }
 
     [Resolved(CanBeNull = true)]
     private MusicController? musicController { get; set; }
 
     private ScheduledDelegate? playfieldLoad;
-    
+
     protected override void LoadComplete()
     {
         base.LoadComplete();
@@ -57,13 +62,14 @@ public partial class EditorScreen : KumiScreen
             AddInternal(new InputBlockingContainer
             {
                 RelativeSizeAxes = Axes.Both,
+                Depth = 1,
                 Child = new KumiPlayfield(chart.Value)
                 {
                     Clock = clock,
                     ProcessCustomClock = false
                 }
             });
-            
+
             playfieldLoad?.Cancel();
             playfieldLoad = null;
         }, 1, true);
@@ -102,17 +108,6 @@ public partial class EditorScreen : KumiScreen
             case Key.Right:
                 clock.SeekForward();
                 return true;
-
-            case Key.Space:
-                if (e.Repeat)
-                    return false;
-                
-                if (clock.IsRunning)
-                    clock.Stop();
-                else
-                    clock.Start();
-
-                return true;
         }
 
         return base.OnKeyDown(e);
@@ -124,7 +119,7 @@ public partial class EditorScreen : KumiScreen
     {
         if (e.ControlPressed || e.AltPressed || e.SuperPressed)
             return false;
-        
+
         var scrollComponent = e.ScrollDelta.X + e.ScrollDelta.Y;
         var scrollDirection = Math.Sign(scrollComponent);
 
@@ -136,13 +131,13 @@ public partial class EditorScreen : KumiScreen
         while (Math.Abs(scrollAccumulation) >= 1d)
         {
             if (scrollAccumulation > 0)
-                clock.SeekForward();
-            else
                 clock.SeekBackward();
+            else
+                clock.SeekForward();
 
             scrollAccumulation = scrollAccumulation < 0 ? Math.Min(0, scrollAccumulation + 1d) : Math.Max(0, scrollAccumulation - 1d);
         }
-        
+
         return true;
     }
 }
