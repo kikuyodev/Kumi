@@ -3,6 +3,7 @@ using Kumi.Game.Charts;
 using Kumi.Game.Charts.Objects;
 using Kumi.Game.Charts.Objects.Windows;
 using Kumi.Game.Gameplay;
+using Kumi.Game.Gameplay.Clocks;
 using Kumi.Game.Gameplay.Drawables;
 using Kumi.Game.Graphics;
 using Kumi.Game.Tests;
@@ -18,6 +19,7 @@ namespace Kumi.Tests.Visual.Gameplay;
 public abstract partial class PlayfieldTestScene : KumiTestScene
 {
     protected Playfield? Playfield;
+    private GameplayClockContainer gameplayClockContainer = null!;
 
     private TestWorkingChart? workingChart;
 
@@ -47,7 +49,16 @@ public abstract partial class PlayfieldTestScene : KumiTestScene
     public void PlayfieldTests()
     {
         AddStep("load playfield", () => { LoadComponent(Playfield = CreatePlayfield(workingChart!)); });
-        AddStep("add playfield", () => { Add(Playfield); });
+        AddStep("add playfield", () =>
+        {
+            Add(gameplayClockContainer = new GameplayClockContainer(workingChart!.Track)
+            {
+                RelativeSizeAxes = Axes.Both,
+                Child = Playfield
+            });
+
+            gameplayClockContainer.StartTime = -1000;
+        });
         AddAssert("notes loaded", () => Playfield!.ChildrenOfType<DrawableNote>().Any());
 
         AddAssert("seek clock", () =>
@@ -55,7 +66,7 @@ public abstract partial class PlayfieldTestScene : KumiTestScene
             var note = Playfield!.ChildrenOfType<DrawableNote>().FirstOrDefault();
             if (note == null) return false;
 
-            Playfield!.GameplayClockContainer.Seek(note.Note.StartTime);
+            gameplayClockContainer.Seek(note.Note.StartTime);
             return true;
         });
 
@@ -67,7 +78,7 @@ public abstract partial class PlayfieldTestScene : KumiTestScene
 
         CreateAsserts();
 
-        AddStep("reset clock", () => { Playfield!.GameplayClockContainer.Reset(startClock: true); });
+        AddStep("reset clock", () => { gameplayClockContainer.Reset(startClock: true); });
     }
 
     protected override void Update()
@@ -77,7 +88,7 @@ public abstract partial class PlayfieldTestScene : KumiTestScene
         if (Playfield == null)
             return;
 
-        timeText.Text = $"Time: {Playfield.GameplayClockContainer.Time.Current:N2}";
+        timeText.Text = $"Time: {gameplayClockContainer.Time.Current:N2}";
     }
 
     protected virtual void CreateAsserts()

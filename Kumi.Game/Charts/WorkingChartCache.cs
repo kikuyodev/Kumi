@@ -1,4 +1,5 @@
-﻿using Kumi.Game.Database;
+﻿using Kumi.Game.Charts.Formats;
+using Kumi.Game.Database;
 using Kumi.Game.Extensions;
 using Kumi.Game.IO;
 using osu.Framework.Audio;
@@ -131,9 +132,8 @@ public class WorkingChartCache : IChartResourceProvider, IWorkingChartCache
                     return null;
                 }
 
-                // return null for now until we have a chart decoder.
-                // TODO: chart decoder.
-                return null;
+                var decoder = new ChartDecoder();
+                return decoder.Decode(stream);
             }
             catch (Exception e)
             {
