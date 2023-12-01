@@ -14,8 +14,8 @@ namespace Kumi.Game.Gameplay.Drawables;
 public partial class DrawableDrumHit : DrawableNote<DrumHit>, IKeyBindingHandler<GameplayAction>
 {
     public static readonly ColourInfo DON_COLOUR_GRADIENT = ColourInfo.GradientVertical(
-        Color4Extensions.FromHex("F94926"),
-        Color4Extensions.FromHex("F96226")
+        Color4Extensions.FromHex("F96226"),
+        Color4Extensions.FromHex("F94926")
     );
     
     public static readonly ColourInfo KAT_COLOUR_GRADIENT = ColourInfo.GradientVertical(
