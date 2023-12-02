@@ -19,11 +19,13 @@ namespace Kumi.Game.Screens.Edit;
 [Cached]
 public partial class EditorOverlay : Container
 {
-    public IBindable<WorkingChart?> Chart { get; } = new Bindable<WorkingChart?>();
+    public const float TOP_BAR_HEIGHT = 24;
+
+    public IBindable<WorkingChart> Chart { get; } = new Bindable<WorkingChart>();
 
     public EditorOverlay()
     {
-        Chart.BindValueChanged(_ => constructDisplay(), true);
+        Chart.BindValueChanged(_ => constructDisplay());
     }
 
     private void constructDisplay()
@@ -35,7 +37,7 @@ public partial class EditorOverlay : Container
             new Container
             {
                 RelativeSizeAxes = Axes.X,
-                Height = 24,
+                Height = TOP_BAR_HEIGHT,
                 Children = new Drawable[]
                 {
                     new FillFlowContainer
@@ -122,7 +124,7 @@ public partial class EditorOverlay : Container
                     }
                 }
             },
-            new TimelineBar
+            new TopBarTimeline
             {
                 Anchor = Anchor.BottomLeft,
                 Origin = Anchor.BottomLeft
