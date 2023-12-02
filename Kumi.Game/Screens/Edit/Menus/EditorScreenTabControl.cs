@@ -23,11 +23,3 @@ public partial class EditorScreenTabControl : KumiTabControl<EditorScreenMode>
         }
     }
 }
-
-public enum EditorScreenMode
-{
-    Setup,
-    Compose,
-    Timing,
-    Verify
-}
