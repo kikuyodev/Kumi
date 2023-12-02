@@ -35,9 +35,9 @@ public partial class EditorScreenTestScene : KumiScreenTestScene
     [Test]
     public void TestEditorScreen()
     {
-        PushScreen(new EditorScreen());
+        PushScreen(new Editor());
         WaitForScreenLoad();
     }
 
-    protected override KumiScreen CreateScreen() => new EditorScreen();
+    protected override KumiScreen CreateScreen() => new Editor();
 }
