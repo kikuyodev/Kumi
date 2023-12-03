@@ -16,14 +16,14 @@ public class TimingPointHandler
     /// Gets any timing point at a given time.
     /// </summary>
     /// <param name="time">The time.</param>
-    public TimingPoint GetTimingPointAt(float time) => searchForPoint<TimingPoint>(time, null);
+    public TimingPoint GetTimingPointAt(double time) => searchForPoint<TimingPoint>(time, null);
 
     /// <summary>
     /// Gets a specific kind of timing point at a given time.
     /// </summary>
     /// <param name="time">The time.</param>
     /// <param name="pointType">The point type.</param>
-    public T GetTimingPointAt<T>(float time, TimingPointType? pointType)
+    public T GetTimingPointAt<T>(double time, TimingPointType? pointType)
         where T : TimingPoint
         => searchForPoint<T>(time, pointType);
 
@@ -31,19 +31,19 @@ public class TimingPointHandler
     /// Gets the scroll speed at a given time.
     /// </summary>
     /// <param name="time">The time.</param>
-    public float GetScrollSpeedAt(float time) => searchForPoint<TimingPoint>(time, null).RelativeScrollSpeed;
+    public float GetScrollSpeedAt(double time) => searchForPoint<TimingPoint>(time, null).RelativeScrollSpeed;
 
     /// <summary>
     /// Gets the BPM at a given time.
     /// </summary>
     /// <param name="time">The time.</param>
-    public float GetBPMAt(float time) => searchForPoint<UninheritedTimingPoint>(time, TimingPointType.Uninherited).BPM;
+    public float GetBPMAt(double time) => searchForPoint<UninheritedTimingPoint>(time, TimingPointType.Uninherited).BPM;
 
     /// <summary>
     /// Gets the beat length at a given time.
     /// </summary>
     /// <param name="time">The time.</param>
-    public float GetBeatLengthAt(float time) => searchForPoint<UninheritedTimingPoint>(time, TimingPointType.Uninherited).MillisecondsPerBeat;
+    public float GetBeatLengthAt(double time) => searchForPoint<UninheritedTimingPoint>(time, TimingPointType.Uninherited).MillisecondsPerBeat;
 
     /// <summary>
     /// Clears all timing points.
@@ -53,7 +53,7 @@ public class TimingPointHandler
         TimingPoints.Clear();
     }
 
-    private T searchForPoint<T>(float time, TimingPointType? pointType)
+    private T searchForPoint<T>(double time, TimingPointType? pointType)
         where T : TimingPoint
     {
         var idx = TimingPoints.BinarySearch(new TimingPoint(time));

@@ -11,7 +11,7 @@ public class DisplayLyricEvent : Event, IHasEndTime
     protected override EventType ExpectedType => EventType.SwitchMedia;
     protected override int ExpectedLength => 4;
 
-    public float EndTime { get; private set; }
+    public double EndTime { get; private set; }
     public float CrossfadeTime { get; private set; }
     public Easing Easing { get; private set; }
     public string Lyric { get; private set; } = null!;
@@ -20,7 +20,7 @@ public class DisplayLyricEvent : Event, IHasEndTime
         : base(startTime)
     {
         Lyric = lyric;
-        StartTime = startTime;
+        Time = startTime;
         EndTime = endTime;
         CrossfadeTime = crossfadeTime;
         Easing = easing;
@@ -33,7 +33,7 @@ public class DisplayLyricEvent : Event, IHasEndTime
 
     protected override void Parse(string[] input)
     {
-        EndTime = StartTime + StringUtils.AssertAndFetch<float>(input[0]);
+        EndTime = Time + StringUtils.AssertAndFetch<float>(input[0]);
         Easing = Enum.Parse<Easing>(input[1]);
         CrossfadeTime = StringUtils.AssertAndFetch<float>(input[2]);
         Lyric = input[3];

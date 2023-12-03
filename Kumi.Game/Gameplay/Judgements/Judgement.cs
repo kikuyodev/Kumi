@@ -11,7 +11,7 @@ public class Judgement
 
     public double? AbsoluteTime { get; set; }
 
-    public double DeltaTime => AbsoluteTime ?? 0 - Note.StartTime;
+    public double DeltaTime => AbsoluteTime ?? 0 - Note.Time;
 
     public bool HasResult => Result > NoteHitResult.None;
 

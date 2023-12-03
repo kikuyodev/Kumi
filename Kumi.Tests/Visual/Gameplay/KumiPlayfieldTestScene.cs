@@ -71,14 +71,14 @@ public partial class KumiPlayfieldTestScene : KumiTestScene
             var note = playfield!.ChildrenOfType<DrawableNote>().FirstOrDefault();
             if (note == null) return false;
 
-            gameplayClockContainer.Seek(note.Note.StartTime);
+            gameplayClockContainer.Seek(note.Note.Time);
             return true;
         });
 
         AddAssert("first note closer in time", () =>
         {
             var note = playfield!.ChildrenOfType<DrawableNote>().FirstOrDefault();
-            return note!.Time.Current == note.Note.StartTime;
+            return note!.Time.Current == note.Note.Time;
         });
 
         AddStep("reset clock", () => { gameplayClockContainer.Reset(startClock: true); });

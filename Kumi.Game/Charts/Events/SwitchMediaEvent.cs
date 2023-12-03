@@ -11,7 +11,7 @@ public class SwitchMediaEvent : MediaEvent, IHasEndTime
     protected override EventType ExpectedType => EventType.SwitchMedia;
     protected override int ExpectedLength => 3;
 
-    public float EndTime { get; private set; }
+    public double EndTime { get; private set; }
     public Easing Easing { get; private set; }
 
     public SwitchMediaEvent(string filename, float startTime, float endTime, Easing easing = Easing.None)
@@ -29,7 +29,7 @@ public class SwitchMediaEvent : MediaEvent, IHasEndTime
 
     protected override void Parse(string[] input)
     {
-        EndTime = StartTime + StringUtils.AssertAndFetch<float>(input[0]);
+        EndTime = Time + StringUtils.AssertAndFetch<double>(input[0]);
         FileName = input[1];
         Easing = Enum.Parse<Easing>(input[2]);
     }

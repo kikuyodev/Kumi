@@ -66,14 +66,14 @@ public abstract partial class PlayfieldTestScene : KumiTestScene
             var note = Playfield!.ChildrenOfType<DrawableNote>().FirstOrDefault();
             if (note == null) return false;
 
-            gameplayClockContainer.Seek(note.Note.StartTime);
+            gameplayClockContainer.Seek(note.Note.Time);
             return true;
         });
 
         AddAssert("first note closer in time", () =>
         {
             var note = Playfield!.ChildrenOfType<DrawableNote>().FirstOrDefault();
-            return note!.Time.Current == note.Note.StartTime;
+            return note!.Time.Current == note.Note.Time;
         });
 
         CreateAsserts();
@@ -109,7 +109,7 @@ public abstract partial class PlayfieldTestScene : KumiTestScene
     {
         return new TestNote
         {
-            StartTime = startTime,
+            Time = startTime,
             Type = NoteType.Don,
             Flags = NoteFlags.None,
             NoteColor = Color4.White,
@@ -121,7 +121,7 @@ public abstract partial class PlayfieldTestScene : KumiTestScene
 
     protected partial class TestNote : INote
     {
-        public float StartTime { get; set; }
+        public double Time { get; set; }
         public NoteType Type { get; set; }
         public NoteFlags Flags { get; set; }
         public Color4 NoteColor { get; set; }
