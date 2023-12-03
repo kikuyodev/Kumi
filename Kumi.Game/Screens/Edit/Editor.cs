@@ -26,6 +26,9 @@ public partial class Editor : KumiScreen
 
     [Cached]
     private EditorClock clock = new EditorClock();
+    
+    [Cached]
+    private BindableBeatDivisor beatDivisor = new BindableBeatDivisor();
 
     private EditorScreenStack screenStack = null!;
     
@@ -40,7 +43,7 @@ public partial class Editor : KumiScreen
 
         clock.ChangeSource(workingChart.Value.Track);
         AddInternal(clock);
-
+        
         AddRangeInternal(new Drawable[]
         {
             screenStack = new EditorScreenStack
