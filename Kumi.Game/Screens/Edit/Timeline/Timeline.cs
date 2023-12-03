@@ -13,6 +13,7 @@ using osuTK.Input;
 
 namespace Kumi.Game.Screens.Edit.Timeline;
 
+[Cached]
 public partial class Timeline : ZoomableScrollContainer
 {
     public const float HEIGHT = 72;
@@ -40,6 +41,8 @@ public partial class Timeline : ZoomableScrollContainer
 
     private WaveformGraph waveform = null!;
 
+    private TimelineTickDisplay ticks;
+
     private Container mainContent = null!;
 
     private Bindable<float> waveformOpacity = null!;
@@ -48,7 +51,7 @@ public partial class Timeline : ZoomableScrollContainer
 
     private readonly IBindable<Track> track = new Bindable<Track>();
     
-    protected InputManager InputManger { get; private set; }
+    protected InputManager InputManger { get; private set; } = null!;
 
     [BackgroundDependencyLoader]
     private void load(IBindable<WorkingChart> chart)
@@ -73,7 +76,8 @@ public partial class Timeline : ZoomableScrollContainer
                         LowColour = Color4Extensions.FromHex("3960AC"),
                         MidColour = Color4Extensions.FromHex("5379C6"),
                         HighColour = Color4Extensions.FromHex("8CA6D9")
-                    }
+                    },
+                    ticks = new TimelineTickDisplay()
                 }
             }
         });
