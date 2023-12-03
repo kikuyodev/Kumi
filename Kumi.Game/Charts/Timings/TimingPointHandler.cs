@@ -11,6 +11,16 @@ public class TimingPointHandler
     /// A list of all timing points in the <see cref="IChart" />.
     /// </summary>
     public BindableList<TimingPoint> TimingPoints { get; } = new BindableList<TimingPoint>();
+    
+    /// <summary>
+    /// A list of all inherited timing points in the <see cref="IChart" />.
+    /// </summary>
+    public IReadOnlyList<InheritedTimingPoint> InheritedTimingPoints => TimingPoints.OfType<InheritedTimingPoint>().ToList().AsReadOnly();
+    
+    /// <summary>
+    /// A list of all uninherited timing points in the <see cref="IChart" />.
+    /// </summary>
+    public IReadOnlyList<UninheritedTimingPoint> UninheritedTimingPoints => TimingPoints.OfType<UninheritedTimingPoint>().ToList().AsReadOnly();
 
     /// <summary>
     /// Gets any timing point at a given time.
@@ -56,6 +66,15 @@ public class TimingPointHandler
     private T searchForPoint<T>(double time, TimingPointType? pointType)
         where T : TimingPoint
     {
+        if (TimingPoints.Count == 0)
+            return (TimingPoint.DEFAULT as T)!;
+        
+        if (time < TimingPoints[0].Time)
+            return (TimingPoint.DEFAULT as T)!;
+        
+        if (time > TimingPoints[^1].Time)
+            return (TimingPoints[^1] as T)!;
+        
         var idx = TimingPoints.BinarySearch(new TimingPoint(time));
         if (idx < 0)
             idx = ~idx - 1;
