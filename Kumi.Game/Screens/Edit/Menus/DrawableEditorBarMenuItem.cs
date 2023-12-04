@@ -112,7 +112,8 @@ public partial class DrawableEditorBarMenuItem : osu.Framework.Graphics.UserInte
                     Anchor = Anchor.CentreLeft,
                     Origin = Anchor.CentreLeft,
                     Font = KumiFonts.GetFont(size: 12),
-                    Margin = new MarginPadding { Horizontal = 8 }
+                    Margin = new MarginPadding { Horizontal = 8 },
+                    Colour = Color4Extensions.FromHex("CCCCCC")
                 },
                 BoldText = new SpriteText
                 {
@@ -120,7 +121,8 @@ public partial class DrawableEditorBarMenuItem : osu.Framework.Graphics.UserInte
                     Anchor = Anchor.CentreLeft,
                     Origin = Anchor.CentreLeft,
                     Font = KumiFonts.GetFont(weight: FontWeight.SemiBold, size: 12),
-                    Margin = new MarginPadding { Horizontal = 8 }
+                    Margin = new MarginPadding { Horizontal = 8 },
+                    Colour = Color4Extensions.FromHex("CCCCCC")
                 }
             };
         }

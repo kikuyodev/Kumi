@@ -12,7 +12,6 @@ using osu.Framework.Graphics.Sprites;
 using osu.Framework.Graphics.UserInterface;
 using osu.Framework.Localisation;
 using osuTK;
-using osuTK.Graphics;
 
 namespace Kumi.Game.Screens.Edit;
 
@@ -91,7 +90,7 @@ public partial class EditorOverlay : Container
                                 Anchor = Anchor.CentreLeft,
                                 Origin = Anchor.CentreLeft,
                                 Alpha = 0.5f,
-                                Colour = Color4.White,
+                                Colour = Color4Extensions.FromHex("CCCCCC"),
                                 Text = getRomanisableString(),
                                 Font = KumiFonts.GetFont(size: 12)
                             }
