@@ -24,14 +24,11 @@ public partial class Editor : KumiScreen
     [Resolved]
     private ChartManager chartManager { get; set; } = null!;
 
-    [Cached]
-    private EditorClock clock = new EditorClock();
-    
-    [Cached]
-    private BindableBeatDivisor beatDivisor = new BindableBeatDivisor();
+    private EditorClock clock = null!;
+    private BindableBeatDivisor beatDivisor = null!;
 
     private EditorScreenStack screenStack = null!;
-    
+
     private readonly Bindable<WorkingChart> workingChart = new Bindable<WorkingChart>();
 
     [BackgroundDependencyLoader]
@@ -41,9 +38,15 @@ public partial class Editor : KumiScreen
 
         dependencies.CacheAs((workingChart.Value.Chart as Chart)!);
 
+        beatDivisor = new BindableBeatDivisor();
+        clock = new EditorClock(beatDivisor);
+        
+        dependencies.CacheAs(clock);
+        dependencies.CacheAs(beatDivisor);
+
         clock.ChangeSource(workingChart.Value.Track);
         AddInternal(clock);
-        
+
         AddRangeInternal(new Drawable[]
         {
             screenStack = new EditorScreenStack
@@ -67,7 +70,7 @@ public partial class Editor : KumiScreen
 
         if (musicController != null)
             musicController.TrackChanged += onTrackChanged;
-        
+
         screenStack.Push(new ComposeScreen());
     }
 
