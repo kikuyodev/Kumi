@@ -4,9 +4,7 @@ using Kumi.Game.Screens.Edit.Timeline.Parts;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Caching;
-using osu.Framework.Extensions.Color4Extensions;
 using osu.Framework.Graphics;
-using osuTK.Graphics;
 
 namespace Kumi.Game.Screens.Edit.Timeline;
 
@@ -99,12 +97,12 @@ public partial class TimelineTickDisplay : TimelinePart<DrawableTick>
                     var indexInBar = beat % (point.TimeSignature.Numerator * beatDivisor.Value);
 
                     var divisor = BindableBeatDivisor.GetDivisorForBeatIndex(beat, beatDivisor.Value);
-                    var colour = getColourFor(divisor);
+                    var colour = BindableBeatDivisor.GetColourFor(divisor);
 
                     var size = new Vector2(1f, tick_height);
                     
                     if (indexInBar != 0)
-                        size = new Vector2(0.6f, tick_height * getHeightFor(divisor));
+                        size = new Vector2(0.6f, tick_height * BindableBeatDivisor.GetHeightFor(divisor));
 
                     var tick = getNextDrawableTick();
                     tick.X = xPos;
@@ -140,54 +138,6 @@ public partial class TimelineTickDisplay : TimelinePart<DrawableTick>
             tick.Show();
 
             return tick;
-        }
-    }
-
-    private Color4 getColourFor(int divisor)
-    {
-        switch (divisor)
-        {
-            case 1:
-                return Color4.White;
-            case 2:
-                return Color4Extensions.FromHex("FF3366");
-            case 4:
-                return Color4Extensions.FromHex("33BBFF");
-            case 8:
-                return Color4Extensions.FromHex("FFD333");
-            case 16:
-                return Color4Extensions.FromHex("8C66FF").Opacity(0.5f);
-            
-            case 3:
-                return Color4Extensions.FromHex("6633FF");
-            case 6:
-                return Color4Extensions.FromHex("FF7033");
-            case 12:
-                return Color4Extensions.FromHex("8C66FF").Opacity(0.5f);
-            
-            default:
-                return Color4Extensions.FromHex("FF3366");
-        }
-    }
-
-    private float getHeightFor(int divisor)
-    {
-        switch (divisor)
-        {
-            case 1:
-            case 2:
-                return 0.8f;
-            
-            case 3:
-            case 4:
-                return 0.6f;
-            
-            case 6:
-            case 8:
-                return 0.5f;
-            
-            default:
-                return 0.4f;
         }
     }
 }
