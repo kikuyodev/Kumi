@@ -1,7 +1,7 @@
 ﻿using Kumi.Game.Charts;
+using Kumi.Game.Graphics;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
-using osu.Framework.Extensions.Color4Extensions;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
@@ -29,7 +29,7 @@ public partial class ChartSetInfoWedge : Container
             new Box
             {
                 RelativeSizeAxes = Axes.Both,
-                Colour = Color4Extensions.FromHex("0D0D0D")
+                Colour = Colours.Gray(0.05f)
             },
             content = new Container
             {

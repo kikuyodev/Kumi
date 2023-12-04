@@ -1,6 +1,6 @@
 ﻿using Kumi.Game.Charts;
+using Kumi.Game.Graphics;
 using osu.Framework.Allocation;
-using osu.Framework.Extensions.Color4Extensions;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
@@ -67,7 +67,7 @@ public partial class MarkerPart : TimelinePart
             RelativePositionAxes = Axes.X;
             RelativeSizeAxes = Axes.Y;
             AutoSizeAxes = Axes.X;
-            Colour = Color4Extensions.FromHex("FF0040");
+            Colour = Colours.RED_ACCENT;
 
             InternalChildren = new Drawable[]
             {

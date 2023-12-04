@@ -38,14 +38,14 @@ public abstract partial class KumiTabControl<T> : TabControl<T>
             Anchor = Anchor.BottomLeft,
             Origin = Anchor.BottomLeft,
             Size = new Vector2(0, 3),
-            Colour = Color4Extensions.FromHex("3377FF"),
+            Colour = Colours.BLUE_ACCENT_LIGHT,
             Alpha = 0,
             Y = 5,
             EdgeEffect = new EdgeEffectParameters
             {
                 Roundness = 3,
                 Type = EdgeEffectType.Glow,
-                Colour = Color4Extensions.FromHex("3377FF").Opacity(0.15f),
+                Colour = Colours.BLUE_ACCENT_LIGHT.Opacity(0.15f),
                 Radius = 4
             }
         });
@@ -95,7 +95,7 @@ public abstract partial class KumiTabControl<T> : TabControl<T>
                     Origin = Anchor.Centre,
                     Text = GetText(),
                     Font = KumiFonts.GetFont(size: 10),
-                    Colour = Color4Extensions.FromHex("666666")
+                    Colour = Colours.GRAY_6
                 },
                 TextBold = new SpriteText
                 {
@@ -103,7 +103,7 @@ public abstract partial class KumiTabControl<T> : TabControl<T>
                     Origin = Anchor.Centre,
                     Text = GetText(),
                     Font = KumiFonts.GetFont(weight: FontWeight.SemiBold, size: 10),
-                    Colour = Color4Extensions.FromHex("CCCCCC"),
+                    Colour = Colours.GRAY_C,
                     Alpha = 0
                 },
             };
@@ -120,7 +120,7 @@ public abstract partial class KumiTabControl<T> : TabControl<T>
 
         private void updateState()
         {
-            Text.FadeColour(Active.Value || IsHovered ? Color4Extensions.FromHex("CCCCCC") : Color4Extensions.FromHex("666666"), fade_duration, Easing.OutQuint);
+            Text.FadeColour(Active.Value || IsHovered ? Colours.GRAY_C : Colours.GRAY_6, fade_duration, Easing.OutQuint);
             Text.FadeTo(Active.Value ? 0 : 1, fade_duration, Easing.OutQuint);
             TextBold.FadeTo(Active.Value ? 1 : 0, fade_duration, Easing.OutQuint);
         }

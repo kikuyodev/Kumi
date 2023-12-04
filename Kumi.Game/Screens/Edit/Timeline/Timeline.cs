@@ -1,9 +1,9 @@
 ﻿using Kumi.Game.Charts;
+using Kumi.Game.Graphics;
 using Kumi.Game.Graphics.Containers;
 using osu.Framework.Allocation;
 using osu.Framework.Audio.Track;
 using osu.Framework.Bindables;
-using osu.Framework.Extensions.Color4Extensions;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Audio;
 using osu.Framework.Graphics.Containers;
@@ -72,10 +72,10 @@ public partial class Timeline : ZoomableScrollContainer
                     waveform = new WaveformGraph
                     {
                         RelativeSizeAxes = Axes.Both,
-                        BaseColour = Color4Extensions.FromHex("5379C6"),
-                        LowColour = Color4Extensions.FromHex("3960AC"),
-                        MidColour = Color4Extensions.FromHex("5379C6"),
-                        HighColour = Color4Extensions.FromHex("8CA6D9")
+                        BaseColour = Colours.BLUE_LIGHT,
+                        LowColour = Colours.BLUE,
+                        MidColour = Colours.BLUE_LIGHT,
+                        HighColour = Colours.BLUE_LIGHTER
                     },
                     ticks = new TimelineTickDisplay()
                 }

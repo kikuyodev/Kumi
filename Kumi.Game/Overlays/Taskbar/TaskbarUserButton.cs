@@ -3,7 +3,6 @@ using Kumi.Game.Graphics.Sprites;
 using Kumi.Game.Online.API;
 using Kumi.Game.Online.API.Accounts;
 using osu.Framework.Allocation;
-using osu.Framework.Extensions.Color4Extensions;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
@@ -64,7 +63,7 @@ public partial class TaskbarUserButton : TaskbarButton
                             Child = new Box
                             {
                                 RelativeSizeAxes = Axes.Both,
-                                Colour = Color4Extensions.FromHex("1A1A1A"),
+                                Colour = Colours.Gray(0.1f),
                             }
                         },
                         avatar = new UpdateableAvatarSprite

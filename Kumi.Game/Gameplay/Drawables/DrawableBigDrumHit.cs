@@ -2,6 +2,7 @@
 using Kumi.Game.Charts.Objects;
 using Kumi.Game.Charts.Objects.Windows;
 using Kumi.Game.Gameplay.Drawables.Parts;
+using Kumi.Game.Graphics;
 using Kumi.Game.Input;
 using osu.Framework.Extensions.Color4Extensions;
 using osu.Framework.Graphics;
@@ -49,7 +50,7 @@ public partial class DrawableBigDrumHit : DrawableNote<DrumHit>, IKeyBindingHand
                 this.Delay(250).Expire();
                 break;
             case NoteState.Miss:
-                drumHitPart!.FadeColour(Color4Extensions.FromHex("0D0D0D").Opacity(0.5f), 100);
+                drumHitPart!.FadeColour(Colours.Gray(0.05f).Opacity(0.5f), 100);
                 drumHitPart.FadeOut(100);
 
                 this.Delay(100).Expire();

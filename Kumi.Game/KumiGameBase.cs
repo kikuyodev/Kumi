@@ -28,7 +28,7 @@ public partial class KumiGameBase : osu.Framework.Game
 
     private Container content = null!;
     
-    protected Colors GameColors { get; private set; } = null!;
+    protected Colours GameColours { get; private set; } = null!;
     protected IAPIConnectionProvider API { get; set; } = null!;
     protected Bindable<WorkingChart> Chart { get; private set; } = null!;
     protected KumiScreenStack ScreenStack = null!;
@@ -47,7 +47,7 @@ public partial class KumiGameBase : osu.Framework.Game
     {
         // Resources
         Resources.AddStore(new DllResourceStore(KumiResources.Assembly));
-        DependencyContainer.Cache(GameColors = new Colors());
+        DependencyContainer.Cache(GameColours = new Colours());
 
         Audio.Tracks.AddAdjustment(AdjustableProperty.Volume, new BindableDouble(0.8));
 

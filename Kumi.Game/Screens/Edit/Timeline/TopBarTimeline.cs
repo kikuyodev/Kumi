@@ -1,6 +1,5 @@
 ﻿using Kumi.Game.Graphics;
 using osu.Framework.Allocation;
-using osu.Framework.Extensions.Color4Extensions;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
@@ -57,7 +56,7 @@ public partial class TopBarTimeline : GridContainer
                         new Box
                         {
                             RelativeSizeAxes = Axes.Both,
-                            Colour = Color4Extensions.FromHex("0D0D0D"),
+                            Colour = Colours.Gray(0.05f),
                         },
                         timeText = new SpriteText
                         {
@@ -65,7 +64,7 @@ public partial class TopBarTimeline : GridContainer
                             Origin = Anchor.Centre,
                             Spacing = new Vector2(-1, 0),
                             Font = KumiFonts.GetFont(FontFamily.Montserrat, size: 12).With(fixedWidth: true),
-                            Colour = Color4Extensions.FromHex("666666"),
+                            Colour = Colours.GRAY_6,
                             Padding = new MarginPadding { Horizontal = 8 }
                         }
                     }
@@ -81,7 +80,7 @@ public partial class TopBarTimeline : GridContainer
                         new Box
                         {
                             RelativeSizeAxes = Axes.Both,
-                            Colour = Color4Extensions.FromHex("0D0D0D"),
+                            Colour = Colours.Gray(0.05f),
                         },
                         new TimelineSummary
                         {
@@ -104,7 +103,7 @@ public partial class TopBarTimeline : GridContainer
                             Child = new Box
                             {
                                 RelativeSizeAxes = Axes.Both,
-                                Colour = Color4Extensions.FromHex("0D0D0D"),
+                                Colour = Colours.Gray(0.05f),
                             },
                         },
                         new PlaybackControl
@@ -130,14 +129,14 @@ public partial class TopBarTimeline : GridContainer
                         new Box
                         {
                             RelativeSizeAxes = Axes.Both,
-                            Colour = Color4Extensions.FromHex("3377FF"),
+                            Colour = Colours.BLUE_ACCENT_LIGHT,
                         },
                         new SpriteText
                         {
                             Anchor = Anchor.Centre,
                             Origin = Anchor.Centre,
                             Font = KumiFonts.GetFont(FontFamily.Montserrat, FontWeight.SemiBold, size: 12),
-                            Colour = Color4Extensions.FromHex("0D0D0D"),
+                            Colour = Colours.Gray(0.05f),
                             Padding = new MarginPadding { Horizontal = 16 },
                             Text = "Test"
                         }
