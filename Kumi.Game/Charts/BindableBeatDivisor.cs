@@ -46,6 +46,28 @@ public class BindableBeatDivisor : BindableInt
             Value = 1;
     }
 
+    public void SelectNext()
+    {
+        var divisors = ValidDivisors.Value.Divisors;
+        if (divisors.Cast<int?>().SkipWhile(d => d != Value).ElementAtOrDefault(1) is { } newValue)
+            Value = newValue;
+    }
+
+    public int NextDivisor(int? offset = null)
+    {
+        offset ??= Value;
+
+        var divisors = ValidDivisors.Value.Divisors;
+        return divisors.Cast<int?>().SkipWhile(d => d != offset).ElementAtOrDefault(1) ?? Value;
+    }
+
+    public void SelectPrevious()
+    {
+        var divisors = ValidDivisors.Value.Divisors;
+        if (divisors.Cast<int?>().TakeWhile(d => d != Value).LastOrDefault() is { } newValue)
+            Value = newValue;
+    }
+
     protected override int DefaultPrecision => 1;
 
     public override void BindTo(Bindable<int> them)
