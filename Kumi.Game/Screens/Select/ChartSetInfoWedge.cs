@@ -15,10 +15,10 @@ public partial class ChartSetInfoWedge : Container
 
     public ChartSetInfoWedge()
     {
-        X = -5;
+        X = 5;
         Masking = true;
         CornerRadius = 5;
-        Margin = new MarginPadding { Left = -5 };
+        Margin = new MarginPadding { Right = -5 };
     }
 
     [BackgroundDependencyLoader]

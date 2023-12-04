@@ -101,7 +101,7 @@ public partial class ChartSetInfoWedgeContent : Container
         charterFlow.AddText("Charted by ");
         charterFlow.AddText(chart.ChartInfo.ChartSet!.Creator.Username, s =>
         {
-            s.Font = KumiFonts.GetFont(FontFamily.Montserrat, FontWeight.SemiBold);
+            s.Font = KumiFonts.GetFont(FontFamily.Montserrat, FontWeight.SemiBold, 12f);
             s.Alpha = 1f;
             s.Colour = Color4Extensions.FromHex("80DFFF");
         });
