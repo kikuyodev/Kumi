@@ -51,7 +51,7 @@ public partial class DrawableNote : CompositeDrawable
         if (State.Value == newState && !force)
             return;
 
-        var initialTime = Note.StartTime - InitialLifetimeOffset;
+        var initialTime = Note.Time - InitialLifetimeOffset;
 
         // clear existing transforms
         base.ApplyTransformsAt(double.MinValue, true);
@@ -89,9 +89,9 @@ public partial class DrawableNote : CompositeDrawable
 
     public virtual double InitialLifetimeOffset => 1000;
 
-    public double StateChangeTime => Note.StartTime;
+    public double StateChangeTime => Note.Time;
 
-    public double HitStateUpdateTime => Judgement.AbsoluteTime ?? Note.StartTime;
+    public double HitStateUpdateTime => Judgement.AbsoluteTime ?? Note.Time;
 
     #endregion
 
@@ -121,7 +121,7 @@ public partial class DrawableNote : CompositeDrawable
         if (Judged)
             return false;
 
-        CheckForResult(userTriggered, Time.Current - Note.StartTime);
+        CheckForResult(userTriggered, Time.Current - Note.Time);
 
         return Judged;
     }

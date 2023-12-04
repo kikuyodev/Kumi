@@ -33,7 +33,7 @@ public class Note : INote
         set => flagsBindable.Value = value;
     }
 
-    public float StartTime
+    public double Time
     {
         get => startTimeBindable.Value;
         set => startTimeBindable.Value = value;
@@ -51,12 +51,12 @@ public class Note : INote
 
     protected Note(float startTime)
     {
-        StartTime = startTime;
+        Time = startTime;
         typeBindable.ValueChanged += v => NoteColor = getColorFromType(v.NewValue);
     }
 
     private readonly Bindable<NoteType> typeBindable = new Bindable<NoteType>();
-    private readonly Bindable<float> startTimeBindable = new Bindable<float>();
+    private readonly Bindable<double> startTimeBindable = new Bindable<double>();
     private readonly Bindable<Color4> noteColorBindable = new Bindable<Color4>();
     private readonly Bindable<NoteFlags> flagsBindable = new Bindable<NoteFlags>();
 
@@ -76,7 +76,7 @@ public class Note : INote
     /// Gets the total duration of this note.
     /// ...I'm not sure if this is useful, but it's here just in case.
     /// </summary>
-    public float GetDuration() => this is IHasEndTime ? (this as IHasEndTime)!.EndTime - StartTime : 0.0f;
+    public double GetDuration() => this is IHasEndTime ? (this as IHasEndTime)!.EndTime - Time : 0.0f;
 
     private Color4 getColorFromType(NoteType type)
     {

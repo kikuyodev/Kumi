@@ -10,12 +10,12 @@ public class BreakTimeEvent : Event, IHasEndTime
     protected override EventType ExpectedType => EventType.Break;
     protected override int ExpectedLength => 1;
 
-    public float EndTime { get; private set; }
+    public double EndTime { get; private set; }
 
     public BreakTimeEvent(float startTime, float endTime)
         : base(startTime)
     {
-        StartTime = startTime;
+        Time = startTime;
         EndTime = endTime;
     }
 
@@ -26,6 +26,6 @@ public class BreakTimeEvent : Event, IHasEndTime
 
     protected override void Parse(string[] input)
     {
-        EndTime = StartTime + StringUtils.AssertAndFetch<float>(input[0]);
+        EndTime = Time + StringUtils.AssertAndFetch<float>(input[0]);
     }
 }

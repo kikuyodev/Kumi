@@ -7,7 +7,7 @@ namespace Kumi.Game.Charts.Objects;
 /// </summary>
 public class DrumRoll : Note, IHasEndTime
 {
-    public float EndTime
+    public double EndTime
     {
         get => endTimeBindable.Value;
         set => endTimeBindable.Value = value;
@@ -18,5 +18,5 @@ public class DrumRoll : Note, IHasEndTime
     {
     }
 
-    private readonly Bindable<float> endTimeBindable = new Bindable<float>();
+    private readonly Bindable<double> endTimeBindable = new Bindable<double>();
 }

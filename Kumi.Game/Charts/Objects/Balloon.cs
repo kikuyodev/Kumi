@@ -4,7 +4,7 @@ namespace Kumi.Game.Charts.Objects;
 
 public class Balloon : Note, IHasEndTime
 {
-    public float EndTime
+    public double EndTime
     {
         get => endTimeBindable.Value;
         set => endTimeBindable.Value = value;
@@ -15,5 +15,5 @@ public class Balloon : Note, IHasEndTime
     {
     }
 
-    private readonly Bindable<float> endTimeBindable = new Bindable<float>();
+    private readonly Bindable<double> endTimeBindable = new Bindable<double>();
 }
