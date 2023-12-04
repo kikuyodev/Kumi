@@ -1,4 +1,4 @@
-﻿using osu.Framework.Extensions.Color4Extensions;
+﻿using Kumi.Game.Graphics;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.UserInterface;
@@ -13,7 +13,7 @@ public partial class EditorMenuBar : osu.Framework.Graphics.UserInterface.Menu
         MaskingContainer.CornerRadius = 5;
         ItemsContainer.Padding = new MarginPadding();
 
-        BackgroundColour = Color4Extensions.FromHex("0D0D0D");
+        BackgroundColour = Colours.Gray(0.05f);
     }
 
     protected override osu.Framework.Graphics.UserInterface.Menu CreateSubMenu() => new EditorBarSubMenu();

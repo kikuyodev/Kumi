@@ -4,7 +4,6 @@ using Kumi.Game.Screens.Edit.Menus;
 using Kumi.Game.Screens.Edit.Timeline;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
-using osu.Framework.Extensions.Color4Extensions;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
@@ -90,7 +89,7 @@ public partial class EditorOverlay : Container
                                 Anchor = Anchor.CentreLeft,
                                 Origin = Anchor.CentreLeft,
                                 Alpha = 0.5f,
-                                Colour = Color4Extensions.FromHex("CCCCCC"),
+                                Colour = Colours.GRAY_C,
                                 Text = getRomanisableString(),
                                 Font = KumiFonts.GetFont(size: 12)
                             }
@@ -112,7 +111,7 @@ public partial class EditorOverlay : Container
                                 Child = new Box
                                 {
                                     RelativeSizeAxes = Axes.Both,
-                                    Colour = Color4Extensions.FromHex("0D0D0D")
+                                    Colour = Colours.Gray(0.05f)
                                 },
                             },
                             new EditorScreenTabControl

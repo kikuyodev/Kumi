@@ -48,7 +48,7 @@ public partial class ChartSetListItem : CompositeDrawable
                 Masking = true,
                 EdgeEffect = new EdgeEffectParameters
                 {
-                    Colour = Color4Extensions.FromHex("00BFFF").Opacity(0f),
+                    Colour = Colours.CYAN_ACCENT_LIGHT.Opacity(0f),
                     Type = EdgeEffectType.Glow,
                     Radius = 12,
                     Roundness = 5,
@@ -67,7 +67,7 @@ public partial class ChartSetListItem : CompositeDrawable
                         RelativeSizeAxes = Axes.Both,
                         Alpha = 0f,
                         AlwaysPresent = true,
-                        Colour = ColourInfo.GradientHorizontal(Color4Extensions.FromHex("00BFFF"), Color4Extensions.FromHex("5500FF"))
+                        Colour = ColourInfo.GradientHorizontal(Colours.CYAN_ACCENT_LIGHT, Colours.PURPLE_ACCENT_LIGHT)
                     },
                     new Container
                     {
@@ -135,12 +135,12 @@ public partial class ChartSetListItem : CompositeDrawable
         if (val.NewValue)
         {
             highlight.FadeTo(0.15f, 200, Easing.OutQuint);
-            content.FadeEdgeEffectTo(Color4Extensions.FromHex("00BFFF").Opacity(0.25f), 200, Easing.OutQuint);
+            content.FadeEdgeEffectTo(Colours.CYAN_ACCENT_LIGHT.Opacity(0.25f), 200, Easing.OutQuint);
         }
         else
         {
             highlight.FadeOut(200, Easing.OutQuint);
-            content.FadeEdgeEffectTo(Color4Extensions.FromHex("00BFFF").Opacity(0), 200, Easing.OutQuint);
+            content.FadeEdgeEffectTo(Colours.CYAN_ACCENT_LIGHT.Opacity(0), 200, Easing.OutQuint);
         }
     }
 }

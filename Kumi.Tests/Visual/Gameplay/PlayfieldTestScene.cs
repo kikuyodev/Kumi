@@ -19,7 +19,7 @@ namespace Kumi.Tests.Visual.Gameplay;
 public abstract partial class PlayfieldTestScene : KumiTestScene
 {
     protected Playfield? Playfield;
-    private GameplayClockContainer gameplayClockContainer = null!;
+    private GameplayClockContainer? gameplayClockContainer;
 
     private TestWorkingChart? workingChart;
 
@@ -66,7 +66,7 @@ public abstract partial class PlayfieldTestScene : KumiTestScene
             var note = Playfield!.ChildrenOfType<DrawableNote>().FirstOrDefault();
             if (note == null) return false;
 
-            gameplayClockContainer.Seek(note.Note.Time);
+            gameplayClockContainer?.Seek(note.Note.Time);
             return true;
         });
 
@@ -78,7 +78,7 @@ public abstract partial class PlayfieldTestScene : KumiTestScene
 
         CreateAsserts();
 
-        AddStep("reset clock", () => { gameplayClockContainer.Reset(startClock: true); });
+        AddStep("reset clock", () => { gameplayClockContainer?.Reset(startClock: true); });
     }
 
     protected override void Update()
@@ -88,7 +88,7 @@ public abstract partial class PlayfieldTestScene : KumiTestScene
         if (Playfield == null)
             return;
 
-        timeText.Text = $"Time: {gameplayClockContainer.Time.Current:N2}";
+        timeText.Text = $"Time: {gameplayClockContainer?.Time.Current:N2}";
     }
 
     protected virtual void CreateAsserts()

@@ -3,6 +3,7 @@ using Kumi.Game.Charts.Objects;
 using Kumi.Game.Gameplay.Algorithms;
 using Kumi.Game.Gameplay.Drawables;
 using Kumi.Game.Gameplay.UI;
+using Kumi.Game.Graphics;
 using Kumi.Game.Graphics.Containers;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
@@ -47,7 +48,7 @@ public partial class KumiPlayfield : ScrollingPlayfield
                     new Box
                     {
                         RelativeSizeAxes = Axes.Both,
-                        Colour = Color4Extensions.FromHex("0D0D0D").Opacity(0.95f)
+                        Colour = Colours.Gray(0.05f).Opacity(0.95f)
                     },
                     new Container
                     {
@@ -113,7 +114,7 @@ public partial class KumiPlayfield : ScrollingPlayfield
                                         new Box
                                         {
                                             RelativeSizeAxes = Axes.Both,
-                                            Colour = Color4Extensions.FromHex("0D0D0D").Opacity(0.95f)
+                                            Colour = Colours.Gray(0.05f).Opacity(0.95f)
                                         },
                                         new Circle
                                         {

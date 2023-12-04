@@ -83,10 +83,10 @@ public class Note : INote
         switch (type)
         {
             case NoteType.Don:
-                return Colors.DonColor;
+                return Colours.DON_COLOR;
 
             case NoteType.Kat:
-                return Colors.KatColor;
+                return Colours.KAT_COLOR;
         }
 
         return Color4.White;

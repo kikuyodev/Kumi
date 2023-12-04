@@ -1,6 +1,6 @@
-﻿using Kumi.Game.Graphics.UserInterface;
+﻿using Kumi.Game.Graphics;
+using Kumi.Game.Graphics.UserInterface;
 using osu.Framework.Allocation;
-using osu.Framework.Extensions.Color4Extensions;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
@@ -48,7 +48,7 @@ public partial class TimelineArea : CompositeDrawable
                                 {
                                     RelativeSizeAxes = Axes.Both,
                                     Depth = float.MaxValue,
-                                    Colour = Color4Extensions.FromHex("0D0D0D")
+                                    Colour = Colours.Gray(0.05f)
                                 },
                                 timeline = new Timeline()
                             }
@@ -67,7 +67,7 @@ public partial class TimelineArea : CompositeDrawable
                                     Anchor = Anchor.TopCentre,
                                     Origin = Anchor.Centre,
                                     Rotation = 45,
-                                    Colour = Color4Extensions.FromHex("FF0040"),
+                                    Colour = Colours.RED_ACCENT,
                                     Size = new Vector2(6)
                                 },
                                 new Box
@@ -76,7 +76,7 @@ public partial class TimelineArea : CompositeDrawable
                                     Width = 1.25f,
                                     Anchor = Anchor.Centre,
                                     Origin = Anchor.Centre,
-                                    Colour = Color4Extensions.FromHex("FF0040"),
+                                    Colour = Colours.RED_ACCENT,
                                     EdgeSmoothness = new Vector2(1f, 0)
                                 },
                                 new Box
@@ -84,7 +84,7 @@ public partial class TimelineArea : CompositeDrawable
                                     Anchor = Anchor.BottomCentre,
                                     Origin = Anchor.Centre,
                                     Rotation = 45,
-                                    Colour = Color4Extensions.FromHex("FF0040"),
+                                    Colour = Colours.RED_ACCENT,
                                     Size = new Vector2(6)
                                 }
                             }
@@ -106,8 +106,8 @@ public partial class TimelineArea : CompositeDrawable
                             {
                                 new KumiIconButton
                                 {
-                                    BackgroundColour = Color4Extensions.FromHex("0D0D0D"),
-                                    IconColour = Color4Extensions.FromHex("CCCCCC"),
+                                    BackgroundColour = Colours.Gray(0.05f),
+                                    IconColour = Colours.GRAY_C,
                                     Size = new Vector2(20),
                                     Icon = FontAwesome.Solid.SearchPlus,
                                     IconScale = new Vector2(0.5f),
@@ -115,8 +115,8 @@ public partial class TimelineArea : CompositeDrawable
                                 },
                                 new KumiIconButton
                                 {
-                                    BackgroundColour = Color4Extensions.FromHex("0D0D0D"),
-                                    IconColour = Color4Extensions.FromHex("CCCCCC"),
+                                    BackgroundColour = Colours.Gray(0.05f),
+                                    IconColour = Colours.GRAY_C,
                                     Size = new Vector2(20),
                                     Icon = FontAwesome.Solid.SearchMinus,
                                     IconScale = new Vector2(0.5f),

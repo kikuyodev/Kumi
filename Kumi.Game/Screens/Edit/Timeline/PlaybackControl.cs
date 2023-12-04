@@ -1,9 +1,9 @@
-﻿using Kumi.Game.Graphics.UserInterface;
+﻿using Kumi.Game.Graphics;
+using Kumi.Game.Graphics.UserInterface;
 using osu.Framework.Allocation;
 using osu.Framework.Audio;
 using osu.Framework.Audio.Track;
 using osu.Framework.Bindables;
-using osu.Framework.Extensions.Color4Extensions;
 using osu.Framework.Extensions.IEnumerableExtensions;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
@@ -38,8 +38,8 @@ public partial class PlaybackControl : Container
                 Origin = Anchor.CentreLeft,
                 Icon = FontAwesome.Solid.PlayCircle,
                 IconScale = new(0.5f),
-                BackgroundColour = Color4Extensions.FromHex("0D0D0D"),
-                IconColour = Color4Extensions.FromHex("CCCCCC"),
+                BackgroundColour = Colours.Gray(0.05f),
+                IconColour = Colours.GRAY_C,
                 Size = new Vector2(20),
                 Action = togglePause
             },

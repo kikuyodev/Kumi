@@ -1,7 +1,6 @@
 ﻿using Kumi.Game.Charts;
 using Kumi.Game.Graphics;
 using osu.Framework.Allocation;
-using osu.Framework.Extensions.Color4Extensions;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Sprites;
@@ -103,7 +102,7 @@ public partial class ChartSetInfoWedgeContent : Container
         {
             s.Font = KumiFonts.GetFont(FontFamily.Montserrat, FontWeight.SemiBold, 12f);
             s.Alpha = 1f;
-            s.Colour = Color4Extensions.FromHex("80DFFF");
+            s.Colour = Colours.CYAN_ACCENT_LIGHTER;
         });
     }
 }

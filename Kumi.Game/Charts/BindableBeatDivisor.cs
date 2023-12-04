@@ -1,4 +1,5 @@
-﻿using osu.Framework.Bindables;
+﻿using Kumi.Game.Graphics;
+using osu.Framework.Bindables;
 using osu.Framework.Extensions.Color4Extensions;
 using osuTK.Graphics;
 
@@ -88,28 +89,28 @@ public class BindableBeatDivisor : BindableInt
                 return Color4.White;
 
             case 2:
-                return Color4Extensions.FromHex("FF3366");
+                return Colours.RED_ACCENT;
 
             case 4:
-                return Color4Extensions.FromHex("33BBFF");
+                return Colours.CYAN_ACCENT;
 
             case 8:
-                return Color4Extensions.FromHex("FFD333");
+                return Colours.YELLOW_ACCENT;
 
             case 16:
-                return Color4Extensions.FromHex("8C66FF").Opacity(0.5f);
+                return Colours.PURPLE_ACCENT_LIGHT.Opacity(0.5f);
 
             case 3:
-                return Color4Extensions.FromHex("6633FF");
+                return Colours.PURPLE_ACCENT_LIGHT;
 
             case 6:
-                return Color4Extensions.FromHex("FF7033");
+                return Colours.ORANGE_ACCENT;
 
             case 12:
-                return Color4Extensions.FromHex("8C66FF").Opacity(0.5f);
+                return Colours.PURPLE_ACCENT_LIGHTER.Opacity(0.5f);
 
             default:
-                return Color4Extensions.FromHex("FF3366");
+                return Colours.RED_ACCENT;
         }
     }
 

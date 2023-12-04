@@ -2,7 +2,6 @@
 using Kumi.Game.Graphics;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
-using osu.Framework.Extensions.Color4Extensions;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
@@ -33,7 +32,7 @@ public partial class BeatDivisorControl : CompositeDrawable
             new Box
             {
                 RelativeSizeAxes = Axes.Both,
-                Colour = Color4Extensions.FromHex("0D0D0D")
+                Colour = Colours.Gray(0.05f)
             },
             new GridContainer
             {
@@ -72,7 +71,7 @@ public partial class BeatDivisorControl : CompositeDrawable
                                         {
                                             RelativeSizeAxes = Axes.Both,
                                             Depth = float.MaxValue,
-                                            Colour = Color4Extensions.FromHex("1A1A1A")
+                                            Colour = Colours.Gray(0.1f)
                                         },
                                         new TickSliderBar(beatDivisor)
                                         {
@@ -88,7 +87,7 @@ public partial class BeatDivisorControl : CompositeDrawable
                                     Anchor = Anchor.Centre,
                                     Origin = Anchor.Centre,
                                     Font = KumiFonts.GetFont(FontFamily.Montserrat, size: 12),
-                                    Colour = Color4Extensions.FromHex("666666"),
+                                    Colour = Colours.GRAY_6
                                 }
                             }
                         }
@@ -181,12 +180,12 @@ public partial class BeatDivisorControl : CompositeDrawable
                     text = new SpriteText
                     {
                         Font = KumiFonts.GetFont(FontFamily.Montserrat, size: 12),
-                        Colour = Color4Extensions.FromHex("666666")
+                        Colour = Colours.GRAY_6
                     },
                     boldText = new SpriteText
                     {
                         Font = KumiFonts.GetFont(FontFamily.Montserrat, weight: FontWeight.SemiBold, size: 12),
-                        Colour = Color4Extensions.FromHex("CCCCCC"),
+                        Colour = Colours.GRAY_C,
                         Alpha = 0
                     }
                 };
