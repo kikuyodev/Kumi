@@ -101,11 +101,11 @@ public partial class Editor : KumiScreen
         switch (e.Key)
         {
             case Key.Left:
-                clock.SeekBackward();
+                seek(e, -1);
                 return true;
 
             case Key.Right:
-                clock.SeekForward();
+                seek(e, -1);
                 return true;
         }
 
@@ -130,13 +130,23 @@ public partial class Editor : KumiScreen
         while (Math.Abs(scrollAccumulation) >= 1d)
         {
             if (scrollAccumulation > 0)
-                clock.SeekBackward();
+                seek(e, -1);
             else
-                clock.SeekForward();
+                seek(e, 1);
 
             scrollAccumulation = scrollAccumulation < 0 ? Math.Min(0, scrollAccumulation + 1d) : Math.Max(0, scrollAccumulation - 1d);
         }
 
         return true;
+    }
+
+    private void seek(UIEvent e, int direction)
+    {
+        var amount = e.ShiftPressed ? 4 : 1;
+        
+        if (direction < 1)
+            clock.SeekBackward(amount);
+        else
+            clock.SeekForward(amount);
     }
 }
