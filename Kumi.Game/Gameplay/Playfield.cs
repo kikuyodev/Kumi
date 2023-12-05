@@ -61,6 +61,13 @@ public abstract partial class Playfield : Container
         base.Update();
     }
 
+    public void Update(INote note)
+    {
+        // For now just remove and re-add
+        Remove(note);
+        Add(note);
+    }
+
     public void Add(INote note)
     {
         var drawableNote = createDrawableNote(note);

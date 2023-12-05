@@ -16,7 +16,7 @@ public abstract partial class BlueprintContainer : CompositeDrawable
 
     public NoteOrderedSelectionContainer SelectionBlueprints { get; private set; } = null!;
     
-    public SelectionHandler<Note> SelectionHandler { get; private set; } = null!;
+    public SelectionHandler SelectionHandler { get; private set; } = null!;
 
     protected readonly BindableList<Note> SelectedItems = new BindableList<Note>();
 
@@ -53,7 +53,7 @@ public abstract partial class BlueprintContainer : CompositeDrawable
             }
         };
         
-        SelectionHandler = new SelectionHandler<Note>();
+        SelectionHandler = new SelectionHandler();
         SelectionHandler.SelectedItems.BindTo(SelectedItems);
         
         AddRangeInternal(new Drawable[]

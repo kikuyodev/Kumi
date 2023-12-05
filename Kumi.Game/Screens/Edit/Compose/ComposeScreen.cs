@@ -1,4 +1,5 @@
 ﻿using Kumi.Game.Charts;
+using Kumi.Game.Charts.Objects;
 using Kumi.Game.Gameplay;
 using Kumi.Game.Gameplay.Drawables;
 using Kumi.Game.Graphics.Containers;
@@ -8,7 +9,6 @@ using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
-using osu.Framework.Threading;
 
 namespace Kumi.Game.Screens.Edit;
 
@@ -19,12 +19,15 @@ public partial class ComposeScreen : EditorScreenWithTimeline
     private BlueprintContainer blueprintContainer = null!;
 
     public KumiPlayfield Playfield { get; private set; } = null!;
-    
+
     [Resolved]
     private IBindable<WorkingChart> workingChart { get; set; } = null!;
-    
+
     [Resolved]
     private EditorClock clock { get; set; } = null!;
+    
+    [Resolved]
+    private EditorChart editorChart { get; set; } = null!;
 
     public IReadOnlyList<DrawableNote> Notes => Playfield.Notes;
 
@@ -33,16 +36,22 @@ public partial class ComposeScreen : EditorScreenWithTimeline
     {
     }
 
-    private ScheduledDelegate? playfieldLoad;
-    
     protected override void LoadComplete()
     {
         base.LoadComplete();
 
-        playfieldLoad = Scheduler.AddDelayed(() =>
+        loadPlayfield();
+    }
+
+    private void loadPlayfield()
+    {
+        Schedule(() =>
         {
             if (!workingChart.Value.ChartLoaded)
+            {
+                loadPlayfield();
                 return;
+            }
 
             playfieldContainer.Add(new InputBlockingContainer
             {
@@ -63,10 +72,20 @@ public partial class ComposeScreen : EditorScreenWithTimeline
                     }
                 }
             });
+            
+            editorChart.NoteAdded += onNoteAdded;
+            editorChart.NoteRemoved += onNoteRemoved;
+        });
+    }
 
-            playfieldLoad?.Cancel();
-            playfieldLoad = null;
-        }, 1, true);
+    private void onNoteAdded(Note note)
+    {
+        Playfield.Add(note);
+    }
+
+    private void onNoteRemoved(Note note)
+    {
+        Playfield.Remove(note);
     }
 
     protected override Drawable CreateMainContent()
