@@ -31,6 +31,8 @@ public partial class Editor : KumiScreen
 
     private readonly Bindable<WorkingChart> workingChart = new Bindable<WorkingChart>();
 
+    private EditorChart editorChart = null!;
+
     [BackgroundDependencyLoader]
     private void load(IBindable<WorkingChart> working)
     {
@@ -40,9 +42,12 @@ public partial class Editor : KumiScreen
 
         beatDivisor = new BindableBeatDivisor();
         clock = new EditorClock(beatDivisor);
-        
+
         dependencies.CacheAs(clock);
         dependencies.CacheAs(beatDivisor);
+
+        AddInternal(editorChart = new EditorChart(working.Value.Chart, working.Value.ChartInfo));
+        dependencies.CacheAs(editorChart);
 
         clock.ChangeSource(workingChart.Value.Track);
         AddInternal(clock);

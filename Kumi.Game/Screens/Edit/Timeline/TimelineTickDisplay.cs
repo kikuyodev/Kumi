@@ -11,6 +11,9 @@ namespace Kumi.Game.Screens.Edit.Timeline;
 public partial class TimelineTickDisplay : TimelinePart<DrawableTick>
 {
     [Resolved]
+    private EditorChart chart { get; set; } = null!;
+    
+    [Resolved]
     private Bindable<WorkingChart> working { get; set; } = null!;
 
     [Resolved]
@@ -24,7 +27,6 @@ public partial class TimelineTickDisplay : TimelinePart<DrawableTick>
     private (float min, float max) visibleRange = (float.MinValue, float.MaxValue);
     private float? nextMinTick;
     private float? nextMaxTick;
-    private Chart chart = null!;
 
     public TimelineTickDisplay()
     {
@@ -35,7 +37,6 @@ public partial class TimelineTickDisplay : TimelinePart<DrawableTick>
     private void load()
     {
         beatDivisor.BindValueChanged(_ => invalidateTicks());
-        working.BindValueChanged(c => chart = (Chart) c.NewValue.Chart, true);
     }
 
     private void invalidateTicks()
@@ -74,10 +75,10 @@ public partial class TimelineTickDisplay : TimelinePart<DrawableTick>
         nextMinTick = null;
         nextMaxTick = null;
 
-        for (int i = 0; i < chart.TimingHandler.UninheritedTimingPoints.Count; i++)
+        for (int i = 0; i < chart.TimingPointHandler.UninheritedTimingPoints.Count; i++)
         {
-            var point = chart.TimingHandler.UninheritedTimingPoints[i];
-            var until = i + 1 < chart.TimingHandler.UninheritedTimingPoints.Count ? chart.TimingHandler.UninheritedTimingPoints[i + 1].Time : working.Value.Track.Length;
+            var point = chart.TimingPointHandler.UninheritedTimingPoints[i];
+            var until = i + 1 < chart.TimingPointHandler.UninheritedTimingPoints.Count ? chart.TimingPointHandler.UninheritedTimingPoints[i + 1].StartTime : working.Value.Track.Length;
 
             var beat = 0;
 
