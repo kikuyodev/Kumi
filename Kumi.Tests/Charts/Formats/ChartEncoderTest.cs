@@ -63,11 +63,11 @@ public class ChartEncoderTest
         // create notes
         chart.Notes.Add(new DrumHit(0)
         {
-            Type = NoteType.Don
+            Type = { Value = NoteType.Don }
         });
         chart.Notes.Add(new DrumHit(1000)
         {
-            Type = NoteType.Kat
+            Type = { Value = NoteType.Kat }
         });
 
         return chart;

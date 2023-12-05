@@ -111,9 +111,9 @@ public partial class KumiPlayfieldTestScene : KumiTestScene
     {
         return new DrumHit(startTime)
         {
-            Type = type,
-            Flags = big ? NoteFlags.Big : NoteFlags.None,
-            NoteColor = Color4.White,
+            Type = { Value = type },
+            Flags = { Value = big ? NoteFlags.Big : NoteFlags.None },
+            NoteColor = { Value = Color4.White },
             Windows = new NoteWindows()
         };
     }

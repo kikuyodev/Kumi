@@ -179,7 +179,7 @@ public partial class KumiPlayfield : ScrollingPlayfield
     {
         if (note is DrumHit drumHit)
         {
-            if (note.Flags.HasFlagFast(NoteFlags.Big))
+            if (note.Flags.Value.HasFlagFast(NoteFlags.Big))
                 return new DrawableBigDrumHit(drumHit);
             
             return new DrawableDrumHit(drumHit);

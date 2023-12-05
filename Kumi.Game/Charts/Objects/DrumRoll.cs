@@ -9,14 +9,23 @@ public class DrumRoll : Note, IHasEndTime
 {
     public double EndTime
     {
-        get => endTimeBindable.Value;
-        set => endTimeBindable.Value = value;
+        get => EndTimeBindable.Value;
+        set
+        {
+            if (EndTimeBindable.Value == value)
+                return;
+            
+            if (value < StartTime)
+                throw new ArgumentOutOfRangeException(nameof(value), "End time cannot be less than start time.");
+            
+            EndTimeBindable.Value = value;
+        }
     }
+    
+    public Bindable<double> EndTimeBindable { get; } = new Bindable<double>();
 
     public DrumRoll(float startTime)
         : base(startTime)
     {
     }
-
-    private readonly Bindable<double> endTimeBindable = new Bindable<double>();
 }

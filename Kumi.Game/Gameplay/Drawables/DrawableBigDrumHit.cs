@@ -22,7 +22,7 @@ public partial class DrawableBigDrumHit : DrawableNote<DrumHit>, IKeyBindingHand
         Anchor = Anchor.CentreLeft;
         Origin = Anchor.Centre;
         
-        AddInternal(drumHitPart = createDrawable(new BigDrumHitPart(note.Type)));
+        AddInternal(drumHitPart = createDrawable(new BigDrumHitPart(note.Type.Value)));
     }
 
     protected override void UpdateAfterChildren()
@@ -83,7 +83,7 @@ public partial class DrawableBigDrumHit : DrawableNote<DrumHit>, IKeyBindingHand
             return false;
 
         // TODO: Detect if the user is pressing both keys, and update the score accordingly.
-        switch (Note.Type)
+        switch (Note.Type.Value)
         {
             case NoteType.Don:
                 if (e.Action is GameplayAction.RightCentre or GameplayAction.LeftCentre)

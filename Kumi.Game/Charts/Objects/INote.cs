@@ -8,14 +8,14 @@ public interface INote : IHasStartTime
     /// <summary>
     /// The type of <see cref="Note" />.
     /// </summary>
-    NoteType Type { get; set; }
+    NoteProperty<NoteType> Type { get; }
 
-    NoteFlags Flags { get; set; }
+    NoteProperty<NoteFlags> Flags { get; }
 
     /// <summary>
     /// The color of this note, for rendering.
     /// </summary>
-    Color4 NoteColor { get; set; }
+    NoteProperty<Color4> NoteColor { get; }
 
     /// <summary>
     /// The result timing windows for this note, as well as the result of the note.

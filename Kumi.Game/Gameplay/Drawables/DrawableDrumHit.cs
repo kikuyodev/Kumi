@@ -33,7 +33,7 @@ public partial class DrawableDrumHit : DrawableNote<DrumHit>, IKeyBindingHandler
         Anchor = Anchor.CentreLeft;
         Origin = Anchor.Centre;
         
-        AddInternal(drumHitPart = createDrawable(new DrumHitPart(note.Type)));
+        AddInternal(drumHitPart = createDrawable(new DrumHitPart(note.Type.Value)));
     }
 
     protected override void UpdateAfterChildren()
@@ -93,7 +93,7 @@ public partial class DrawableDrumHit : DrawableNote<DrumHit>, IKeyBindingHandler
         if (Judged)
             return false;
 
-        switch (Note.Type)
+        switch (Note.Type.Value)
         {
             case NoteType.Don:
                 if (e.Action is GameplayAction.RightCentre or GameplayAction.LeftCentre)
