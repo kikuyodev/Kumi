@@ -74,7 +74,7 @@ public partial class ScrollingNoteContainer : Container<DrawableNote>
 
     private void updateLayout(DrawableNote note)
     {
-        updatePosition(note, note.Note.Time);
+        updatePosition(note, note.Note.StartTime);
         setLifetimeStart(note);
     }
 
@@ -85,19 +85,19 @@ public partial class ScrollingNoteContainer : Container<DrawableNote>
         var boundingBox = getBoundingBox();
         var startOffset = -boundingBox.Left;
 
-        var adjustedTime = Algorithm.Value.TimeAt(-startOffset, note.Note.Time, TimeRange, DrawWidth);
+        var adjustedTime = Algorithm.Value.TimeAt(-startOffset, note.Note.StartTime, TimeRange, DrawWidth);
         return adjustedTime - TimeRange;
     }
     
     private void setLifetimeStart(DrawableNote note)
     {
         var computedStartTime = computeLifetimeStart(note);
-        note.LifetimeStart = Math.Min(note.Note.Time - note.Note.Windows.WindowFor(NoteHitResult.Bad), computedStartTime);
+        note.LifetimeStart = Math.Min(note.Note.StartTime - note.Note.Windows.WindowFor(NoteHitResult.Bad), computedStartTime);
     }
 
     private void updatePosition(DrawableNote note, double currentTime)
     {
-        var position = positionAtTime(note.Note.Time, currentTime);
+        var position = positionAtTime(note.Note.StartTime, currentTime);
         note.X = position;
     }
 

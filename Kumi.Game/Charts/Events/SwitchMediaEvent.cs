@@ -29,7 +29,7 @@ public class SwitchMediaEvent : MediaEvent, IHasEndTime
 
     protected override void Parse(string[] input)
     {
-        EndTime = Time + StringUtils.AssertAndFetch<double>(input[0]);
+        EndTime = StartTime + StringUtils.AssertAndFetch<double>(input[0]);
         FileName = input[1];
         Easing = Enum.Parse<Easing>(input[2]);
     }

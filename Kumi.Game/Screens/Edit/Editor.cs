@@ -143,7 +143,7 @@ public partial class Editor : KumiScreen
     private void seek(UIEvent e, int direction)
     {
         var amount = e.ShiftPressed ? 4 : 1;
-        
+
         if (direction < 1)
             clock.SeekBackward(amount);
         else

@@ -3,7 +3,7 @@ using osuTK.Graphics;
 
 namespace Kumi.Game.Charts.Objects;
 
-public interface INote : IHasTime
+public interface INote : IHasStartTime
 {
     /// <summary>
     /// The type of <see cref="Note" />.

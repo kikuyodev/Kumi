@@ -81,7 +81,7 @@ public partial class TimelineTickDisplay : TimelinePart<DrawableTick>
 
             var beat = 0;
 
-            for (var t = point.Time; t < until; t += point.MillisecondsPerBeat / beatDivisor.Value)
+            for (var t = point.StartTime; t < until; t += point.MillisecondsPerBeat / beatDivisor.Value)
             {
                 var xPos = (float) t;
 

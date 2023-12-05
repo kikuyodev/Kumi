@@ -69,10 +69,10 @@ public class TimingPointHandler
         if (TimingPoints.Count == 0)
             return (TimingPoint.DEFAULT as T)!;
         
-        if (time < TimingPoints[0].Time)
+        if (time < TimingPoints[0].StartTime)
             return (TimingPoint.DEFAULT as T)!;
         
-        if (time > TimingPoints[^1].Time)
+        if (time > TimingPoints[^1].StartTime)
             return (TimingPoints[^1] as T)!;
         
         var idx = TimingPoints.BinarySearch(new TimingPoint(time));

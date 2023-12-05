@@ -17,7 +17,7 @@ public class KiaiTimeEvent : Event, IHasEndTime
     public KiaiTimeEvent(float startTime, float endTime)
         : base(startTime)
     {
-        Time = startTime;
+        StartTime = startTime;
         EndTime = endTime;
     }
 
@@ -28,6 +28,6 @@ public class KiaiTimeEvent : Event, IHasEndTime
 
     protected override void Parse(string[] input)
     {
-        EndTime = Time + StringUtils.AssertAndFetch<float>(input[0]);
+        EndTime = StartTime + StringUtils.AssertAndFetch<float>(input[0]);
     }
 }

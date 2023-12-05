@@ -16,16 +16,16 @@ public class TimingPoint : ITimingPoint, IComparablyEquatable<TimingPoint>
     public TimingFlags Flags { get; set; }
     public int Volume { get; set; }
     public float RelativeScrollSpeed { get; set; }
-    public double Time { get; }
+    public double StartTime { get; }
 
     internal TimingPoint(double time)
     {
-        Time = time;
+        StartTime = time;
     }
 
     public static readonly TimingPoint DEFAULT = new DefaultTimingPoint(0);
 
-    public int CompareTo(TimingPoint? other) => Time < other!.Time ? -1 : Time > other.Time ? 1 : 0;
+    public int CompareTo(TimingPoint? other) => StartTime < other!.StartTime ? -1 : StartTime > other.StartTime ? 1 : 0;
 
     public bool Equals(TimingPoint? other)
     {
@@ -35,7 +35,7 @@ public class TimingPoint : ITimingPoint, IComparablyEquatable<TimingPoint>
         if (ReferenceEquals(other, this))
             return false;
 
-        return Time.Equals(other.Time);
+        return StartTime.Equals(other.StartTime);
     }
 
     internal class DefaultTimingPoint : UninheritedTimingPoint

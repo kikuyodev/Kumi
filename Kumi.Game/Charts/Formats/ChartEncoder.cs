@@ -74,7 +74,7 @@ public class ChartEncoder : FileEncoder<Chart, ChartSections>
             var values = new List<string>
             {
                 ((int) e.Type).ToString(),
-                e.Time.ToString(CultureInfo.InvariantCulture)
+                e.StartTime.ToString(CultureInfo.InvariantCulture)
             };
 
             if (e is IHasEndTime endTime)
@@ -106,7 +106,7 @@ public class ChartEncoder : FileEncoder<Chart, ChartSections>
             var values = new List<string>
             {
                 ((int) point.PointType).ToString(),
-                point.Time.ToString(CultureInfo.InvariantCulture)
+                point.StartTime.ToString(CultureInfo.InvariantCulture)
             };
 
             if (point is UninheritedTimingPoint uninherited)

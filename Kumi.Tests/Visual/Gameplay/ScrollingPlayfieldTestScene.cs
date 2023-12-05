@@ -138,7 +138,7 @@ public partial class ScrollingPlayfieldTestScene : PlayfieldTestScene
 
             if (!userTriggered)
             {
-                if (Time.Current > Note.Time - Note.Windows.WindowFor(NoteHitResult.Bad) && !Note.Windows.IsWithinWindow(deltaTime))
+                if (Time.Current > Note.StartTime - Note.Windows.WindowFor(NoteHitResult.Bad) && !Note.Windows.IsWithinWindow(deltaTime))
                     ApplyResult(NoteHitResult.Miss);
 
                 return;

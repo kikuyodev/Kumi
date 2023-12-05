@@ -71,7 +71,7 @@ public abstract partial class Playfield : Container
     private DrawableNote createDrawableNote(INote note)
     {
         var drawableNote = CreateDrawableNote(note);
-        drawableNote.LifetimeStart = note.Time - drawableNote.InitialLifetimeOffset;
+        drawableNote.LifetimeStart = note.StartTime - drawableNote.InitialLifetimeOffset;
 
         return drawableNote;
     }

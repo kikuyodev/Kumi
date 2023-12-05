@@ -68,7 +68,7 @@ public partial class EditorClock : CompositeComponent, IFrameBasedClock, IAdjust
         var nativeChart = (Chart)chart.Value.Chart;
         var point = nativeChart.TimingHandler.GetTimingPointAt<UninheritedTimingPoint>(CurrentTime, TimingPointType.Uninherited);
 
-        if (direction < 0 && point.Time == CurrentTime)
+        if (direction < 0 && point.StartTime == CurrentTime)
             point = nativeChart.TimingHandler.GetTimingPointAt<UninheritedTimingPoint>(CurrentTime - 1, TimingPointType.Uninherited);
         
         var seekAmount = point.MillisecondsPerBeat / beatDivisor.Value * amount;
@@ -80,7 +80,7 @@ public partial class EditorClock : CompositeComponent, IFrameBasedClock, IAdjust
             return;
         }
 
-        newPosition -= point.Time;
+        newPosition -= point.StartTime;
 
         int closestBeat;
         if (direction > 0)
@@ -88,20 +88,20 @@ public partial class EditorClock : CompositeComponent, IFrameBasedClock, IAdjust
         else
             closestBeat = (int) Math.Ceiling(newPosition / seekAmount);
 
-        newPosition = point.Time + closestBeat * seekAmount;
+        newPosition = point.StartTime + closestBeat * seekAmount;
 
-        var nextPoint = nativeChart.TimingHandler.UninheritedTimingPoints.FirstOrDefault(t => t.Time > point.Time);
-        if (newPosition > nextPoint?.Time)
-            newPosition = nextPoint.Time;
+        var nextPoint = nativeChart.TimingHandler.UninheritedTimingPoints.FirstOrDefault(t => t.StartTime > point.StartTime);
+        if (newPosition > nextPoint?.StartTime)
+            newPosition = nextPoint.StartTime;
 
         if (Precision.AlmostEquals(CurrentTime, newPosition, 0.5f))
         {
             closestBeat += direction > 0 ? 1 : -1;
-            newPosition = point.Time + closestBeat * seekAmount;
+            newPosition = point.StartTime + closestBeat * seekAmount;
         }
         
-        if (newPosition < point.Time && !ReferenceEquals(point, nativeChart.TimingHandler.UninheritedTimingPoints.First()))
-            newPosition = point.Time;
+        if (newPosition < point.StartTime && !ReferenceEquals(point, nativeChart.TimingHandler.UninheritedTimingPoints.First()))
+            newPosition = point.StartTime;
         
         Seek(newPosition);
     }
