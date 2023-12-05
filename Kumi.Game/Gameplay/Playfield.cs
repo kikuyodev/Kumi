@@ -11,6 +11,8 @@ public abstract partial class Playfield : Container
 {
     protected WorkingChart WorkingChart { get; set; }
     protected IChart Chart { get; set; } = null!;
+    
+    public IReadOnlyList<DrawableNote> Notes => NoteContainer.Children;
 
     protected readonly Container<DrawableNote> NoteContainer;
     
@@ -59,13 +61,42 @@ public abstract partial class Playfield : Container
         base.Update();
     }
 
+    public void Add(INote note)
+    {
+        var drawableNote = createDrawableNote(note);
+        NoteContainer.Add(drawableNote);
+    }
+    
+    public bool Remove(INote note)
+    {
+        var index = NoteContainer.IndexOf(NoteContainer.Children.FirstOrDefault(n => n.Note == note)!);
+        if (index != -1)
+        {
+            RemoveAt(index);
+            return true;
+        }
+
+        return false;
+    }
+    
+    public void RemoveAt(int index)
+    {
+        var drawableNote = NoteContainer.ElementAtOrDefault(index);
+        if (drawableNote != null)
+            NoteContainer.Remove(drawableNote, true);
+    }
+    
+    public void SetKeepAlive(INote note, bool keepAlive)
+    {
+        var drawableNote = NoteContainer.Children.FirstOrDefault(n => n.Note == note);
+        if (drawableNote != null)
+            drawableNote.AlwaysPresent = keepAlive;
+    }
+
     private void onChartLoaded()
     {
         foreach (var note in Chart.Notes)
-        {
-            var drawableNote = createDrawableNote(note);
-            NoteContainer.Add(drawableNote);
-        }
+            Add(note);
     }
 
     private DrawableNote createDrawableNote(INote note)
