@@ -8,7 +8,7 @@ using osu.Framework.Bindables;
 
 namespace Kumi.Game.Charts;
 
-public class Chart : IChart
+public class Chart : IChart, IDecodable
 {
     /// <summary>
     /// 1 - Initial Version
@@ -79,5 +79,4 @@ public class Chart : IChart
     }
 
     #endregion
-
 }
