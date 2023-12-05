@@ -13,7 +13,7 @@ namespace Kumi.Game.Gameplay.Drawables;
 
 public partial class DrawableBigDrumHit : DrawableNote<DrumHit>, IKeyBindingHandler<GameplayAction>
 {
-    private readonly Drawable? drumHitPart;
+    internal readonly Drawable? DrumHitPart;
     
     public DrawableBigDrumHit(DrumHit note)
         : base(note)
@@ -22,7 +22,7 @@ public partial class DrawableBigDrumHit : DrawableNote<DrumHit>, IKeyBindingHand
         Anchor = Anchor.CentreLeft;
         Origin = Anchor.Centre;
         
-        AddInternal(drumHitPart = createDrawable(new BigDrumHitPart(note.Type.Value)));
+        AddInternal(DrumHitPart = createDrawable(new BigDrumHitPart(note.Type.Value)));
     }
 
     protected override void UpdateAfterChildren()
@@ -44,14 +44,14 @@ public partial class DrawableBigDrumHit : DrawableNote<DrumHit>, IKeyBindingHand
         switch (newState)
         {
             case NoteState.Hit:
-                drumHitPart.MoveToY(-100, 250, Easing.OutBack);
-                drumHitPart.FadeOut(250, Easing.OutQuint);
+                DrumHitPart.MoveToY(-100, 250, Easing.OutBack);
+                DrumHitPart.FadeOut(250, Easing.OutQuint);
                 
                 this.Delay(250).Expire();
                 break;
             case NoteState.Miss:
-                drumHitPart!.FadeColour(Colours.Gray(0.05f).Opacity(0.5f), 100);
-                drumHitPart.FadeOut(100);
+                DrumHitPart!.FadeColour(Colours.Gray(0.05f).Opacity(0.5f), 100);
+                DrumHitPart.FadeOut(100);
 
                 this.Delay(100).Expire();
                 break;
