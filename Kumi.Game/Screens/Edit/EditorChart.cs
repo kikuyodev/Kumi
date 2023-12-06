@@ -14,6 +14,8 @@ public partial class EditorChart : TransactionalCommitComponent, IChart
     public event Action<Note>? NoteUpdated;
 
     public readonly BindableList<Note> SelectedNotes = new BindableList<Note>();
+    
+    public readonly Bindable<Note?> PlacementNote = new Bindable<Note?>();
 
     private readonly ChartInfo chartInfo;
     private readonly IChart playableChart;

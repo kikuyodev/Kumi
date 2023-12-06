@@ -29,9 +29,6 @@ public class Note : INote
             if (StartTimeBindable.Value == value)
                 return;
 
-            if (value < 0.0f)
-                throw new ArgumentOutOfRangeException(nameof(value), "Time cannot be negative.");
-
             StartTimeBindable.Value = value;
         }
     }
@@ -59,6 +56,8 @@ public class Note : INote
     /// <param name="chart"></param>
     public void ApplyChartDefaults(IChart chart)
     {
+        Windows ??= new NoteWindows();
+        
         // TODO: Set windows based on difficulty rating.
         Windows.ApplyDifficultyRating(0.0f);
     }
