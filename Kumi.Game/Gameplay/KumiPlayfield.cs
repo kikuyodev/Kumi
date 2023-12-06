@@ -19,7 +19,11 @@ namespace Kumi.Game.Gameplay;
 
 public partial class KumiPlayfield : ScrollingPlayfield
 {
+    private Container contentContainer = null!;
+    
     private readonly Bindable<IScrollAlgorithm> algorithm = new Bindable<IScrollAlgorithm>(new LinearScrollAlgorithm());
+
+    public override bool ReceivePositionalInputAt(Vector2 screenSpacePos) => contentContainer.ReceivePositionalInputAt(screenSpacePos);
 
     public KumiPlayfield(WorkingChart workingChart)
         : base(workingChart)
@@ -37,7 +41,7 @@ public partial class KumiPlayfield : ScrollingPlayfield
 
         Children = new Drawable[]
         {
-            new Container
+            contentContainer = new Container
             {
                 RelativeSizeAxes = Axes.X,
                 Height = 200,
@@ -190,4 +194,7 @@ public partial class KumiPlayfield : ScrollingPlayfield
 
     public double TimeAtScreenSpacePosition(Vector2 screenSpacePosition)
         => ScrollContainer.TimeAtScreenSpacePosition(screenSpacePosition);
+    
+    public Vector2 ScreenSpacePositionAtTime(double time)
+        => ScrollContainer.ScreenSpacePositionAtTime(time);
 }

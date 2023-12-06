@@ -84,6 +84,12 @@ public partial class ScrollingNoteContainer : Container<DrawableNote>
         var pos = ToLocalSpace(screenSpacePosition);
         return timeAtPosition(pos.X, Time.Current);
     }
+    
+    public Vector2 ScreenSpacePositionAtTime(double time)
+    {
+        var position = positionAtTime(time, Time.Current);
+        return ToScreenSpace(new Vector2(position, 0));
+    }
 
     private RectangleF getBoundingBox() => new RectangleF().Inflate(100);
 

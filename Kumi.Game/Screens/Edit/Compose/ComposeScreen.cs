@@ -3,12 +3,13 @@ using Kumi.Game.Charts.Objects;
 using Kumi.Game.Gameplay;
 using Kumi.Game.Gameplay.Drawables;
 using Kumi.Game.Graphics.Containers;
-using Kumi.Game.Screens.Edit.Blueprints;
 using Kumi.Game.Screens.Edit.Compose;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
+using osu.Framework.Input;
+using osuTK;
 
 namespace Kumi.Game.Screens.Edit;
 
@@ -16,9 +17,9 @@ namespace Kumi.Game.Screens.Edit;
 public partial class ComposeScreen : EditorScreenWithTimeline
 {
     private Container playfieldContainer = null!;
-    private BlueprintContainer blueprintContainer = null!;
+    private InputManager? inputManager;
 
-    public KumiPlayfield Playfield { get; private set; } = null!;
+    public KumiPlayfield? Playfield { get; private set; }
 
     [Resolved]
     private IBindable<WorkingChart> workingChart { get; set; } = null!;
@@ -29,7 +30,9 @@ public partial class ComposeScreen : EditorScreenWithTimeline
     [Resolved]
     private EditorChart editorChart { get; set; } = null!;
 
-    public IReadOnlyList<DrawableNote> Notes => Playfield.Notes;
+    public IReadOnlyList<DrawableNote> Notes => Playfield!.Notes;
+
+    public virtual bool CursorInPlacementArea => Playfield?.ReceivePositionalInputAt(inputManager?.CurrentState.Mouse.Position ?? Vector2.Zero) ?? false;
 
     public ComposeScreen()
         : base(EditorScreenMode.Compose, false)
@@ -40,6 +43,7 @@ public partial class ComposeScreen : EditorScreenWithTimeline
     {
         base.LoadComplete();
 
+        inputManager = GetContainingInputManager();
         loadPlayfield();
     }
 
@@ -52,24 +56,22 @@ public partial class ComposeScreen : EditorScreenWithTimeline
                 loadPlayfield();
                 return;
             }
-
-            playfieldContainer.Add(new InputBlockingContainer
+            
+            playfieldContainer.AddRange(new Drawable[]
             {
-                RelativeSizeAxes = Axes.Both,
-                Depth = 1,
-                Children = new Drawable[]
+                new InputBlockingContainer
                 {
-                    Playfield = new KumiPlayfield(workingChart.Value)
+                    RelativeSizeAxes = Axes.Both,
+                    Depth = 1,
+                    Child = Playfield = new KumiPlayfield(workingChart.Value)
                     {
-                        Clock = clock,
-                        ProcessCustomClock = false
-                    },
-                    blueprintContainer = new ComposeBlueprintContainer
-                    {
-                        RelativeSizeAxes = Axes.Both,
                         Clock = clock,
                         ProcessCustomClock = false
                     }
+                },
+                new NoteComposer
+                {
+                    RelativeSizeAxes = Axes.Both,
                 }
             });
             
@@ -80,12 +82,12 @@ public partial class ComposeScreen : EditorScreenWithTimeline
 
     private void onNoteAdded(Note note)
     {
-        Playfield.Add(note);
+        Playfield?.Add(note);
     }
 
     private void onNoteRemoved(Note note)
     {
-        Playfield.Remove(note);
+        Playfield?.Remove(note);
     }
 
     protected override Drawable CreateMainContent()
