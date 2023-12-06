@@ -17,7 +17,7 @@ public class CalculableNote
     /// <summary>
     /// Gets the start time of the note.
     /// </summary>
-    public double StartTime => CurrentNote.Time;
+    public double StartTime => CurrentNote.StartTime;
 
     public CalculableNote(INote currentNote, List<CalculableNote> notes, int index)
     {

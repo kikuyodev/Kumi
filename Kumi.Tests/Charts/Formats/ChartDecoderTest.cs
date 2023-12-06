@@ -40,9 +40,9 @@ public class ChartDecoderTest
         Assert.IsTrue(Precision.AlmostEquals(1.0f, chart.ChartInfo.InitialScrollSpeed));
         Assert.IsTrue(Precision.AlmostEquals(195f, ((UninheritedTimingPoint) chart.TimingPoints.First()).BPM));
 
-        Assert.AreEqual(1246, chart.Notes[0].Time);
+        Assert.AreEqual(1246, chart.Notes[0].StartTime);
         Assert.AreEqual(NoteType.Don, chart.Notes[0].Type);
-        Assert.AreEqual(1554, chart.Notes[1].Time);
+        Assert.AreEqual(1554, chart.Notes[1].StartTime);
         Assert.AreEqual(NoteType.Kat, chart.Notes[1].Type);
     }
 }

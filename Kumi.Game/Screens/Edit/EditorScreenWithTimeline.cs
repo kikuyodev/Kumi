@@ -39,8 +39,8 @@ public abstract partial class EditorScreenWithTimeline : EditorScreen
                 RelativeSizeAxes = Axes.Both,
                 Children = new[]
                 {
-                    createTimelineContent(),
-                    CreateMainContent()
+                    CreateMainContent(),
+                    createTimelineContent()
                 }
             };
         }

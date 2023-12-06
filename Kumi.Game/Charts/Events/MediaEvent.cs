@@ -12,14 +12,14 @@ public abstract class MediaEvent : Event, IHasMedia
     protected MediaEvent(string filename, float time)
         : base(time)
     {
-        Time = time;
+        StartTime = time;
         FileName = filename;
     }
 
     protected MediaEvent(float time)
         : base(time)
     {
-        Time = time;
+        StartTime = time;
     }
 
     public bool FileExists(Storage chartStorage)

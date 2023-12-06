@@ -2,7 +2,7 @@
 
 namespace Kumi.Game.Charts.Events;
 
-public interface IEvent : IHasTime, ICanParse<string>
+public interface IEvent : IHasStartTime, ICanParse<string>
 {
     /// <summary>
     /// The type of this <see cref="IEvent" />.

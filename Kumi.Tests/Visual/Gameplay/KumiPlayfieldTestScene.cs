@@ -71,14 +71,14 @@ public partial class KumiPlayfieldTestScene : KumiTestScene
             var note = playfield!.ChildrenOfType<DrawableNote>().FirstOrDefault();
             if (note == null) return false;
 
-            gameplayClockContainer?.Seek(note.Note.Time);
+            gameplayClockContainer?.Seek(note.Note.StartTime);
             return true;
         });
 
         AddAssert("first note closer in time", () =>
         {
             var note = playfield!.ChildrenOfType<DrawableNote>().FirstOrDefault();
-            return note!.Time.Current == note.Note.Time;
+            return note!.Time.Current == note.Note.StartTime;
         });
 
         AddStep("reset clock", () => { gameplayClockContainer?.Reset(startClock: true); });
@@ -111,9 +111,9 @@ public partial class KumiPlayfieldTestScene : KumiTestScene
     {
         return new DrumHit(startTime)
         {
-            Type = type,
-            Flags = big ? NoteFlags.Big : NoteFlags.None,
-            NoteColor = Color4.White,
+            Type = { Value = type },
+            Flags = { Value = big ? NoteFlags.Big : NoteFlags.None },
+            NoteColor = { Value = Color4.White },
             Windows = new NoteWindows()
         };
     }

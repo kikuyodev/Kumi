@@ -7,7 +7,7 @@ namespace Kumi.Game.Charts.Events;
 /// </summary>
 public abstract class Event : IEvent
 {
-    public double Time { get; set; }
+    public double StartTime { get; set; }
     public EventType Type { get; set; }
 
     /// <summary>
@@ -17,7 +17,7 @@ public abstract class Event : IEvent
 
     /// <summary>
     /// The expected length of the input string once it has been split, excluding the <see cref="EventType" /> and
-    /// <see cref="Time" />.
+    /// <see cref="StartTime" />.
     /// </summary>
     protected virtual int ExpectedLength => 0;
 
@@ -28,7 +28,7 @@ public abstract class Event : IEvent
 
     protected Event(float startTime)
     {
-        Time = startTime;
+        StartTime = startTime;
     }
 
     public void ParseFrom(string input) => ParseFrom(input.SplitComplex(DELIMITER).ToArray());
@@ -45,7 +45,7 @@ public abstract class Event : IEvent
             throw new ArgumentException($"Expected the event type to be {ExpectedType}, but got {type}.");
 
         Type = type;
-        Time = StringUtils.AssertAndFetch<float>(input[1]);
+        StartTime = StringUtils.AssertAndFetch<float>(input[1]);
 
         Parse(input[2..]);
     }
@@ -54,7 +54,7 @@ public abstract class Event : IEvent
     /// An internal method that is called by <see cref="ParseFrom(string)" /> to parse the input string.
     /// The input string is guaranteed to be split by <see cref="DELIMITER" /> and have a length of
     /// <see cref="ExpectedLength" />.
-    /// The first two values are the <see cref="EventType" /> and the <see cref="Time" /> respectively; and are already
+    /// The first two values are the <see cref="EventType" /> and the <see cref="StartTime" /> respectively; and are already
     /// parsed;
     /// and the remaining values passed to this function are the values that need to be parsed.
     /// </summary>

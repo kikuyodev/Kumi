@@ -1,5 +1,4 @@
-﻿using Kumi.Game.Charts;
-using osu.Framework.Allocation;
+﻿using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Cursor;
@@ -10,7 +9,7 @@ namespace Kumi.Game.Screens.Edit;
 public abstract partial class EditorScreen : Screen
 {
     [Resolved]
-    protected Chart Chart { get; private set; } = null!;
+    protected EditorChart EditorChart { get; private set; } = null!;
     
     private readonly Container content;
 

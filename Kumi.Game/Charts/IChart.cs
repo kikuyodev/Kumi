@@ -1,11 +1,10 @@
 ﻿using Kumi.Game.Charts.Events;
 using Kumi.Game.Charts.Objects;
 using Kumi.Game.Charts.Timings;
-using Kumi.Game.IO.Formats;
 
 namespace Kumi.Game.Charts;
 
-public interface IChart : IDecodable
+public interface IChart
 {
     /// <summary>
     /// The <see cref="ChartInfo" /> of this <see cref="IChart" />.

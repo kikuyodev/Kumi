@@ -8,6 +8,7 @@ using Kumi.Game.Gameplay.Drawables;
 using Kumi.Game.Graphics;
 using Kumi.Game.Tests;
 using NUnit.Framework;
+using osu.Framework.Bindables;
 using osu.Framework.Development;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Sprites;
@@ -66,14 +67,14 @@ public abstract partial class PlayfieldTestScene : KumiTestScene
             var note = Playfield!.ChildrenOfType<DrawableNote>().FirstOrDefault();
             if (note == null) return false;
 
-            gameplayClockContainer?.Seek(note.Note.Time);
+            gameplayClockContainer?.Seek(note.Note.StartTime);
             return true;
         });
 
         AddAssert("first note closer in time", () =>
         {
             var note = Playfield!.ChildrenOfType<DrawableNote>().FirstOrDefault();
-            return note!.Time.Current == note.Note.Time;
+            return note!.Time.Current == note.Note.StartTime;
         });
 
         CreateAsserts();
@@ -109,10 +110,10 @@ public abstract partial class PlayfieldTestScene : KumiTestScene
     {
         return new TestNote
         {
-            Time = startTime,
-            Type = NoteType.Don,
-            Flags = NoteFlags.None,
-            NoteColor = Color4.White,
+            StartTime = startTime,
+            Type = new NoteProperty<NoteType>(),
+            Flags = new NoteProperty<NoteFlags>(),
+            NoteColor = new NoteProperty<Color4>(Color4.White),
             Windows = new NoteWindows()
         };
     }
@@ -121,10 +122,17 @@ public abstract partial class PlayfieldTestScene : KumiTestScene
 
     protected partial class TestNote : INote
     {
-        public double Time { get; set; }
-        public NoteType Type { get; set; }
-        public NoteFlags Flags { get; set; }
-        public Color4 NoteColor { get; set; }
+        public double StartTime
+        {
+            get => StartTimeBindable.Value;
+            set => StartTimeBindable.Value = value;
+        }
+        
+        public NoteProperty<NoteType> Type { get; init; } = null!;
+        public NoteProperty<NoteFlags> Flags { get; init; } = null!;
+        public NoteProperty<Color4> NoteColor { get; init; } = null!;
         public NoteWindows Windows { get; set; } = null!;
+
+        public Bindable<double> StartTimeBindable { get; } = new Bindable<double>();
     }
 }

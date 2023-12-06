@@ -6,6 +6,7 @@ using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Primitives;
 using osu.Framework.Layout;
+using osuTK;
 
 namespace Kumi.Game.Gameplay;
 
@@ -74,35 +75,48 @@ public partial class ScrollingNoteContainer : Container<DrawableNote>
 
     private void updateLayout(DrawableNote note)
     {
-        updatePosition(note, note.Note.Time);
+        updatePosition(note, note.Note.StartTime);
         setLifetimeStart(note);
+    }
+
+    public double TimeAtScreenSpacePosition(Vector2 screenSpacePosition)
+    {
+        var pos = ToLocalSpace(screenSpacePosition);
+        return timeAtPosition(pos.X, Time.Current);
+    }
+    
+    public Vector2 ScreenSpacePositionAtTime(double time)
+    {
+        var position = positionAtTime(time, Time.Current);
+        return ToScreenSpace(new Vector2(position, 0));
     }
 
     private RectangleF getBoundingBox() => new RectangleF().Inflate(100);
 
-    private double computeLifetimeStart(DrawableNote note)
+    public double ComputeLifetimeStart(DrawableNote note)
     {
         var boundingBox = getBoundingBox();
         var startOffset = -boundingBox.Left;
 
-        var adjustedTime = Algorithm.Value.TimeAt(-startOffset, note.Note.Time, TimeRange, DrawWidth);
+        var adjustedTime = Algorithm.Value.TimeAt(-startOffset, note.Note.StartTime, TimeRange, DrawWidth);
         return adjustedTime - TimeRange;
     }
     
     private void setLifetimeStart(DrawableNote note)
     {
-        var computedStartTime = computeLifetimeStart(note);
-        note.LifetimeStart = Math.Min(note.Note.Time - note.Note.Windows.WindowFor(NoteHitResult.Bad), computedStartTime);
+        var computedStartTime = ComputeLifetimeStart(note);
+        note.LifetimeStart = Math.Min(note.Note.StartTime - note.Note.Windows.WindowFor(NoteHitResult.Bad), computedStartTime);
     }
 
     private void updatePosition(DrawableNote note, double currentTime)
     {
-        var position = positionAtTime(note.Note.Time, currentTime);
+        var position = positionAtTime(note.Note.StartTime, currentTime);
         note.X = position;
     }
 
     private float positionAtTime(double time, double currentTime)
-    {
-        return Algorithm.Value.PositionAt(time, currentTime, TimeRange, DrawWidth);
-    }
+        => Algorithm.Value.PositionAt(time, currentTime, TimeRange, DrawWidth);
+
+    private double timeAtPosition(float localPosition, double currentTime)
+        => Algorithm.Value.TimeAt(localPosition, currentTime, TimeRange, DrawWidth);
 }

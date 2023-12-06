@@ -24,7 +24,7 @@ public partial class DrawableDrumHit : DrawableNote<DrumHit>, IKeyBindingHandler
         Color4Extensions.FromHex("6894C1")
     );
     
-    private readonly Drawable? drumHitPart;
+    internal readonly Drawable? DrumHitPart;
     
     public DrawableDrumHit(DrumHit note)
         : base(note)
@@ -33,7 +33,7 @@ public partial class DrawableDrumHit : DrawableNote<DrumHit>, IKeyBindingHandler
         Anchor = Anchor.CentreLeft;
         Origin = Anchor.Centre;
         
-        AddInternal(drumHitPart = createDrawable(new DrumHitPart(note.Type)));
+        AddInternal(DrumHitPart = createDrawable(new DrumHitPart(note.Type.Value)));
     }
 
     protected override void UpdateAfterChildren()
@@ -55,14 +55,14 @@ public partial class DrawableDrumHit : DrawableNote<DrumHit>, IKeyBindingHandler
         switch (newState)
         {
             case NoteState.Hit:
-                drumHitPart.MoveToY(-100, 250, Easing.OutBack);
-                drumHitPart.FadeOut(250, Easing.OutQuint);
+                DrumHitPart.MoveToY(-100, 250, Easing.OutBack);
+                DrumHitPart.FadeOut(250, Easing.OutQuint);
                 
                 this.Delay(250).Expire();
                 break;
             case NoteState.Miss:
-                drumHitPart!.FadeColour(Colours.Gray(0.05f).Opacity(0.5f), 100, Easing.OutQuint);
-                drumHitPart.FadeOut(100);
+                DrumHitPart!.FadeColour(Colours.Gray(0.05f).Opacity(0.5f), 100, Easing.OutQuint);
+                DrumHitPart.FadeOut(100);
 
                 this.Delay(100).Expire();
                 break;
@@ -75,7 +75,7 @@ public partial class DrawableDrumHit : DrawableNote<DrumHit>, IKeyBindingHandler
 
         if (!userTriggered)
         {
-            if (Time.Current > Note.Time - Note.Windows.WindowFor(NoteHitResult.Bad) && !Note.Windows.IsWithinWindow(deltaTime))
+            if (Time.Current > Note.StartTime - Note.Windows.WindowFor(NoteHitResult.Bad) && !Note.Windows.IsWithinWindow(deltaTime))
                 ApplyResult(NoteHitResult.Miss);
             
             return;
@@ -93,7 +93,7 @@ public partial class DrawableDrumHit : DrawableNote<DrumHit>, IKeyBindingHandler
         if (Judged)
             return false;
 
-        switch (Note.Type)
+        switch (Note.Type.Value)
         {
             case NoteType.Don:
                 if (e.Action is GameplayAction.RightCentre or GameplayAction.LeftCentre)

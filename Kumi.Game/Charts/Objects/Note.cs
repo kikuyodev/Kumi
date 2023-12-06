@@ -21,29 +21,22 @@ public class Note : INote
     /// </summary>
     public const char DELIMITER = ',';
 
-    public NoteType Type
+    public double StartTime
     {
-        get => typeBindable.Value;
-        set => typeBindable.Value = value;
+        get => StartTimeBindable.Value;
+        set
+        {
+            if (StartTimeBindable.Value == value)
+                return;
+
+            StartTimeBindable.Value = value;
+        }
     }
 
-    public NoteFlags Flags
-    {
-        get => flagsBindable.Value;
-        set => flagsBindable.Value = value;
-    }
-
-    public double Time
-    {
-        get => startTimeBindable.Value;
-        set => startTimeBindable.Value = value;
-    }
-
-    public Color4 NoteColor
-    {
-        get => noteColorBindable.Value;
-        set => noteColorBindable.Value = value;
-    }
+    public NoteProperty<NoteType> Type { get; } = new NoteProperty<NoteType>();
+    public NoteProperty<NoteFlags> Flags { get; } = new NoteProperty<NoteFlags>();
+    public NoteProperty<Color4> NoteColor { get; } = new NoteProperty<Color4>();
+    public Bindable<double> StartTimeBindable { get; } = new Bindable<double>();
 
     // TODO: Initialize this somewhere, we're not guaranteed to have a window for every note,
     //       especially when we're just decoding the chart.
@@ -51,14 +44,9 @@ public class Note : INote
 
     protected Note(float startTime)
     {
-        Time = startTime;
-        typeBindable.ValueChanged += v => NoteColor = getColorFromType(v.NewValue);
+        StartTime = startTime;
+        Type.Bindable.ValueChanged += v => NoteColor.Value = getColorFromType(v.NewValue);
     }
-
-    private readonly Bindable<NoteType> typeBindable = new Bindable<NoteType>();
-    private readonly Bindable<double> startTimeBindable = new Bindable<double>();
-    private readonly Bindable<Color4> noteColorBindable = new Bindable<Color4>();
-    private readonly Bindable<NoteFlags> flagsBindable = new Bindable<NoteFlags>();
 
     /// <summary>
     /// A function that applies various defaults to an object within a <see cref="IChart" />.
@@ -68,6 +56,8 @@ public class Note : INote
     /// <param name="chart"></param>
     public void ApplyChartDefaults(IChart chart)
     {
+        Windows ??= new NoteWindows();
+        
         // TODO: Set windows based on difficulty rating.
         Windows.ApplyDifficultyRating(0.0f);
     }
@@ -76,7 +66,7 @@ public class Note : INote
     /// Gets the total duration of this note.
     /// ...I'm not sure if this is useful, but it's here just in case.
     /// </summary>
-    public double GetDuration() => this is IHasEndTime ? (this as IHasEndTime)!.EndTime - Time : 0.0f;
+    public double GetDuration() => this is IHasEndTime ? (this as IHasEndTime)!.EndTime - StartTime : 0.0f;
 
     private Color4 getColorFromType(NoteType type)
     {

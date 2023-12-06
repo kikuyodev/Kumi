@@ -20,7 +20,7 @@ public class DisplayLyricEvent : Event, IHasEndTime
         : base(startTime)
     {
         Lyric = lyric;
-        Time = startTime;
+        StartTime = startTime;
         EndTime = endTime;
         CrossfadeTime = crossfadeTime;
         Easing = easing;
@@ -33,7 +33,7 @@ public class DisplayLyricEvent : Event, IHasEndTime
 
     protected override void Parse(string[] input)
     {
-        EndTime = Time + StringUtils.AssertAndFetch<float>(input[0]);
+        EndTime = StartTime + StringUtils.AssertAndFetch<float>(input[0]);
         Easing = Enum.Parse<Easing>(input[1]);
         CrossfadeTime = StringUtils.AssertAndFetch<float>(input[2]);
         Lyric = input[3];

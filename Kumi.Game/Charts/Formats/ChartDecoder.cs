@@ -199,13 +199,13 @@ public class ChartDecoder : FileDecoder<Chart, ChartSections>
             case NoteType.Don:
             case NoteType.Kat:
                 note = new DrumHit(StringUtils.AssertAndFetch<float>(args[1]));
-                note.Flags = (NoteFlags) StringUtils.AssertAndFetch<int>(args[2]);
+                note.Flags.Value = (NoteFlags) StringUtils.AssertAndFetch<int>(args[2]);
                 break;
 
             case NoteType.Drumroll:
                 var drumroll = new DrumRoll(StringUtils.AssertAndFetch<float>(args[1]));
                 drumroll.EndTime = StringUtils.AssertAndFetch<float>(args[2]);
-                drumroll.Flags = (NoteFlags) StringUtils.AssertAndFetch<int>(args[3]);
+                drumroll.Flags.Value = (NoteFlags) StringUtils.AssertAndFetch<int>(args[3]);
 
                 note = drumroll;
                 break;
@@ -213,7 +213,7 @@ public class ChartDecoder : FileDecoder<Chart, ChartSections>
             case NoteType.Balloon:
                 var balloon = new Balloon(StringUtils.AssertAndFetch<float>(args[1]));
                 balloon.EndTime = StringUtils.AssertAndFetch<float>(args[2]);
-                balloon.Flags = (NoteFlags) StringUtils.AssertAndFetch<int>(args[3]);
+                balloon.Flags.Value = (NoteFlags) StringUtils.AssertAndFetch<int>(args[3]);
 
                 note = balloon;
                 break;
@@ -224,7 +224,7 @@ public class ChartDecoder : FileDecoder<Chart, ChartSections>
 
         // TODO: Temporary
         note.Windows = new NoteWindows();
-        note.Type = typeValue;
+        note.Type.Value = typeValue;
         Current.Notes.Add(note);
     }
 
