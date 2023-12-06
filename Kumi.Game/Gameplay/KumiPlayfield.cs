@@ -187,4 +187,7 @@ public partial class KumiPlayfield : ScrollingPlayfield
         
         throw new ArgumentException("Unsupported note type", nameof(note));
     }
+
+    public double TimeAtScreenSpacePosition(Vector2 screenSpacePosition)
+        => ScrollContainer.TimeAtScreenSpacePosition(screenSpacePosition);
 }

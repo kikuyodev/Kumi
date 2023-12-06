@@ -91,7 +91,7 @@ public abstract partial class SelectionBlueprint<T> : CompositeDrawable, IStatef
     public virtual bool IsSelectable => ShouldBeAlive && IsPresent;
 
     public virtual Vector2 ScreenSpaceSelectionPoint => ScreenSpaceDrawQuad.Centre;
-
+    
     public virtual Quad SelectionQuad => ScreenSpaceDrawQuad;
 }
 

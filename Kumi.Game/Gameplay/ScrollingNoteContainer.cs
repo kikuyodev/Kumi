@@ -6,6 +6,7 @@ using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Primitives;
 using osu.Framework.Layout;
+using osuTK;
 
 namespace Kumi.Game.Gameplay;
 
@@ -78,9 +79,15 @@ public partial class ScrollingNoteContainer : Container<DrawableNote>
         setLifetimeStart(note);
     }
 
+    public double TimeAtScreenSpacePosition(Vector2 screenSpacePosition)
+    {
+        var pos = ToLocalSpace(screenSpacePosition);
+        return timeAtPosition(pos.X, Time.Current);
+    }
+
     private RectangleF getBoundingBox() => new RectangleF().Inflate(100);
 
-    private double computeLifetimeStart(DrawableNote note)
+    public double ComputeLifetimeStart(DrawableNote note)
     {
         var boundingBox = getBoundingBox();
         var startOffset = -boundingBox.Left;
@@ -91,7 +98,7 @@ public partial class ScrollingNoteContainer : Container<DrawableNote>
     
     private void setLifetimeStart(DrawableNote note)
     {
-        var computedStartTime = computeLifetimeStart(note);
+        var computedStartTime = ComputeLifetimeStart(note);
         note.LifetimeStart = Math.Min(note.Note.StartTime - note.Note.Windows.WindowFor(NoteHitResult.Bad), computedStartTime);
     }
 
@@ -102,7 +109,8 @@ public partial class ScrollingNoteContainer : Container<DrawableNote>
     }
 
     private float positionAtTime(double time, double currentTime)
-    {
-        return Algorithm.Value.PositionAt(time, currentTime, TimeRange, DrawWidth);
-    }
+        => Algorithm.Value.PositionAt(time, currentTime, TimeRange, DrawWidth);
+
+    private double timeAtPosition(float localPosition, double currentTime)
+        => Algorithm.Value.TimeAt(localPosition, currentTime, TimeRange, DrawWidth);
 }

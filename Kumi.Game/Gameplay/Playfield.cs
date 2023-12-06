@@ -61,13 +61,6 @@ public abstract partial class Playfield : Container
         base.Update();
     }
 
-    public void Update(INote note)
-    {
-        // For now just remove and re-add
-        Remove(note);
-        Add(note);
-    }
-
     public void Add(INote note)
     {
         var drawableNote = createDrawableNote(note);
@@ -109,10 +102,31 @@ public abstract partial class Playfield : Container
     private DrawableNote createDrawableNote(INote note)
     {
         var drawableNote = CreateDrawableNote(note);
-        drawableNote.LifetimeStart = note.StartTime - drawableNote.InitialLifetimeOffset;
+        drawableNote.LifetimeStart = ComputeInitialLifetimeOffset(drawableNote);
 
         return drawableNote;
     }
+
+    public virtual void UpdateLifetime(Note note)
+    {
+        var drawableNote = NoteContainer.Children.FirstOrDefault(n => n.Note == note);
+        if (drawableNote != null)
+        {
+            drawableNote.LifetimeStart = ComputeInitialLifetimeOffset(drawableNote);
+            
+            // Recompute transforms
+            drawableNote.Reset();
+        }
+    }
+
+    public void UpdateLifetimeRange(IEnumerable<Note> notes)
+    {
+        foreach (var note in notes)
+            UpdateLifetime(note);
+    }
+
+    protected virtual double ComputeInitialLifetimeOffset(DrawableNote drawableNote)
+        => drawableNote.Note.StartTime - drawableNote.InitialLifetimeOffset;
 
     protected abstract DrawableNote CreateDrawableNote(INote note);
 

@@ -90,4 +90,12 @@ public partial class ComposeScreen : EditorScreenWithTimeline
 
     protected override Drawable CreateMainContent()
         => playfieldContainer = new Container { RelativeSizeAxes = Axes.Both };
+
+    protected override void Dispose(bool isDisposing)
+    {
+        base.Dispose(isDisposing);
+        
+        editorChart.NoteAdded -= onNoteAdded;
+        editorChart.NoteRemoved -= onNoteRemoved;
+    }
 }

@@ -31,6 +31,34 @@ public partial class SelectionHandler : CompositeDrawable, IKeyBindingHandler<Pl
     }
 
     public override bool ReceivePositionalInputAt(Vector2 screenSpacePos) => true;
+    
+    #region Deletion
+
+    public bool OnPressed(KeyBindingPressEvent<PlatformAction> e)
+    {
+        switch (e.Action)
+        {
+            case PlatformAction.Delete:
+                DeleteSelected();
+                return true;
+        }
+        
+        return false;
+    }
+
+    public void OnReleased(KeyBindingReleaseEvent<PlatformAction> e)
+    {
+    }
+
+    protected void DeleteSelected()
+    {
+        editorChart.RemoveRange(SelectedItems.ToArray());
+        DeselectAll();
+    }
+
+    #endregion
+
+    #region Selection
 
     protected void DeselectAll()
         => SelectedItems.Clear();
@@ -76,25 +104,5 @@ public partial class SelectionHandler : CompositeDrawable, IKeyBindingHandler<Pl
         return false;
     }
 
-    public bool OnPressed(KeyBindingPressEvent<PlatformAction> e)
-    {
-        switch (e.Action)
-        {
-            case PlatformAction.Delete:
-                DeleteSelected();
-                return true;
-        }
-        
-        return false;
-    }
-
-    public void OnReleased(KeyBindingReleaseEvent<PlatformAction> e)
-    {
-    }
-
-    protected void DeleteSelected()
-    {
-        editorChart.RemoveRange(SelectedItems.ToArray());
-        DeselectAll();
-    }
+    #endregion
 }
