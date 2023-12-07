@@ -5,10 +5,17 @@ namespace Kumi.Game.Input;
 
 public partial class GlobalKeybindContainer : RealmBackedKeyBindingContainer<GlobalAction>
 {
-    public override IEnumerable<IKeyBinding> DefaultKeyBindings => Array.Empty<KeyBinding>();
-
     public GlobalKeybindContainer()
         : base(KeybindType.Global)
     {
     }
+
+    public override IEnumerable<IKeyBinding> DefaultKeyBindings
+        => new[]
+        {
+            new KeyBinding(InputKey.Escape, GlobalAction.Back),
+            new KeyBinding(InputKey.ExtraMouseButton1, GlobalAction.Back),
+            
+            new KeyBinding(InputKey.Enter, GlobalAction.Select)
+        };
 }

@@ -1,8 +1,6 @@
 ﻿using System.Diagnostics;
 using Kumi.Game.Charts;
-using Kumi.Game.Graphics.Backgrounds;
 using Kumi.Game.Overlays;
-using Kumi.Game.Screens.Backgrounds;
 using Kumi.Game.Screens.Select.List;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
@@ -12,9 +10,8 @@ using osu.Framework.Screens;
 
 namespace Kumi.Game.Screens.Select;
 
-public partial class SelectScreen : KumiScreen
+public partial class SelectScreen : ScreenWithChartBackground
 {
-    public override BackgroundScreen CreateBackground() => new ChartBackground();
     public override float BlurAmount => 10f;
     public override float DimAmount => 0.5f;
 

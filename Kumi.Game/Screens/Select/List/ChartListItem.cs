@@ -170,48 +170,4 @@ public partial class ChartListItem : CompositeDrawable
         // TODO
         return Colours.Gray(0.2f);
     }
-
-    private partial class DifficultyPill : CircularContainer
-    {
-        private readonly float difficulty;
-
-        public DifficultyPill(float difficulty)
-        {
-            this.difficulty = difficulty;
-        }
-
-        [BackgroundDependencyLoader]
-        private void load()
-        {
-            AutoSizeAxes = Axes.Both;
-            Masking = true;
-
-            Children = new Drawable[]
-            {
-                new Box
-                {
-                    RelativeSizeAxes = Axes.Both,
-                    Colour = getDifficultyColor()
-                },
-                new SpriteText
-                {
-                    Anchor = Anchor.Centre,
-                    Origin = Anchor.Centre,
-                    Text = difficulty.ToString("N2"),
-                    Font = KumiFonts.GetFont(weight: FontWeight.Bold, size: 8),
-                    Padding = new MarginPadding
-                    {
-                        Vertical = 1,
-                        Horizontal = 8
-                    }
-                }
-            };
-        }
-
-        private Color4 getDifficultyColor()
-        {
-            // TODO
-            return Colours.Gray(0.2f);
-        }
-    }
 }

@@ -28,6 +28,8 @@ public partial class KumiPlayfield : ScrollingPlayfield
     public KumiPlayfield(WorkingChart workingChart)
         : base(workingChart)
     {
+        ScrollContainer.Algorithm.BindTo(algorithm);
+        ScrollContainer.TimeRange = 1000;
     }
 
     [BackgroundDependencyLoader]
@@ -174,9 +176,6 @@ public partial class KumiPlayfield : ScrollingPlayfield
                 }
             }
         };
-
-        ScrollContainer.Algorithm.BindTo(algorithm);
-        ScrollContainer.TimeRange = 1000;
     }
 
     protected override DrawableNote CreateDrawableNote(INote note)

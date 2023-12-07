@@ -17,7 +17,7 @@ public partial class ParallaxContainer : Container, IRequireHighFrequencyMousePo
     /// <summary>
     /// The duration it takes to move the parallax effect.
     /// </summary>
-    public const int PARALLAX_DURATION = 250;
+    public const int PARALLAX_DURATION = 500;
 
     /// <summary>
     /// The current strength of the parallax effect.

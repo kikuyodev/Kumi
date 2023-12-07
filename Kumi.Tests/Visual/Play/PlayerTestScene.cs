@@ -1,15 +1,15 @@
 ﻿using System.Diagnostics;
 using Kumi.Game.Charts;
-using Kumi.Game.Screens.Edit;
+using Kumi.Game.Screens.Play;
 using Kumi.Game.Tests;
 using NUnit.Framework;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Development;
 
-namespace Kumi.Tests.Visual.Edit;
+namespace Kumi.Tests.Visual.Play;
 
-public partial class EditorScreenTestScene : KumiScreenTestScene
+public partial class PlayerTestScene : KumiScreenTestScene
 {
     private WorkingChart? workingChart;
 
@@ -30,11 +30,11 @@ public partial class EditorScreenTestScene : KumiScreenTestScene
             currentChart.Value = workingChart;
         });
     }
-
+    
     [Test]
-    public void TestEditorScreen()
+    public void TestPlayerScreen()
     {
-        PushScreen(new Editor());
+        PushScreen(new PlayerLoader());
         WaitForScreenLoad();
     }
 }
