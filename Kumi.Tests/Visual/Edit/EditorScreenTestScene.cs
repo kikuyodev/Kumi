@@ -1,6 +1,5 @@
 ﻿using System.Diagnostics;
 using Kumi.Game.Charts;
-using Kumi.Game.Screens;
 using Kumi.Game.Screens.Edit;
 using Kumi.Game.Tests;
 using NUnit.Framework;
@@ -38,6 +37,4 @@ public partial class EditorScreenTestScene : KumiScreenTestScene
         PushScreen(new Editor());
         WaitForScreenLoad();
     }
-
-    protected override KumiScreen CreateScreen() => new Editor();
 }

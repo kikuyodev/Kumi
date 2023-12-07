@@ -20,6 +20,4 @@ public abstract partial class KumiScreenTestScene : KumiTestScene
     protected void PushScreen(KumiScreen newScreen) => AddStep("push screen", () => ScreenStack.Push(screen = newScreen));
 
     protected void WaitForScreenLoad() => AddUntilStep("Screen is loaded", () => screen?.IsLoaded ?? false);
-
-    protected abstract KumiScreen CreateScreen();
 }
