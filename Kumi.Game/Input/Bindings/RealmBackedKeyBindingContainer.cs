@@ -37,9 +37,11 @@ public abstract partial class RealmBackedKeyBindingContainer<T> : KeyBindingCont
 
             ReloadMappings(sender.AsEnumerable());
         });
+        
+        ReloadMappings();
     }
 
-    protected override void ReloadMappings() => ReloadMappings(realm.Run(r => r.All<Keybind>().Where(b => b.Type == Type)));
+    protected override void ReloadMappings() => ReloadMappings(realm.Run(r => r.All<Keybind>().Where(b => b.TypeInt == (int)Type).ToArray()));
 
     private void ReloadMappings(IEnumerable<Keybind> keybinds) =>
         KeyBindings = keybinds.Where(b => b.Type == Type).Select(b => new KeyBinding(b.KeyCombination, b.Action));

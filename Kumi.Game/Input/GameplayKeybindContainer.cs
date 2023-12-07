@@ -1,13 +1,14 @@
-﻿using osu.Framework.Input.Bindings;
+﻿using Kumi.Game.Input.Bindings;
+using osu.Framework.Input.Bindings;
 
 namespace Kumi.Game.Input;
 
-public partial class GameplayKeybindContainer : KeyBindingContainer<GameplayAction>
+public partial class GameplayKeybindContainer : RealmBackedKeyBindingContainer<GameplayAction>
 {
     protected override bool HandleRepeats => false;
 
     public GameplayKeybindContainer()
-        : base(SimultaneousBindingMode.Unique)
+        : base(KeybindType.Gameplay, SimultaneousBindingMode.Unique)
     {
     }
 
