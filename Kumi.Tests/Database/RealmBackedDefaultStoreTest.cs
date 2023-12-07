@@ -7,7 +7,6 @@ namespace Kumi.Tests.Database;
 [TestFixture]
 public class RealmBackedDefaultStoreTest : RealmTest
 {
-
     [Test]
     public void TestRegisterDefaults()
     {
