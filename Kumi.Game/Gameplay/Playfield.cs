@@ -11,16 +11,15 @@ public abstract partial class Playfield : Container
 {
     protected WorkingChart WorkingChart { get; set; }
     protected IChart Chart { get; set; } = null!;
-    
+
     public IReadOnlyList<DrawableNote> Notes => NoteContainer.Children;
 
     protected readonly Container<DrawableNote> NoteContainer;
-    
+
     protected override Container<Drawable> Content => content;
 
-    private bool firstLoad;
     private Container content = null!;
-    
+
     // Testing purposes
     internal Container<DrawableNote> NoteContainerInternal => NoteContainer;
 
@@ -35,7 +34,7 @@ public abstract partial class Playfield : Container
         });
 
         WorkingChart = workingChart;
-        workingChart.BeginAsyncLoad();
+        Chart = WorkingChart.Chart;
     }
 
     [BackgroundDependencyLoader]
@@ -47,18 +46,8 @@ public abstract partial class Playfield : Container
             Anchor = Anchor.Centre,
             Origin = Anchor.Centre
         };
-    }
 
-    protected override void Update()
-    {
-        if (WorkingChart.ChartLoaded && !firstLoad)
-        {
-            Chart = WorkingChart.Chart;
-            firstLoad = true;
-            onChartLoaded();
-        }
-
-        base.Update();
+        addNotes();
     }
 
     public void Add(INote note)
@@ -66,7 +55,7 @@ public abstract partial class Playfield : Container
         var drawableNote = createDrawableNote(note);
         NoteContainer.Add(drawableNote);
     }
-    
+
     public bool Remove(INote note)
     {
         var index = NoteContainer.IndexOf(NoteContainer.Children.FirstOrDefault(n => n.Note == note)!);
@@ -78,14 +67,14 @@ public abstract partial class Playfield : Container
 
         return false;
     }
-    
+
     public void RemoveAt(int index)
     {
         var drawableNote = NoteContainer.ElementAtOrDefault(index);
         if (drawableNote != null)
             NoteContainer.Remove(drawableNote, true);
     }
-    
+
     public void SetKeepAlive(INote note, bool keepAlive)
     {
         var drawableNote = NoteContainer.Children.FirstOrDefault(n => n.Note == note);
@@ -93,7 +82,7 @@ public abstract partial class Playfield : Container
             drawableNote.AlwaysPresent = keepAlive;
     }
 
-    private void onChartLoaded()
+    private void addNotes()
     {
         foreach (var note in Chart.Notes)
             Add(note);
@@ -113,7 +102,7 @@ public abstract partial class Playfield : Container
         if (drawableNote != null)
         {
             drawableNote.LifetimeStart = ComputeInitialLifetimeOffset(drawableNote);
-            
+
             // Recompute transforms
             drawableNote.Reset();
         }
