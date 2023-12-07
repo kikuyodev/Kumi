@@ -1,7 +1,5 @@
 ﻿using Kumi.Game.Charts;
-using Kumi.Game.Graphics.Backgrounds;
 using Kumi.Game.Overlays;
-using Kumi.Game.Screens.Backgrounds;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
@@ -10,9 +8,8 @@ using osuTK.Input;
 
 namespace Kumi.Game.Screens.Edit;
 
-public partial class Editor : KumiScreen
+public partial class Editor : ScreenWithChartBackground
 {
-    public override BackgroundScreen CreateBackground() => new ChartBackground();
     public override float DimAmount => 0.5f;
     public override float ParallaxAmount => 0.001f;
 
