@@ -111,7 +111,7 @@ public class TestResources
         {
             Artist = $"Test Artist {RNG.Next(0, 50)}",
             Title = $"Test Title {RNG.Next(0, 50)}",
-            Creator = new RealmUser { Username = $"Test Author {RNG.Next(0, 50)}" }
+            Creator = new RealmAccount { Username = $"Test Author {RNG.Next(0, 50)}" }
         };
 
         var chartSetInfo = new ChartSetInfo();

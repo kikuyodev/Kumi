@@ -17,7 +17,7 @@ public class ChartMetadata : RealmObject, IChartMetadata, IDeepCloneable<ChartMe
     [JsonProperty("title_romanised")]
     public string TitleRomanised { get; set; } = string.Empty;
 
-    public RealmUser Creator { get; set; } = null!;
+    public RealmAccount Creator { get; set; } = null!;
 
     public string Source { get; set; } = string.Empty;
     public string Genre { get; set; } = string.Empty;
@@ -35,7 +35,7 @@ public class ChartMetadata : RealmObject, IChartMetadata, IDeepCloneable<ChartMe
             ArtistRomanised = ArtistRomanised,
             Title = Title,
             TitleRomanised = TitleRomanised,
-            Creator = new RealmUser
+            Creator = new RealmAccount
             {
                 Id = Creator.Id,
                 Username = Creator.Username

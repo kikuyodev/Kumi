@@ -1,6 +1,7 @@
 using Kumi.Game.Charts;
 using Kumi.Game.Charts.Objects;
 using Kumi.Game.Gameplay.Drawables;
+using Kumi.Game.Gameplay.Judgements;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
@@ -9,8 +10,10 @@ namespace Kumi.Game.Gameplay;
 
 public abstract partial class Playfield : Container
 {
+    public event Action<DrawableNote, Judgement>? NewJudgement; 
+    
     protected WorkingChart WorkingChart { get; set; }
-    protected IChart Chart { get; set; } = null!;
+    protected IChart Chart { get; set; }
 
     public IReadOnlyList<DrawableNote> Notes => NoteContainer.Children;
 
@@ -54,6 +57,8 @@ public abstract partial class Playfield : Container
     {
         var drawableNote = createDrawableNote(note);
         NoteContainer.Add(drawableNote);
+        
+        drawableNote.OnNewJudgement += (n, j) => NewJudgement?.Invoke(n, j);
     }
 
     public bool Remove(INote note)

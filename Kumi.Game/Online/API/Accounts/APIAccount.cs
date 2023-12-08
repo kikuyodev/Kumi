@@ -2,7 +2,7 @@
 
 namespace Kumi.Game.Online.API.Accounts;
 
-public class APIAccount : IUser
+public class APIAccount : IAccount
 {
     /// <summary>
     /// A special ID used to represent the system users, or any other user that is not logged in.

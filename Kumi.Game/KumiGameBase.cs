@@ -4,6 +4,7 @@ using Kumi.Game.Graphics;
 using Kumi.Game.Input;
 using Kumi.Game.Input.Bindings;
 using Kumi.Game.Online.API;
+using Kumi.Game.Scoring;
 using Kumi.Game.Screens;
 using Kumi.Resources;
 using osu.Framework.Allocation;
@@ -24,6 +25,7 @@ public partial class KumiGameBase : osu.Framework.Game
 
     private RealmAccess realm = null!;
     private ChartManager chartManager = null!;
+    private ScoreManager scoreManager = null!;
     private KeybindStore keybindStore = null!;
 
     private Container content = null!;
@@ -69,6 +71,8 @@ public partial class KumiGameBase : osu.Framework.Game
 
         DependencyContainer.CacheAs<IBindable<WorkingChart>>(Chart);
         DependencyContainer.CacheAs(Chart);
+        
+        DependencyContainer.Cache(scoreManager = new ScoreManager(Storage!, realm));
 
         var largeStore = new LargeTextureStore(Host.Renderer, Host.CreateTextureLoaderStore(new NamespacedResourceStore<byte[]>(Resources, "Textures")));
         largeStore.AddTextureSource(Host.CreateTextureLoaderStore(new OnlineStore()));

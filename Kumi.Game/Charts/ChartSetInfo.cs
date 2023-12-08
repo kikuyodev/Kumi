@@ -23,7 +23,7 @@ public class ChartSetInfo : RealmObject, IHasGuidPrimaryKey, IChartSetInfo, ISof
     public IList<RealmNamedFileUsage> Files { get; } = null!;
 
     [Ignored]
-    public RealmUser Creator => Metadata.Creator;
+    public RealmAccount Creator => Metadata.Creator;
 
     public string Hash { get; set; } = string.Empty;
 

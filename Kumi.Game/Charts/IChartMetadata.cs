@@ -30,7 +30,7 @@ public interface IChartMetadata
     /// <summary>
     /// The creator of this specific chart.
     /// </summary>
-    RealmUser Creator { get; }
+    RealmAccount Creator { get; }
 
     /// <summary>
     /// Which game, movie, or series this song is from.
