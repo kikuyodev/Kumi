@@ -3,6 +3,7 @@ using AutoMapper;
 using AutoMapper.Internal;
 using Kumi.Game.Charts;
 using Kumi.Game.Models;
+using Kumi.Game.Scoring;
 using Realms;
 
 namespace Kumi.Game.Database;
@@ -71,7 +72,8 @@ public static class RealmObjectUtils
         c.CreateMap<ChartInfo, ChartInfo>();
         c.CreateMap<ChartMetadata, ChartMetadata>();
         c.CreateMap<ChartSetInfo, ChartSetInfo>();
-        c.CreateMap<RealmUser, RealmUser>();
+        c.CreateMap<ScoreInfo, ScoreInfo>();
+        c.CreateMap<RealmAccount, RealmAccount>();
         c.CreateMap<RealmFile, RealmFile>();
         c.CreateMap<RealmNamedFileUsage, RealmNamedFileUsage>();
     }

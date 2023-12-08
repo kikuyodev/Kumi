@@ -8,9 +8,9 @@ namespace Kumi.Game.Graphics.Sprites;
 
 public partial class AvatarSprite : Sprite
 {
-    private readonly IUser? user;
+    private readonly IAccount? user;
 
-    public AvatarSprite(IUser? user)
+    public AvatarSprite(IAccount? user)
     {
         this.user = user;
 

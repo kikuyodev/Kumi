@@ -1,6 +1,6 @@
 ﻿namespace Kumi.Game.Online.API.Accounts;
 
-public interface IUser
+public interface IAccount
 {
     int Id { get; }
 

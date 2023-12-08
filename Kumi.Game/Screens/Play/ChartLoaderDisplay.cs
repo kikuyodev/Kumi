@@ -136,7 +136,7 @@ public partial class ChartLoaderDisplay : CompositeDrawable
                                 },
                                 new SpriteText
                                 {
-                                    Text = chartInfo.ChartSet?.Creator.Username ?? "Unknown creator",
+                                    Text = chartInfo.ChartSet?.Creator?.Username ?? "Unknown creator",
                                     Font = KumiFonts.GetFont(FontFamily.Montserrat, FontWeight.Light),
                                     Anchor = Anchor.TopRight,
                                     Origin = Anchor.TopRight

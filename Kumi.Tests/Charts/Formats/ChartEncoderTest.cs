@@ -79,7 +79,7 @@ public class ChartEncoderTest
         {
             Artist = "Test Artist",
             Title = "Test Title",
-            Creator = new RealmUser { Username = "Test Author" }
+            Creator = new RealmAccount { Username = "Test Author" }
         };
 
         var chartInfo = new ChartInfo

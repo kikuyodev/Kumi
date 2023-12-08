@@ -74,6 +74,9 @@ public class ChartImporter : RealmModelImporter<ChartSetInfo>
 
     protected override void PostImport(ChartSetInfo model, Realm realm)
     {
+        foreach (var chart in model.Charts)
+            chart.UpdateLocalScores(realm);
+        
         ProcessChart?.Invoke(model);
     }
 

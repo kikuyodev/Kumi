@@ -95,7 +95,7 @@ public class ChartDecoder : FileDecoder<Chart, ChartSections>
                 break;
 
             case "creator":
-                Current.Metadata.Creator = new RealmUser { Username = pair.Value };
+                Current.Metadata.Creator = new RealmAccount { Username = pair.Value };
                 break;
 
             case "difficulty_name":
