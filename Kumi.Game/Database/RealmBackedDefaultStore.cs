@@ -61,7 +61,7 @@ public abstract class RealmBackedDefaultStore<TModel> : IRealmBackedDefaultStore
     }
 
 
-    public virtual bool Compare(TModel model, TModel other) => model.Equals(other);
+    public abstract bool Compare(TModel model, TModel other);
 
     public void Reset()
     {

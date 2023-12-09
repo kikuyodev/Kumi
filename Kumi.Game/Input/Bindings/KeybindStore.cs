@@ -14,4 +14,7 @@ public class KeybindStore : RealmBackedDefaultStore<Keybind>
     public override void AssignDefaults()
     {
     }
+
+    public override bool Compare(Keybind model, Keybind other)
+        => model.Action == other.Action && model.KeyCombinationString == other.KeyCombinationString && model.Type == other.Type;
 }
