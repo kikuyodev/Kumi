@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using System.Net;
+using Newtonsoft.Json;
 
 namespace Kumi.Game.Online.API;
 
@@ -18,6 +19,9 @@ public class APIResponse : IHasStatus
     
     [JsonIgnore]
     public bool IsSuccess => StatusCode == 200;
+    
+    [JsonIgnore]
+    public CookieContainer Cookies { get; set; } = new CookieContainer();
    
     /// <summary>
     /// Gets the value of the specified key from the response data.

@@ -6,7 +6,7 @@ public abstract class APIRequest<T>
 {
     public T Response { get; private set; } = null!;
     
-    public event APIWebRequest.APIRequestSucceeded<T>? Success;
+    public new event APIWebRequest.APIRequestSucceeded<T>? Success;
 
     protected APIRequest()
     {

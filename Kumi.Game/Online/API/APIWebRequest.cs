@@ -1,5 +1,6 @@
-﻿using Newtonsoft.Json;
-using osu.Framework.IO.Network;
+﻿using System.Net;
+using Newtonsoft.Json;
+using WebRequest = osu.Framework.IO.Network.WebRequest;
 
 namespace Kumi.Game.Online.API;
 
@@ -7,7 +8,7 @@ namespace Kumi.Game.Online.API;
 /// A web request to the API with a parsed response.
 /// </summary>
 public class APIWebRequest<T> : APIWebRequest
-    where T : IHasStatus
+    where T : APIResponse
 {
     
     public APIWebRequest(string? uri)
@@ -27,6 +28,15 @@ public class APIWebRequest<T> : APIWebRequest
 
         if (!string.IsNullOrEmpty(response))
             ResponseObject = JsonConvert.DeserializeObject<T>(response);
+        
+        if (this.ResponseHeaders.TryGetValues("Set-Cookie", out var cookieHeader))
+        {
+            ResponseObject.Cookies = new CookieContainer();
+            foreach (var cookie in cookieHeader)
+            {
+                ResponseObject.Cookies.SetCookies(new Uri(this.Url), cookie);
+            }
+        }
 
         base.ProcessResponse();
     }
@@ -79,5 +89,5 @@ public class APIWebRequest : WebRequest
     public delegate void APIRequestFailed(Exception e);
 
     public delegate void APIRequestSucceeded();
-    public delegate void APIRequestSucceeded<T>(T response);
+    public delegate void APIRequestSucceeded<in T>(T response);
 }
