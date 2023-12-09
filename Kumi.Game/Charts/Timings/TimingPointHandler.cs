@@ -66,19 +66,21 @@ public class TimingPointHandler
     private T searchForPoint<T>(double time, TimingPointType? pointType)
         where T : TimingPoint
     {
-        if (TimingPoints.Count == 0)
+        var list = pointType == null ? TimingPoints.ToList() : TimingPoints.Where(p => p.PointType == pointType).ToList();
+        
+        if (list.Count == 0)
             return (TimingPoint.DEFAULT as T)!;
         
-        if (time < TimingPoints[0].StartTime)
+        if (time < list[0].StartTime)
             return (TimingPoint.DEFAULT as T)!;
         
-        if (time > TimingPoints[^1].StartTime)
-            return (TimingPoints[^1] as T)!;
+        if (time > list[^1].StartTime)
+            return (list[^1] as T)!; 
         
-        var idx = TimingPoints.BinarySearch(new TimingPoint(time));
+        var idx = list.BinarySearch(new TimingPoint(time));
         if (idx < 0)
             idx = ~idx - 1;
 
-        return (TimingPoints[idx] is T point && (pointType == null || point.PointType == pointType) ? point : TimingPoint.DEFAULT as T)!;
+        return (list[idx] is T point && (pointType == null || point.PointType == pointType) ? point : TimingPoint.DEFAULT as T)!;
     }
 }
