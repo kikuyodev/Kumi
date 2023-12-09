@@ -27,7 +27,7 @@ public partial class AvatarSprite : Sprite
     [BackgroundDependencyLoader]
     private void load(LargeTextureStore store)
     {
-        Texture = store.Get($"${api.EndpointConfiguration.WebsiteUri}/cdn/avatars/{user?.Id ?? 0}");
+        Texture = store.Get($"{api.EndpointConfiguration.WebsiteUri}/cdn/avatars/{user?.Id ?? 0}");
     }
 
     protected override void LoadComplete()
