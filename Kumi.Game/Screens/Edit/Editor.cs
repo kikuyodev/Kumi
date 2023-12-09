@@ -31,6 +31,7 @@ public partial class Editor : ScreenWithChartBackground
     private readonly Bindable<WorkingChart> workingChart = new Bindable<WorkingChart>();
 
     private EditorChart editorChart = null!;
+    private EditorHistoryHandler historyHandler = null!;
 
     [BackgroundDependencyLoader]
     private void load(IBindable<WorkingChart> working)
@@ -47,6 +48,9 @@ public partial class Editor : ScreenWithChartBackground
 
         AddInternal(editorChart = new EditorChart(working.Value.Chart, working.Value.ChartInfo));
         dependencies.CacheAs(editorChart);
+        
+        AddInternal(historyHandler = new EditorHistoryHandler(editorChart));
+        dependencies.CacheAs(historyHandler);
 
         clock.ChangeSource(workingChart.Value.Track);
         AddInternal(clock);
