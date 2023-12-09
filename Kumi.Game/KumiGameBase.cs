@@ -3,6 +3,7 @@ using Kumi.Game.Database;
 using Kumi.Game.Graphics;
 using Kumi.Game.Input;
 using Kumi.Game.Input.Bindings;
+using Kumi.Game.Online;
 using Kumi.Game.Online.API;
 using Kumi.Game.Scoring;
 using Kumi.Game.Screens;
@@ -62,7 +63,8 @@ public partial class KumiGameBase : osu.Framework.Game
         DependencyContainer.CacheAs(Storage);
 
         // TODO
-        // DependencyContainer.CacheAs(API = new APIConnection());
+        DependencyContainer.CacheAs(API = new APIConnection(new ProductionServerConfiguration()));
+        base.Content.Add((APIConnection)API);
 
         var defaultChart = new DummyWorkingChart(Audio, Textures);
         DependencyContainer.Cache(chartManager = new ChartManager(Storage!, realm, Audio, Resources, Host, defaultChart));

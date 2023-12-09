@@ -1,5 +1,6 @@
 ﻿using Kumi.Game.Graphics;
 using Kumi.Game.Graphics.UserInterface;
+using Kumi.Game.Online.API;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
@@ -14,6 +15,9 @@ public partial class LoginScreen : Screen
 {
     private KumiTextBox username = null!;
     private KumiTextBox password = null!;
+    
+    [Resolved]
+    private IAPIConnectionProvider api { get; set;  }
     
     public LoginScreen()
     {
@@ -54,7 +58,11 @@ public partial class LoginScreen : Screen
                 {
                     Text = "Sign in",
                     Important = true,
-                    BackgroundColour = Colours.ORANGE_ACCENT_LIGHT
+                    BackgroundColour = Colours.ORANGE_ACCENT_LIGHT,
+                    Action = () =>
+                    {
+                        api.Login(username.Text, password.Text);
+                    }
                 },
                 new KumiCheckbox
                 {

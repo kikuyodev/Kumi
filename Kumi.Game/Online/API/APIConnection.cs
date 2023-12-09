@@ -1,4 +1,6 @@
-﻿using Kumi.Game.Online.API.Accounts;
+﻿using System.Net;
+using Kumi.Game.Online.API.Accounts;
+using Kumi.Game.Online.API.Requests;
 using Kumi.Game.Online.Server;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
@@ -22,8 +24,9 @@ public partial class APIConnection : Component, IAPIConnectionProvider
     }
     
     private IServerConnector? serverConnector;
-    
-    public new void Schedule(Action action) => base.Schedule(action);
+    private CookieContainer cookies = new CookieContainer();
+
+    public new void Schedule(Action action) => Scheduler.Add(action);
     
     public void Queue(APIRequest request) => RequestQueue.Enqueue(request);
     
@@ -54,7 +57,26 @@ public partial class APIConnection : Component, IAPIConnectionProvider
     
     public void Login(string username, string password)
     {
-        throw new NotImplementedException();
+        Console.WriteLine($"Logging in as {username} with password {password}");
+        var loginReq = new LoginRequest()
+        {
+            Username = username,
+            Password = password
+        };
+
+        loginReq.Success += () =>
+        {
+            State.Value = APIState.Online;
+            LocalAccount.Value = loginReq.Response.GetAccount();
+        };
+        
+        try
+        {
+            loginReq.Perform(this);
+        } catch (Exception e) {
+            Logger.Error(e, $"Failed to perform {loginReq}");
+            loginReq.TriggerFailure(e);
+        }
     }
     public void Logout()
     {
@@ -65,6 +87,7 @@ public partial class APIConnection : Component, IAPIConnectionProvider
 
     #region IAPIConnectionProvider implementation
     
+    CookieContainer IAPIConnectionProvider.Cookies => cookies;
     IBindable<APIAccount> IAPIConnectionProvider.LocalAccount => LocalAccount;
     IBindable<APIState> IAPIConnectionProvider.State => State;
 
