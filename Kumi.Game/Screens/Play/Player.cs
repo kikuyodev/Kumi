@@ -17,6 +17,9 @@ namespace Kumi.Game.Screens.Play;
 
 public partial class Player : ScreenWithChartBackground
 {
+    public override bool ShowTaskbar => false;
+    public override bool DisableTaskbarControl => true;
+    
     private const float pass_threshold = 0.7f;
     
     public override float ParallaxAmount => 0.0025f;

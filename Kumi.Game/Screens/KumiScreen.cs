@@ -13,6 +13,9 @@ public partial class KumiScreen : Screen
     public virtual float ParallaxAmount => 0.015f;
     public virtual float BlurAmount => 0f;
     public virtual float DimAmount => 0.95f;
+    public virtual bool AllowBackButton => true;
+    public virtual bool ShowTaskbar => true;
+    public virtual bool DisableTaskbarControl => false;
 
     public KumiScreen()
     {
@@ -34,6 +37,17 @@ public partial class KumiScreen : Screen
         base.OnEntering(e);
 
         stack.Push(CurrentBackground);
+
+        CurrentBackground.BackgroundStack.Parallax.Amount = ParallaxAmount;
+        CurrentBackground.BackgroundStack.BlurAmount = BlurAmount;
+        CurrentBackground.BackgroundStack.DimAmount = DimAmount;
+    }
+
+    public override void OnResuming(ScreenTransitionEvent e)
+    {
+        base.OnResuming(e);
+
+        CurrentBackground.MakeCurrent();
 
         CurrentBackground.BackgroundStack.Parallax.Amount = ParallaxAmount;
         CurrentBackground.BackgroundStack.BlurAmount = BlurAmount;

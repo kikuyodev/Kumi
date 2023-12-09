@@ -133,7 +133,7 @@ public partial class ChartListItem : CompositeDrawable
         };
 
         textFlowContainer.AddText("Charted by ");
-        textFlowContainer.AddText(ChartInfo.ChartSet?.Creator.Username ?? "Unknown", s =>
+        textFlowContainer.AddText(ChartInfo.ChartSet?.Creator?.Username ?? "Unknown", s =>
         {
             s.Colour = Colours.GRAY_9;
             s.Font = KumiFonts.GetFont(weight: FontWeight.SemiBold, size: 8);

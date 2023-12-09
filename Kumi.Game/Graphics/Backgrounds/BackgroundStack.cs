@@ -82,12 +82,15 @@ public partial class BackgroundStack : CompositeDrawable
         switch (type)
         {
             case BackgroundTransitionType.Fade:
-                background.Alpha = 0;
-                Parallax.Add(background);
+                Schedule(() =>
+                {
+                    background.Alpha = 0;
+                    Parallax.Add(background);
 
-                background.FadeIn(duration, easing);
-                CurrentBackground.FadeOut(duration, easing).Then().Expire();
-                CurrentBackground = background;
+                    background.FadeIn(duration, easing);
+                    CurrentBackground.FadeOut(duration, easing).Then().Expire();
+                    CurrentBackground = background;
+                });
                 break;
         }
     }

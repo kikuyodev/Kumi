@@ -98,7 +98,7 @@ public partial class ChartSetInfoWedgeContent : Container
         };
 
         charterFlow.AddText("Charted by ");
-        charterFlow.AddText(chart.ChartInfo.ChartSet!.Creator.Username, s =>
+        charterFlow.AddText(chart.ChartInfo.ChartSet!.Creator?.Username ?? "Unknown", s =>
         {
             s.Font = KumiFonts.GetFont(FontFamily.Montserrat, FontWeight.SemiBold, 12f);
             s.Alpha = 1f;
