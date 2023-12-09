@@ -57,7 +57,7 @@ public class NoteWindows
                 return window.Result;
         }
 
-        return NoteHitResult.Bad;
+        return NoteHitResult.Miss;
     }
 
     /// <summary>
