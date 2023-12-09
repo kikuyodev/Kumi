@@ -23,7 +23,7 @@ public abstract partial class JudgementProcessor : Component
 
     public IBindable<bool> HasCompleted => hasCompleted;
 
-    public virtual void ApplyChart(IChart chart)
+    public void ApplyChart(IChart chart)
     {
         Reset(false);
         simulateJudgements(chart);
