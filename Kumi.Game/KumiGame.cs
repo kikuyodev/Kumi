@@ -33,7 +33,7 @@ public partial class KumiGame : KumiGameBase
     {
         base.LoadComplete();
 
-        LoadComponent(loaderScreen = new LoaderScreen());
+        LoadComponent(loaderScreen = new LoaderScreen { ExitAction = Exit });
         screenStack.Push(loaderScreen);
 
         DependencyContainer.CacheAs(this);
