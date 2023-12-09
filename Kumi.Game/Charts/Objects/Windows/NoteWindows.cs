@@ -50,14 +50,14 @@ public class NoteWindows
         if (!IsWithinWindow(delta))
             return null;
 
-        if (delta < WindowRanges[0].Min)
-            return NoteHitResult.Bad;
-        if (delta < WindowRanges[0].Max)
-            return NoteHitResult.Ok;
-        if (delta < WindowRanges[1].Max)
-            return NoteHitResult.Good;
+        for (var i = WindowRanges.Length - 1; i >= 0; i--)
+        {
+            var window = WindowRanges[i];
+            if (delta >= window.Min && delta <= window.Max)
+                return window.Result;
+        }
 
-        return NoteHitResult.Bad;
+        return NoteHitResult.Miss;
     }
 
     /// <summary>
