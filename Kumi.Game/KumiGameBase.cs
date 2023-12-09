@@ -104,6 +104,7 @@ public partial class KumiGameBase : osu.Framework.Game
         DependencyContainer.Cache(globalKeybindContainer);
         DependencyContainer.Cache(keybindStore = new KeybindStore(realm));
         keybindStore.AssignDefaultsFor(globalKeybindContainer);
+        keybindStore.AssignDefaultsFor(new GameplayKeybindContainer());
         keybindStore.RegisterDefaults();
     }
 
