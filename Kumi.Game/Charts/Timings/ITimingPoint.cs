@@ -1,6 +1,6 @@
 ﻿namespace Kumi.Game.Charts.Timings;
 
-public interface ITimingPoint : IHasTime
+public interface ITimingPoint : IHasStartTime
 {
     /// <summary>
     /// The type of timing point this is.
@@ -19,7 +19,7 @@ public interface ITimingPoint : IHasTime
 
     /// <summary>
     /// Gets the relative scroll speed of this timing point.
-    /// This can be used to calculate the scroll speed of a <see cref="IHasTime" /> object.
+    /// This can be used to calculate the scroll speed of a <see cref="IHasStartTime" /> object.
     /// </summary>
     float RelativeScrollSpeed { get; }
 }

@@ -9,7 +9,7 @@ namespace Kumi.Game.Gameplay.Drawables;
 
 public partial class DrawableNote : CompositeDrawable
 {
-    public INote Note { get; }
+    public INote Note { get; private set; }
 
     public override bool IsPresent => base.IsPresent || (state.Value == NoteState.Idle && Clock.CurrentTime >= LifetimeStart);
     public override bool RemoveWhenNotAlive => false;
@@ -23,7 +23,7 @@ public partial class DrawableNote : CompositeDrawable
 
     public DrawableNote(INote note)
     {
-        Note = note;
+        Note = (Note)note;
         AlwaysPresent = true;
 
         Judgement = new Judgement(Note);
@@ -42,6 +42,16 @@ public partial class DrawableNote : CompositeDrawable
         base.UpdateAfterChildren();
 
         UpdateResult(false);
+    }
+
+    internal void Reset()
+    {
+        LifetimeEnd = double.MaxValue; // Expire() may have set this value to the last transform's end time
+        state.Value = NoteState.Idle;
+        Judgement.Reset();
+        
+        // Force update state to idle
+        updateState(State.Value, true);
     }
 
     #region Animations
@@ -131,7 +141,6 @@ public partial class DrawableNote : CompositeDrawable
     }
 
     #endregion
-
 }
 
 public partial class DrawableNote<T> : DrawableNote

@@ -13,8 +13,8 @@ public partial class KumiTextBox : TextBox
 
     private readonly Box background;
 
-    private readonly Color4 backgroundColor = Color4Extensions.FromHex("121212");
-    private readonly Color4 inputErrorColour = Color4Extensions.FromHex("732639");
+    private readonly Color4 backgroundColor = Colours.Gray(0.07f);
+    private readonly Color4 inputErrorColour = Colours.RED;
     
     public KumiTextBox()
     {
@@ -43,7 +43,7 @@ public partial class KumiTextBox : TextBox
     {
         base.OnTextCommitted(textChanged);
 
-        background.FlashColour(Color4Extensions.FromHex("262626"), 200, Easing.OutQuint);
+        background.FlashColour(Colours.Gray(0.15f), 200, Easing.OutQuint);
     }
 
     protected override Drawable GetDrawableCharacter(char c) => new BasicTextBox.FallingDownContainer
@@ -58,7 +58,7 @@ public partial class KumiTextBox : TextBox
 
     protected override SpriteText CreatePlaceholder() => new BasicTextBox.FadingPlaceholderText
     {
-        Colour = Color4Extensions.FromHex("666"),
+        Colour = Colours.GRAY_6,
         Font = KumiFonts.GetFont(italics: true),
         Anchor = Anchor.CentreLeft,
         Origin = Anchor.CentreLeft,
@@ -67,6 +67,6 @@ public partial class KumiTextBox : TextBox
     protected override Caret CreateCaret() => new BasicTextBox.BasicCaret
     {
         CaretWidth = 2,
-        SelectionColour = Color4Extensions.FromHex("00BFFF").Opacity(0.4f)
+        SelectionColour = Colours.CYAN_ACCENT.Opacity(0.4f)
     };
 }

@@ -11,7 +11,7 @@ public class DisplayLyricEvent : Event, IHasEndTime
     protected override EventType ExpectedType => EventType.SwitchMedia;
     protected override int ExpectedLength => 4;
 
-    public float EndTime { get; private set; }
+    public double EndTime { get; private set; }
     public float CrossfadeTime { get; private set; }
     public Easing Easing { get; private set; }
     public string Lyric { get; private set; } = null!;

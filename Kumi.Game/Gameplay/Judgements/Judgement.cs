@@ -33,4 +33,19 @@ public class Judgement
         Result = NoteHitResult.None;
         AbsoluteTime = null;
     }
+
+    public int GetScore()
+    {
+        if (!HasResult)
+            return 0;
+
+        return Result switch
+        {
+            NoteHitResult.Miss => 0,
+            NoteHitResult.Bad => 100,
+            NoteHitResult.Ok => 200,
+            NoteHitResult.Good => 300,
+            _ => 0
+        };
+    }
 }

@@ -1,4 +1,5 @@
 ﻿using Kumi.Game.Screens.Backgrounds;
+using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Screens;
 
@@ -12,7 +13,8 @@ public partial class KumiScreenStack : ScreenStack
     /// <summary>
     /// The background screen stack associated with this screen stack.
     /// </summary>
-    public BackgroundScreenStack BackgroundStack { get; set; }
+    [Cached]
+    public BackgroundScreenStack BackgroundStack { get; }
 
     public KumiScreenStack()
     {

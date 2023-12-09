@@ -7,7 +7,7 @@ namespace Kumi.Game.Charts.Events;
 /// </summary>
 public abstract class Event : IEvent
 {
-    public float StartTime { get; set; }
+    public double StartTime { get; set; }
     public EventType Type { get; set; }
 
     /// <summary>

@@ -16,9 +16,9 @@ public class TimingPoint : ITimingPoint, IComparablyEquatable<TimingPoint>
     public TimingFlags Flags { get; set; }
     public int Volume { get; set; }
     public float RelativeScrollSpeed { get; set; }
-    public float StartTime { get; }
+    public double StartTime { get; }
 
-    internal TimingPoint(float time)
+    internal TimingPoint(double time)
     {
         StartTime = time;
     }

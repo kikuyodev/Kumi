@@ -1,5 +1,5 @@
-﻿using osu.Framework.Allocation;
-using osu.Framework.Extensions.Color4Extensions;
+﻿using Kumi.Game.Graphics;
+using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Primitives;
@@ -41,12 +41,12 @@ public partial class LoginPanel : Container
             new Box
             {
                 RelativeSizeAxes = Axes.Both,
-                Colour = Color4Extensions.FromHex("1A1A1A")
+                Colour = Colours.Gray(0.1f)
             },
             new Container
             {
                 RelativeSizeAxes = Axes.Both,
-                Colour = Color4Extensions.FromHex("F94826"),
+                Colour = Colours.ORANGE_ACCENT_LIGHT,
                 Padding = new MarginPadding(4),
                 Children = new Drawable[]
                 {

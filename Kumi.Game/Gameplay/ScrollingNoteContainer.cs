@@ -1,16 +1,19 @@
 ﻿using Kumi.Game.Charts.Objects.Windows;
 using Kumi.Game.Gameplay.Algorithms;
 using Kumi.Game.Gameplay.Drawables;
+using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Primitives;
 using osu.Framework.Layout;
+using osuTK;
 
 namespace Kumi.Game.Gameplay;
 
 public partial class ScrollingNoteContainer : Container<DrawableNote>
 {
+    public readonly IBindable<double> TimeRange = new BindableDouble();
     public readonly IBindable<IScrollAlgorithm> Algorithm = new Bindable<IScrollAlgorithm>();
     
     private readonly HashSet<DrawableNote> layoutComputed = new HashSet<DrawableNote>();
@@ -21,7 +24,12 @@ public partial class ScrollingNoteContainer : Container<DrawableNote>
         AddLayout(layoutCache);
     }
 
-    private const double time_range = 5000;
+    [BackgroundDependencyLoader]
+    private void load()
+    {
+        TimeRange.ValueChanged += _ => layoutCache.Invalidate();
+        Algorithm.ValueChanged += _ => layoutCache.Invalidate();
+    }
 
     public override void Add(DrawableNote drawable)
     {
@@ -78,20 +86,32 @@ public partial class ScrollingNoteContainer : Container<DrawableNote>
         setLifetimeStart(note);
     }
 
+    public double TimeAtScreenSpacePosition(Vector2 screenSpacePosition)
+    {
+        var pos = ToLocalSpace(screenSpacePosition);
+        return timeAtPosition(pos.X, Time.Current);
+    }
+    
+    public Vector2 ScreenSpacePositionAtTime(double time)
+    {
+        var position = positionAtTime(time, Time.Current);
+        return ToScreenSpace(new Vector2(position, 0));
+    }
+
     private RectangleF getBoundingBox() => new RectangleF().Inflate(100);
 
-    private double computeLifetimeStart(DrawableNote note)
+    public double ComputeLifetimeStart(DrawableNote note)
     {
         var boundingBox = getBoundingBox();
         var startOffset = -boundingBox.Left;
 
-        var adjustedTime = Algorithm.Value.TimeAt(-startOffset, note.Note.StartTime, time_range, DrawWidth);
-        return adjustedTime - time_range;
+        var adjustedTime = Algorithm.Value.TimeAt(-startOffset, note.Note.StartTime, TimeRange.Value, DrawWidth);
+        return adjustedTime - TimeRange.Value;
     }
     
     private void setLifetimeStart(DrawableNote note)
     {
-        var computedStartTime = computeLifetimeStart(note);
+        var computedStartTime = ComputeLifetimeStart(note);
         note.LifetimeStart = Math.Min(note.Note.StartTime - note.Note.Windows.WindowFor(NoteHitResult.Bad), computedStartTime);
     }
 
@@ -102,7 +122,8 @@ public partial class ScrollingNoteContainer : Container<DrawableNote>
     }
 
     private float positionAtTime(double time, double currentTime)
-    {
-        return Algorithm.Value.PositionAt(time, currentTime, time_range, DrawWidth);
-    }
+        => Algorithm.Value.PositionAt(time, currentTime, TimeRange.Value, DrawWidth);
+
+    private double timeAtPosition(float localPosition, double currentTime)
+        => Algorithm.Value.TimeAt(localPosition, currentTime, TimeRange.Value, DrawWidth);
 }

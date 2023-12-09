@@ -89,7 +89,7 @@ public abstract class DifficultyCalculator
         var notes = new List<CalculableNote>();
 
         foreach (var note in CurrentChart.Notes)
-            switch (note.Type)
+            switch (note.Type.Value)
             {
                 // TODO: Implement other note types.
                 case NoteType.Kat:

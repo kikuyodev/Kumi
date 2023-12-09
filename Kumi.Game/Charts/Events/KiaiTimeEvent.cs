@@ -12,7 +12,7 @@ public class KiaiTimeEvent : Event, IHasEndTime
     protected override EventType ExpectedType => EventType.KiaiTime;
     protected override int ExpectedLength => 1;
 
-    public float EndTime { get; private set; }
+    public double EndTime { get; private set; }
 
     public KiaiTimeEvent(float startTime, float endTime)
         : base(startTime)

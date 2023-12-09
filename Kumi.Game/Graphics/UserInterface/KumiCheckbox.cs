@@ -1,5 +1,4 @@
 ﻿using osu.Framework.Bindables;
-using osu.Framework.Extensions.Color4Extensions;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
@@ -75,7 +74,7 @@ public partial class KumiCheckbox : Checkbox
                 background = new Box
                 {
                     RelativeSizeAxes = Axes.Both,
-                    Colour = Color4Extensions.FromHex("509495")
+                    Colour = Colours.BLUE_LIGHT
                 },
                 icon = new SpriteIcon
                 {
@@ -84,7 +83,8 @@ public partial class KumiCheckbox : Checkbox
                     Icon = FontAwesome.Solid.Check,
                     Size = new(16),
                     Alpha = 0,
-                    AlwaysPresent = true
+                    AlwaysPresent = true,
+                    Colour = Colours.GRAY_C
                 }
             };
             
@@ -95,12 +95,12 @@ public partial class KumiCheckbox : Checkbox
         {
             if (c.NewValue)
             {
-                background.FadeColour(Color4Extensions.FromHex("00BFFF"), 200, Easing.OutQuint);
+                background.FadeColour(Colours.BLUE_LIGHT, 200, Easing.OutQuint);
                 icon.FadeInFromZero(200, Easing.OutQuint);
             }
             else
             {
-                background.FadeColour(Color4Extensions.FromHex("121212"), 200, Easing.OutQuint);
+                background.FadeColour(Colours.Gray(0.07f), 200, Easing.OutQuint);
                 icon.FadeOutFromOne(200, Easing.OutQuint);
             }
         }
