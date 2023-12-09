@@ -14,4 +14,19 @@ public class APIAccount : IAccount
 
     [JsonProperty("username")]
     public string Username { get; set; } = string.Empty;
+    
+    [JsonProperty("title")]
+    public string Title { get; set; } = string.Empty;
+    
+    [JsonProperty("country")]
+    public APICountry Country { get; set; } = new APICountry();
+    
+    [JsonProperty("groups")]
+    public List<APIGroup> Groups { get; set; } = new List<APIGroup>();
+    
+    [JsonProperty("created_at")]
+    public DateTime CreatedAt { get; set; }
+    
+    [JsonProperty("updated_at")]
+    public DateTime UpdatedAt { get; set; }
 }
