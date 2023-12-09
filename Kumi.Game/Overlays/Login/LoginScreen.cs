@@ -1,7 +1,6 @@
 ﻿using Kumi.Game.Graphics;
 using Kumi.Game.Graphics.UserInterface;
 using osu.Framework.Allocation;
-using osu.Framework.Extensions.Color4Extensions;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Sprites;
@@ -54,7 +53,8 @@ public partial class LoginScreen : Screen
                 new KumiButton
                 {
                     Text = "Sign in",
-                    Important = true
+                    Important = true,
+                    BackgroundColour = Colours.ORANGE_ACCENT_LIGHT
                 },
                 new KumiCheckbox
                 {
@@ -75,7 +75,7 @@ public partial class LoginScreen : Screen
                         {
                             Text = "Don't have an account?",
                             Font = KumiFonts.GetFont(size: 14),
-                            Colour = Color4Extensions.FromHex("666")
+                            Colour = Colours.GRAY_C
                         },
                         new ClickableContainer
                         {
@@ -84,7 +84,7 @@ public partial class LoginScreen : Screen
                             {
                                 Text = "Register one now!",
                                 Font = KumiFonts.GetFont(size: 14),
-                                Colour = Color4Extensions.FromHex("80DFFF")
+                                Colour = Colours.CYAN_ACCENT_LIGHTER
                             },
                         }
                     }

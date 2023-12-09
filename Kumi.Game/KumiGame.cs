@@ -1,7 +1,9 @@
-﻿using Kumi.Game.Overlays;
+﻿using Kumi.Game.Charts;
+using Kumi.Game.Overlays;
 using Kumi.Game.Screens;
 using Kumi.Game.Screens.Menu;
 using osu.Framework.Allocation;
+using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Threading;
 
@@ -23,6 +25,8 @@ public partial class KumiGame : KumiGameBase
         });
 
         DependencyContainer.CacheAs(screenStack.BackgroundStack);
+        
+        Chart.BindValueChanged(chartChanged, true);
     }
 
     protected override void LoadComplete()
@@ -48,6 +52,12 @@ public partial class KumiGame : KumiGameBase
                 });
             }, Scheduler);
         });
+    }
+
+    private void chartChanged(ValueChangedEvent<WorkingChart> chart)
+    {
+        chart.OldValue?.CancelAsyncLoad();
+        chart.NewValue?.BeginAsyncLoad();
     }
 
     private void loadComponents(IReadOnlyList<ComponentLoadTask> components, Action loadComplete, Scheduler scheduler)

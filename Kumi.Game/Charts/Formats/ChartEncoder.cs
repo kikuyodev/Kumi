@@ -129,14 +129,14 @@ public class ChartEncoder : FileEncoder<Chart, ChartSections>
         {
             var values = new List<string>
             {
-                ((int) note.Type).ToString(),
+                ((int) note.Type.Value).ToString(),
                 note.StartTime.ToString(CultureInfo.InvariantCulture)
             };
 
             if (note is IHasEndTime endTime)
                 values.Add(endTime.EndTime.ToString(CultureInfo.InvariantCulture));
 
-            values.Add(((int) note.Flags).ToString());
+            values.Add(((int) note.Flags.Value).ToString());
 
             WriteLine(string.Join(",", values));
         }

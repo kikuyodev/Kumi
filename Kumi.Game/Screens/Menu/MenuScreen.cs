@@ -2,12 +2,14 @@ using Kumi.Game.Graphics;
 using Kumi.Game.Graphics.Backgrounds;
 using Kumi.Game.Overlays;
 using Kumi.Game.Screens.Backgrounds;
+using Kumi.Game.Screens.Select;
 using osu.Framework.Allocation;
 using osu.Framework.Extensions.Color4Extensions;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Sprites;
 using osu.Framework.Graphics.Textures;
+using osu.Framework.Input.Events;
 using osu.Framework.Screens;
 using osuTK;
 using osuTK.Graphics;
@@ -77,6 +79,13 @@ public partial class MenuScreen : KumiScreen
         });
     }
 
+    protected override bool OnKeyDown(KeyDownEvent e)
+    {
+        this.Push(new SelectScreen());
+        
+        return base.OnKeyDown(e);
+    }
+    
     public override void OnEntering(ScreenTransitionEvent e)
     {
         base.OnEntering(e);

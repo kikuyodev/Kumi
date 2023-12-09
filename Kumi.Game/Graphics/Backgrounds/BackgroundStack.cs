@@ -35,6 +35,22 @@ public partial class BackgroundStack : CompositeDrawable
             blurContainer?.BlurTo(new Vector2(blurAmount), ParallaxContainer.PARALLAX_DURATION, Easing.OutQuint);
         }
     }
+    
+    private float dimAmount;
+    
+    public float DimAmount
+    {
+        get => dimAmount;
+        set
+        {
+            if (dimAmount == value)
+                return;
+
+            dimAmount = value;
+            Parallax.FinishTransforms();
+            Parallax.FadeTo(value, ParallaxContainer.PARALLAX_DURATION, Easing.OutQuint);
+        }
+    }
 
     private readonly BufferedContainer? blurContainer;
 
@@ -70,7 +86,7 @@ public partial class BackgroundStack : CompositeDrawable
                 Parallax.Add(background);
 
                 background.FadeIn(duration, easing);
-                CurrentBackground.FadeOut(duration, easing);
+                CurrentBackground.FadeOut(duration, easing).Then().Expire();
                 CurrentBackground = background;
                 break;
         }

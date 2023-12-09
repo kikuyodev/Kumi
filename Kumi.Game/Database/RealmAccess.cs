@@ -12,8 +12,9 @@ public class RealmAccess : IDisposable
     /// <summary>
     /// Version history:
     /// 1    2023-10-28   Initial version.
+    /// 2    2023-12-07   Rename RealmUser to RealmAccount.
     /// </summary>
-    private const int schema_version = 1;
+    private const int schema_version = 2;
 
     public string FileName { get; }
 

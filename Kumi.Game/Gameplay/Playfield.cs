@@ -1,7 +1,7 @@
 using Kumi.Game.Charts;
 using Kumi.Game.Charts.Objects;
-using Kumi.Game.Gameplay.Clocks;
 using Kumi.Game.Gameplay.Drawables;
+using Kumi.Game.Gameplay.Judgements;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
@@ -10,19 +10,20 @@ namespace Kumi.Game.Gameplay;
 
 public abstract partial class Playfield : Container
 {
+    public event Action<DrawableNote, Judgement>? NewJudgement; 
+    
     protected WorkingChart WorkingChart { get; set; }
-    protected IChart Chart { get; set; } = null!;
+    protected IChart Chart { get; set; }
+
+    public IReadOnlyList<DrawableNote> Notes => NoteContainer.Children;
 
     protected readonly Container<DrawableNote> NoteContainer;
-    
+
     protected override Container<Drawable> Content => content;
 
-    private bool firstLoad;
     private Container content = null!;
-    private GameplayClockContainer gameplayClockContainer = null!;
-    
+
     // Testing purposes
-    internal GameplayClockContainer GameplayClockContainer => gameplayClockContainer;
     internal Container<DrawableNote> NoteContainerInternal => NoteContainer;
 
     protected Playfield(WorkingChart workingChart)
@@ -36,54 +37,90 @@ public abstract partial class Playfield : Container
         });
 
         WorkingChart = workingChart;
-        workingChart.BeginAsyncLoad();
+        Chart = WorkingChart.Chart;
     }
 
     [BackgroundDependencyLoader]
     private void load()
     {
-        InternalChild = gameplayClockContainer = new GameplayClockContainer(WorkingChart.Track)
+        InternalChild = content = new Container
         {
             RelativeSizeAxes = Axes.Both,
-            Child = content = new Container
-            {
-                RelativeSizeAxes = Axes.Both,
-                Anchor = Anchor.Centre,
-                Origin = Anchor.Centre
-            }
+            Anchor = Anchor.Centre,
+            Origin = Anchor.Centre
         };
+
+        addNotes();
     }
 
-    protected override void Update()
+    public void Add(INote note)
     {
-        if (WorkingChart.ChartLoaded && !firstLoad)
+        var drawableNote = createDrawableNote(note);
+        NoteContainer.Add(drawableNote);
+        
+        drawableNote.OnNewJudgement += (n, j) => NewJudgement?.Invoke(n, j);
+    }
+
+    public bool Remove(INote note)
+    {
+        var index = NoteContainer.IndexOf(NoteContainer.Children.FirstOrDefault(n => n.Note == note)!);
+        if (index != -1)
         {
-            Chart = WorkingChart.Chart;
-            firstLoad = true;
-            onChartLoaded();
+            RemoveAt(index);
+            return true;
         }
 
-        base.Update();
+        return false;
     }
 
-    private void onChartLoaded()
+    public void RemoveAt(int index)
+    {
+        var drawableNote = NoteContainer.ElementAtOrDefault(index);
+        if (drawableNote != null)
+            NoteContainer.Remove(drawableNote, true);
+    }
+
+    public void SetKeepAlive(INote note, bool keepAlive)
+    {
+        var drawableNote = NoteContainer.Children.FirstOrDefault(n => n.Note == note);
+        if (drawableNote != null)
+            drawableNote.AlwaysPresent = keepAlive;
+    }
+
+    private void addNotes()
     {
         foreach (var note in Chart.Notes)
-        {
-            var drawableNote = createDrawableNote(note);
-            NoteContainer.Add(drawableNote);
-        }
-
-        gameplayClockContainer.StartTime = -3000;
+            Add(note);
     }
 
     private DrawableNote createDrawableNote(INote note)
     {
         var drawableNote = CreateDrawableNote(note);
-        drawableNote.LifetimeStart = note.StartTime - drawableNote.InitialLifetimeOffset;
+        drawableNote.LifetimeStart = ComputeInitialLifetimeOffset(drawableNote);
 
         return drawableNote;
     }
+
+    public virtual void UpdateLifetime(Note note)
+    {
+        var drawableNote = NoteContainer.Children.FirstOrDefault(n => n.Note == note);
+        if (drawableNote != null)
+        {
+            drawableNote.LifetimeStart = ComputeInitialLifetimeOffset(drawableNote);
+
+            // Recompute transforms
+            drawableNote.Reset();
+        }
+    }
+
+    public void UpdateLifetimeRange(IEnumerable<Note> notes)
+    {
+        foreach (var note in notes)
+            UpdateLifetime(note);
+    }
+
+    protected virtual double ComputeInitialLifetimeOffset(DrawableNote drawableNote)
+        => drawableNote.Note.StartTime - drawableNote.InitialLifetimeOffset;
 
     protected abstract DrawableNote CreateDrawableNote(INote note);
 

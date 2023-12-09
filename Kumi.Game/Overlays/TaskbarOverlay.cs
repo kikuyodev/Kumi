@@ -1,6 +1,6 @@
-﻿using Kumi.Game.Overlays.Taskbar;
+﻿using Kumi.Game.Graphics;
+using Kumi.Game.Overlays.Taskbar;
 using osu.Framework.Allocation;
-using osu.Framework.Extensions.Color4Extensions;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
@@ -34,7 +34,7 @@ public partial class TaskbarOverlay : OverlayContainer
                     new Box
                     {
                         RelativeSizeAxes = Axes.Both,
-                        Colour = Color4Extensions.FromHex("0D0D0D")
+                        Colour = Colours.Gray(0.05f)
                     },
                     new Container
                     {

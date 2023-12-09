@@ -3,10 +3,12 @@ using Kumi.Game.Charts;
 using Kumi.Game.Charts.Objects;
 using Kumi.Game.Charts.Objects.Windows;
 using Kumi.Game.Gameplay;
+using Kumi.Game.Gameplay.Clocks;
 using Kumi.Game.Gameplay.Drawables;
 using Kumi.Game.Graphics;
 using Kumi.Game.Tests;
 using NUnit.Framework;
+using osu.Framework.Bindables;
 using osu.Framework.Development;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Sprites;
@@ -18,6 +20,7 @@ namespace Kumi.Tests.Visual.Gameplay;
 public abstract partial class PlayfieldTestScene : KumiTestScene
 {
     protected Playfield? Playfield;
+    private GameplayClockContainer? gameplayClockContainer;
 
     private TestWorkingChart? workingChart;
 
@@ -47,7 +50,16 @@ public abstract partial class PlayfieldTestScene : KumiTestScene
     public void PlayfieldTests()
     {
         AddStep("load playfield", () => { LoadComponent(Playfield = CreatePlayfield(workingChart!)); });
-        AddStep("add playfield", () => { Add(Playfield); });
+        AddStep("add playfield", () =>
+        {
+            Add(gameplayClockContainer = new GameplayClockContainer(workingChart!.Track)
+            {
+                RelativeSizeAxes = Axes.Both,
+                Child = Playfield
+            });
+
+            gameplayClockContainer.StartTime = -1000;
+        });
         AddAssert("notes loaded", () => Playfield!.ChildrenOfType<DrawableNote>().Any());
 
         AddAssert("seek clock", () =>
@@ -55,7 +67,7 @@ public abstract partial class PlayfieldTestScene : KumiTestScene
             var note = Playfield!.ChildrenOfType<DrawableNote>().FirstOrDefault();
             if (note == null) return false;
 
-            Playfield!.GameplayClockContainer.Seek(note.Note.StartTime);
+            gameplayClockContainer?.Seek(note.Note.StartTime);
             return true;
         });
 
@@ -67,7 +79,7 @@ public abstract partial class PlayfieldTestScene : KumiTestScene
 
         CreateAsserts();
 
-        AddStep("reset clock", () => { Playfield!.GameplayClockContainer.Reset(startClock: true); });
+        AddStep("reset clock", () => { gameplayClockContainer?.Reset(startClock: true); });
     }
 
     protected override void Update()
@@ -77,7 +89,7 @@ public abstract partial class PlayfieldTestScene : KumiTestScene
         if (Playfield == null)
             return;
 
-        timeText.Text = $"Time: {Playfield.GameplayClockContainer.Time.Current:N2}";
+        timeText.Text = $"Time: {gameplayClockContainer?.Time.Current:N2}";
     }
 
     protected virtual void CreateAsserts()
@@ -99,9 +111,9 @@ public abstract partial class PlayfieldTestScene : KumiTestScene
         return new TestNote
         {
             StartTime = startTime,
-            Type = NoteType.Don,
-            Flags = NoteFlags.None,
-            NoteColor = Color4.White,
+            Type = new NoteProperty<NoteType>(),
+            Flags = new NoteProperty<NoteFlags>(),
+            NoteColor = new NoteProperty<Color4>(Color4.White),
             Windows = new NoteWindows()
         };
     }
@@ -110,10 +122,17 @@ public abstract partial class PlayfieldTestScene : KumiTestScene
 
     protected partial class TestNote : INote
     {
-        public float StartTime { get; set; }
-        public NoteType Type { get; set; }
-        public NoteFlags Flags { get; set; }
-        public Color4 NoteColor { get; set; }
+        public double StartTime
+        {
+            get => StartTimeBindable.Value;
+            set => StartTimeBindable.Value = value;
+        }
+        
+        public NoteProperty<NoteType> Type { get; init; } = null!;
+        public NoteProperty<NoteFlags> Flags { get; init; } = null!;
+        public NoteProperty<Color4> NoteColor { get; init; } = null!;
         public NoteWindows Windows { get; set; } = null!;
+
+        public Bindable<double> StartTimeBindable { get; } = new Bindable<double>();
     }
 }

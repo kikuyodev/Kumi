@@ -3,6 +3,7 @@ using JetBrains.Annotations;
 using Kumi.Game.Database;
 using Kumi.Game.Extensions;
 using Kumi.Game.Models;
+using Kumi.Game.Scoring;
 using Realms;
 
 namespace Kumi.Game.Charts;
@@ -16,6 +17,9 @@ public class ChartInfo : RealmObject, IHasGuidPrimaryKey, IChartInfo, IEquatable
     public string DifficultyName { get; set; } = string.Empty;
 
     public ChartMetadata Metadata { get; set; } = null!;
+
+    [Backlink(nameof(ScoreInfo.ChartInfo))]
+    public IQueryable<ScoreInfo> Scores { get; } = null!;
 
     public float InitialScrollSpeed { get; set; }
 
@@ -41,6 +45,15 @@ public class ChartInfo : RealmObject, IHasGuidPrimaryKey, IChartInfo, IEquatable
     public string Hash { get; set; } = string.Empty;
 
     public int ChartVersion { get; set; }
+
+    public void UpdateLocalScores(Realm realm)
+    {
+        foreach (var score in Scores)
+            score.ChartInfo = null;
+
+        foreach (var score in realm.All<ScoreInfo>().Where(s => s.ChartHash == Hash))
+            score.ChartInfo = this;
+    }
 
     public bool Equals(ChartInfo? other)
     {

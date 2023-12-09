@@ -57,7 +57,10 @@ public partial class MenuMusicOverlay : FillFlowContainer
         artist.Text = new RomanisableString(metadata.Artist, metadata.ArtistRomanised);
         title.Text = new RomanisableString(metadata.Title, metadata.TitleRomanised);
 
-        // 500 delay so that the track can fade in before the overlay does.
-        this.Delay(500).FadeInFromZero(1000, Easing.OutQuint).Then(5000).FadeOutFromOne(1000, Easing.InQuint);
+        Scheduler.AddOnce(() =>
+        {
+            // 500 delay so that the track can fade in before the overlay does.
+            this.Delay(500).FadeInFromZero(1000, Easing.OutQuint).Then(5000).FadeOutFromOne(1000, Easing.InQuint);
+        });
     }
 }

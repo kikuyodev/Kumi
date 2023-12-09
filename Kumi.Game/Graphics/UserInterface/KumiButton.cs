@@ -29,7 +29,7 @@ public partial class KumiButton : Button
         }
     }
 
-    private Color4 backgroundColour = Color4Extensions.FromHex("F94826");
+    private Color4 backgroundColour = Colours.Gray(0.1f);
     
     public Color4 BackgroundColour
     {

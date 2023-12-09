@@ -12,6 +12,7 @@ public partial class KumiScreen : Screen
 
     public virtual float ParallaxAmount => 0.015f;
     public virtual float BlurAmount => 0f;
+    public virtual float DimAmount => 0.95f;
 
     public KumiScreen()
     {
@@ -36,6 +37,7 @@ public partial class KumiScreen : Screen
 
         CurrentBackground.BackgroundStack.Parallax.Amount = ParallaxAmount;
         CurrentBackground.BackgroundStack.BlurAmount = BlurAmount;
+        CurrentBackground.BackgroundStack.DimAmount = DimAmount;
     }
 
     public virtual BackgroundScreen CreateBackground() => new BlackBackground();

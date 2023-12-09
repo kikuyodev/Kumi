@@ -4,6 +4,7 @@ using Kumi.Game.Graphics;
 using Kumi.Game.Input;
 using Kumi.Game.Input.Bindings;
 using Kumi.Game.Online.API;
+using Kumi.Game.Scoring;
 using Kumi.Game.Screens;
 using Kumi.Resources;
 using osu.Framework.Allocation;
@@ -24,13 +25,16 @@ public partial class KumiGameBase : osu.Framework.Game
 
     private RealmAccess realm = null!;
     private ChartManager chartManager = null!;
+    private ScoreManager scoreManager = null!;
     private KeybindStore keybindStore = null!;
 
-    protected Colors GameColors { get; private set; } = null!;
+    private Container content = null!;
+    
+    protected Colours GameColours { get; private set; } = null!;
     protected IAPIConnectionProvider API { get; set; } = null!;
     protected Bindable<WorkingChart> Chart { get; private set; } = null!;
     protected KumiScreenStack ScreenStack = null!;
-    protected override Container<Drawable> Content { get; }
+    protected override Container<Drawable> Content => content;
 
     protected DependencyContainer DependencyContainer = null!;
 
@@ -40,20 +44,12 @@ public partial class KumiGameBase : osu.Framework.Game
         return DependencyContainer;
     }
 
-    protected KumiGameBase()
-    {
-        base.Content.Add(Content = new DrawSizePreservingFillContainer
-        {
-            TargetDrawSize = new Vector2(1280, 720)
-        });
-    }
-
     [BackgroundDependencyLoader]
     private void load()
     {
         // Resources
         Resources.AddStore(new DllResourceStore(KumiResources.Assembly));
-        DependencyContainer.Cache(GameColors = new Colors());
+        DependencyContainer.Cache(GameColours = new Colours());
 
         Audio.Tracks.AddAdjustment(AdjustableProperty.Volume, new BindableDouble(0.8));
 
@@ -75,6 +71,8 @@ public partial class KumiGameBase : osu.Framework.Game
 
         DependencyContainer.CacheAs<IBindable<WorkingChart>>(Chart);
         DependencyContainer.CacheAs(Chart);
+        
+        DependencyContainer.Cache(scoreManager = new ScoreManager(Storage!, realm));
 
         var largeStore = new LargeTextureStore(Host.Renderer, Host.CreateTextureLoaderStore(new NamespacedResourceStore<byte[]>(Resources, "Textures")));
         largeStore.AddTextureSource(Host.CreateTextureLoaderStore(new OnlineStore()));
@@ -87,13 +85,17 @@ public partial class KumiGameBase : osu.Framework.Game
             RelativeSizeAxes = Axes.Both,
             Child = new DrawSizePreservingFillContainer() // TODO: Add a way to change the resolution and UI scale dynamically.
             {
-                TargetDrawSize = new Vector2(1920, 1080),
+                TargetDrawSize = new Vector2(1280, 720),
                 RelativeSizeAxes = Axes.Both,
                 Children = new Drawable[]
                 {
                     globalKeybindContainer = new GlobalKeybindContainer
                     {
-                        RelativeSizeAxes = Axes.Both
+                        RelativeSizeAxes = Axes.Both,
+                        Child = content = new Container
+                        {
+                            RelativeSizeAxes = Axes.Both,
+                        }
                     }
                 }
             }
@@ -107,14 +109,16 @@ public partial class KumiGameBase : osu.Framework.Game
 
     private void loadFonts()
     {
+        // This is placed here first because for whatever reason some fonts that the framework use uses *this* one instead of its own.
+        AddFont(Resources, @"Fonts/Inter/Inter");
+        AddFont(Resources, @"Fonts/Inter/Inter-Italic");
+        
         AddFont(Resources, @"Fonts/Inter/Inter-Thin");
         AddFont(Resources, @"Fonts/Inter/Inter-ThinItalic");
         AddFont(Resources, @"Fonts/Inter/Inter-ExtraLight");
         AddFont(Resources, @"Fonts/Inter/Inter-ExtraLightItalic");
         AddFont(Resources, @"Fonts/Inter/Inter-Light");
         AddFont(Resources, @"Fonts/Inter/Inter-LightItalic");
-        AddFont(Resources, @"Fonts/Inter/Inter");
-        AddFont(Resources, @"Fonts/Inter/Inter-Italic");
         AddFont(Resources, @"Fonts/Inter/Inter-Medium");
         AddFont(Resources, @"Fonts/Inter/Inter-MediumItalic");
         AddFont(Resources, @"Fonts/Inter/Inter-SemiBold");
