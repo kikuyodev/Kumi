@@ -13,11 +13,14 @@ using osu.Framework.Input.Events;
 using osu.Framework.Screens;
 using osuTK;
 using osuTK.Graphics;
+using osuTK.Input;
 
 namespace Kumi.Game.Screens.Menu;
 
 public partial class MenuScreen : KumiScreen
 {
+    public override bool ShowTaskbar => false;
+    
     private Sprite logo = null!;
     private Sprite logoShadow = null!;
 
@@ -81,11 +84,15 @@ public partial class MenuScreen : KumiScreen
 
     protected override bool OnKeyDown(KeyDownEvent e)
     {
-        this.Push(new SelectScreen());
+        if (e.Repeat)
+            return false;
         
+        if (e.Key != Key.Escape)
+            this.Push(new SelectScreen());
+
         return base.OnKeyDown(e);
     }
-    
+
     public override void OnEntering(ScreenTransitionEvent e)
     {
         base.OnEntering(e);

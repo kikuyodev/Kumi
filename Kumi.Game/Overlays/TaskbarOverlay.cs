@@ -10,6 +10,8 @@ namespace Kumi.Game.Overlays;
 
 public partial class TaskbarOverlay : OverlayContainer
 {
+    public const float HEIGHT = 48;
+
     private FillFlowContainer leftFlow = null!;
     private FillFlowContainer rightFlow = null!;
     private Container overlayContent = null!;
@@ -21,7 +23,8 @@ public partial class TaskbarOverlay : OverlayContainer
     [BackgroundDependencyLoader]
     private void load()
     {
-        RelativeSizeAxes = Axes.Both;
+        RelativeSizeAxes = Axes.X;
+        AutoSizeAxes = Axes.Y;
         
         Children = new Drawable[]
         {

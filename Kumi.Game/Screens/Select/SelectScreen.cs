@@ -1,16 +1,20 @@
 ﻿using System.Diagnostics;
 using Kumi.Game.Charts;
+using Kumi.Game.Input;
 using Kumi.Game.Overlays;
+using Kumi.Game.Screens.Play;
 using Kumi.Game.Screens.Select.List;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
+using osu.Framework.Input.Bindings;
+using osu.Framework.Input.Events;
 using osu.Framework.Screens;
 
 namespace Kumi.Game.Screens.Select;
 
-public partial class SelectScreen : ScreenWithChartBackground
+public partial class SelectScreen : ScreenWithChartBackground, IKeyBindingHandler<GlobalAction>
 {
     public override float BlurAmount => 10f;
     public override float DimAmount => 0.5f;
@@ -119,6 +123,25 @@ public partial class SelectScreen : ScreenWithChartBackground
         endLooping();
         
         return base.OnExiting(e);
+    }
+
+    public bool OnPressed(KeyBindingPressEvent<GlobalAction> e)
+    {
+        if (e.Repeat || !this.IsCurrentScreen())
+            return false;
+        
+        switch (e.Action)
+        {
+            case GlobalAction.Select:
+                this.Push(new PlayerLoader());
+                return true;
+        }
+        
+        return false;
+    }
+
+    public void OnReleased(KeyBindingReleaseEvent<GlobalAction> e)
+    {
     }
 
     private bool isHandlingLooping;

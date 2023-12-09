@@ -2,6 +2,10 @@
 
 public enum GlobalAction
 {
+    // Overlays
+    ToggleTaskbar,
+
+    // Screens
     Back,
-    Select
+    Select,
 }

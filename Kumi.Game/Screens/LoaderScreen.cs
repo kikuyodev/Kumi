@@ -10,8 +10,13 @@ namespace Kumi.Game.Screens;
 
 public partial class LoaderScreen : KumiScreen
 {
+    public override bool ShowTaskbar => false;
+    public override bool DisableTaskbarControl => true;
+
     private LoadAnimation loadAnimation = null!;
     private Sprite logo = null!;
+
+    public Action? ExitAction;
 
     [BackgroundDependencyLoader]
     private void load(LargeTextureStore store)
@@ -47,8 +52,21 @@ public partial class LoaderScreen : KumiScreen
         logo.ScaleTo(0.2f, 1000, Easing.OutQuint);
         loadAnimation.FadeOut(1000, Easing.OutQuint);
         loadAnimation.ScaleTo(0.2f, 1000, Easing.OutQuint);
-        
+
         base.OnSuspending(e);
+    }
+
+    public override void OnResuming(ScreenTransitionEvent e)
+    {
+        base.OnResuming(e);
+
+        loadAnimation.FadeIn(500, Easing.OutQuint);
+        loadAnimation.ScaleTo(0.3f, 500, Easing.OutQuint);
+        loadAnimation.AnimationProgress = 1f;
+
+        loadAnimation.Delay(500).TransformTo(nameof(loadAnimation.AnimationProgress), 0f, 1000, Easing.OutQuint);
+
+        Scheduler.AddDelayed(() => ExitAction?.Invoke(), 500 + 1000);
     }
 
     public void SetProgress(float progress)

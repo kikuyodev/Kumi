@@ -1,27 +1,49 @@
 ﻿using Kumi.Game.Charts;
+using Kumi.Game.Input;
 using Kumi.Game.Overlays;
 using Kumi.Game.Screens;
 using Kumi.Game.Screens.Menu;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
+using osu.Framework.Graphics.Containers;
+using osu.Framework.Input.Bindings;
+using osu.Framework.Input.Events;
+using osu.Framework.Screens;
 using osu.Framework.Threading;
 
 namespace Kumi.Game;
 
-public partial class KumiGame : KumiGameBase
+public partial class KumiGame : KumiGameBase, IKeyBindingHandler<GlobalAction>
 {
+    private bool taskbarEnabled;
+    private bool taskbarControlsDisabled;
+
+    private float taskbarOffset => (Taskbar?.Position.Y ?? 0) + (Taskbar?.DrawHeight ?? 0);
+    
+    private Container screenOffsetContainer = null!;
+    private Container topOverlayContainer = null!;
+    
     private KumiScreenStack screenStack = null!;
     private LoaderScreen loaderScreen = null!;
-
-    protected MusicController MusicController { get; private set; } = null!;
+    
+    protected TaskbarOverlay? Taskbar { get; private set; }
 
     [BackgroundDependencyLoader]
     private void load()
     {
         AddRange(new Drawable[]
         {
-            screenStack = new KumiScreenStack { RelativeSizeAxes = Axes.Both }
+            screenOffsetContainer = new Container
+            {
+                RelativeSizeAxes = Axes.Both,
+                Child = screenStack = new KumiScreenStack { RelativeSizeAxes = Axes.Both },
+            },
+            topOverlayContainer = new Container
+            {
+                RelativeSizeAxes = Axes.X,
+                AutoSizeAxes = Axes.Y,
+            },
         });
 
         DependencyContainer.CacheAs(screenStack.BackgroundStack);
@@ -33,8 +55,11 @@ public partial class KumiGame : KumiGameBase
     {
         base.LoadComplete();
 
-        LoadComponent(loaderScreen = new LoaderScreen());
+        LoadComponent(loaderScreen = new LoaderScreen { ExitAction = Exit });
         screenStack.Push(loaderScreen);
+        
+        screenStack.ScreenPushed += onScreenChanged;
+        screenStack.ScreenExited += onScreenChanged;
 
         DependencyContainer.CacheAs(this);
 
@@ -43,7 +68,11 @@ public partial class KumiGame : KumiGameBase
             loadComponents(new[]
             {
                 new ComponentLoadTask(typeof(MusicController), loadComplete: Add),
-                new ComponentLoadTask(typeof(TaskbarOverlay)),
+                new ComponentLoadTask(typeof(TaskbarOverlay), loadComplete: c =>
+                {
+                    Taskbar = (TaskbarOverlay) c;
+                    topOverlayContainer.Add(c);
+                }),
             }, () =>
             {
                 LoadComponentAsync(new MenuScreen(), c =>
@@ -58,6 +87,53 @@ public partial class KumiGame : KumiGameBase
     {
         chart.OldValue?.CancelAsyncLoad();
         chart.NewValue?.BeginAsyncLoad();
+    }
+
+    private void onScreenChanged(IScreen current, IScreen newScreen)
+    {
+        if (newScreen is KumiScreen newKumiScreen)
+        {
+            taskbarEnabled = newKumiScreen.ShowTaskbar;
+            taskbarControlsDisabled = newKumiScreen.DisableTaskbarControl;
+            
+            if (newKumiScreen.ShowTaskbar)
+                Taskbar?.Show();
+            else
+                Taskbar?.Hide();
+        }
+    }
+
+    public bool OnPressed(KeyBindingPressEvent<GlobalAction> e)
+    {
+        if (e.Repeat)
+            return false;
+
+        switch (e.Action)
+        {
+            case GlobalAction.ToggleTaskbar:
+                if (!taskbarEnabled || taskbarControlsDisabled)
+                    return false;
+
+                if (Taskbar?.State.Value == Visibility.Visible)
+                    Taskbar?.Hide();
+                else
+                    Taskbar?.Show();
+
+                return true;
+        }
+
+        return false;
+    }
+
+    public void OnReleased(KeyBindingReleaseEvent<GlobalAction> e)
+    {
+    }
+
+    protected override void UpdateAfterChildren()
+    {
+        base.UpdateAfterChildren();
+        
+        screenOffsetContainer.Padding = new MarginPadding { Top = taskbarOffset };
     }
 
     private void loadComponents(IReadOnlyList<ComponentLoadTask> components, Action loadComplete, Scheduler scheduler)

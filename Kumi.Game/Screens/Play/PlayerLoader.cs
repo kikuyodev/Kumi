@@ -16,6 +16,8 @@ public partial class PlayerLoader : ScreenWithChartBackground
 {
     public override float BlurAmount => 0f;
     public override float DimAmount => 0.9f;
+    public override bool ShowTaskbar => false;
+    public override bool DisableTaskbarControl => true;
 
     private bool readyForPush
         => player?.LoadState == LoadState.Ready;
@@ -64,6 +66,8 @@ public partial class PlayerLoader : ScreenWithChartBackground
 
         contentIn();
 
+        chart.Value.Track.Stop();
+
         display.Delay(700).FadeIn(500, Easing.OutQuint);
 
         Scheduler.Add(new ScheduledDelegate(pushWhenLoaded, Clock.CurrentTime + 1000, 0));
@@ -77,13 +81,6 @@ public partial class PlayerLoader : ScreenWithChartBackground
         cancelLoad();
 
         contentIn();
-    }
-
-    public override void OnSuspending(ScreenTransitionEvent e)
-    {
-        base.OnSuspending(e);
-
-        chart.Value.Track.Stop();
     }
 
     public override bool OnExiting(ScreenExitEvent e)
