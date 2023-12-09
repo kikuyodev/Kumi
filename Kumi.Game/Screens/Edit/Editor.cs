@@ -12,6 +12,8 @@ public partial class Editor : ScreenWithChartBackground
 {
     public override float DimAmount => 0.5f;
     public override float ParallaxAmount => 0.001f;
+    public override bool ShowTaskbar => false;
+    public override bool DisableTaskbarControl => true;
 
     private DependencyContainer dependencies = null!;
 

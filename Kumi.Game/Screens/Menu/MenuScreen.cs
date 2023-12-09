@@ -19,6 +19,8 @@ namespace Kumi.Game.Screens.Menu;
 
 public partial class MenuScreen : KumiScreen
 {
+    public override bool ShowTaskbar => false;
+    
     private Sprite logo = null!;
     private Sprite logoShadow = null!;
 
