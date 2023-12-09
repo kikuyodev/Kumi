@@ -1,4 +1,5 @@
-﻿using Kumi.Game.Online.API.Accounts;
+﻿using System.Net;
+using Kumi.Game.Online.API.Accounts;
 using Kumi.Game.Online.Server;
 using osu.Framework.Bindables;
 
@@ -33,6 +34,11 @@ public interface IAPIConnectionProvider
     /// The current state of the API connection.
     /// </summary>
     IBindable<APIState> State { get; }
+    
+    /// <summary>
+    /// Cookies that are used for requests.
+    /// </summary>
+    CookieContainer Cookies { get; }
 
     /// <summary>
     /// Passes a function to be executed on the game's update thread.
