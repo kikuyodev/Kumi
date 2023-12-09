@@ -16,7 +16,7 @@ public class APIResponse : IHasStatus
     public string? Message { get; set; }
     
     [JsonProperty("data")]
-    public Dictionary<string, JObject> Data { get; set; }
+    public Dictionary<string, JObject>? Data { get; set; }
     
     [JsonIgnore]
     public bool IsSuccess => StatusCode == 200;
@@ -32,9 +32,12 @@ public class APIResponse : IHasStatus
     /// <exception cref="KeyNotFoundException">An exception that states the key was not found.</exception>
     public T Get<T>(string key)
     {
+        if (Data is null)
+            throw new KeyNotFoundException($"Key {key} was not found in the response data.");
+        
         if (Data.TryGetValue(key, out var value))
         {
-            return JsonConvert.DeserializeObject<T>(value.ToString());
+            return JsonConvert.DeserializeObject<T>(value.ToString())!;
         }
 
         throw new KeyNotFoundException($"Key {key} was not found in the response data.");

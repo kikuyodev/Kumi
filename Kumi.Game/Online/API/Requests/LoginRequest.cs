@@ -4,22 +4,22 @@ namespace Kumi.Game.Online.API.Requests;
 
 public class LoginRequest : APIRequest<LoginRequest.LoginResponse>
 {
-    public string Username { get; set; }
-    public string Password { get; set; }
+    public string? Username { get; set; }
+    public string? Password { get; set; }
     
-    public override string Endpoint { get; } = "/accounts/login";
+    public override string Endpoint => "/accounts/login";
 
-    public override HttpMethod Method { get; } = HttpMethod.Post;
+    public override HttpMethod Method => HttpMethod.Post;
 
     protected override APIWebRequest CreateWebRequest() => new LoginWebRequest(Uri, Username, Password);
 
     internal class LoginWebRequest : APIWebRequest<LoginResponse>
     {
-        public LoginWebRequest(string? uri, string username, string passsword)
+        public LoginWebRequest(string? uri, string? username, string? password)
             : base(uri)
         {
-            this.AddParameter("username", username);
-            this.AddParameter("password", passsword);
+            AddParameter("username", username);
+            AddParameter("password", password);
         }
     }
     

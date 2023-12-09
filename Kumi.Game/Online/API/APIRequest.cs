@@ -8,7 +8,7 @@ public abstract class APIRequest<T>
 
     protected APIRequest()
     {
-        base.Success += () =>
+        Success += () =>
         {
             var saferRequest = (APIWebRequest<T>) Request;
             Response = saferRequest.ResponseObject!;
@@ -50,7 +50,7 @@ public abstract class APIRequest
     /// </summary>
     public event APIWebRequest.APIRequestFailed? Failure;
 
-    protected virtual string Uri => $@"{Provider!.EndpointConfiguration.APIUri}/{Endpoint}";
+    protected virtual string Uri => Path.Join(Provider!.EndpointConfiguration.APIUri, Endpoint);
 
     protected virtual APIWebRequest CreateWebRequest() => new APIWebRequest($@"{Uri}?{string.Join("&", QueryParameters.Select(x => $"{x.Key}={x.Value}"))}");
 
@@ -70,7 +70,7 @@ public abstract class APIRequest
 
         // Assign specific headers here.
         Request.Method = Method;
-        Request.AddHeader("Cookie", provider.Cookies.ToString());
+        Request.AddHeader("Cookie", provider?.Cookies.ToString());
         
         // TODO: Think of headers to assign.
         Request.Failure += TriggerFailure;
