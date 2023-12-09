@@ -17,6 +17,8 @@ namespace Kumi.Game.Screens.Play;
 
 public partial class Player : ScreenWithChartBackground
 {
+    private const float pass_threshold = 0.7f;
+    
     public override float ParallaxAmount => 0.0025f;
     public override float BlurAmount => 10f;
     public override float DimAmount => 0.25f;
@@ -33,6 +35,7 @@ public partial class Player : ScreenWithChartBackground
     private GameplayKeybindContainer? keybindContainer;
 
     private ScoreProcessor scoreProcessor = null!;
+    private HealthGaugeProcessor healthGaugeProcessor = null!;
 
     private DependencyContainer dependencies = null!;
 
@@ -48,7 +51,11 @@ public partial class Player : ScreenWithChartBackground
         scoreProcessor = new ScoreProcessor();
         scoreProcessor.ApplyChart(chart.Value.Chart);
         
+        healthGaugeProcessor = new HealthGaugeProcessor();
+        healthGaugeProcessor.ApplyChart(chart.Value.Chart);
+        
         dependencies.CacheAs(scoreProcessor);
+        dependencies.CacheAs(healthGaugeProcessor);
 
         InternalChild = createGameplayClockContainer(chart.Value);
 

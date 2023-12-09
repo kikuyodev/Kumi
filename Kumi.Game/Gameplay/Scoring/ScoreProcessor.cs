@@ -14,6 +14,7 @@ public partial class ScoreProcessor : JudgementProcessor
     private long totalScore;
     private int combo;
     private int highestCombo;
+    private int goodHits;
     
     protected override void ApplyJudgementInternal(Judgement judgement)
     {
@@ -31,7 +32,30 @@ public partial class ScoreProcessor : JudgementProcessor
 
         if (judgement.Result.AffectsScore())
         {
-            totalScore += getScoreValueFor(judgement.Result) + Int64.Max(0, (long)Math.Floor(Math.Min(combo, 100) / 10.0));
+            totalScore += calculateScore(judgement.Result, combo);
+        }
+    }
+
+    public ScoreRank GetScoreRank()
+    {
+        var totalPossibleScore = getTotalPossibleScore();
+        
+        if (totalScore >= totalPossibleScore)
+            return ScoreRank.Kiwami;
+        else
+        {
+            var percentage = totalScore / totalPossibleScore;
+            
+            if (percentage >= 0.9)
+                return ScoreRank.MiyabiPlatinum;
+            else if (percentage >= 0.75)
+                return ScoreRank.MiyabiGold;
+            else if (percentage >= 0.65)
+                return ScoreRank.IkiSilver;
+            else if (percentage >= 0.45)
+                return ScoreRank.IkiBronze;
+            else
+                return ScoreRank.Iki;
         }
     }
 
@@ -39,7 +63,25 @@ public partial class ScoreProcessor : JudgementProcessor
     {
         score.MaxCombo = highestCombo;
         score.TotalScore = totalScore;
+        score.ScoreRank = GetScoreRank();
+        score.ComboRank = (goodHits == MaxHits) ? ScoreComboRank.PerfectCombo
+                              : (highestCombo == MaxHits) ? ScoreComboRank.FullCombo
+                                : ScoreComboRank.Clear;
     }
+
+    private long getTotalPossibleScore()
+    {
+        var score = 0L;
+        
+        for (var i = 0; i < MaxHits; i++)
+        {
+            score += calculateScore(NoteHitResult.Good, i);
+        }
+        
+        return score;
+    }
+    
+    private long calculateScore(NoteHitResult result, int currentCombo) => getScoreValueFor(result) + Int64.Max(0, (long)Math.Floor(Math.Min(currentCombo, 100) / 10.0));
     
     private long getScoreValueFor(NoteHitResult result) => result switch
     {
