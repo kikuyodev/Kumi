@@ -112,15 +112,26 @@ public partial class TaskbarOverlay : OverlayContainer
                 : Visibility.Visible;
         });
 
-        api.LocalAccount.BindValueChanged(_ =>
+        api.State.BindValueChanged(state =>
         {
-            loginOverlay.State.Value = Visibility.Hidden;
+            switch (state.NewValue)
+            {
+                case APIState.Offline:
+                    loginOverlay.State.Value = Visibility.Visible;
+                    break;
+                case APIState.Online:
+                    loginOverlay.State.Value = Visibility.Hidden;
+                    break;
+            }
         }, true);
     }
 
     protected override void PopIn()
     {
         this.MoveToY(0, 200, Easing.OutQuint);
+        
+        if (api.State.Value == APIState.Offline)
+            loginOverlay.State.Value = Visibility.Visible;
     }
 
     protected override void PopOut()
