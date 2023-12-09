@@ -14,6 +14,8 @@ public partial class KumiScreen : Screen
     public virtual float BlurAmount => 0f;
     public virtual float DimAmount => 0.95f;
     public virtual bool AllowBackButton => true;
+    public virtual bool ShowTaskbar => true;
+    public virtual bool DisableTaskbarControl => false;
 
     public KumiScreen()
     {

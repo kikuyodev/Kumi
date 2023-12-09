@@ -13,8 +13,9 @@ public class RealmAccess : IDisposable
     /// Version history:
     /// 1    2023-10-28   Initial version.
     /// 2    2023-12-07   Rename RealmUser to RealmAccount.
+    /// 3    2023-12-08   Add more properties to ScoreInfo.
     /// </summary>
-    private const int schema_version = 2;
+    private const int schema_version = 3;
 
     public string FileName { get; }
 

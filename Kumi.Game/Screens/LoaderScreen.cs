@@ -10,9 +10,12 @@ namespace Kumi.Game.Screens;
 
 public partial class LoaderScreen : KumiScreen
 {
+    public override bool ShowTaskbar => false;
+    public override bool DisableTaskbarControl => true;
+
     private LoadAnimation loadAnimation = null!;
     private Sprite logo = null!;
-    
+
     public Action? ExitAction;
 
     [BackgroundDependencyLoader]
@@ -49,7 +52,7 @@ public partial class LoaderScreen : KumiScreen
         logo.ScaleTo(0.2f, 1000, Easing.OutQuint);
         loadAnimation.FadeOut(1000, Easing.OutQuint);
         loadAnimation.ScaleTo(0.2f, 1000, Easing.OutQuint);
-        
+
         base.OnSuspending(e);
     }
 
