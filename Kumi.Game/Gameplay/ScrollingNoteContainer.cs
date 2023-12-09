@@ -1,6 +1,7 @@
 ﻿using Kumi.Game.Charts.Objects.Windows;
 using Kumi.Game.Gameplay.Algorithms;
 using Kumi.Game.Gameplay.Drawables;
+using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
@@ -12,6 +13,7 @@ namespace Kumi.Game.Gameplay;
 
 public partial class ScrollingNoteContainer : Container<DrawableNote>
 {
+    public readonly IBindable<double> TimeRange = new BindableDouble();
     public readonly IBindable<IScrollAlgorithm> Algorithm = new Bindable<IScrollAlgorithm>();
     
     private readonly HashSet<DrawableNote> layoutComputed = new HashSet<DrawableNote>();
@@ -22,7 +24,12 @@ public partial class ScrollingNoteContainer : Container<DrawableNote>
         AddLayout(layoutCache);
     }
 
-    public double TimeRange = 5000;
+    [BackgroundDependencyLoader]
+    private void load()
+    {
+        TimeRange.ValueChanged += _ => layoutCache.Invalidate();
+        Algorithm.ValueChanged += _ => layoutCache.Invalidate();
+    }
 
     public override void Add(DrawableNote drawable)
     {
@@ -98,8 +105,8 @@ public partial class ScrollingNoteContainer : Container<DrawableNote>
         var boundingBox = getBoundingBox();
         var startOffset = -boundingBox.Left;
 
-        var adjustedTime = Algorithm.Value.TimeAt(-startOffset, note.Note.StartTime, TimeRange, DrawWidth);
-        return adjustedTime - TimeRange;
+        var adjustedTime = Algorithm.Value.TimeAt(-startOffset, note.Note.StartTime, TimeRange.Value, DrawWidth);
+        return adjustedTime - TimeRange.Value;
     }
     
     private void setLifetimeStart(DrawableNote note)
@@ -115,8 +122,8 @@ public partial class ScrollingNoteContainer : Container<DrawableNote>
     }
 
     private float positionAtTime(double time, double currentTime)
-        => Algorithm.Value.PositionAt(time, currentTime, TimeRange, DrawWidth);
+        => Algorithm.Value.PositionAt(time, currentTime, TimeRange.Value, DrawWidth);
 
     private double timeAtPosition(float localPosition, double currentTime)
-        => Algorithm.Value.TimeAt(localPosition, currentTime, TimeRange, DrawWidth);
+        => Algorithm.Value.TimeAt(localPosition, currentTime, TimeRange.Value, DrawWidth);
 }
