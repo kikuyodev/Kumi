@@ -43,6 +43,6 @@ public partial class HealthGaugeProcessor : JudgementProcessor
         NoteHitResult.Good => good_health,
         NoteHitResult.Ok => ok_health,
         NoteHitResult.Bad => bad_health,
-        _ => -0.01f // misses and other results count as a miss
+        _ => -0.005f // misses and other results count as a miss
     };
 }

@@ -5,6 +5,7 @@ using Kumi.Game.Gameplay.Scoring;
 using Kumi.Game.Input;
 using Kumi.Game.Online.API.Accounts;
 using Kumi.Game.Scoring;
+using Kumi.Game.Screens.Play.HUD;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Extensions;
@@ -17,28 +18,29 @@ namespace Kumi.Game.Screens.Play;
 
 public partial class Player : ScreenWithChartBackground
 {
+    private const float pass_threshold = 0.7f;
+
     public override bool ShowTaskbar => false;
     public override bool DisableTaskbarControl => true;
-    
-    private const float pass_threshold = 0.7f;
-    
     public override float ParallaxAmount => 0.0025f;
     public override float BlurAmount => 10f;
     public override float DimAmount => 0.25f;
-    
+
     public bool LoadedChartSuccessfully => playfield?.Notes.Any() == true;
 
     [Resolved]
     private ScoreManager scoreManager { get; set; } = null!;
 
-    public ScoreInfo Score { get; private set; }
-    
+    public ScoreInfo Score { get; private set; } = null!;
+
     private KumiPlayfield? playfield;
     private GameplayClockContainer? clockContainer;
     private GameplayKeybindContainer? keybindContainer;
 
     private ScoreProcessor scoreProcessor = null!;
     private HealthGaugeProcessor healthGaugeProcessor = null!;
+
+    private HealthDisplay healthBar = null!;
 
     private DependencyContainer dependencies = null!;
 
@@ -53,10 +55,10 @@ public partial class Player : ScreenWithChartBackground
 
         scoreProcessor = new ScoreProcessor();
         scoreProcessor.ApplyChart(chart.Value.Chart);
-        
+
         healthGaugeProcessor = new HealthGaugeProcessor();
         healthGaugeProcessor.ApplyChart(chart.Value.Chart);
-        
+
         dependencies.CacheAs(scoreProcessor);
         dependencies.CacheAs(healthGaugeProcessor);
 
@@ -66,24 +68,34 @@ public partial class Player : ScreenWithChartBackground
 
         Score.ChartInfo = chart.Value.ChartInfo;
         Score.ChartHash = chart.Value.ChartInfo.Hash;
-        
+
         playfield!.NewJudgement += (_, j) =>
         {
             scoreProcessor.ApplyJudgement(j);
+            healthGaugeProcessor.ApplyJudgement(j);
         };
-        
+
         scoreProcessor.HasCompleted.BindValueChanged(_ => checkScoreCompleted());
-        
+
         AddRangeInternal(new Drawable[]
         {
-            scoreProcessor
+            scoreProcessor,
+            healthGaugeProcessor,
+            healthBar = new HealthDisplay
+            {
+                Anchor = Anchor.CentreRight,
+                Origin = Anchor.BottomRight,
+                X = -24,
+                Y = -110,
+                Current = { BindTarget = healthGaugeProcessor.Health }
+            },
         });
     }
 
     protected override void LoadComplete()
     {
         base.LoadComplete();
-        
+
         if (!LoadedChartSuccessfully)
             return;
 
@@ -94,13 +106,19 @@ public partial class Player : ScreenWithChartBackground
     {
         base.OnEntering(e);
 
+        healthBar.MoveToX(0)
+           .FadeOut()
+           .Then()
+           .MoveToX(-24, 1000, Easing.OutQuint)
+           .FadeIn(1000, Easing.OutQuint);
+
         Scheduler.AddDelayed(() =>
         {
             if (clockContainer != null)
                 clockContainer.Start();
         }, 500);
     }
-    
+
     private Drawable createGameplayClockContainer(WorkingChart chart, double startDelay = 1000)
     {
         if (!chart.TrackLoaded)
@@ -120,10 +138,10 @@ public partial class Player : ScreenWithChartBackground
 
         return keybindContainer;
     }
-    
+
     protected virtual Task PrepareScoreForResultsAsync(ScoreInfo score)
         => Task.CompletedTask;
-    
+
     protected virtual ScoreInfo CreateScore(IChart chart) => new ScoreInfo
     {
         Account = new GuestAccount()
@@ -133,7 +151,7 @@ public partial class Player : ScreenWithChartBackground
     {
         var importableScore = score.DeepClone();
         var imported = scoreManager.Import(importableScore);
-        
+
         score.Hash = imported.Hash;
         score.ID = imported.ID;
 
@@ -172,18 +190,18 @@ public partial class Player : ScreenWithChartBackground
                 prepareAndImportScoreAsync();
                 return;
             }
-            
+
             if (!prepareScoreForDisplayTask.IsCompleted)
                 return;
-            
+
             resultsDisplayDelegate?.Cancel();
 
             if (prepareScoreForDisplayTask.GetResultSafely() == null)
                 return;
-            
+
             if (!this.IsCurrentScreen())
                 return;
-            
+
             this.Push(new ResultsScreen(prepareScoreForDisplayTask.GetResultSafely()!));
         }, Time.Current + 1000, 50);
 
