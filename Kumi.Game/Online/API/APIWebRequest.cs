@@ -9,6 +9,7 @@ namespace Kumi.Game.Online.API;
 public class APIWebRequest<T> : APIWebRequest
     where T : IHasStatus
 {
+    
     public APIWebRequest(string? uri)
         : base(uri)
     {
@@ -78,4 +79,5 @@ public class APIWebRequest : WebRequest
     public delegate void APIRequestFailed(Exception e);
 
     public delegate void APIRequestSucceeded();
+    public delegate void APIRequestSucceeded<T>(T response);
 }

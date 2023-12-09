@@ -1,5 +1,19 @@
 ﻿namespace Kumi.Game.Online.API;
 
+public abstract class APIRequest<T>
+    : APIRequest
+    where T : APIResponse
+{
+    public T Response { get; private set; } = null!;
+    
+    public event APIWebRequest.APIRequestSucceeded<T>? Success;
+
+    protected APIRequest()
+    {
+        Success += response => Response = response;
+    }
+}
+
 /// <summary>
 /// An object that represents a request to the API, without any response data.
 /// </summary>
