@@ -26,11 +26,34 @@ public class ScoreInfo : RealmObject, IHasGuidPrimaryKey, ISoftDelete, IHasFiles
     public long TotalScore { get; set; }
 
     public int MaxCombo { get; set; }
+    
+    [Ignored]
+    public ScoreRank ScoreRank
+    {
+        get => (ScoreRank) ScoreRankInt;
+        set => ScoreRankInt = (int) value;
+    }
+    
+    [Ignored]
+    public ScoreComboRank ComboRank
+    {
+        get => (ScoreComboRank) ComboRankInt;
+        set => ComboRankInt = (int) value;
+    }
+    
+    public bool Failed { get; set; } = false;
 
     public DateTimeOffset Date { get; set; }
 
     [MapTo("User")]
     public RealmAccount RealmAccount { get; set; } = null!;
+    
+    
+    [MapTo(nameof(ScoreRank))]
+    
+    public int ScoreRankInt { get; set; }
+    [MapTo(nameof(ComboRank))]
+    public int ComboRankInt { get; set; }
 
     public ScoreInfo(ChartInfo? chart = null, RealmAccount? realmAccount = null)
     {
@@ -47,7 +70,7 @@ public class ScoreInfo : RealmObject, IHasGuidPrimaryKey, ISoftDelete, IHasFiles
     }
 
     private APIAccount? account;
-    
+
     [Ignored]
     public APIAccount Account
     {
