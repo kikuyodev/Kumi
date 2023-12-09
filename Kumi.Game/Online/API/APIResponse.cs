@@ -1,5 +1,6 @@
 ﻿using System.Net;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace Kumi.Game.Online.API;
 
@@ -15,7 +16,7 @@ public class APIResponse : IHasStatus
     public string? Message { get; set; }
     
     [JsonProperty("data")]
-    public Dictionary<string, object> Data { get; set; }
+    public Dictionary<string, JObject> Data { get; set; }
     
     [JsonIgnore]
     public bool IsSuccess => StatusCode == 200;
@@ -33,7 +34,7 @@ public class APIResponse : IHasStatus
     {
         if (Data.TryGetValue(key, out var value))
         {
-            return (T) value;
+            return JsonConvert.DeserializeObject<T>(value.ToString());
         }
 
         throw new KeyNotFoundException($"Key {key} was not found in the response data.");

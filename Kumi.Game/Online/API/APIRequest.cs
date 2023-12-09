@@ -5,12 +5,14 @@ public abstract class APIRequest<T>
     where T : APIResponse
 {
     public T Response { get; private set; } = null!;
-    
-    public new event APIWebRequest.APIRequestSucceeded<T>? Success;
 
     protected APIRequest()
     {
-        Success += response => Response = response;
+        base.Success += () =>
+        {
+            var saferRequest = (APIWebRequest<T>) Request;
+            Response = saferRequest.ResponseObject!;
+        };
     }
 }
 
@@ -23,6 +25,8 @@ public abstract class APIRequest
     /// The endpoint that this request will be sent to.
     /// </summary>
     public abstract string Endpoint { get; }
+    
+    public virtual HttpMethod Method { get; } = HttpMethod.Get;
 
     /// <summary>
     /// The query parameters that this request will be sent with.
@@ -65,6 +69,9 @@ public abstract class APIRequest
         Request = CreateWebRequest();
 
         // Assign specific headers here.
+        Request.Method = Method;
+        Request.AddHeader("Cookie", provider.Cookies.ToString());
+        
         // TODO: Think of headers to assign.
         Request.Failure += TriggerFailure;
         Request.Success += TriggerSuccess;
