@@ -20,7 +20,8 @@ namespace Kumi.Game.Gameplay;
 public partial class KumiPlayfield : ScrollingPlayfield
 {
     private Container contentContainer = null!;
-    
+
+    private readonly Bindable<double> timeRange = new Bindable<double>(1000);
     private readonly Bindable<IScrollAlgorithm> algorithm = new Bindable<IScrollAlgorithm>(new LinearScrollAlgorithm());
 
     public override bool ReceivePositionalInputAt(Vector2 screenSpacePos) => contentContainer.ReceivePositionalInputAt(screenSpacePos);
@@ -29,7 +30,10 @@ public partial class KumiPlayfield : ScrollingPlayfield
         : base(workingChart)
     {
         ScrollContainer.Algorithm.BindTo(algorithm);
-        ScrollContainer.TimeRange = 1000;
+        ScrollContainer.TimeRange.BindTo(timeRange);
+
+        timeRange.Value = 1000 * workingChart.Chart.ChartInfo.InitialScrollSpeed;
+        algorithm.Value = new DynamicScrollAlgorithm(((Chart)workingChart.Chart).TimingPoints);
     }
 
     [BackgroundDependencyLoader]
@@ -184,16 +188,16 @@ public partial class KumiPlayfield : ScrollingPlayfield
         {
             if (note.Flags.Value.HasFlagFast(NoteFlags.Big))
                 return new DrawableBigDrumHit(drumHit);
-            
+
             return new DrawableDrumHit(drumHit);
         }
-        
+
         throw new ArgumentException("Unsupported note type", nameof(note));
     }
 
     public double TimeAtScreenSpacePosition(Vector2 screenSpacePosition)
         => ScrollContainer.TimeAtScreenSpacePosition(screenSpacePosition);
-    
+
     public Vector2 ScreenSpacePositionAtTime(double time)
         => ScrollContainer.ScreenSpacePositionAtTime(time);
 }
