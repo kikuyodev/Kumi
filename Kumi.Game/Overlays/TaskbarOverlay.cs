@@ -1,4 +1,5 @@
 ﻿using Kumi.Game.Graphics;
+using Kumi.Game.Online.API;
 using Kumi.Game.Overlays.Taskbar;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
@@ -19,6 +20,9 @@ public partial class TaskbarOverlay : OverlayContainer
     private LoginOverlay loginOverlay = null!;
     
     protected override bool StartHidden => true;
+    
+    [Resolved]
+    private IAPIConnectionProvider api { get; set;  }
 
     [BackgroundDependencyLoader]
     private void load()
@@ -97,15 +101,37 @@ public partial class TaskbarOverlay : OverlayContainer
             Alignment = TaskbarButtonAlignment.Right,
         }, () =>
         {
+            if (api.LocalAccount.Value.Id != 0)
+            {
+                // TODO: Open user profile
+                return;
+            }
+            
             loginOverlay.State.Value = loginOverlay.State.Value == Visibility.Visible
                 ? Visibility.Hidden
                 : Visibility.Visible;
         });
+
+        api.State.BindValueChanged(state =>
+        {
+            switch (state.NewValue)
+            {
+                case APIState.Offline:
+                    loginOverlay.State.Value = Visibility.Visible;
+                    break;
+                case APIState.Online:
+                    loginOverlay.State.Value = Visibility.Hidden;
+                    break;
+            }
+        }, true);
     }
 
     protected override void PopIn()
     {
         this.MoveToY(0, 200, Easing.OutQuint);
+        
+        if (api.State.Value == APIState.Offline)
+            loginOverlay.State.Value = Visibility.Visible;
     }
 
     protected override void PopOut()

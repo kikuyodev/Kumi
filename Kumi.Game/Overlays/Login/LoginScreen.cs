@@ -1,5 +1,6 @@
 ﻿using Kumi.Game.Graphics;
 using Kumi.Game.Graphics.UserInterface;
+using Kumi.Game.Online.API;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
@@ -12,15 +13,24 @@ namespace Kumi.Game.Overlays.Login;
 
 public partial class LoginScreen : Screen
 {
+    private bool handleKeyboardInput = true;
+    private bool handleMouseInput = true;
+    
     private KumiTextBox username = null!;
     private KumiTextBox password = null!;
-    
+
+    [Resolved]
+    private IAPIConnectionProvider api { get; set; } = null!;
+
+    public override bool HandleNonPositionalInput => handleKeyboardInput;
+    public override bool HandlePositionalInput => handleMouseInput;
+
     public LoginScreen()
     {
         RelativeSizeAxes = Axes.X;
         AutoSizeAxes = Axes.Y;
     }
-    
+
     [BackgroundDependencyLoader]
     private void load()
     {
@@ -54,7 +64,11 @@ public partial class LoginScreen : Screen
                 {
                     Text = "Sign in",
                     Important = true,
-                    BackgroundColour = Colours.ORANGE_ACCENT_LIGHT
+                    BackgroundColour = Colours.ORANGE_ACCENT_LIGHT,
+                    Action = () =>
+                    {
+                        api.Login(username.Text, password.Text);
+                    }
                 },
                 new KumiCheckbox
                 {
@@ -91,6 +105,29 @@ public partial class LoginScreen : Screen
                 }
             }
         };
+
+        api.State.BindValueChanged(v =>
+        {
+            if (v.NewValue == APIState.Online)
+                this.Exit();
+
+            if (v.NewValue == APIState.Offline)
+            {
+                password.Text = string.Empty;
+                handleKeyboardInput = true;
+                handleMouseInput = true;
+
+                this.FadeColour(Colours.Gray(1f), 100, Easing.OutQuint);
+            }
+
+            if (v.NewValue == APIState.Connecting)
+            {
+                handleKeyboardInput = false;
+                handleMouseInput = false;
+
+                this.FadeColour(Colours.Gray(0.5f), 100, Easing.OutQuint);
+            }
+        }, true);
     }
 
     public override bool AcceptsFocus => true;

@@ -1,4 +1,5 @@
-﻿using Kumi.Game.Online.API.Accounts;
+﻿using System.Net;
+using Kumi.Game.Online.API.Accounts;
 using Kumi.Game.Online.Server;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
@@ -25,6 +26,7 @@ public partial class DummyAPIConnection : Component, IAPIConnectionProvider
     /// </summary>
     public Func<APIRequest, bool>? HandleRequest { get; set; }
 
+    public CookieContainer Cookies { get; } = new CookieContainer();
     public new void Schedule(Action action) => base.Schedule(action);
 
     public DummyAPIConnection()

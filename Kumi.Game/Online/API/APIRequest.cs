@@ -1,5 +1,21 @@
 ﻿namespace Kumi.Game.Online.API;
 
+public abstract class APIRequest<T>
+    : APIRequest
+    where T : APIResponse
+{
+    public T Response { get; private set; } = null!;
+
+    protected APIRequest()
+    {
+        Success += () =>
+        {
+            var saferRequest = (APIWebRequest<T>) Request;
+            Response = saferRequest.ResponseObject!;
+        };
+    }
+}
+
 /// <summary>
 /// An object that represents a request to the API, without any response data.
 /// </summary>
@@ -9,6 +25,8 @@ public abstract class APIRequest
     /// The endpoint that this request will be sent to.
     /// </summary>
     public abstract string Endpoint { get; }
+    
+    public virtual HttpMethod Method { get; } = HttpMethod.Get;
 
     /// <summary>
     /// The query parameters that this request will be sent with.
@@ -32,7 +50,7 @@ public abstract class APIRequest
     /// </summary>
     public event APIWebRequest.APIRequestFailed? Failure;
 
-    protected virtual string Uri => $@"{Provider!.EndpointConfiguration.APIUri}/{Endpoint}";
+    protected virtual string Uri => Path.Join(Provider!.EndpointConfiguration.APIUri, Endpoint);
 
     protected virtual APIWebRequest CreateWebRequest() => new APIWebRequest($@"{Uri}?{string.Join("&", QueryParameters.Select(x => $"{x.Key}={x.Value}"))}");
 
@@ -51,6 +69,9 @@ public abstract class APIRequest
         Request = CreateWebRequest();
 
         // Assign specific headers here.
+        Request.Method = Method;
+        Request.AddHeader("Cookie", provider?.Cookies.ToString());
+        
         // TODO: Think of headers to assign.
         Request.Failure += TriggerFailure;
         Request.Success += TriggerSuccess;
