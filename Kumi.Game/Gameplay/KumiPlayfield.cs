@@ -1,5 +1,6 @@
 ﻿using Kumi.Game.Charts;
 using Kumi.Game.Charts.Objects;
+using Kumi.Game.Charts.Timings;
 using Kumi.Game.Gameplay.Algorithms;
 using Kumi.Game.Gameplay.Drawables;
 using Kumi.Game.Gameplay.UI;
@@ -200,4 +201,20 @@ public partial class KumiPlayfield : ScrollingPlayfield
 
     public Vector2 ScreenSpacePositionAtTime(double time)
         => ScrollContainer.ScreenSpacePositionAtTime(time);
+
+    public double SnapTime(double time, int beatDivisor)
+    {
+        // Snap to timing points
+        var timingPoint = ((Chart) WorkingChart.Chart).TimingHandler.GetTimingPointAt<UninheritedTimingPoint>(time, TimingPointType.Uninherited);
+        var beatLength = timingPoint.MillisecondsPerBeat / beatDivisor;
+        var beats = (Math.Max(time, 0) - timingPoint.StartTime) / beatLength;
+
+        var roundedBeats = (int) Math.Round(beats, MidpointRounding.AwayFromZero);
+        var snappedTime = timingPoint.StartTime + roundedBeats * beatLength;
+
+        if (snappedTime >= 0)
+            return snappedTime;
+
+        return snappedTime + beatLength;
+    }
 }

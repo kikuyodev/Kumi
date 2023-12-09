@@ -1,12 +1,12 @@
 ﻿using System.Collections.Specialized;
 using System.Diagnostics;
+using Kumi.Game.Charts;
 using Kumi.Game.Charts.Objects;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Input.Events;
-using osuTK;
 using osuTK.Input;
 
 namespace Kumi.Game.Screens.Edit.Blueprints;
@@ -26,6 +26,9 @@ public abstract partial class BlueprintContainer : CompositeDrawable
 
     [Resolved]
     private EditorChart editorChart { get; set; } = null!;
+    
+    [Resolved]
+    private BindableBeatDivisor divisor { get; set; } = null!;
 
     protected BlueprintContainer()
     {
@@ -287,7 +290,6 @@ public abstract partial class BlueprintContainer : CompositeDrawable
 
     #region Movement
 
-    private Vector2[]? movementBlueprintsOriginalPositions;
     private SelectionBlueprint<Note>[]? movementBlueprints;
 
     private bool isDraggingBlueprint;
@@ -303,7 +305,6 @@ public abstract partial class BlueprintContainer : CompositeDrawable
             return false;
 
         movementBlueprints = SelectionHandler.SelectedBlueprints.ToArray();
-        movementBlueprintsOriginalPositions = movementBlueprints.Select(m => m.ScreenSpaceSelectionPoint).ToArray();
         return true;
     }
 
@@ -312,8 +313,10 @@ public abstract partial class BlueprintContainer : CompositeDrawable
         if (movementBlueprints == null)
             return false;
 
-        var targetTime = composer.Playfield.TimeAtScreenSpacePosition(e.ScreenSpaceMousePosition);
+        var targetTime = composer.Playfield!.TimeAtScreenSpacePosition(e.ScreenSpaceMousePosition);
+        targetTime = composer.Playfield.SnapTime(targetTime, divisor.Value);
         var offset = targetTime - BlueprintPivot?.Item.StartTime ?? targetTime;
+        
 
         editorChart.PerformOnSelection(n =>
         {
@@ -329,9 +332,7 @@ public abstract partial class BlueprintContainer : CompositeDrawable
         if (movementBlueprints == null)
             return false;
 
-        movementBlueprintsOriginalPositions = null;
         movementBlueprints = null;
-
         return true;
     }
 
