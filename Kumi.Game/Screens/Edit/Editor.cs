@@ -39,7 +39,8 @@ public partial class Editor : ScreenWithChartBackground, IKeyBindingHandler<Plat
     private void load(IBindable<WorkingChart> working)
     {
         workingChart.BindTarget = working;
-
+        
+        dependencies.CacheAs(this);
         dependencies.CacheAs((workingChart.Value.Chart as Chart)!);
 
         beatDivisor = new BindableBeatDivisor();

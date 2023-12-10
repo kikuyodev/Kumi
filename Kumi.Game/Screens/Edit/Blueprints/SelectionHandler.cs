@@ -84,9 +84,6 @@ public partial class SelectionHandler : CompositeDrawable, IKeyBindingHandler<Pl
             editorChart.RemoveRange(clipboard);
             DeselectAll();
         }
-
-        Console.WriteLine("Copied {0} notes.", clipboard.Count);
-        Console.WriteLine("Clipboard contents: {0}", string.Join(", ", historyHandler.Paste(EditorClipboardType.Note)));
     }
     
     public void Paste()
@@ -95,6 +92,8 @@ public partial class SelectionHandler : CompositeDrawable, IKeyBindingHandler<Pl
         
         if (clipboard == null || clipboard.Count == 0)
             return;
+        
+        editorChart.BeginChange();
 
         double previousNoteTime = 0.0;
         int pastedNotes = 0;
@@ -126,8 +125,8 @@ public partial class SelectionHandler : CompositeDrawable, IKeyBindingHandler<Pl
             editorChart.Add(note);
             pastedNotes++;
         }
-
-        Console.WriteLine("Pasted {0} notes.", clipboard.Count);
+        
+        editorChart.EndChange();
     }
 
     #region Deletion

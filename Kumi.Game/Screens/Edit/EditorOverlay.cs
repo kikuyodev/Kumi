@@ -18,12 +18,22 @@ namespace Kumi.Game.Screens.Edit;
 public partial class EditorOverlay : Container
 {
     public const float TOP_BAR_HEIGHT = 24;
+    
+    private MenuItem undoMenuItem = null!;
+    private MenuItem redoMenuItem = null!;
 
     public IBindable<WorkingChart> Chart { get; } = new Bindable<WorkingChart>();
+    
+    [Resolved]
+    private Editor editor { get; set; } = null!;
+    
+    [Resolved]
+    private EditorHistoryHandler historyHandler { get; set; } = null!;
 
-    public EditorOverlay()
+    [BackgroundDependencyLoader]
+    private void load()
     {
-        Chart.BindValueChanged(_ => constructDisplay());
+        Chart.BindValueChanged(_ => constructDisplay(), true);
     }
 
     private void constructDisplay()
@@ -64,8 +74,8 @@ public partial class EditorOverlay : Container
                                     {
                                         Items = new[]
                                         {
-                                            new MenuItem("Undo"),
-                                            new MenuItem("Redo"),
+                                            undoMenuItem = new MenuItem("Undo", () => editor.Undo()),
+                                            redoMenuItem = new MenuItem("Redo", () => editor.Redo()),
                                             new MenuItem("Cut"),
                                             new MenuItem("Copy"),
                                             new MenuItem("Paste"),
@@ -128,6 +138,9 @@ public partial class EditorOverlay : Container
                 Origin = Anchor.BottomLeft
             }
         };
+        
+        historyHandler.CanUndo.BindValueChanged(v => undoMenuItem.Action.Disabled = !v.NewValue, true);
+        historyHandler.CanRedo.BindValueChanged(v => redoMenuItem.Action.Disabled = !v.NewValue, true);
     }
     
     private RomanisableString getRomanisableString()
