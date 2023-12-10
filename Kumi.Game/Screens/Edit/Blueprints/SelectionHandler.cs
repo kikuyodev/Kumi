@@ -15,11 +15,20 @@ public partial class SelectionHandler : CompositeDrawable, IKeyBindingHandler<Pl
 {
     [Resolved]
     private EditorChart editorChart { get; set; } = null!;
+
+    [Resolved]
+    private EditorHistoryHandler historyHandler { get; set; } = null!;
     
+    [Resolved]
+    private Editor editor { get; set; } = null!;
+
+    [Resolved]
+    private EditorClock editorClock { get; set; } = null!;
+
     public IReadOnlyList<SelectionBlueprint<Note>> SelectedBlueprints => selectedBlueprints;
-    
+
     public readonly BindableList<Note> SelectedItems = new BindableList<Note>();
-    
+
     private readonly List<SelectionBlueprint<Note>> selectedBlueprints;
 
     public SelectionHandler()
@@ -31,8 +40,7 @@ public partial class SelectionHandler : CompositeDrawable, IKeyBindingHandler<Pl
     }
 
     public override bool ReceivePositionalInputAt(Vector2 screenSpacePos) => true;
-    
-    #region Deletion
+
 
     public bool OnPressed(KeyBindingPressEvent<PlatformAction> e)
     {
@@ -42,13 +50,15 @@ public partial class SelectionHandler : CompositeDrawable, IKeyBindingHandler<Pl
                 DeleteSelected();
                 return true;
         }
-        
+
         return false;
     }
 
     public void OnReleased(KeyBindingReleaseEvent<PlatformAction> e)
     {
     }
+
+    #region Deletion
 
     protected void DeleteSelected()
     {
@@ -84,10 +94,10 @@ public partial class SelectionHandler : CompositeDrawable, IKeyBindingHandler<Pl
             blueprint.ToggleSelection();
             return true;
         }
-        
+
         if (blueprint.IsSelected)
             return false;
-        
+
         DeselectAll();
         blueprint.Select();
         return true;

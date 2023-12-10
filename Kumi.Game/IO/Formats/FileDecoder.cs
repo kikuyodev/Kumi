@@ -17,7 +17,6 @@ public abstract partial class FileDecoder<T, TSection> : FileHandler<T, TSection
     protected FileDecoder(int version)
         : base(version)
     {
-
     }
 
     public T Decode(Stream stream) => Decode(stream, new T());

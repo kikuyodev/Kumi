@@ -3,12 +3,15 @@ using Kumi.Game.Overlays;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
+using osu.Framework.Input;
+using osu.Framework.Input.Bindings;
 using osu.Framework.Input.Events;
+using osu.Framework.Screens;
 using osuTK.Input;
 
 namespace Kumi.Game.Screens.Edit;
 
-public partial class Editor : ScreenWithChartBackground
+public partial class Editor : ScreenWithChartBackground, IKeyBindingHandler<PlatformAction>
 {
     public override float DimAmount => 0.5f;
     public override float ParallaxAmount => 0.001f;
@@ -31,12 +34,16 @@ public partial class Editor : ScreenWithChartBackground
     private readonly Bindable<WorkingChart> workingChart = new Bindable<WorkingChart>();
 
     private EditorChart editorChart = null!;
+    private EditorHistoryHandler historyHandler = null!;
+
+    public Bindable<EditorScreen> CurrentScreen = new Bindable<EditorScreen>();
 
     [BackgroundDependencyLoader]
     private void load(IBindable<WorkingChart> working)
     {
         workingChart.BindTarget = working;
-
+        
+        dependencies.CacheAs(this);
         dependencies.CacheAs((workingChart.Value.Chart as Chart)!);
 
         beatDivisor = new BindableBeatDivisor();
@@ -47,6 +54,9 @@ public partial class Editor : ScreenWithChartBackground
 
         AddInternal(editorChart = new EditorChart(working.Value.Chart, working.Value.ChartInfo));
         dependencies.CacheAs(editorChart);
+
+        AddInternal(historyHandler = new EditorHistoryHandler(editorChart));
+        dependencies.CacheAs(historyHandler);
 
         clock.ChangeSource(workingChart.Value.Track);
         AddInternal(clock);
@@ -63,6 +73,14 @@ public partial class Editor : ScreenWithChartBackground
                 Chart = { BindTarget = workingChart }
             }
         });
+        
+        screenStack.ScreenPushed += onScreenChanged;
+        screenStack.ScreenExited += onScreenChanged;
+    }
+
+    private void onScreenChanged(IScreen current, IScreen newScreen)
+    {
+        CurrentScreen.Value = (EditorScreen)newScreen;
     }
 
     [Resolved(CanBeNull = true)]
@@ -95,6 +113,47 @@ public partial class Editor : ScreenWithChartBackground
     {
         base.Update();
         clock.ProcessFrame();
+    }
+
+    public void Undo() => historyHandler.RestoreState(-1);
+    public void Redo() => historyHandler.RestoreState(1);
+
+    public void Copy(bool cut)
+        => screenStack.CurrentScreen.Copy(cut);
+    
+    public void Paste()
+        => screenStack.CurrentScreen.Paste();
+
+    public bool OnPressed(KeyBindingPressEvent<PlatformAction> e)
+    {
+        switch (e.Action)
+        {
+            case PlatformAction.Undo:
+                Undo();
+                return true;
+
+            case PlatformAction.Redo:
+                Redo();
+                return true;
+            
+            case PlatformAction.Cut:
+                Copy(true);
+                return true;
+            
+            case PlatformAction.Copy:
+                Copy(false);
+                return true;
+            
+            case PlatformAction.Paste:
+                Paste();
+                return true;
+        }
+
+        return false;
+    }
+
+    public void OnReleased(KeyBindingReleaseEvent<PlatformAction> e)
+    {
     }
 
     protected override bool OnKeyDown(KeyDownEvent e)
