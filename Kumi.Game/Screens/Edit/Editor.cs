@@ -6,6 +6,7 @@ using osu.Framework.Graphics;
 using osu.Framework.Input;
 using osu.Framework.Input.Bindings;
 using osu.Framework.Input.Events;
+using osu.Framework.Screens;
 using osuTK.Input;
 
 namespace Kumi.Game.Screens.Edit;
@@ -34,6 +35,8 @@ public partial class Editor : ScreenWithChartBackground, IKeyBindingHandler<Plat
 
     private EditorChart editorChart = null!;
     private EditorHistoryHandler historyHandler = null!;
+
+    public Bindable<EditorScreen> CurrentScreen = new Bindable<EditorScreen>();
 
     [BackgroundDependencyLoader]
     private void load(IBindable<WorkingChart> working)
@@ -70,6 +73,14 @@ public partial class Editor : ScreenWithChartBackground, IKeyBindingHandler<Plat
                 Chart = { BindTarget = workingChart }
             }
         });
+        
+        screenStack.ScreenPushed += onScreenChanged;
+        screenStack.ScreenExited += onScreenChanged;
+    }
+
+    private void onScreenChanged(IScreen current, IScreen newScreen)
+    {
+        CurrentScreen.Value = (EditorScreen)newScreen;
     }
 
     [Resolved(CanBeNull = true)]
@@ -107,6 +118,12 @@ public partial class Editor : ScreenWithChartBackground, IKeyBindingHandler<Plat
     public void Undo() => historyHandler.RestoreState(-1);
     public void Redo() => historyHandler.RestoreState(1);
 
+    public void Copy(bool cut)
+        => screenStack.CurrentScreen.Copy(cut);
+    
+    public void Paste()
+        => screenStack.CurrentScreen.Paste();
+
     public bool OnPressed(KeyBindingPressEvent<PlatformAction> e)
     {
         switch (e.Action)
@@ -117,6 +134,18 @@ public partial class Editor : ScreenWithChartBackground, IKeyBindingHandler<Plat
 
             case PlatformAction.Redo:
                 Redo();
+                return true;
+            
+            case PlatformAction.Cut:
+                Copy(true);
+                return true;
+            
+            case PlatformAction.Copy:
+                Copy(false);
+                return true;
+            
+            case PlatformAction.Paste:
+                Paste();
                 return true;
         }
 

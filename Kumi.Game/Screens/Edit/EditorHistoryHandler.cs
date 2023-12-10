@@ -33,13 +33,18 @@ public partial class EditorHistoryHandler : TransactionalCommitComponent
                 return stream.ComputeSHA2Hash();
         }
     }
+    
+    /// <summary>
+    /// A dictionary of the contents of the clipboard.
+    /// </summary>
+    public Dictionary<EditorClipboardType, BindableList<string>> Contents { get; } = new Dictionary<EditorClipboardType, BindableList<string>>();
 
     public EditorHistoryHandler(EditorChart editorChart)
     {
         this.editorChart = editorChart;
         patcher = new EditorChartPatcher(editorChart);
         
-        Contents.Add(EditorClipboardType.Note, new Bindable<List<string>>());
+        Contents.Add(EditorClipboardType.Note, new BindableList<string>());
 
         editorChart.TransactionBegan += BeginChange;
         editorChart.TransactionEnded += EndChange;
@@ -47,35 +52,26 @@ public partial class EditorHistoryHandler : TransactionalCommitComponent
     }
 
     #region Clipboard management
-    
-    /// <summary>
-    /// A dictionary of the contents of the clipboard.
-    /// </summary>
-    public Dictionary<EditorClipboardType, Bindable<List<string>>> Contents { get; } = new Dictionary<EditorClipboardType, Bindable<List<string>>>();
 
     public void Copy(EditorClipboardType type, List<string> content)
     {
         if (!Contents.ContainsKey(type))
-            Contents.Add(type, new Bindable<List<string>>(new List<string>()));
+            Contents.Add(type, new BindableList<string>());
 
-        Contents[type].Value = content;
+        Contents[type] = new BindableList<string>(content);
     }
     
-    public List<string> Paste(EditorClipboardType type)
+    public BindableList<string> Paste(EditorClipboardType type)
     {
         if (Contents.TryGetValue(type, out var content))
-            return content.Value;
+            return content;
         
-        return new List<string>();
-    }
-    
-    public void BindValueChanged(EditorClipboardType type, Action<ValueChangedEvent<List<string>>> action)
-    {
-        if (Contents.TryGetValue(type, out var content))
-            content.BindValueChanged(action);
+        return new BindableList<string>();
     }
 
     #endregion
+
+    #region Undo / Redo
 
     public override void BeginChange()
     {
@@ -149,6 +145,8 @@ public partial class EditorHistoryHandler : TransactionalCommitComponent
         CanUndo.Value = savedStates.Count > 0 && currentState > 0;
         CanRedo.Value = currentState < savedStates.Count - 1;
     }
+
+    #endregion
 }
 
 public enum EditorClipboardType
