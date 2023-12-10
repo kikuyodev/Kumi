@@ -1,4 +1,6 @@
-﻿namespace Kumi.Game.Online.API;
+﻿using osu.Framework.Development;
+
+namespace Kumi.Game.Online.API;
 
 public abstract class APIRequest<T>
     : APIRequest
@@ -71,6 +73,9 @@ public abstract class APIRequest
         // Assign specific headers here.
         Request.Method = Method;
         Request.AddHeader("Cookie", provider?.Cookies.ToString());
+        
+        if (DebugUtils.IsDebugBuild)
+            Request.AllowInsecureRequests = true; // We have to do this because the API is not always served over HTTPS.
         
         // TODO: Think of headers to assign.
         Request.Failure += TriggerFailure;
