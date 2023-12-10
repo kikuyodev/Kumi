@@ -2,10 +2,12 @@
 
 public class ProductionServerConfiguration : ServerConfiguration
 {
+    private const string base_uri = "https://kumi.kikuyo.dev";
+    
     public ProductionServerConfiguration()
     {
-        APIUri = "https://kumi.kikuyo.dev/api/v1";
-        //WebsocketUri = "https://kumi.kikuyo.dev/api/v1";
-        WebsiteUri = "https://kumi.kikuyo.dev";
+        APIUri = base_uri + "/api/v1"; 
+        //WebsocketUri = base_uri + "/api/v1";
+        WebsiteUri = base_uri;
     }
 }
