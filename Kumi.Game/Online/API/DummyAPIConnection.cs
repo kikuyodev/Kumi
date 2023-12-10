@@ -73,6 +73,11 @@ public partial class DummyAPIConnection : Component, IAPIConnectionProvider
         State.Value = APIState.Online;
     }
 
+    public bool Register(string username, string email, string password)
+    {
+        return true;
+    }
+
     public void Logout()
     {
         State.Value = APIState.Offline;

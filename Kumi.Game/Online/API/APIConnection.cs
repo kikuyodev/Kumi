@@ -15,7 +15,7 @@ public partial class APIConnection : Component, IAPIConnectionProvider
     public Queue<APIRequest> RequestQueue { get; private set; } = new Queue<APIRequest>();
     public Bindable<APIAccount> LocalAccount { get; } = new Bindable<APIAccount>(new GuestAccount());
     public Bindable<APIState> State { get; } = new Bindable<APIState>(APIState.Offline);
-    public string SessionToken { get; }
+    public string SessionToken { get; } = null!;
 
     public APIConnection(ServerConfiguration configuration)
     {
@@ -23,8 +23,8 @@ public partial class APIConnection : Component, IAPIConnectionProvider
         serverConnector = new ServerConnector(this);
     }
 
-    private IServerConnector? serverConnector;
-    private CookieContainer cookies = new CookieContainer();
+    private readonly IServerConnector? serverConnector;
+    private readonly CookieContainer cookies = new CookieContainer();
 
     public new void Schedule(Action action) => Scheduler.Add(action);
 
@@ -93,6 +93,29 @@ public partial class APIConnection : Component, IAPIConnectionProvider
             Logger.Error(e, $"Failed to perform {loginReq}");
             loginReq.TriggerFailure(e);
         }
+    }
+
+    public bool Register(string username, string email, string password)
+    {
+        var req = new RegisterRequest
+        {
+            Username = username,
+            Email = email,
+            Password = password
+        };
+
+        try
+        {
+            req.Perform(this);
+            return true;
+        }
+        catch (Exception e)
+        {
+            Logger.Error(e, $"Failed to perform {req}");
+            req.TriggerFailure(e);
+        }
+
+        return false;
     }
 
     public void Logout()

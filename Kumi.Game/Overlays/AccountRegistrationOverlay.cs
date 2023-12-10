@@ -24,6 +24,15 @@ public partial class AccountRegistrationOverlay : KumiFocusedOverlayContainer
     private TextFlowContainer kumiText = null!;
     private TextFlowContainer legalitiesText = null!;
 
+    private LabeledTextBox usernameTextBox = null!;
+    private LabeledTextBox emailTextBox = null!;
+    private LabeledTextBox passwordTextBox = null!;
+
+    private LabeledTextBox[] textBoxes = null!;
+
+    [Resolved]
+    private IAPIConnectionProvider api { get; set; } = null!;
+
     public AccountRegistrationOverlay()
     {
         Width = 600;
@@ -35,7 +44,7 @@ public partial class AccountRegistrationOverlay : KumiFocusedOverlayContainer
     private readonly IBindable<APIState> apiState = new Bindable<APIState>();
 
     [BackgroundDependencyLoader]
-    private void load(IAPIConnectionProvider api, LargeTextureStore textures)
+    private void load(LargeTextureStore textures)
     {
         apiState.BindTo(api.State);
         apiState.BindValueChanged(apiStateChanged, true);
@@ -118,19 +127,19 @@ public partial class AccountRegistrationOverlay : KumiFocusedOverlayContainer
                                         Spacing = new Vector2(0, 8),
                                         Children = new Drawable[]
                                         {
-                                            new LabeledTextBox
+                                            usernameTextBox = new LabeledTextBox
                                             {
                                                 PlaceholderText = "Username",
                                                 Label = "The name everyone will see you as. Please make sure the name is appropriate.",
                                                 TabbableContentContainer = this
                                             },
-                                            new LabeledTextBox
+                                            emailTextBox = new LabeledTextBox
                                             {
                                                 PlaceholderText = "Email",
                                                 Label = "Used for notifications, account verification, and in case you forget your password.",
                                                 TabbableContentContainer = this
                                             },
-                                            new LabeledTextBox(true)
+                                            passwordTextBox = new LabeledTextBox(true)
                                             {
                                                 PlaceholderText = "Password",
                                                 Label = "A secure and long passphrase that only you will remember. Must be at least 8 characters long.",
@@ -143,7 +152,7 @@ public partial class AccountRegistrationOverlay : KumiFocusedOverlayContainer
                                                 BackgroundColour = Colours.ORANGE_ACCENT,
                                                 Text = "Register",
                                                 Important = true,
-                                                Action = () => {}
+                                                Action = performRegistration
                                             }
                                         }
                                     },
@@ -201,6 +210,8 @@ public partial class AccountRegistrationOverlay : KumiFocusedOverlayContainer
             }
         };
 
+        textBoxes = new[] { usernameTextBox, emailTextBox, passwordTextBox };
+
         kumiText.AddText("Welcome to ");
         kumiText.AddText("Kumi!", c => c.Font = KumiFonts.GetFont(weight: FontWeight.SemiBold, size: 12));
         kumiText.AddText("A faithful recreation to Taiko no Tatsujin.");
@@ -228,6 +239,48 @@ public partial class AccountRegistrationOverlay : KumiFocusedOverlayContainer
         content.FadeOut();
         this.FadeOut(200);
     }
+
+    private void performRegistration()
+    {
+        if (focusNextEmptyTextBox())
+            return;
+
+        Task.Run(() =>
+        {
+            bool success;
+
+            try
+            {
+                success = api.Register(usernameTextBox.Current.Value, emailTextBox.Current.Value, passwordTextBox.Current.Value);
+            }
+            catch (Exception)
+            {
+                success = false;
+            }
+
+            Schedule(() =>
+            {
+                if (success)
+                    api.Login(usernameTextBox.Current.Value, passwordTextBox.Current.Value);
+            });
+        });
+    }
+
+    private bool focusNextEmptyTextBox()
+    {
+        var next = nextEmptyTextBox();
+
+        if (next != null)
+        {
+            Schedule(() => GetContainingInputManager().ChangeFocus(next.TextBox));
+            return true;
+        }
+
+        return false;
+    }
+
+    private LabeledTextBox? nextEmptyTextBox()
+        => textBoxes.FirstOrDefault(t => string.IsNullOrEmpty(t.Current.Value));
 
     private ScheduledDelegate? scheduledHide;
 
@@ -269,6 +322,8 @@ public partial class AccountRegistrationOverlay : KumiFocusedOverlayContainer
         private readonly KumiTextBox textBox;
         private readonly TextFlowContainer textFlow;
 
+        public KumiTextBox TextBox => textBox;
+
         public LabeledTextBox(bool secret = false)
         {
             AutoSizeAxes = Axes.Y;
@@ -289,18 +344,22 @@ public partial class AccountRegistrationOverlay : KumiFocusedOverlayContainer
         }
 
         private KumiTextBox createTextBox(bool secret)
-            => secret
-                   ? new KumiPasswordTextBox
-                   {
-                       RelativeSizeAxes = Axes.X,
-                       Height = 24,
-                       Current = { BindTarget = Current }
-                   }
-                   : new KumiTextBox
-                   {
-                       RelativeSizeAxes = Axes.X,
-                       Height = 24,
-                       Current = { BindTarget = Current }
-                   };
+        {
+            var input = secret
+                              ? new KumiPasswordTextBox
+                              {
+                                  RelativeSizeAxes = Axes.X,
+                                  Height = 24,
+                              }
+                              : new KumiTextBox
+                              {
+                                  RelativeSizeAxes = Axes.X,
+                                  Height = 24,
+                              };
+            
+            Current.BindTo(input.Current);
+
+            return input;
+        }
     }
 }
