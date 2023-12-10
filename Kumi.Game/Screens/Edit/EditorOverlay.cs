@@ -21,6 +21,9 @@ public partial class EditorOverlay : Container
     
     private MenuItem undoMenuItem = null!;
     private MenuItem redoMenuItem = null!;
+    private MenuItem cutMenuItem = null!;
+    private MenuItem copyMenuItem = null!;
+    private MenuItem pasteMenuItem = null!;
 
     public IBindable<WorkingChart> Chart { get; } = new Bindable<WorkingChart>();
     
@@ -76,10 +79,9 @@ public partial class EditorOverlay : Container
                                         {
                                             undoMenuItem = new MenuItem("Undo", () => editor.Undo()),
                                             redoMenuItem = new MenuItem("Redo", () => editor.Redo()),
-                                            new MenuItem("Cut"),
-                                            new MenuItem("Copy"),
-                                            new MenuItem("Paste"),
-                                            new MenuItem("Clone"),
+                                            cutMenuItem = new MenuItem("Cut", () => editor.Copy(true)),
+                                            copyMenuItem = new MenuItem("Copy", () => editor.Copy(false)),
+                                            pasteMenuItem = new MenuItem("Paste", () => editor.Paste()),
                                         }
                                     },
                                     new MenuItem("View")
@@ -141,6 +143,27 @@ public partial class EditorOverlay : Container
         
         historyHandler.CanUndo.BindValueChanged(v => undoMenuItem.Action.Disabled = !v.NewValue, true);
         historyHandler.CanRedo.BindValueChanged(v => redoMenuItem.Action.Disabled = !v.NewValue, true);
+        
+        editor.CurrentScreen.BindValueChanged(v =>
+        {
+            // unbind from previous screen
+            if (v.OldValue != null)
+            {
+                v.OldValue.CanCopy.UnbindAll();
+                v.OldValue.CanPaste.UnbindAll();
+            }
+            
+            // bind to new screen
+            if (v.NewValue != null)
+            {
+                v.NewValue.CanCopy.BindValueChanged(c =>
+                {
+                    copyMenuItem.Action.Disabled = !c.NewValue;
+                    cutMenuItem.Action.Disabled = !c.NewValue;
+                }, true);
+                v.NewValue.CanPaste.BindValueChanged(c => pasteMenuItem.Action.Disabled = !c.NewValue, true);
+            }
+        }, true);
     }
     
     private RomanisableString getRomanisableString()
