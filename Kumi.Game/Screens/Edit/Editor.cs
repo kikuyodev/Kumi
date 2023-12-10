@@ -3,12 +3,14 @@ using Kumi.Game.Overlays;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
+using osu.Framework.Input;
+using osu.Framework.Input.Bindings;
 using osu.Framework.Input.Events;
 using osuTK.Input;
 
 namespace Kumi.Game.Screens.Edit;
 
-public partial class Editor : ScreenWithChartBackground
+public partial class Editor : ScreenWithChartBackground, IKeyBindingHandler<PlatformAction>
 {
     public override float DimAmount => 0.5f;
     public override float ParallaxAmount => 0.001f;
@@ -48,7 +50,7 @@ public partial class Editor : ScreenWithChartBackground
 
         AddInternal(editorChart = new EditorChart(working.Value.Chart, working.Value.ChartInfo));
         dependencies.CacheAs(editorChart);
-        
+
         AddInternal(historyHandler = new EditorHistoryHandler(editorChart));
         dependencies.CacheAs(historyHandler);
 
@@ -99,6 +101,29 @@ public partial class Editor : ScreenWithChartBackground
     {
         base.Update();
         clock.ProcessFrame();
+    }
+
+    public void Undo() => historyHandler.RestoreState(-1);
+    public void Redo() => historyHandler.RestoreState(1);
+
+    public bool OnPressed(KeyBindingPressEvent<PlatformAction> e)
+    {
+        switch (e.Action)
+        {
+            case PlatformAction.Undo:
+                Undo();
+                return true;
+
+            case PlatformAction.Redo:
+                Redo();
+                return true;
+        }
+
+        return false;
+    }
+
+    public void OnReleased(KeyBindingReleaseEvent<PlatformAction> e)
+    {
     }
 
     protected override bool OnKeyDown(KeyDownEvent e)

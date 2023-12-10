@@ -5,7 +5,7 @@ using Kumi.Game.IO.Formats;
 
 namespace Kumi.Game.Charts.Formats;
 
-public class ChartEncoder : FileEncoder<Chart, ChartSections>
+public class ChartEncoder : FileEncoder<IChart, ChartSections>
 {
     public ChartEncoder()
         : base(Chart.CURRENT_VERSION)
@@ -44,13 +44,13 @@ public class ChartEncoder : FileEncoder<Chart, ChartSections>
     private void handleMetadata()
     {
         WriteLine($"ARTIST = {Current.Metadata.Artist}");
-        WriteLine($"ARTIST_ROMANISED = {Current.Metadata.ArtistRomanised}");
+        WriteLine($"ARTIST_ROMANISED = {(string.IsNullOrEmpty(Current.Metadata.ArtistRomanised) ? Current.Metadata.Artist : Current.Metadata.ArtistRomanised)}");
         WriteLine($"TITLE = {Current.Metadata.Title}");
-        WriteLine($"TITLE_ROMANISED = {Current.Metadata.TitleRomanised}");
+        WriteLine($"TITLE_ROMANISED = {(string.IsNullOrEmpty(Current.Metadata.TitleRomanised) ? Current.Metadata.Artist : Current.Metadata.TitleRomanised)}");
         WriteLine($"SOURCE = {Current.Metadata.Source}");
         WriteLine($"GENRE = {Current.Metadata.Genre}");
         WriteLine($"TAGS = {Current.Metadata.Tags}");
-        WriteLine($"CREATOR = {Current.Metadata.Creator.Username}");
+        WriteLine($"CREATOR = {Current.Metadata.Creator?.Username}");
         WriteLine($"DIFFICULTY_NAME = {Current.ChartInfo.DifficultyName}");
         WriteLine($"PREVIEW_POINT = {Current.Metadata.PreviewTime}");
     }
