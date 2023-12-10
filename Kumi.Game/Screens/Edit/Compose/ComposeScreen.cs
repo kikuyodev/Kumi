@@ -1,9 +1,12 @@
 ﻿using Kumi.Game.Charts;
 using Kumi.Game.Charts.Objects;
+using Kumi.Game.Charts.Objects.Windows;
+using Kumi.Game.Extensions;
 using Kumi.Game.Gameplay;
 using Kumi.Game.Gameplay.Drawables;
 using Kumi.Game.Graphics.Containers;
 using Kumi.Game.Screens.Edit.Compose;
+using Kumi.Game.Utils;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
@@ -16,6 +19,7 @@ namespace Kumi.Game.Screens.Edit;
 [Cached]
 public partial class ComposeScreen : EditorScreenWithTimeline
 {
+    private NoteComposer noteComposer = null!;
     private Container playfieldContainer = null!;
     private InputManager? inputManager;
 
@@ -26,9 +30,12 @@ public partial class ComposeScreen : EditorScreenWithTimeline
 
     [Resolved]
     private EditorClock clock { get; set; } = null!;
-    
+
     [Resolved]
     private EditorChart editorChart { get; set; } = null!;
+
+    [Resolved]
+    private EditorHistoryHandler historyHandler { get; set; } = null!;
 
     public IReadOnlyList<DrawableNote> Notes => Playfield!.Notes;
 
@@ -45,6 +52,10 @@ public partial class ComposeScreen : EditorScreenWithTimeline
 
         inputManager = GetContainingInputManager();
         loadPlayfield();
+        
+        editorChart.SelectedNotes.BindCollectionChanged((_, __) => updateClipboardActionAvailability());
+        historyHandler.Contents[EditorClipboardType.Note].BindCollectionChanged((_, __) => updateClipboardActionAvailability());
+        updateClipboardActionAvailability();
     }
 
     private void loadPlayfield()
@@ -56,7 +67,7 @@ public partial class ComposeScreen : EditorScreenWithTimeline
                 loadPlayfield();
                 return;
             }
-            
+
             playfieldContainer.AddRange(new Drawable[]
             {
                 new InputBlockingContainer
@@ -69,12 +80,12 @@ public partial class ComposeScreen : EditorScreenWithTimeline
                         ProcessCustomClock = false
                     }
                 },
-                new NoteComposer
+                noteComposer = new NoteComposer
                 {
                     RelativeSizeAxes = Axes.Both,
                 }
             });
-            
+
             editorChart.NoteAdded += onNoteAdded;
             editorChart.NoteRemoved += onNoteRemoved;
         });
@@ -93,10 +104,118 @@ public partial class ComposeScreen : EditorScreenWithTimeline
     protected override Drawable CreateMainContent()
         => playfieldContainer = new Container { RelativeSizeAxes = Axes.Both };
 
+    public override void Copy(bool cut)
+    {
+        historyHandler.Copy(EditorClipboardType.Note, editorChart.SelectedNotes
+           .OrderBy(n => n.StartTime)
+           .Select(note => note.ToSaveableString())
+           .ToList()
+        );
+
+        if (cut)
+        {
+            editorChart.RemoveRange(editorChart.SelectedNotes);
+            editorChart.SelectedNotes.Clear();
+        }
+    }
+
+    public override void Paste()
+    {
+        var clipboard = historyHandler.Paste(EditorClipboardType.Note);
+
+        if (clipboard.Count == 0)
+            return;
+
+        editorChart.BeginChange();
+        editorChart.SelectedNotes.Clear();
+
+        double previousNoteTime = 0.0;
+        int pastedNotes = 0;
+
+        foreach (var noteString in clipboard)
+        {
+            var note = processNote(noteString);
+
+            if (pastedNotes == 0)
+            {
+                // first note
+                previousNoteTime = note.StartTime;
+                note.StartTime = clock.CurrentTime;
+            }
+            else
+            {
+                note.StartTime = clock.CurrentTime + (note.StartTime - previousNoteTime);
+                previousNoteTime = note.StartTime;
+            }
+
+            // find a note at the same time as the pasted note
+            var noteAtTime = editorChart.Notes.FirstOrDefault(n => n.StartTime == note.StartTime);
+
+            if (noteAtTime != null)
+            {
+                editorChart.Remove((Note) noteAtTime);
+            }
+
+            editorChart.Add(note);
+            editorChart.SelectedNotes.Add(note);
+            pastedNotes++;
+        }
+
+        editorChart.EndChange();
+    }
+
+    private void updateClipboardActionAvailability()
+    {
+        CanCopy.Value = editorChart.SelectedNotes.Any();
+        CanPaste.Value = historyHandler.Contents[EditorClipboardType.Note].Count > 0;
+    }
+
+    // TODO: There should be a general way to do this, across both the decoder and the composer
+    private Note processNote(string line)
+    {
+        var args = line.SplitComplex(Note.DELIMITER).ToArray();
+        var typeValue = (NoteType) StringUtils.AssertAndFetch<int>(args[0]);
+        Note? note;
+
+        switch (typeValue)
+        {
+            case NoteType.Don:
+            case NoteType.Kat:
+                note = new DrumHit(StringUtils.AssertAndFetch<float>(args[1]));
+                note.Flags.Value = (NoteFlags) StringUtils.AssertAndFetch<int>(args[2]);
+                break;
+
+            case NoteType.Drumroll:
+                var drumroll = new DrumRoll(StringUtils.AssertAndFetch<float>(args[1]));
+                drumroll.EndTime = StringUtils.AssertAndFetch<float>(args[2]);
+                drumroll.Flags.Value = (NoteFlags) StringUtils.AssertAndFetch<int>(args[3]);
+
+                note = drumroll;
+                break;
+
+            case NoteType.Balloon:
+                var balloon = new Balloon(StringUtils.AssertAndFetch<float>(args[1]));
+                balloon.EndTime = StringUtils.AssertAndFetch<float>(args[2]);
+                balloon.Flags.Value = (NoteFlags) StringUtils.AssertAndFetch<int>(args[3]);
+
+                note = balloon;
+                break;
+
+            default:
+                throw new InvalidDataException($"Invalid note type: {typeValue}");
+        }
+
+        // TODO: Temporary
+        note.Windows = new NoteWindows();
+        note.Type.Value = typeValue;
+
+        return note;
+    }
+
     protected override void Dispose(bool isDisposing)
     {
         base.Dispose(isDisposing);
-        
+
         editorChart.NoteAdded -= onNoteAdded;
         editorChart.NoteRemoved -= onNoteRemoved;
     }

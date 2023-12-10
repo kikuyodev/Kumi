@@ -185,6 +185,7 @@ public class ChartDecoder : FileDecoder<Chart, ChartSections>
                 throw new InvalidDataException($"Invalid timing point type: {typeValue}");
         }
 
+        tp.PointType = typeValue;
         Current.TimingPoints.Add(tp);
     }
 

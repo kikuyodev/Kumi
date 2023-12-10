@@ -79,6 +79,8 @@ public class RealmBackedDefaultStoreTest : RealmTest
                 new TestModel { Name = "Test2" }
             };
         }
-    }
 
+        public override bool Compare(TestModel model, TestModel other)
+            => model.Name == other.Name;
+    }
 }

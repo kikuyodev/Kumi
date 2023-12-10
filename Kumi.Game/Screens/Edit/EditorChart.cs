@@ -66,6 +66,14 @@ public partial class EditorChart : TransactionalCommitComponent, IChart
         var insertionIndex = findInsertionIndex(playableChart.Notes, note.StartTime);
         Insert(insertionIndex + 1, note);
     }
+    
+    public void AddRange(IEnumerable<Note> notes)
+    {
+        BeginChange();
+        foreach (var n in notes)
+            Add(n);
+        EndChange();
+    }
 
     public void Insert(int index, Note note)
     {

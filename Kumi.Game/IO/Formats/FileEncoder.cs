@@ -1,4 +1,5 @@
-﻿using Kumi.Game.Extensions;
+﻿using System.Text;
+using Kumi.Game.Extensions;
 
 namespace Kumi.Game.IO.Formats;
 
@@ -65,7 +66,7 @@ public abstract class FileEncoder<TInput> : FileHandler<TInput>
     public void Encode(TInput input, Stream writableStream)
     {
         stream = writableStream;
-        Writer = new StreamWriter(stream);
+        Writer = new StreamWriter(stream, Encoding.UTF8, 1024, true);
 
         PreProcess(input);
         PostProcess();
