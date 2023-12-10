@@ -6,17 +6,17 @@ namespace Kumi.Game.Online.Server;
 /// A server packet with consistent data.
 /// </summary>
 /// <typeparam name="T"></typeparam>
-public class ServerPacket<T> : ServerPacket
+public class Packet<T> : Packet
     where T : class
 {
     [JsonProperty("d")]
     public T Data { get; set; } = null!;
 
-    public ServerPacket()
+    public Packet()
     {
     }
 
-    public ServerPacket(ServerPacket<T> parent)
+    public Packet(Packet<T> parent)
         : base(parent)
     {
     }
@@ -25,18 +25,19 @@ public class ServerPacket<T> : ServerPacket
 /// <summary>
 /// A server packet, which contains an opcode, but no data.
 /// </summary>
-public class ServerPacket
+public class Packet
 {
     [JsonProperty("op")]
-    public ServerPacketOpCode OpCode { get; set; }
+    public OpCode OpCode { get; set; }
 
+    [JsonIgnore]
     public string RawData { get; set; } = string.Empty;
-
-    public ServerPacket()
+    
+    public Packet()
     {
     }
 
-    public ServerPacket(ServerPacket parent)
+    public Packet(Packet parent)
     {
         OpCode = parent.OpCode;
     }

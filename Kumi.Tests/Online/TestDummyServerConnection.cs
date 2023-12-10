@@ -38,7 +38,7 @@ public partial class TestDummyServerConnection : KumiTestScene
             Provider.Login("username", "password");
         });
 
-        connector.RegisterPacketHandler<TestPacket>(ServerPacketOpCode.Hello, packet =>
+        connector.RegisterPacketHandler<TestPacket>(OpCode.Hello, packet =>
         {
             caughtPackets.Add(packet);
         });
@@ -51,7 +51,7 @@ public partial class TestDummyServerConnection : KumiTestScene
         });
 
         AddUntilStep("wait for packet", () => caughtPackets.Count > 0);
-        AddAssert("packet opcode is hello", () => caughtPackets[0].OpCode == ServerPacketOpCode.Hello);
+        AddAssert("packet opcode is hello", () => caughtPackets[0].OpCode == OpCode.Hello);
         AddAssert("packet data is correct", () => caughtPackets[0].Data.SequenceEqual(new byte[] { 0x00, 0x01, 0x02, 0x03, 0x04 }));
     }
 
@@ -67,11 +67,11 @@ public partial class TestDummyServerConnection : KumiTestScene
         return connector;
     }
 
-    internal class TestPacket : ServerPacket<byte[]>
+    internal class TestPacket : Packet<byte[]>
     {
         public TestPacket()
         {
-            OpCode = ServerPacketOpCode.Hello;
+            OpCode = OpCode.Hello;
             Data = new byte[] { 0x00, 0x01, 0x02, 0x03, 0x04 };
         }
     }

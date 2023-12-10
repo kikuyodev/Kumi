@@ -15,7 +15,7 @@ public class ServerConnector : IServerConnector //, IDisposable
     public bool AutoStart { get; set; }
     public Bindable<ServerConnectionState> State { get; } = new Bindable<ServerConnectionState>(ServerConnectionState.Disconnected);
 
-    public Dictionary<ServerPacketOpCode, List<Action<ServerPacket>>> PacketHandlers { get; } = new Dictionary<ServerPacketOpCode, List<Action<ServerPacket>>>();
+    public Dictionary<OpCode, List<Action<Packet>>> PacketHandlers { get; } = new Dictionary<OpCode, List<Action<Packet>>>();
     public CancellationTokenSource CancellationToken { get; private set; } = new CancellationTokenSource();
 
     public ServerConnector(IAPIConnectionProvider provider, bool autoStart = true)
@@ -54,10 +54,10 @@ public class ServerConnector : IServerConnector //, IDisposable
         Started = true;
     }
 
-    public void RegisterPacketHandler<T>(ServerPacketOpCode opCode, Action<T> handler)
-        where T : ServerPacket
+    public void RegisterPacketHandler<T>(OpCode opCode, Action<T> handler)
+        where T : Packet
     {
-        void castingHandler(ServerPacket packet)
+        void castingHandler(Packet packet)
         {
             try
             {
@@ -80,7 +80,7 @@ public class ServerConnector : IServerConnector //, IDisposable
         // Register the packet handler.
         if (!PacketHandlers.TryGetValue(opCode, out var handlers))
         {
-            handlers = new List<Action<ServerPacket>>();
+            handlers = new List<Action<Packet>>();
             PacketHandlers.Add(opCode, handlers);
         }
 
@@ -176,6 +176,6 @@ public class ServerConnector : IServerConnector //, IDisposable
         CancellationToken = new CancellationTokenSource();
     }
 
-    IDictionary<ServerPacketOpCode, ICollection<Action<ServerPacket>>> IServerConnector.PacketHandlers { get; } =
-        new Dictionary<ServerPacketOpCode, ICollection<Action<ServerPacket>>>();
+    IDictionary<OpCode, ICollection<Action<Packet>>> IServerConnector.PacketHandlers { get; } =
+        new Dictionary<OpCode, ICollection<Action<Packet>>>();
 }

@@ -38,10 +38,10 @@ public interface IServerConnector
     /// </summary>
     Bindable<ServerConnectionState> State { get; }
 
-    IDictionary<ServerPacketOpCode, ICollection<Action<ServerPacket>>> PacketHandlers { get; }
+    IDictionary<OpCode, ICollection<Action<Packet>>> PacketHandlers { get; }
 
     void Start();
 
-    void RegisterPacketHandler<T>(ServerPacketOpCode opCode, Action<T> handler)
-        where T : ServerPacket;
+    void RegisterPacketHandler<T>(OpCode opCode, Action<T> handler)
+        where T : Packet;
 }

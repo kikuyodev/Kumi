@@ -32,7 +32,7 @@ public class ServerConnection : IAsyncDisposable
 
     public event Action<byte[]>? RawMessageReceived;
 
-    public event Action<ServerPacket>? PacketReceived;
+    public event Action<Packet>? PacketReceived;
 
     public ServerConnection(IServerConnector connector)
     {
@@ -67,7 +67,7 @@ public class ServerConnection : IAsyncDisposable
         }
     }
 
-    public void Queue(ServerPacket packet)
+    public void Queue(Packet packet)
     {
         // Serialize the packet.
         var json = JsonConvert.SerializeObject(packet);
@@ -157,7 +157,7 @@ public class ServerConnection : IAsyncDisposable
 
         try
         {
-            var packet = JsonConvert.DeserializeObject<ServerPacket>(message);
+            var packet = JsonConvert.DeserializeObject<Packet>(message);
             packet!.RawData = message;
 
             PacketReceived?.Invoke(packet);
