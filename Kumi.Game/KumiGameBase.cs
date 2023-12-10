@@ -11,6 +11,7 @@ using Kumi.Resources;
 using osu.Framework.Allocation;
 using osu.Framework.Audio;
 using osu.Framework.Bindables;
+using osu.Framework.Development;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Textures;
@@ -30,7 +31,7 @@ public partial class KumiGameBase : osu.Framework.Game
     private KeybindStore keybindStore = null!;
 
     private Container content = null!;
-    
+
     protected Colours GameColours { get; private set; } = null!;
     protected IAPIConnectionProvider API { get; set; } = null!;
     protected Bindable<WorkingChart> Chart { get; private set; } = null!;
@@ -63,8 +64,11 @@ public partial class KumiGameBase : osu.Framework.Game
         DependencyContainer.CacheAs(Storage);
 
         // TODO
-        DependencyContainer.CacheAs(API = new APIConnection(new ProductionServerConfiguration()));
-        base.Content.Add((APIConnection)API);
+        API = new APIConnection(DebugUtils.IsDebugBuild
+                                    ? new DevelopmentServerConfiguration()
+                                    : new ProductionServerConfiguration());
+        DependencyContainer.CacheAs(API);
+        base.Content.Add((APIConnection) API);
 
         var defaultChart = new DummyWorkingChart(Audio, Textures);
         DependencyContainer.Cache(chartManager = new ChartManager(Storage!, realm, Audio, Resources, Host, defaultChart));
@@ -73,7 +77,7 @@ public partial class KumiGameBase : osu.Framework.Game
 
         DependencyContainer.CacheAs<IBindable<WorkingChart>>(Chart);
         DependencyContainer.CacheAs(Chart);
-        
+
         DependencyContainer.Cache(scoreManager = new ScoreManager(Storage!, realm));
 
         var largeStore = new LargeTextureStore(Host.Renderer, Host.CreateTextureLoaderStore(new NamespacedResourceStore<byte[]>(Resources, "Textures")));
@@ -115,7 +119,7 @@ public partial class KumiGameBase : osu.Framework.Game
         // This is placed here first because for whatever reason some fonts that the framework use uses *this* one instead of its own.
         AddFont(Resources, @"Fonts/Inter/Inter");
         AddFont(Resources, @"Fonts/Inter/Inter-Italic");
-        
+
         AddFont(Resources, @"Fonts/Inter/Inter-Thin");
         AddFont(Resources, @"Fonts/Inter/Inter-ThinItalic");
         AddFont(Resources, @"Fonts/Inter/Inter-ExtraLight");
