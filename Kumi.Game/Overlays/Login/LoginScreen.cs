@@ -33,7 +33,7 @@ public partial class LoginScreen : Container
     }
 
     [BackgroundDependencyLoader]
-    private void load()
+    private void load(AccountRegistrationOverlay registrationOverlay)
     {
         InternalChild = new FillFlowContainer
         {
@@ -95,6 +95,11 @@ public partial class LoginScreen : Container
                         new ClickableContainer
                         {
                             AutoSizeAxes = Axes.Both,
+                            Action = () =>
+                            {
+                                RequestHide?.Invoke();
+                                registrationOverlay.Show();
+                            },
                             Child = new SpriteText
                             {
                                 Text = "Register one now!",

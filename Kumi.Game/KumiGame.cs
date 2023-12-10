@@ -92,6 +92,7 @@ public partial class KumiGame : KumiGameBase, IKeyBindingHandler<GlobalAction>, 
             loadComponents(new[]
             {
                 new ComponentLoadTask(typeof(MusicController), loadComplete: Add),
+                new ComponentLoadTask(typeof(AccountRegistrationOverlay), loadComplete: topOverlayContainer.Add),
                 new ComponentLoadTask(typeof(TaskbarOverlay), loadComplete: c =>
                 {
                     Taskbar = (TaskbarOverlay) c;
