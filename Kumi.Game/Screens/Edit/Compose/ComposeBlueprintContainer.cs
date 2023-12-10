@@ -1,4 +1,5 @@
-﻿using Kumi.Game.Charts.Objects;
+﻿using Kumi.Game.Charts;
+using Kumi.Game.Charts.Objects;
 using Kumi.Game.Screens.Edit.Blueprints;
 using Kumi.Game.Screens.Edit.Compose.Tools;
 using osu.Framework.Allocation;
@@ -38,6 +39,9 @@ public partial class ComposeBlueprintContainer : EditorBlueprintContainer
     
     [Resolved]
     private EditorScreenWithTimeline? editorScreen { get; set; }
+    
+    [Resolved]
+    private BindableBeatDivisor beatDivisor { get; set; } = null!;
 
     public override bool ReceivePositionalInputAt(Vector2 screenSpacePos) => editorScreen?.MainContent.ReceivePositionalInputAt(screenSpacePos) ?? base.ReceivePositionalInputAt(screenSpacePos);
 
@@ -111,8 +115,10 @@ public partial class ComposeBlueprintContainer : EditorBlueprintContainer
 
     private void updatePlacementPosition()
     {
-        var result = Composer?.Playfield.TimeAtScreenSpacePosition(inputManager.CurrentState.Mouse.Position);
-        CurrentPlacement?.UpdateTimeAndPosition(result);
+        var targetTime = Composer!.Playfield!.TimeAtScreenSpacePosition(inputManager.CurrentState.Mouse.Position);
+        targetTime = Composer.Playfield.SnapTime(targetTime, beatDivisor.Value);
+        
+        CurrentPlacement?.UpdateTimeAndPosition(targetTime);
     }
 
     private void noteAdded(Note note)
