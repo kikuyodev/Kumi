@@ -23,7 +23,10 @@ public partial class LoginOverlay : KumiFocusedOverlayContainer
             CornerRadius = 5,
             AutoSizeDuration = 200,
             AutoSizeEasing = Easing.OutQuint,
-            Child = panel = new LoginPanel()
+            Child = panel = new LoginPanel
+            {
+                RequestHide = Hide
+            }
         };
     }
 

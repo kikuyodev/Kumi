@@ -12,8 +12,10 @@ public partial class LoginPanel : Container
 {
     public override RectangleF BoundingBox => hidden ? RectangleF.Empty : base.BoundingBox;
 
-    private LoginScreenStack formStack = null!;
+    private Container formContainer = null!;
     private LoginScreen? loginScreen;
+    
+    public Action? RequestHide;
     
     private bool hidden;
 
@@ -66,7 +68,7 @@ public partial class LoginPanel : Container
                     },
                 }
             },
-            formStack = new LoginScreenStack
+            formContainer = new Container
             {
                 RelativeSizeAxes = Axes.X,
                 AutoSizeAxes = Axes.Y,
@@ -82,7 +84,10 @@ public partial class LoginPanel : Container
     protected override void LoadComplete()
     {
         base.LoadComplete();
-        formStack.Push(loginScreen = new LoginScreen());
+        LoadComponentAsync(loginScreen = new LoginScreen
+        {
+            RequestHide = RequestHide
+        }, formContainer.Add);
     }
 
     public override bool AcceptsFocus => true;

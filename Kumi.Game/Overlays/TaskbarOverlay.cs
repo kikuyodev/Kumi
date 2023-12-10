@@ -18,11 +18,13 @@ public partial class TaskbarOverlay : OverlayContainer
     private Container overlayContent = null!;
     
     private LoginOverlay loginOverlay = null!;
+
+    private bool initialShow;
     
     protected override bool StartHidden => true;
     
     [Resolved]
-    private IAPIConnectionProvider api { get; set;  }
+    private IAPIConnectionProvider api { get; set;  } = null!;
 
     [BackgroundDependencyLoader]
     private void load()
@@ -116,22 +118,22 @@ public partial class TaskbarOverlay : OverlayContainer
         {
             switch (state.NewValue)
             {
-                case APIState.Offline:
-                    loginOverlay.State.Value = Visibility.Visible;
-                    break;
                 case APIState.Online:
                     loginOverlay.State.Value = Visibility.Hidden;
                     break;
             }
-        }, true);
+        });
     }
 
     protected override void PopIn()
     {
         this.MoveToY(0, 200, Easing.OutQuint);
-        
-        if (api.State.Value == APIState.Offline)
+
+        if (api.State.Value == APIState.Offline && !initialShow)
+        {
             loginOverlay.State.Value = Visibility.Visible;
+            initialShow = true;
+        }
     }
 
     protected override void PopOut()
