@@ -12,7 +12,7 @@ public partial class KumiTestScene : TestScene
 
     protected new DependencyContainer Dependencies = null!;
 
-    protected IAPIConnectionProvider Provider => localDummyProvider;
+    protected IAPIConnectionProvider API => localDummyProvider;
     protected AudioManager AudioManager => base.Dependencies.Get<AudioManager>();
     protected LargeTextureStore LargeTextureStore => base.Dependencies.Get<LargeTextureStore>();
 

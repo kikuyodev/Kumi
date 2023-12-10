@@ -14,12 +14,12 @@ public partial class TestDummyAPIConnection : KumiTestScene
         AddStep("login to account", () =>
         {
             // Login to the API.
-            Provider.Login("username", "password");
+            API.Login("username", "password");
         });
 
-        var account = Provider.LocalAccount;
+        var account = API.LocalAccount;
 
-        AddAssert("is online", () => Provider.State.Value == APIState.Online);
+        AddAssert("is online", () => API.State.Value == APIState.Online);
         AddAssert("account is not null", () => account.Value != null);
         AddAssert("username is equal to Dummy", () => !string.IsNullOrEmpty(account.Value.Username) && account.Value.Username == "Dummy");
     }
@@ -29,7 +29,7 @@ public partial class TestDummyAPIConnection : KumiTestScene
     public void SimpleTestRequest(bool shouldFail)
     {
         APIRequest? request = null;
-        var dummy = Provider as DummyAPIConnection;
+        var dummy = API as DummyAPIConnection;
 
         AddStep("assign request handler", () => dummy!.HandleRequest = _ => !shouldFail);
         AddAssert("request is null", () => request == null);
@@ -46,7 +46,7 @@ public partial class TestDummyAPIConnection : KumiTestScene
     [TestCase(10)]
     public void QueueTestRequest(int amount)
     {
-        var dummy = Provider as DummyAPIConnection;
+        var dummy = API as DummyAPIConnection;
 
         AddStep("pause queue", () => dummy!.PauseQueue = true);
         AddAssert("queue is empty", () => dummy!.RequestQueue.Count == 0);

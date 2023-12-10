@@ -66,7 +66,7 @@ public partial class DummyAPIConnection : Component, IAPIConnectionProvider
         // Create a new account object.
         LocalAccount.Value = new APIAccount
         {
-            Id = 1,
+            Id = APIAccount.DEFAULT_SYSTEM_ID, // TODO: Change this to a 1 when logout is properly implemented.
             Username = "Dummy"
         };
 
