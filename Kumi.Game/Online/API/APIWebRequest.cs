@@ -56,6 +56,7 @@ public class APIWebRequest : WebRequest
     public APIWebRequest(string? uri)
         : base(uri)
     {
+        AllowInsecureRequests = true;
         Failed += onFailure;
     }
 

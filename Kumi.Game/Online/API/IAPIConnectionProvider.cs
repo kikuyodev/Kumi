@@ -79,6 +79,14 @@ public interface IAPIConnectionProvider
     public void Login(string username, string password);
 
     /// <summary>
+    /// Registers a new account with the API with the provided credentials.
+    /// </summary>
+    /// <param name="username">The username of the account/</param>
+    /// <param name="email">The email of the account.</param>
+    /// <param name="password">The password of the account.</param>
+    public bool Register(string username, string email, string password);
+
+    /// <summary>
     /// Logs the current account out of the API, invalidating the session token in the process.
     /// </summary>
     public void Logout();
