@@ -15,7 +15,7 @@ public partial class APIConnection : Component, IAPIConnectionProvider
     public Queue<APIRequest> RequestQueue { get; private set; } = new Queue<APIRequest>();
     public Bindable<APIAccount> LocalAccount { get; } = new Bindable<APIAccount>(new GuestAccount());
     public Bindable<APIState> State { get; } = new Bindable<APIState>(APIState.Offline);
-    public string SessionToken { get; }
+    public string SessionToken { get; set; }
 
     public APIConnection(ServerConfiguration configuration)
     {
@@ -73,6 +73,7 @@ public partial class APIConnection : Component, IAPIConnectionProvider
             try
             {
                 LocalAccount.Value = loginReq.Response.GetAccount();
+                SessionToken = loginReq.Response.GetToken();
                 State.Value = APIState.Online;
             }
             catch (KeyNotFoundException e)
@@ -110,4 +111,8 @@ public partial class APIConnection : Component, IAPIConnectionProvider
 
     #endregion
 
+    private void registerConnectorHandlers()
+    {
+        
+    }
 }

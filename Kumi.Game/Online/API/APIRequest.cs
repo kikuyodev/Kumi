@@ -72,12 +72,13 @@ public abstract class APIRequest
 
         // Assign specific headers here.
         Request.Method = Method;
-        Request.AddHeader("Cookie", provider?.Cookies.ToString());
+        
+        if (provider.State.Value == APIState.Online)
+            Request.AddHeader("Authorization", $"Session {provider.SessionToken}");
         
         if (DebugUtils.IsDebugBuild)
             Request.AllowInsecureRequests = true; // We have to do this because the API is not always served over HTTPS.
         
-        // TODO: Think of headers to assign.
         Request.Failure += TriggerFailure;
         Request.Success += TriggerSuccess;
 

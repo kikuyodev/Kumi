@@ -26,5 +26,6 @@ public class LoginRequest : APIRequest<LoginRequest.LoginResponse>
     public class LoginResponse : APIResponse
     {
         public APIAccount GetAccount() => Get<APIAccount>("account");
+        public string? GetToken() => Get<string>("token");
     }
 }
