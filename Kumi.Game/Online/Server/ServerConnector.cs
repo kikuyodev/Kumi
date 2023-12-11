@@ -13,6 +13,7 @@ public class ServerConnector : IServerConnector //, IDisposable
     public IAPIConnectionProvider Provider { get; }
     public bool Started { get; private set; }
     public bool AutoStart { get; set; }
+    public string AuthorizationToken { get; set; } = string.Empty;
     public Bindable<ServerConnectionState> State { get; } = new Bindable<ServerConnectionState>(ServerConnectionState.Disconnected);
 
     public Dictionary<OpCode, List<Action<Packet>>> PacketHandlers { get; } = new Dictionary<OpCode, List<Action<Packet>>>();

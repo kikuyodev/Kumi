@@ -39,6 +39,11 @@ public interface IServerConnector
     Bindable<ServerConnectionState> State { get; }
 
     IDictionary<OpCode, ICollection<Action<Packet>>> PacketHandlers { get; }
+    
+    /// <summary>
+    /// The token that is used to authenticate with the server.
+    /// </summary>
+    string AuthorizationToken { get; set; }
 
     void Start();
 

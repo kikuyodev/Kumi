@@ -1,6 +1,7 @@
 ﻿using System.Net;
 using Kumi.Game.Online.API.Accounts;
 using Kumi.Game.Online.API.Requests;
+using Kumi.Game.Online.API.Requests.Websocket;
 using Kumi.Game.Online.Server;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
@@ -75,6 +76,15 @@ public partial class APIConnection : Component, IAPIConnectionProvider
                 LocalAccount.Value = loginReq.Response.GetAccount();
                 SessionToken = loginReq.Response.GetToken();
                 State.Value = APIState.Online;
+
+                var tokenReq = new WebsocketTokenRequest();
+                
+                tokenReq.Success += () =>
+                {
+                    serverConnector.AuthorizationToken = tokenReq.Response.GetToken();
+                };
+                
+                Perform(tokenReq);
             }
             catch (KeyNotFoundException e)
             {
