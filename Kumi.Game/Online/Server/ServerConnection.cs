@@ -1,5 +1,7 @@
-﻿using System.Net.WebSockets;
+﻿using System.Diagnostics;
+using System.Net.WebSockets;
 using System.Text;
+using Kumi.Game.Online.Server.Packets;
 using Newtonsoft.Json;
 using osu.Framework.Logging;
 using SixLabors.ImageSharp;
@@ -38,11 +40,22 @@ public class ServerConnection : IAsyncDisposable
     {
         Connector = connector;
         Connection = new ClientWebSocket();
+        
+        PacketReceived += packet =>
+        {
+            if (packet.OpCode != OpCode.Pong)
+                return;
+            
+            expectingPong = false;
+            onPong?.Invoke();
+        };
     }
 
     private readonly Queue<byte[]> messageQueue = new Queue<byte[]>();
 
     private readonly CancellationToken cancellationToken = default;
+    private bool expectingPong;
+    private Func<bool>? onPong;
 
     public async Task ConnectAsync(CancellationToken token)
     {
@@ -107,6 +120,24 @@ public class ServerConnection : IAsyncDisposable
         Closed?.Invoke(null);
     }
 
+    public async Task<long> Ping()
+    {
+        var stopwatch = new Stopwatch();
+        
+        expectingPong = true;
+        stopwatch.Start();
+        Queue(new PingPacket());
+        
+        return await Task.Run(() =>
+        {
+            while (expectingPong)
+            {
+                Thread.Sleep(1);
+            }
+
+            return stopwatch.ElapsedMilliseconds;
+        });
+    }
     private Task? receiveTask;
 
     private void update()
