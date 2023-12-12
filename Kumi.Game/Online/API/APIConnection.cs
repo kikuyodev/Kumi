@@ -3,6 +3,7 @@ using Kumi.Game.Online.API.Accounts;
 using Kumi.Game.Online.API.Requests;
 using Kumi.Game.Online.API.Requests.Websocket;
 using Kumi.Game.Online.Server;
+using Kumi.Game.Online.Server.Packets;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Logging;
@@ -82,6 +83,10 @@ public partial class APIConnection : Component, IAPIConnectionProvider
                 tokenReq.Success += () =>
                 {
                     serverConnector.AuthorizationToken = tokenReq.Response.GetToken();
+                    registerConnectorHandlers();
+                    
+                    // try and connect to the server.
+                    serverConnector.Start();
                 };
                 
                 Perform(tokenReq);
@@ -123,6 +128,11 @@ public partial class APIConnection : Component, IAPIConnectionProvider
 
     private void registerConnectorHandlers()
     {
-        
+        this.serverConnector.RegisterPacketHandler<HelloPacket>(OpCode.Hello, performHello);
+    }
+
+    private void performHello(HelloPacket packet)
+    {
+        return;
     }
 }

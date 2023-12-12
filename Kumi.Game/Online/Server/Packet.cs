@@ -19,6 +19,7 @@ public class Packet<T> : Packet
     public Packet(Packet<T> parent)
         : base(parent)
     {
+        this.Data = parent.Data;
     }
 }
 
@@ -33,6 +34,9 @@ public class Packet
     [JsonIgnore]
     public string RawData { get; set; } = string.Empty;
     
+    [JsonProperty("t")]
+    public DispatchType? DispatchType { get; set; }
+    
     public Packet()
     {
     }
@@ -40,5 +44,6 @@ public class Packet
     public Packet(Packet parent)
     {
         OpCode = parent.OpCode;
+        DispatchType = parent.DispatchType;
     }
 }
