@@ -2,8 +2,8 @@
 
 public class HelloPacket : Packet<HelloPacket.HelloData>
 {
-    public OpCode OpCode => OpCode.Hello;
-    
+    public override OpCode OpCode => OpCode.Hello;
+
     public class HelloData
     {
     }

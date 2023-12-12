@@ -29,7 +29,7 @@ public class Packet<T> : Packet
 public class Packet
 {
     [JsonProperty("op")]
-    public OpCode OpCode { get; set; }
+    public virtual OpCode OpCode { get; set; }
 
     [JsonIgnore]
     public string RawData { get; set; } = string.Empty;
