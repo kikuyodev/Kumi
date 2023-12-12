@@ -2,7 +2,6 @@
 using Kumi.Game.Charts;
 using Kumi.Game.Screens.Play;
 using Kumi.Game.Tests;
-using NUnit.Framework;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Development;
@@ -13,28 +12,25 @@ public partial class PlayerTestScene : KumiScreenTestScene
 {
     private WorkingChart? workingChart;
 
-    [SetUp]
-    public void SetupChart()
+    public override void SetupSteps()
     {
+        base.SetupSteps();
+        
         Schedule(() =>
         {
             Debug.Assert(ThreadSafety.IsUpdateThread);
-
+        
             var manager = Dependencies.Get<ChartManager>();
             workingChart = manager.GetWorkingChart(manager.GetAllUsableCharts().First().Charts.First(), true);
-
+        
             workingChart.BeginAsyncLoad();
             workingChart.LoadChartTrack();
-
+        
             var currentChart = Dependencies.Get<Bindable<WorkingChart>>();
             currentChart.Value = workingChart;
         });
-    }
-    
-    [Test]
-    public void TestPlayerScreen()
-    {
-        PushScreen(new PlayerLoader());
-        WaitForScreenLoad();
+        
+        AddStep("Load editor", () => LoadScreen(new PlayerLoader()));
+        AddUntilStep("Wait for editor to load", () => ScreenStack.CurrentScreen is PlayerLoader);
     }
 }

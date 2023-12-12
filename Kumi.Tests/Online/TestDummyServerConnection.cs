@@ -15,7 +15,7 @@ public partial class TestDummyServerConnection : KumiTestScene
 
         AddStep("login to account", () =>
         {
-            Provider.Login("username", "password");
+            API.Login("username", "password");
         });
 
         AddAssert("is started", () => connector.Started);
@@ -23,7 +23,7 @@ public partial class TestDummyServerConnection : KumiTestScene
 
         AddStep("stop the connector", () =>
         {
-            Provider.Logout();
+            API.Logout();
         });
     }
 
@@ -35,7 +35,7 @@ public partial class TestDummyServerConnection : KumiTestScene
 
         AddStep("login to account", () =>
         {
-            Provider.Login("username", "password");
+            API.Login("username", "password");
         });
 
         connector.RegisterPacketHandler<TestPacket>(OpCode.Hello, packet =>
@@ -57,7 +57,7 @@ public partial class TestDummyServerConnection : KumiTestScene
 
     private IServerConnector connect()
     {
-        var connector = Provider.GetServerConnector();
+        var connector = API.GetServerConnector();
 
         AddStep("start the connector", () =>
         {

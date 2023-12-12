@@ -6,18 +6,19 @@ using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Sprites;
 using osu.Framework.Input.Events;
-using osu.Framework.Screens;
 using osuTK;
 
 namespace Kumi.Game.Overlays.Login;
 
-public partial class LoginScreen : Screen
+public partial class LoginScreen : Container
 {
     private bool handleKeyboardInput = true;
     private bool handleMouseInput = true;
     
     private KumiTextBox username = null!;
     private KumiTextBox password = null!;
+    
+    public Action? RequestHide;
 
     [Resolved]
     private IAPIConnectionProvider api { get; set; } = null!;
@@ -32,7 +33,7 @@ public partial class LoginScreen : Screen
     }
 
     [BackgroundDependencyLoader]
-    private void load()
+    private void load(AccountRegistrationOverlay registrationOverlay)
     {
         InternalChild = new FillFlowContainer
         {
@@ -94,6 +95,11 @@ public partial class LoginScreen : Screen
                         new ClickableContainer
                         {
                             AutoSizeAxes = Axes.Both,
+                            Action = () =>
+                            {
+                                RequestHide?.Invoke();
+                                registrationOverlay.Show();
+                            },
                             Child = new SpriteText
                             {
                                 Text = "Register one now!",
@@ -108,9 +114,6 @@ public partial class LoginScreen : Screen
 
         api.State.BindValueChanged(v =>
         {
-            if (v.NewValue == APIState.Online)
-                this.Exit();
-
             if (v.NewValue == APIState.Offline)
             {
                 password.Text = string.Empty;

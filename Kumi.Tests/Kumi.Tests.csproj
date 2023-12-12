@@ -7,6 +7,8 @@
         <Nullable>enable</Nullable>
         <LangVersion>11</LangVersion>
         <StartupObject>Kumi.Tests.VisualTestRunner</StartupObject>
+        <Configurations>Debug;Release;Debug - Tests;Release - Tests</Configurations>
+        <Platforms>AnyCPU</Platforms>
     </PropertyGroup>
 
     <ItemGroup>
