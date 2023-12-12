@@ -167,6 +167,13 @@ public partial class APIConnection : Component, IAPIConnectionProvider
 
     private void performHello(HelloPacket packet)
     {
-        return;
+        // Send an identification packet.
+        serverConnector.CurrentConnection?.Queue(new IdentifyPacket()
+        {
+            Data = new IdentifyPacket.IdentifyData()
+            {
+                Token = serverConnector.AuthorizationToken,
+            }
+        });
     }
 }
