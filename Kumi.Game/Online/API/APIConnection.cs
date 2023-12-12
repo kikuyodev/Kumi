@@ -34,12 +34,28 @@ public partial class APIConnection : Component, IAPIConnectionProvider
             }
             
             // Attempt to reconnect.
-            Scheduler.AddDelayed(() => this.serverConnector.Start(), 5000L);
+            Scheduler.AddDelayed(() =>
+            {
+                this.serverConnector.AuthorizationToken = string.Empty; // Tokens are invalid after successful connection.
+                var tokenReq = new WebsocketTokenRequest();
+                
+                tokenReq.Success += () =>
+                {
+                    serverConnector.AuthorizationToken = tokenReq.Response.GetToken();
+                    registerConnectorHandlers();
+                    
+                    // try and connect to the server.
+                    serverConnector.Start();
+                };
+                
+                Perform(tokenReq);
+            }, 5000L);
         };
     }
 
     private IServerConnector? serverConnector;
     private CookieContainer cookies = new CookieContainer();
+    private bool registeredHandlers;
 
     public new void Schedule(Action action) => Scheduler.Add(action);
 
@@ -141,6 +157,11 @@ public partial class APIConnection : Component, IAPIConnectionProvider
 
     private void registerConnectorHandlers()
     {
+        if (registeredHandlers)
+            return;
+        
+        registeredHandlers = true;
+        
         this.serverConnector.RegisterPacketHandler<HelloPacket>(OpCode.Hello, performHello);
     }
 
