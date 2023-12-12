@@ -49,7 +49,7 @@ public partial class APIConnection : Component, IAPIConnectionProvider
                 };
                 
                 Perform(tokenReq);
-            }, 5000L);
+            }, 1000L);
         };
     }
 
