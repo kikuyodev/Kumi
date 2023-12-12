@@ -140,6 +140,29 @@ public partial class APIConnection : Component, IAPIConnectionProvider
         }
     }
 
+    public bool Register(string username, string email, string password)
+    {
+        var req = new RegisterRequest
+        {
+            Username = username,
+            Email = email,
+            Password = password
+        };
+
+        try
+        {
+            req.Perform(this);
+            return true;
+        }
+        catch (Exception e)
+        {
+            Logger.Error(e, $"Failed to perform {req}");
+            req.TriggerFailure(e);
+        }
+
+        return false;
+    }
+
     public void Logout()
     {
         throw new NotImplementedException();

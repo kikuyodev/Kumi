@@ -87,7 +87,7 @@ public partial class MenuScreen : KumiScreen
         if (e.Repeat)
             return false;
         
-        if (e.Key != Key.Escape)
+        if (e.Key != Key.Escape && e is { ControlPressed: false, ShiftPressed: false, AltPressed: false, SuperPressed: false })
             this.Push(new SelectScreen());
 
         return base.OnKeyDown(e);

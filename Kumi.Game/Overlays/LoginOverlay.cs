@@ -1,11 +1,12 @@
-﻿using Kumi.Game.Overlays.Login;
+﻿using Kumi.Game.Graphics.Containers;
+using Kumi.Game.Overlays.Login;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 
 namespace Kumi.Game.Overlays;
 
-public partial class LoginOverlay : FocusedOverlayContainer
+public partial class LoginOverlay : KumiFocusedOverlayContainer
 {
     private LoginPanel panel = null!;
 
@@ -22,7 +23,10 @@ public partial class LoginOverlay : FocusedOverlayContainer
             CornerRadius = 5,
             AutoSizeDuration = 200,
             AutoSizeEasing = Easing.OutQuint,
-            Child = panel = new LoginPanel()
+            Child = panel = new LoginPanel
+            {
+                RequestHide = Hide
+            }
         };
     }
 
