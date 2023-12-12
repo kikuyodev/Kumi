@@ -16,7 +16,7 @@ public class APIResponse : IHasStatus
     public string? Message { get; set; }
     
     [JsonProperty("data")]
-    public Dictionary<string, JObject>? Data { get; set; }
+    public JObject? Data { get; set; }
     
     [JsonIgnore]
     public bool IsSuccess => StatusCode == 200;
@@ -37,7 +37,11 @@ public class APIResponse : IHasStatus
         
         if (Data.TryGetValue(key, out var value))
         {
-            return JsonConvert.DeserializeObject<T>(value.ToString())!;
+            if (value.Type == JTokenType.Object)
+                return JsonConvert.DeserializeObject<T>(value.ToString())!;
+
+            // Cast it to the type we want.
+            return (T) value.ToObject(typeof(T))!;
         }
 
         throw new KeyNotFoundException($"Key {key} was not found in the response data.");

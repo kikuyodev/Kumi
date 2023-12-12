@@ -1,5 +1,4 @@
-﻿using System.Net;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 using WebRequest = osu.Framework.IO.Network.WebRequest;
 
 namespace Kumi.Game.Online.API;
@@ -28,20 +27,12 @@ public class APIWebRequest<T> : APIWebRequest
 
         if (!string.IsNullOrEmpty(response))
             ResponseObject = JsonConvert.DeserializeObject<T>(response);
-        
-        if (this.ResponseHeaders.TryGetValues("Set-Cookie", out var cookieHeader))
-        {
-            ResponseObject.Cookies = new CookieContainer();
-            foreach (var cookie in cookieHeader)
-            {
-                ResponseObject.Cookies.SetCookies(new Uri(this.Url), cookie);
-            }
-        }
 
         base.ProcessResponse();
     }
 
     public T? ResponseObject { get; private set; }
+    
 }
 
 /// <summary>

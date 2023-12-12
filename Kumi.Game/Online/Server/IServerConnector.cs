@@ -38,10 +38,20 @@ public interface IServerConnector
     /// </summary>
     Bindable<ServerConnectionState> State { get; }
 
-    IDictionary<ServerPacketOpCode, ICollection<Action<ServerPacket>>> PacketHandlers { get; }
+    IDictionary<OpCode, List<Action<Packet>>> PacketHandlers { get; }
+    
+    IDictionary<string, List<Action<Packet>>> DispatchHandlers { get; }
+
+    /// <summary>
+    /// The token that is used to authenticate with the server.
+    /// </summary>
+    string AuthorizationToken { get; set; }
 
     void Start();
 
-    void RegisterPacketHandler<T>(ServerPacketOpCode opCode, Action<T> handler)
-        where T : ServerPacket;
+    void RegisterPacketHandler<T>(OpCode opCode, Action<T> handler)
+        where T : Packet;
+    
+    void RegisterDispatchHandler<T>(string dispatch, Action<T> handler)
+        where T : Packet;
 }
