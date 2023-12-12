@@ -22,7 +22,20 @@ public partial class APIConnection : Component, IAPIConnectionProvider
     public APIConnection(ServerConfiguration configuration)
     {
         EndpointConfiguration = configuration;
-        serverConnector = new ServerConnector(this);
+        var serverConnector = new ServerConnector(this);
+        this.serverConnector = serverConnector;
+        
+        serverConnector.Closed += b =>
+        {
+            if (b)
+            {
+                // The client was intentionally closed.
+                return;
+            }
+            
+            // Attempt to reconnect.
+            Scheduler.AddDelayed(() => this.serverConnector.Start(), 5000L);
+        };
     }
 
     private IServerConnector? serverConnector;

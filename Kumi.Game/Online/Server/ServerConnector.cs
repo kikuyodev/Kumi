@@ -19,6 +19,8 @@ public class ServerConnector : IServerConnector //, IDisposable
     public Dictionary<OpCode, List<Action<Packet>>> PacketHandlers { get; } = new Dictionary<OpCode, List<Action<Packet>>>();
     public CancellationTokenSource CancellationToken { get; private set; } = new CancellationTokenSource();
 
+    public event Action<bool> Closed;
+
     public ServerConnector(IAPIConnectionProvider provider, bool autoStart = true)
     {
         Provider = provider;
@@ -112,6 +114,7 @@ public class ServerConnector : IServerConnector //, IDisposable
                     if (e != null)
                         Logger.Log($"Connection closed: {e.Message}", LoggingTarget.Network);
 
+                    Closed?.Invoke(cancellationToken.IsCancellationRequested);
                     if (cancellationToken.IsCancellationRequested)
                         return true;
 
