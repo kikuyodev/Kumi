@@ -149,18 +149,6 @@ public class ServerConnector : IServerConnector //, IDisposable
                 CurrentConnection = new ServerConnection(this);
                 await CurrentConnection.ConnectAsync(cancellationToken).ConfigureAwait(false);
 
-                CurrentConnection.Closed += e =>
-                {
-                    if (e != null)
-                        Logger.Log($"Connection closed: {e.Message}", LoggingTarget.Network);
-
-                    Closed?.Invoke(cancellationToken.IsCancellationRequested);
-                    if (cancellationToken.IsCancellationRequested)
-                        return true;
-
-                    State.Value = ServerConnectionState.Disconnected;
-                    return true;
-                };
 
                 CurrentConnection.PacketReceived += packet =>
                 {
@@ -175,11 +163,15 @@ public class ServerConnector : IServerConnector //, IDisposable
             catch (OperationCanceledException)
             {
                 // The connection was cancelled.
+                Logger.Log("Connection cancelled.", LoggingTarget.Network);
+                State.Value = ServerConnectionState.Disconnected;
+                Closed?.Invoke(true);
             }
             catch (Exception e)
             {
                 // The connection failed.
                 Logger.Log($"Failed to connect to the server: {e.Message}", LoggingTarget.Network);
+                Closed?.Invoke(false);
                 State.Value = ServerConnectionState.Failed;
             }
         }
