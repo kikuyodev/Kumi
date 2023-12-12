@@ -1,9 +1,5 @@
-﻿using Newtonsoft.Json;
-using Newtonsoft.Json.Converters;
+﻿namespace Kumi.Game.Online.Server;
 
-namespace Kumi.Game.Online.Server;
-
-[JsonConverter(typeof(StringEnumConverter))]
 public enum OpCode
 {
     Dispatch = 0x00,

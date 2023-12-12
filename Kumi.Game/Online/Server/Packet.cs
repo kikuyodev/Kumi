@@ -35,7 +35,7 @@ public class Packet
     public string RawData { get; set; } = string.Empty;
     
     [JsonProperty("t")]
-    public DispatchType? DispatchType { get; set; }
+    public string? DispatchType { get; set; }
     
     public Packet()
     {
