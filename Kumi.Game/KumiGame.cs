@@ -46,7 +46,9 @@ public partial class KumiGame : KumiGameBase, IKeyBindingHandler<GlobalAction>, 
 
     protected TaskbarOverlay? Taskbar { get; private set; }
     protected ControlOverlay? ControlOverlay { get; private set; }
-
+    private List<string> importTasks = new();
+    private ScheduledDelegate? importTask;
+    
     public KumiGame()
     {
         Name = "Kumi";
@@ -122,6 +124,38 @@ public partial class KumiGame : KumiGameBase, IKeyBindingHandler<GlobalAction>, 
             );
         });
     }
+    
+    public override void SetHost(GameHost host)
+    {
+        base.SetHost(host);
+        host.Window.Title = "Kumi";
+
+        if (host.Window != null)
+        {
+            host.Window.DragDrop += handleDragDropPath;
+        }
+    }
+
+    private void handleDragDropPath(string path)
+    {
+        importTasks.Add(path);
+        
+        if (importTask != null)
+            importTask.Cancel();
+
+        importTask = Scheduler.AddDelayed(handlePendingImports, 1000);
+    }
+    
+    private void handlePendingImports()
+    {
+        lock (importTasks)
+        {
+            if (importTasks.Count == 0)
+                return;
+
+            Import(importTasks.ToArray());
+        }
+    }
 
     private void chartChanged(ValueChangedEvent<WorkingChart> chart)
     {
@@ -160,12 +194,6 @@ public partial class KumiGame : KumiGameBase, IKeyBindingHandler<GlobalAction>, 
                 Message = n.Data.Message
             });
         });
-    }
-
-    public override void SetHost(GameHost host)
-    {
-        base.SetHost(host);
-        host.Window.Title = "Kumi";
     }
 
     public bool OnPressed(KeyBindingPressEvent<GlobalAction> e)
@@ -248,7 +276,7 @@ public partial class KumiGame : KumiGameBase, IKeyBindingHandler<GlobalAction>, 
     });
 
     #endregion
-
+    
     #region Component loading
 
     private readonly List<Task> loadTasks = new List<Task>();
@@ -312,5 +340,9 @@ public partial class KumiGame : KumiGameBase, IKeyBindingHandler<GlobalAction>, 
     }
 
     #endregion
-
+    
+    private enum ImportTaskType
+    {
+        KumiChart,
+    }
 }
