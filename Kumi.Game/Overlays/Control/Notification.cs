@@ -143,10 +143,11 @@ public abstract partial class Notification : Container
             },
             Message is null
                 ? Empty()
-                : new SpriteText
+                : new TextFlowContainer(c => c.Font = KumiFonts.GetFont(size: 12))
                 {
+                    RelativeSizeAxes = Axes.X,
+                    AutoSizeAxes = Axes.Y,
                     Text = Message.Value,
-                    Font = KumiFonts.GetFont(size: 12),
                     Colour = Colours.GRAY_C
                 }
         });

@@ -1,4 +1,5 @@
 ﻿using Kumi.Game.Online.API;
+using Kumi.Game.Online.Server.Packets;
 using Newtonsoft.Json;
 using osu.Framework.Bindables;
 using osu.Framework.Logging;
@@ -27,6 +28,16 @@ public class ServerConnector : IServerConnector //, IDisposable
 
         if (AutoStart)
             Start();
+        
+        RegisterPacketHandler<DispatchPacket<object>>(OpCode.Dispatch, packet =>
+        {
+            // Forward the packet to the relevant dispatch handlers.
+            if (dispatchHandlers.TryGetValue(packet.DispatchType, out var handlers))
+            {
+                foreach (var handler in handlers)
+                    handler(packet);
+            }
+        });
     }
 
     private readonly IBindable<APIState> apiState = new Bindable<APIState>();

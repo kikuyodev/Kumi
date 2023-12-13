@@ -5,8 +5,8 @@ namespace Kumi.Game.Online;
 public class DevelopmentServerConfiguration : ServerConfiguration
 {
     private static readonly string base_uri = ConfigurationManager.AppSettings["development:baseUri"] ?? "localhost";
-    private static readonly int port = int.Parse(ConfigurationManager.AppSettings["development:port"] ?? "8080");
-    private static readonly int websocket_port = int.Parse(ConfigurationManager.AppSettings["development:websocketPort"] ?? "8080");
+    private static readonly int port = int.Parse(ConfigurationManager.AppSettings["development:port"] ?? "3333");
+    private static readonly int websocket_port = int.Parse(ConfigurationManager.AppSettings["development:websocketPort"] ?? "3403");
     
     public DevelopmentServerConfiguration()
     {

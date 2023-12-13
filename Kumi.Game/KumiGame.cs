@@ -2,6 +2,7 @@
 using Kumi.Game.Graphics;
 using Kumi.Game.Graphics.Containers;
 using Kumi.Game.Input;
+using Kumi.Game.Online.Server.Packets.Dispatch;
 using Kumi.Game.Overlays;
 using Kumi.Game.Overlays.Control;
 using Kumi.Game.Screens;
@@ -10,8 +11,10 @@ using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
+using osu.Framework.Graphics.Sprites;
 using osu.Framework.Input.Bindings;
 using osu.Framework.Input.Events;
+using osu.Framework.Platform;
 using osu.Framework.Screens;
 using osu.Framework.Threading;
 using osuTK.Graphics;
@@ -24,24 +27,29 @@ public partial class KumiGame : KumiGameBase, IKeyBindingHandler<GlobalAction>, 
     private bool taskbarControlsDisabled;
 
     private float taskbarOffset => (Taskbar?.Position.Y ?? 0) + (Taskbar?.DrawHeight ?? 0);
-    
+
     private Container screenContainer = null!;
     private Container screenOffsetContainer = null!;
     private Container topOverlayContainer = null!;
-    
+
     private KumiScreenStack screenStack = null!;
     private LoaderScreen loaderScreen = null!;
 
     private Container overlayContent = null!;
     private Container overlayOffsetContainer = null!;
     private Container rightOverlayContainer = null!;
-    
+
     private readonly List<KumiFocusedOverlayContainer> focusedOverlays = new List<KumiFocusedOverlayContainer>();
     private readonly List<OverlayContainer> externalOverlays = new List<OverlayContainer>();
     private readonly List<OverlayContainer> visibleBlockingOverlays = new List<OverlayContainer>();
-    
+
     protected TaskbarOverlay? Taskbar { get; private set; }
     protected ControlOverlay? ControlOverlay { get; private set; }
+
+    public KumiGame()
+    {
+        Name = "Kumi";
+    }
 
     [BackgroundDependencyLoader]
     private void load()
@@ -75,7 +83,7 @@ public partial class KumiGame : KumiGameBase, IKeyBindingHandler<GlobalAction>, 
         });
 
         DependencyContainer.CacheAs(screenStack.BackgroundStack);
-        
+
         Chart.BindValueChanged(chartChanged, true);
     }
 
@@ -85,7 +93,7 @@ public partial class KumiGame : KumiGameBase, IKeyBindingHandler<GlobalAction>, 
 
         LoadComponent(loaderScreen = new LoaderScreen { ExitAction = Exit });
         screenStack.Push(loaderScreen);
-        
+
         screenStack.ScreenPushed += onScreenChanged;
         screenStack.ScreenExited += onScreenChanged;
 
@@ -93,16 +101,18 @@ public partial class KumiGame : KumiGameBase, IKeyBindingHandler<GlobalAction>, 
 
         Task.Factory.StartNew(() =>
         {
+            pushNotificationOnConnection();
+
             // This has to be manually added first because of some weird fuckery i can't explain at the moment
             LoadComponent(ControlOverlay = new ControlOverlay
             {
                 Anchor = Anchor.TopRight,
                 Origin = Anchor.TopRight
             });
-            
+
             DependencyContainer.CacheAs<INotificationManager>(ControlOverlay);
             Schedule(() => rightOverlayContainer.Add(ControlOverlay));
-            
+
             loadComponents(new[]
             {
                 new ComponentLoadTask(typeof(MusicController), loadComplete: Add),
@@ -116,7 +126,7 @@ public partial class KumiGame : KumiGameBase, IKeyBindingHandler<GlobalAction>, 
             {
                 LoadComponentAsync(new MenuScreen(), c =>
                 {
-                    Scheduler.AddDelayed(() => screenStack.Push(c), 100); 
+                    Scheduler.AddDelayed(() => screenStack.Push(c), 100);
                 });
             }, Scheduler);
         });
@@ -134,12 +144,37 @@ public partial class KumiGame : KumiGameBase, IKeyBindingHandler<GlobalAction>, 
         {
             taskbarEnabled = newKumiScreen.ShowTaskbar;
             taskbarControlsDisabled = newKumiScreen.DisableTaskbarControl;
-            
+
             if (newKumiScreen.ShowTaskbar)
                 Taskbar?.Show();
             else
                 Taskbar?.Hide();
         }
+    }
+
+    private void pushNotificationOnConnection()
+    {
+        var connector = API.GetServerConnector();
+
+        if (connector == null)
+            return;
+
+        connector.RegisterDispatchHandler<NotificationDispatchPacket>("NOTIFICATION", (n) =>
+        {
+            ControlOverlay!.Post(new BasicNotification
+            {
+                Icon = FontAwesome.Solid.Signal,
+                BackgroundColour = Colours.RED_ACCENT_LIGHT,
+                Header = "Server",
+                Message = n.Data.Message
+            });
+        });
+    }
+
+    public override void SetHost(GameHost host)
+    {
+        base.SetHost(host);
+        host.Window.Title = "Kumi";
     }
 
     public bool OnPressed(KeyBindingPressEvent<GlobalAction> e)
@@ -171,30 +206,30 @@ public partial class KumiGame : KumiGameBase, IKeyBindingHandler<GlobalAction>, 
     protected override void UpdateAfterChildren()
     {
         base.UpdateAfterChildren();
-        
+
         screenOffsetContainer.Padding = new MarginPadding { Top = taskbarOffset };
         overlayOffsetContainer.Padding = new MarginPadding { Top = taskbarOffset };
     }
-    
+
     #region IOverlayManager
 
     private void updateBlockingOverlayColour()
         => Schedule(() => screenContainer.FadeColour(visibleBlockingOverlays.Any() ? Colours.Gray(0.5f) : Color4.White, 500, Easing.OutQuint));
-    
+
     public IDisposable RegisterBlockingOverlay(OverlayContainer container)
     {
         if (container.Parent != null)
             throw new ArgumentException($"Overlays must not have a parent when registered to {nameof(IOverlayManager)}", nameof(container));
-        
+
         if (externalOverlays.Contains(container))
             throw new ArgumentException($"{nameof(container)} is already registered to {nameof(IOverlayManager)}", nameof(container));
-        
+
         externalOverlays.Add(container);
         overlayContent.Add(container);
-        
+
         if (overlayContent is KumiFocusedOverlayContainer focusedOverlayContainer)
             focusedOverlays.Add(focusedOverlayContainer);
-        
+
         return new InvokeOnDisposal(() => unregisterBlockingOverlay(container));
     }
 
@@ -214,10 +249,10 @@ public partial class KumiGame : KumiGameBase, IKeyBindingHandler<GlobalAction>, 
     private void unregisterBlockingOverlay(OverlayContainer container) => Schedule(() =>
     {
         externalOverlays.Remove(container);
-        
+
         if (overlayContent is KumiFocusedOverlayContainer focusedOverlayContainer)
             focusedOverlays.Remove(focusedOverlayContainer);
-        
+
         container.Expire();
     });
 
@@ -239,9 +274,9 @@ public partial class KumiGame : KumiGameBase, IKeyBindingHandler<GlobalAction>, 
             scheduler.Add(() =>
             {
                 component.LoadComplete?.Invoke(component.Drawable);
-                loaderScreen.SetProgress((idx + 1) / (float)amount);
+                loaderScreen.SetProgress((idx + 1) / (float) amount);
             });
-            
+
             Thread.Sleep(100);
         }
 
@@ -274,4 +309,5 @@ public partial class KumiGame : KumiGameBase, IKeyBindingHandler<GlobalAction>, 
     }
 
     #endregion
+
 }

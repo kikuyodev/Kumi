@@ -8,6 +8,8 @@ namespace Kumi.Game.Online.Server;
 /// </summary>
 public interface IServerConnector
 {
+    event Action<bool> Closed;
+    
     /// <summary>
     /// The current client that is being used.
     /// </summary>

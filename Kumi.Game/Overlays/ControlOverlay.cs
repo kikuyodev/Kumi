@@ -100,9 +100,12 @@ public partial class ControlOverlay : KumiFocusedOverlayContainer, INotification
         Logger.Log($"※ {notification.Message ?? notification.Header ?? "Notification"}", LoggingTarget.Information);
         
         notification.Closed += notificationClosed;
-        
-        notificationSection.Add(notification);
-        updateCount();
+
+        Schedule(() =>
+        {
+            notificationSection.Add(notification);
+            updateCount();
+        });
     }
 
     private void notificationClosed()

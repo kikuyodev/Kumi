@@ -19,7 +19,7 @@ public class Packet<T> : Packet
     public Packet(Packet<T> parent)
         : base(parent)
     {
-        this.Data = parent.Data;
+        Data = parent.Data;
     }
 }
 
@@ -35,7 +35,7 @@ public class Packet
     public string RawData { get; set; } = string.Empty;
     
     [JsonProperty("t")]
-    public string? DispatchType { get; set; }
+    public virtual string? DispatchType { get; set; }
     
     public Packet()
     {

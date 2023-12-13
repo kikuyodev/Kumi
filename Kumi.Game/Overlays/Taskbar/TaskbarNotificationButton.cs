@@ -17,14 +17,15 @@ public partial class TaskbarNotificationButton : TaskbarButton, IKeyBindingHandl
     private readonly IBindable<int> notificationCount = new BindableInt();
 
     private NotificationBell notificationBell = null!;
-    private ControlOverlay controlOverlay = null!;
+    private ControlOverlay? controlOverlay;
 
-    [BackgroundDependencyLoader]
-    private void load(INotificationManager notificationManager)
+    [BackgroundDependencyLoader(true)]
+    private void load(INotificationManager? notificationManager)
     {
-        controlOverlay = (notificationManager as ControlOverlay)!;
+        controlOverlay = notificationManager as ControlOverlay;
 
-        notificationCount.BindTo(notificationManager.UnreadCount);
+        if (notificationManager != null)
+            notificationCount.BindTo(notificationManager.UnreadCount);
 
         notificationCount.ValueChanged += count =>
         {
@@ -37,13 +38,7 @@ public partial class TaskbarNotificationButton : TaskbarButton, IKeyBindingHandl
             }
         };
 
-        Action = () =>
-        {
-            if (controlOverlay.State.Value == Visibility.Hidden)
-                controlOverlay.Show();
-            else
-                controlOverlay.Hide();
-        };
+        Action = toggleOverlay;
     }
 
     protected override void LoadComplete()
@@ -59,10 +54,7 @@ public partial class TaskbarNotificationButton : TaskbarButton, IKeyBindingHandl
         switch (e.Action)
         {
             case GlobalAction.ToggleNotifications:
-                if (controlOverlay.State.Value == Visibility.Hidden)
-                    controlOverlay.Show();
-                else
-                    controlOverlay.Hide();
+                toggleOverlay();
                 return true;
         }
 
@@ -71,6 +63,14 @@ public partial class TaskbarNotificationButton : TaskbarButton, IKeyBindingHandl
 
     public void OnReleased(KeyBindingReleaseEvent<GlobalAction> e)
     {
+    }
+
+    private void toggleOverlay()
+    {
+        if (controlOverlay?.State.Value == Visibility.Hidden)
+            controlOverlay.Show();
+        else
+            controlOverlay?.Hide();
     }
 
     protected override Drawable CreateContent()

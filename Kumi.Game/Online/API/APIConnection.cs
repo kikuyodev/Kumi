@@ -22,8 +22,7 @@ public partial class APIConnection : Component, IAPIConnectionProvider
     public APIConnection(ServerConfiguration configuration)
     {
         EndpointConfiguration = configuration;
-        var serverConnector = new ServerConnector(this);
-        this.serverConnector = serverConnector;
+        serverConnector = new ServerConnector(this);
         
         serverConnector.Closed += b =>
         {
@@ -36,7 +35,7 @@ public partial class APIConnection : Component, IAPIConnectionProvider
             // Attempt to reconnect.
             Scheduler.AddDelayed(() =>
             {
-                this.serverConnector.AuthorizationToken = string.Empty; // Tokens are invalid after successful connection.
+                serverConnector.AuthorizationToken = string.Empty; // Tokens are invalid after successful connection.
                 var tokenReq = new WebsocketTokenRequest();
                 
                 tokenReq.Success += () =>
@@ -105,7 +104,6 @@ public partial class APIConnection : Component, IAPIConnectionProvider
             {
                 LocalAccount.Value = loginReq.Response.GetAccount();
                 SessionToken = loginReq.Response.GetToken();
-                State.Value = APIState.Online;
 
                 var tokenReq = new WebsocketTokenRequest();
                 
@@ -115,7 +113,7 @@ public partial class APIConnection : Component, IAPIConnectionProvider
                     registerConnectorHandlers();
                     
                     // try and connect to the server.
-                    serverConnector.Start();
+                    State.Value = APIState.Online;
                 };
                 
                 Perform(tokenReq);
@@ -185,7 +183,7 @@ public partial class APIConnection : Component, IAPIConnectionProvider
         
         registeredHandlers = true;
         
-        this.serverConnector.RegisterPacketHandler<HelloPacket>(OpCode.Hello, performHello);
+        serverConnector.RegisterPacketHandler<HelloPacket>(OpCode.Hello, performHello);
     }
 
     private void performHello(HelloPacket packet)
