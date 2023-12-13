@@ -1,7 +1,9 @@
 ﻿using System.Net;
 using Kumi.Game.Online.API.Accounts;
 using Kumi.Game.Online.API.Requests;
+using Kumi.Game.Online.API.Requests.Websocket;
 using Kumi.Game.Online.Server;
+using Kumi.Game.Online.Server.Packets;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Logging;
@@ -15,16 +17,45 @@ public partial class APIConnection : Component, IAPIConnectionProvider
     public Queue<APIRequest> RequestQueue { get; private set; } = new Queue<APIRequest>();
     public Bindable<APIAccount> LocalAccount { get; } = new Bindable<APIAccount>(new GuestAccount());
     public Bindable<APIState> State { get; } = new Bindable<APIState>(APIState.Offline);
-    public string SessionToken { get; } = null!;
+    public string SessionToken { get; set; }
 
     public APIConnection(ServerConfiguration configuration)
     {
         EndpointConfiguration = configuration;
-        serverConnector = new ServerConnector(this);
+        var serverConnector = new ServerConnector(this);
+        this.serverConnector = serverConnector;
+        
+        serverConnector.Closed += b =>
+        {
+            if (b)
+            {
+                // The client was intentionally closed.
+                return;
+            }
+            
+            // Attempt to reconnect.
+            Scheduler.AddDelayed(() =>
+            {
+                this.serverConnector.AuthorizationToken = string.Empty; // Tokens are invalid after successful connection.
+                var tokenReq = new WebsocketTokenRequest();
+                
+                tokenReq.Success += () =>
+                {
+                    serverConnector.AuthorizationToken = tokenReq.Response.GetToken();
+                    registerConnectorHandlers();
+                    
+                    // try and connect to the server.
+                    serverConnector.Start();
+                };
+                
+                Perform(tokenReq);
+            }, 1000L);
+        };
     }
 
-    private readonly IServerConnector? serverConnector;
-    private readonly CookieContainer cookies = new CookieContainer();
+    private IServerConnector? serverConnector;
+    private CookieContainer cookies = new CookieContainer();
+    private bool registeredHandlers;
 
     public new void Schedule(Action action) => Scheduler.Add(action);
 
@@ -73,7 +104,21 @@ public partial class APIConnection : Component, IAPIConnectionProvider
             try
             {
                 LocalAccount.Value = loginReq.Response.GetAccount();
+                SessionToken = loginReq.Response.GetToken();
                 State.Value = APIState.Online;
+
+                var tokenReq = new WebsocketTokenRequest();
+                
+                tokenReq.Success += () =>
+                {
+                    serverConnector.AuthorizationToken = tokenReq.Response.GetToken();
+                    registerConnectorHandlers();
+                    
+                    // try and connect to the server.
+                    serverConnector.Start();
+                };
+                
+                Perform(tokenReq);
             }
             catch (KeyNotFoundException e)
             {
@@ -133,4 +178,25 @@ public partial class APIConnection : Component, IAPIConnectionProvider
 
     #endregion
 
+    private void registerConnectorHandlers()
+    {
+        if (registeredHandlers)
+            return;
+        
+        registeredHandlers = true;
+        
+        this.serverConnector.RegisterPacketHandler<HelloPacket>(OpCode.Hello, performHello);
+    }
+
+    private void performHello(HelloPacket packet)
+    {
+        // Send an identification packet.
+        serverConnector.CurrentConnection?.Queue(new IdentifyPacket()
+        {
+            Data = new IdentifyPacket.IdentifyData()
+            {
+                Token = serverConnector.AuthorizationToken,
+            }
+        });
+    }
 }

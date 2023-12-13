@@ -13,10 +13,11 @@ public class ServerConnector : IServerConnector //, IDisposable
     public IAPIConnectionProvider Provider { get; }
     public bool Started { get; private set; }
     public bool AutoStart { get; set; }
+    public string AuthorizationToken { get; set; } = string.Empty;
     public Bindable<ServerConnectionState> State { get; } = new Bindable<ServerConnectionState>(ServerConnectionState.Disconnected);
-
-    public Dictionary<ServerPacketOpCode, List<Action<ServerPacket>>> PacketHandlers { get; } = new Dictionary<ServerPacketOpCode, List<Action<ServerPacket>>>();
     public CancellationTokenSource CancellationToken { get; private set; } = new CancellationTokenSource();
+
+    public event Action<bool> Closed;
 
     public ServerConnector(IAPIConnectionProvider provider, bool autoStart = true)
     {
@@ -30,6 +31,8 @@ public class ServerConnector : IServerConnector //, IDisposable
 
     private readonly IBindable<APIState> apiState = new Bindable<APIState>();
     private readonly SemaphoreSlim connectionLock = new SemaphoreSlim(1);
+    private IDictionary<OpCode, List<Action<Packet>>> packetHandlers { get; } = new Dictionary<OpCode, List<Action<Packet>>>();
+    private IDictionary<string, List<Action<Packet>>> dispatchHandlers { get; } = new Dictionary<string, List<Action<Packet>>>();
 
     public void Start()
     {
@@ -54,10 +57,10 @@ public class ServerConnector : IServerConnector //, IDisposable
         Started = true;
     }
 
-    public void RegisterPacketHandler<T>(ServerPacketOpCode opCode, Action<T> handler)
-        where T : ServerPacket
+    public void RegisterPacketHandler<T>(OpCode opCode, Action<T> handler)
+        where T : Packet
     {
-        void castingHandler(ServerPacket packet)
+        void castingHandler(Packet packet)
         {
             try
             {
@@ -78,10 +81,50 @@ public class ServerConnector : IServerConnector //, IDisposable
         }
 
         // Register the packet handler.
-        if (!PacketHandlers.TryGetValue(opCode, out var handlers))
+        if (!packetHandlers.TryGetValue(opCode, out var handlers))
         {
-            handlers = new List<Action<ServerPacket>>();
-            PacketHandlers.Add(opCode, handlers);
+            handlers = new List<Action<Packet>>();
+            packetHandlers.Add(opCode, handlers);
+        }
+
+        // Add the handler to the list.
+        handlers.Add(castingHandler);
+    }
+    
+    public void RegisterDispatchHandler<T>(string dispatch, Action<T> handler)
+        where T : Packet
+    {
+        void castingHandler(Packet packet)
+        {
+            try
+            {
+                // Take the raw data and deserialize it into the specified type.
+                var data = JsonConvert.DeserializeObject<T>(packet.RawData);
+                data!.RawData = packet.RawData;
+                
+                if (data.OpCode != OpCode.Dispatch)
+                    return;
+                
+                if (data.DispatchType != dispatch)
+                    return;
+
+                handler(data);
+            }
+            catch (JsonException)
+            {
+                // Likely a malformed packet, or wasn't meant for this handler.
+            }
+            catch (Exception e)
+            {
+                Logger.Error(e, $"Failed to handle packet {dispatch}.");
+            }
+        }
+
+        // Register the packet handler.
+        if (!dispatchHandlers.TryGetValue(dispatch, out var handlers))
+        {
+            handlers = new List<Action<Packet>>();
+            dispatchHandlers.Add(dispatch, handlers);
         }
 
         // Add the handler to the list.
@@ -106,21 +149,10 @@ public class ServerConnector : IServerConnector //, IDisposable
                 CurrentConnection = new ServerConnection(this);
                 await CurrentConnection.ConnectAsync(cancellationToken).ConfigureAwait(false);
 
-                CurrentConnection.Closed += e =>
-                {
-                    if (e != null)
-                        Logger.Log($"Connection closed: {e.Message}", LoggingTarget.Network);
-
-                    if (cancellationToken.IsCancellationRequested)
-                        return true;
-
-                    State.Value = ServerConnectionState.Disconnected;
-                    return true;
-                };
 
                 CurrentConnection.PacketReceived += packet =>
                 {
-                    if (PacketHandlers.TryGetValue(packet.OpCode, out var handlers))
+                    if (packetHandlers.TryGetValue(packet.OpCode, out var handlers))
                         foreach (var handler in handlers)
                             handler(packet);
                 };
@@ -131,11 +163,15 @@ public class ServerConnector : IServerConnector //, IDisposable
             catch (OperationCanceledException)
             {
                 // The connection was cancelled.
+                Logger.Log("Connection cancelled.", LoggingTarget.Network);
+                State.Value = ServerConnectionState.Disconnected;
+                Closed?.Invoke(true);
             }
             catch (Exception e)
             {
                 // The connection failed.
                 Logger.Log($"Failed to connect to the server: {e.Message}", LoggingTarget.Network);
+                Closed?.Invoke(false);
                 State.Value = ServerConnectionState.Failed;
             }
         }
@@ -176,6 +212,8 @@ public class ServerConnector : IServerConnector //, IDisposable
         CancellationToken = new CancellationTokenSource();
     }
 
-    IDictionary<ServerPacketOpCode, ICollection<Action<ServerPacket>>> IServerConnector.PacketHandlers { get; } =
-        new Dictionary<ServerPacketOpCode, ICollection<Action<ServerPacket>>>();
+    IDictionary<OpCode, List<Action<Packet>>> IServerConnector.PacketHandlers => packetHandlers;
+
+    IDictionary<string, List<Action<Packet>>> IServerConnector.DispatchHandlers => dispatchHandlers;
+
 }
