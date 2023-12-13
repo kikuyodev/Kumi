@@ -97,7 +97,7 @@ public partial class TaskbarOverlay : OverlayContainer
             Alignment = TaskbarButtonAlignment.Left,
             Icon = FontAwesome.Solid.Home
         });
-        
+
         addButton(new TaskbarUserButton
         {
             Alignment = TaskbarButtonAlignment.Right,
@@ -108,10 +108,15 @@ public partial class TaskbarOverlay : OverlayContainer
                 // TODO: Open user profile
                 return;
             }
-            
+
             loginOverlay.State.Value = loginOverlay.State.Value == Visibility.Visible
-                ? Visibility.Hidden
-                : Visibility.Visible;
+                                           ? Visibility.Hidden
+                                           : Visibility.Visible;
+        });
+        
+        addButton(new TaskbarNotificationButton
+        {
+            Alignment = TaskbarButtonAlignment.Right
         });
 
         api.State.BindValueChanged(state =>
@@ -143,7 +148,8 @@ public partial class TaskbarOverlay : OverlayContainer
     
     private void addButton(TaskbarButton button, Action? action = null)
     {
-        button.Action = action ?? button.Action;
+        if (action != null)
+            button.Action = action;
         
         switch (button.Alignment)
         {
