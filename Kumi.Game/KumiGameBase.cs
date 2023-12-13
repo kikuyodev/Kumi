@@ -21,7 +21,7 @@ using osuTK;
 
 namespace Kumi.Game;
 
-public partial class KumiGameBase : osu.Framework.Game
+public partial class KumiGameBase : osu.Framework.Game, ICanAcceptFiles
 {
     protected Storage? Storage { get; set; }
 
@@ -39,6 +39,8 @@ public partial class KumiGameBase : osu.Framework.Game
     protected override Container<Drawable> Content => content;
 
     protected DependencyContainer DependencyContainer = null!;
+    
+    private List<ICanAcceptFiles> fileAcceptors = new();
 
     protected override IReadOnlyDependencyContainer CreateChildDependencies(IReadOnlyDependencyContainer parent)
     {
@@ -107,12 +109,33 @@ public partial class KumiGameBase : osu.Framework.Game
             }
         });
 
+        fileAcceptors.Add(chartManager);
+
         DependencyContainer.Cache(globalKeybindContainer);
         DependencyContainer.Cache(keybindStore = new KeybindStore(realm));
         keybindStore.AssignDefaultsFor(globalKeybindContainer);
         keybindStore.AssignDefaultsFor(new GameplayKeybindContainer());
         keybindStore.RegisterDefaults();
     }
+
+    public async Task Import(params string[] paths)
+    {
+        if (paths.Length == 0)
+            return;
+        
+        foreach (var path in paths)
+        {   
+            var file = new FileInfo(path);
+            var acceptor = fileAcceptors.FirstOrDefault(a => a.HandledFileExtensions.Contains(file.Extension));
+            if (acceptor == null)
+                continue;
+            
+            await acceptor.Import(path);
+        }
+    }
+    public Task Import(ImportTask[] tasks) => Task.WhenAll(tasks.Select(t => Import(t.Path)));
+    
+    public IEnumerable<string> HandledFileExtensions => fileAcceptors.SelectMany(a => a.HandledFileExtensions);
 
     private void loadFonts()
     {

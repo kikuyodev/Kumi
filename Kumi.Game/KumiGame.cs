@@ -14,7 +14,6 @@ using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Sprites;
 using osu.Framework.Input.Bindings;
 using osu.Framework.Input.Events;
-using osu.Framework.Logging;
 using osu.Framework.Platform;
 using osu.Framework.Screens;
 using osu.Framework.Threading;
@@ -46,7 +45,9 @@ public partial class KumiGame : KumiGameBase, IKeyBindingHandler<GlobalAction>, 
 
     protected TaskbarOverlay? Taskbar { get; private set; }
     protected ControlOverlay? ControlOverlay { get; private set; }
-
+    private List<string> importTasks = new();
+    private ScheduledDelegate? importTask;
+    
     public KumiGame()
     {
         Name = "Kumi";
@@ -104,23 +105,65 @@ public partial class KumiGame : KumiGameBase, IKeyBindingHandler<GlobalAction>, 
         {
             pushNotificationOnConnection();
 
-            loadComponent(new MusicController(), Add);
-            loadComponent(new AccountRegistrationOverlay(), d => topOverlayContainer.Add(d));
-            Taskbar = loadComponent(new TaskbarOverlay(), d => topOverlayContainer.Add(d));
-
-            loadComponent<INotificationManager>(ControlOverlay = new ControlOverlay
+            // This has to be manually added first because of some weird fuckery i can't explain at the moment
+            LoadComponent(ControlOverlay = new ControlOverlay
             {
                 Anchor = Anchor.TopRight,
                 Origin = Anchor.TopRight
-            }, d => rightOverlayContainer.Add(d));
+            });
 
+            DependencyContainer.CacheAs<INotificationManager>(ControlOverlay);
+            Schedule(() => rightOverlayContainer.Add(ControlOverlay));
 
-            flushLoadTasks(()
-                => LoadComponentAsync(new MenuScreen(), c
-                    => Scheduler.AddDelayed(() => screenStack.Push(c), 100)
-                )
-            );
+            loadComponents(new[]
+            {
+                new ComponentLoadTask(typeof(MusicController), loadComplete: Add),
+                new ComponentLoadTask(typeof(AccountRegistrationOverlay), loadComplete: topOverlayContainer.Add),
+                new ComponentLoadTask(typeof(TaskbarOverlay), loadComplete: c =>
+                {
+                    Taskbar = (TaskbarOverlay) c;
+                    topOverlayContainer.Add(c);
+                }),
+            }, () =>
+            {
+                LoadComponentAsync(new MenuScreen(), c =>
+                {
+                    Scheduler.AddDelayed(() => screenStack.Push(c), 100);
+                });
+            }, Scheduler);
         });
+    }
+    
+    public override void SetHost(GameHost host)
+    {
+        base.SetHost(host);
+        host.Window.Title = "Kumi";
+
+        if (host.Window != null)
+        {
+            host.Window.DragDrop += handleDragDropPath;
+        }
+    }
+
+    private void handleDragDropPath(string path)
+    {
+        importTasks.Add(path);
+        
+        if (importTask != null)
+            importTask.Cancel();
+
+        importTask = Scheduler.AddDelayed(handlePendingImports, 1000);
+    }
+    
+    private void handlePendingImports()
+    {
+        lock (importTasks)
+        {
+            if (importTasks.Count == 0)
+                return;
+
+            Import(importTasks.ToArray());
+        }
     }
 
     private void chartChanged(ValueChangedEvent<WorkingChart> chart)
@@ -160,12 +203,6 @@ public partial class KumiGame : KumiGameBase, IKeyBindingHandler<GlobalAction>, 
                 Message = n.Data.Message
             });
         });
-    }
-
-    public override void SetHost(GameHost host)
-    {
-        base.SetHost(host);
-        host.Window.Title = "Kumi";
     }
 
     public bool OnPressed(KeyBindingPressEvent<GlobalAction> e)
@@ -251,66 +288,58 @@ public partial class KumiGame : KumiGameBase, IKeyBindingHandler<GlobalAction>, 
 
     #region Component loading
 
-    private readonly List<Task> loadTasks = new List<Task>();
-
-    private T loadComponent<T>(T component, Action<Drawable>? loadComplete = null, bool cache = true)
-        where T : class
+    private void loadComponents(IReadOnlyList<ComponentLoadTask> components, Action loadComplete, Scheduler scheduler)
     {
-        if (cache)
-            DependencyContainer.CacheAs(component);
+        var amount = components.Count;
 
-        var drawable = component as Drawable ?? throw new ArgumentException($"Component {component} must be a {nameof(Drawable)}", nameof(component));
-
-        if (component is KumiFocusedOverlayContainer overlay)
-            focusedOverlays.Add(overlay);
-
-        loadTasks.Add(new Task(async () =>
+        for (var i = 0; i < amount; i++)
         {
-            try
+            var component = components[i];
+            LoadComponent(component.Drawable);
+
+            component.CacheDrawable(DependencyContainer);
+            var idx = i;
+            scheduler.Add(() =>
             {
-                Logger.Log($"loading {component}");
+                component.LoadComplete?.Invoke(component.Drawable);
+                loaderScreen.SetProgress((idx + 1) / (float) amount);
+            });
 
-                Task? task = null;
-                var del = new ScheduledDelegate(() => task = LoadComponentAsync(drawable, loadComplete));
-                Scheduler.Add(del);
+            Thread.Sleep(100);
+        }
 
-                while (!IsDisposed && !del.Completed)
-                    await Task.Delay(10).ConfigureAwait(false);
-
-                if (IsDisposed)
-                    return;
-
-                await task!.ConfigureAwait(false);
-
-                Logger.Log($"loaded {component}!");
-            }
-            catch (OperationCanceledException)
-            {
-            }
-        }));
-
-        return component;
+        scheduler.Add(loadComplete);
     }
 
-    private void flushLoadTasks(Action onComplete)
+    private readonly struct ComponentLoadTask
     {
-        if (loadTasks.Count == 0)
-            return;
+        public Drawable Drawable { get; }
+        public Action<Drawable>? LoadComplete { get; }
 
-        Schedule(() =>
+        private readonly bool cache;
+        private readonly Type type;
+
+        public ComponentLoadTask(Type type, bool cache = true, Action<Drawable>? loadComplete = null)
         {
-            // Sequentially execute all tasks
-            foreach (var task in loadTasks)
-            {
-                loaderScreen.SetProgress((float) loadTasks.IndexOf(task) / (loadTasks.Count - 1));
-                task.RunSynchronously();
-            }
+            this.cache = cache;
+            this.type = type;
+            LoadComplete = loadComplete;
+            Drawable = (Drawable) Activator.CreateInstance(type)!;
+        }
 
-            loadTasks.Clear();
-            onComplete();
-        });
+        public void CacheDrawable(DependencyContainer container)
+        {
+            if (!cache)
+                return;
+
+            container.CacheAs(type, Drawable);
+        }
     }
 
     #endregion
-
+    
+    private enum ImportTaskType
+    {
+        KumiChart,
+    }
 }
