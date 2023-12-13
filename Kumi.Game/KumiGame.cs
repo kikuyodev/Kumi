@@ -114,12 +114,6 @@ public partial class KumiGame : KumiGameBase, IKeyBindingHandler<GlobalAction>, 
                 }),
             }, () =>
             {
-                ControlOverlay!.Post(new BasicNotification
-                {
-                    Header = "hi",
-                    Message = "nyan"
-                });
-                
                 LoadComponentAsync(new MenuScreen(), c =>
                 {
                     Scheduler.AddDelayed(() => screenStack.Push(c), 100); 
