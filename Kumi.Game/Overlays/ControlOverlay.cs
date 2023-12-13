@@ -70,6 +70,7 @@ public partial class ControlOverlay : KumiFocusedOverlayContainer, INotification
                             RelativeSizeAxes = Axes.X,
                             Children = new Drawable[]
                             {
+                                new ConnectionSection(),
                                 notificationSection = new NotificationSection()
                             }
                         }
