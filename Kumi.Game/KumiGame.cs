@@ -3,6 +3,7 @@ using Kumi.Game.Graphics;
 using Kumi.Game.Graphics.Containers;
 using Kumi.Game.Input;
 using Kumi.Game.Overlays;
+using Kumi.Game.Overlays.Control;
 using Kumi.Game.Screens;
 using Kumi.Game.Screens.Menu;
 using osu.Framework.Allocation;
@@ -33,12 +34,14 @@ public partial class KumiGame : KumiGameBase, IKeyBindingHandler<GlobalAction>, 
 
     private Container overlayContent = null!;
     private Container overlayOffsetContainer = null!;
+    private Container rightOverlayContainer = null!;
     
     private readonly List<KumiFocusedOverlayContainer> focusedOverlays = new List<KumiFocusedOverlayContainer>();
     private readonly List<OverlayContainer> externalOverlays = new List<OverlayContainer>();
     private readonly List<OverlayContainer> visibleBlockingOverlays = new List<OverlayContainer>();
     
     protected TaskbarOverlay? Taskbar { get; private set; }
+    protected ControlOverlay? ControlOverlay { get; private set; }
 
     [BackgroundDependencyLoader]
     private void load()
@@ -61,7 +64,8 @@ public partial class KumiGame : KumiGameBase, IKeyBindingHandler<GlobalAction>, 
                 RelativeSizeAxes = Axes.Both,
                 Children = new Drawable[]
                 {
-                    overlayContent = new Container { RelativeSizeAxes = Axes.Both }
+                    overlayContent = new Container { RelativeSizeAxes = Axes.Both },
+                    rightOverlayContainer = new Container { RelativeSizeAxes = Axes.Both }
                 }
             },
             topOverlayContainer = new Container
@@ -89,6 +93,16 @@ public partial class KumiGame : KumiGameBase, IKeyBindingHandler<GlobalAction>, 
 
         Task.Factory.StartNew(() =>
         {
+            // This has to be manually added first because of some weird fuckery i can't explain at the moment
+            LoadComponent(ControlOverlay = new ControlOverlay
+            {
+                Anchor = Anchor.TopRight,
+                Origin = Anchor.TopRight
+            });
+            
+            DependencyContainer.CacheAs<INotificationManager>(ControlOverlay);
+            Schedule(() => rightOverlayContainer.Add(ControlOverlay));
+            
             loadComponents(new[]
             {
                 new ComponentLoadTask(typeof(MusicController), loadComplete: Add),
@@ -100,6 +114,12 @@ public partial class KumiGame : KumiGameBase, IKeyBindingHandler<GlobalAction>, 
                 }),
             }, () =>
             {
+                ControlOverlay!.Post(new BasicNotification
+                {
+                    Header = "hi",
+                    Message = "nyan"
+                });
+                
                 LoadComponentAsync(new MenuScreen(), c =>
                 {
                     Scheduler.AddDelayed(() => screenStack.Push(c), 100); 
@@ -165,7 +185,7 @@ public partial class KumiGame : KumiGameBase, IKeyBindingHandler<GlobalAction>, 
     #region IOverlayManager
 
     private void updateBlockingOverlayColour()
-        => screenContainer.FadeColour(visibleBlockingOverlays.Any() ? Colours.Gray(0.5f) : Color4.White, 500, Easing.OutQuint);
+        => Schedule(() => screenContainer.FadeColour(visibleBlockingOverlays.Any() ? Colours.Gray(0.5f) : Color4.White, 500, Easing.OutQuint));
     
     public IDisposable RegisterBlockingOverlay(OverlayContainer container)
     {

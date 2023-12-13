@@ -13,6 +13,8 @@ public abstract partial class TaskbarButton : Button
 {
     private Box hoverBox = null!;
 
+    protected Container MainContent = null!;
+
     public required TaskbarButtonAlignment Alignment { get; init; }
     
     [BackgroundDependencyLoader]
@@ -30,7 +32,7 @@ public abstract partial class TaskbarButton : Button
                 AlwaysPresent = true,
                 Alpha = 0
             },
-            new Container
+            MainContent = new Container
             {
                 RelativeSizeAxes = Axes.Y,
                 AutoSizeAxes = Axes.X,

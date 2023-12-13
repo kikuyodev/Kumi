@@ -4,6 +4,7 @@ public enum GlobalAction
 {
     // Overlays
     ToggleTaskbar,
+    ToggleNotifications,
 
     // Screens
     Back,
