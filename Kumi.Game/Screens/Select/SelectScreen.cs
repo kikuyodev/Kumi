@@ -56,8 +56,12 @@ public partial class SelectScreen : ScreenWithChartBackground, IKeyBindingHandle
                                 {
                                     Anchor = Anchor.Centre,
                                     Origin = Anchor.Centre,
-                                    Padding = new MarginPadding { Left = 32 }
-                                }
+                                    Padding = new MarginPadding { Left = 32 },
+                                    Children = new Drawable[]
+                                    {
+                                        new HalfScrollContainer(this) { RelativeSizeAxes = Axes.X },
+                                    }
+                                },
                             }
                         },
                         Empty(), // padding
@@ -94,6 +98,18 @@ public partial class SelectScreen : ScreenWithChartBackground, IKeyBindingHandle
         {
             workingChart.Value = manager.GetWorkingChart(c.NewValue);
         }, true);
+
+        var charts = manager.GetAllUsableCharts();
+        charts = charts.Where(c => c.Charts.Any() && !c.DeletePending).ToList();
+
+        Schedule(() =>
+        {
+            foreach (var set in charts)
+                listSelect.AddChartSet(set);
+            
+            // TODO: Ideally, this should always be the last child no matter what.
+            listSelect.Add(new HalfScrollContainer(this) { RelativeSizeAxes = Axes.X });
+        });
     }
 
     public override void OnEntering(ScreenTransitionEvent e)
@@ -169,5 +185,22 @@ public partial class SelectScreen : ScreenWithChartBackground, IKeyBindingHandle
     {
         workingChart.PrepareTrackForPreview(true);
         musicController.Play(true);
+    }
+    
+    private partial class HalfScrollContainer : CompositeDrawable
+    {
+        private readonly Drawable source;
+
+        public HalfScrollContainer(Drawable source)
+        {
+            this.source = source;
+        }
+
+        protected override void Update()
+        {
+            base.Update();
+            
+            Height = source.DrawHeight / 2;
+        }
     }
 }

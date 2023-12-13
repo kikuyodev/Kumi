@@ -14,6 +14,7 @@ using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Sprites;
 using osu.Framework.Input.Bindings;
 using osu.Framework.Input.Events;
+using osu.Framework.Logging;
 using osu.Framework.Platform;
 using osu.Framework.Screens;
 using osu.Framework.Threading;
@@ -103,32 +104,22 @@ public partial class KumiGame : KumiGameBase, IKeyBindingHandler<GlobalAction>, 
         {
             pushNotificationOnConnection();
 
-            // This has to be manually added first because of some weird fuckery i can't explain at the moment
-            LoadComponent(ControlOverlay = new ControlOverlay
+            loadComponent(new MusicController(), Add);
+            loadComponent(new AccountRegistrationOverlay(), d => topOverlayContainer.Add(d));
+            Taskbar = loadComponent(new TaskbarOverlay(), d => topOverlayContainer.Add(d));
+
+            loadComponent<INotificationManager>(ControlOverlay = new ControlOverlay
             {
                 Anchor = Anchor.TopRight,
                 Origin = Anchor.TopRight
-            });
+            }, d => rightOverlayContainer.Add(d));
 
-            DependencyContainer.CacheAs<INotificationManager>(ControlOverlay);
-            Schedule(() => rightOverlayContainer.Add(ControlOverlay));
 
-            loadComponents(new[]
-            {
-                new ComponentLoadTask(typeof(MusicController), loadComplete: Add),
-                new ComponentLoadTask(typeof(AccountRegistrationOverlay), loadComplete: topOverlayContainer.Add),
-                new ComponentLoadTask(typeof(TaskbarOverlay), loadComplete: c =>
-                {
-                    Taskbar = (TaskbarOverlay) c;
-                    topOverlayContainer.Add(c);
-                }),
-            }, () =>
-            {
-                LoadComponentAsync(new MenuScreen(), c =>
-                {
-                    Scheduler.AddDelayed(() => screenStack.Push(c), 100);
-                });
-            }, Scheduler);
+            flushLoadTasks(()
+                => LoadComponentAsync(new MenuScreen(), c
+                    => Scheduler.AddDelayed(() => screenStack.Push(c), 100)
+                )
+            );
         });
     }
 
@@ -260,52 +251,64 @@ public partial class KumiGame : KumiGameBase, IKeyBindingHandler<GlobalAction>, 
 
     #region Component loading
 
-    private void loadComponents(IReadOnlyList<ComponentLoadTask> components, Action loadComplete, Scheduler scheduler)
+    private readonly List<Task> loadTasks = new List<Task>();
+
+    private T loadComponent<T>(T component, Action<Drawable>? loadComplete = null, bool cache = true)
+        where T : class
     {
-        var amount = components.Count;
+        if (cache)
+            DependencyContainer.CacheAs(component);
 
-        for (var i = 0; i < amount; i++)
+        var drawable = component as Drawable ?? throw new ArgumentException($"Component {component} must be a {nameof(Drawable)}", nameof(component));
+
+        if (component is KumiFocusedOverlayContainer overlay)
+            focusedOverlays.Add(overlay);
+
+        loadTasks.Add(new Task(async () =>
         {
-            var component = components[i];
-            LoadComponent(component.Drawable);
-
-            component.CacheDrawable(DependencyContainer);
-            var idx = i;
-            scheduler.Add(() =>
+            try
             {
-                component.LoadComplete?.Invoke(component.Drawable);
-                loaderScreen.SetProgress((idx + 1) / (float) amount);
-            });
+                Logger.Log($"loading {component}");
 
-            Thread.Sleep(100);
-        }
+                Task? task = null;
+                var del = new ScheduledDelegate(() => task = LoadComponentAsync(drawable, loadComplete));
+                Scheduler.Add(del);
 
-        scheduler.Add(loadComplete);
+                while (!IsDisposed && !del.Completed)
+                    await Task.Delay(10).ConfigureAwait(false);
+
+                if (IsDisposed)
+                    return;
+
+                await task!.ConfigureAwait(false);
+
+                Logger.Log($"loaded {component}!");
+            }
+            catch (OperationCanceledException)
+            {
+            }
+        }));
+
+        return component;
     }
 
-    private readonly struct ComponentLoadTask
+    private void flushLoadTasks(Action onComplete)
     {
-        public Drawable Drawable { get; }
-        public Action<Drawable>? LoadComplete { get; }
+        if (loadTasks.Count == 0)
+            return;
 
-        private readonly bool cache;
-        private readonly Type type;
-
-        public ComponentLoadTask(Type type, bool cache = true, Action<Drawable>? loadComplete = null)
+        Schedule(() =>
         {
-            this.cache = cache;
-            this.type = type;
-            LoadComplete = loadComplete;
-            Drawable = (Drawable) Activator.CreateInstance(type)!;
-        }
+            // Sequentially execute all tasks
+            foreach (var task in loadTasks)
+            {
+                loaderScreen.SetProgress((float) loadTasks.IndexOf(task) / (loadTasks.Count - 1));
+                task.RunSynchronously();
+            }
 
-        public void CacheDrawable(DependencyContainer container)
-        {
-            if (!cache)
-                return;
-
-            container.CacheAs(type, Drawable);
-        }
+            loadTasks.Clear();
+            onComplete();
+        });
     }
 
     #endregion

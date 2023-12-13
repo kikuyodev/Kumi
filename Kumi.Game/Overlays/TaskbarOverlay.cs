@@ -143,7 +143,7 @@ public partial class TaskbarOverlay : OverlayContainer
 
     protected override void PopOut()
     {
-        this.MoveToY(-DrawHeight, 200, Easing.OutQuint);
+        this.MoveToY(-HEIGHT, 200, Easing.OutQuint);
     }
     
     private void addButton(TaskbarButton button, Action? action = null)
