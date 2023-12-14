@@ -166,6 +166,8 @@ public partial class KumiGame : KumiGameBase, IOverlayManager
     {
         chart.OldValue?.CancelAsyncLoad();
         chart.NewValue?.BeginAsyncLoad();
+        
+        Logger.Log($"{chart.OldValue?.GetType().Name} changed chart to {chart.NewValue?.GetType().Name} ({chart.NewValue?.Metadata?.Title ?? "Unknown"})");
     }
 
     private void onScreenChanged(IScreen current, IScreen newScreen)

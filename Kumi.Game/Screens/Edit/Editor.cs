@@ -22,9 +22,6 @@ public partial class Editor : ScreenWithChartBackground, IKeyBindingHandler<Plat
     protected override IReadOnlyDependencyContainer CreateChildDependencies(IReadOnlyDependencyContainer parent)
         => dependencies = new DependencyContainer(base.CreateChildDependencies(parent));
 
-    [Resolved]
-    private ChartManager chartManager { get; set; } = null!;
-
     private EditorClock clock = null!;
     private BindableBeatDivisor beatDivisor = null!;
 
@@ -35,13 +32,13 @@ public partial class Editor : ScreenWithChartBackground, IKeyBindingHandler<Plat
     private EditorChart editorChart = null!;
     private EditorHistoryHandler historyHandler = null!;
 
-    public Bindable<EditorScreen> CurrentScreen = new Bindable<EditorScreen>();
+    public readonly Bindable<EditorScreen> CurrentScreen = new Bindable<EditorScreen>();
 
     [BackgroundDependencyLoader]
     private void load(IBindable<WorkingChart> working)
     {
         workingChart.BindTarget = working;
-        
+
         dependencies.CacheAs(this);
         dependencies.CacheAs((workingChart.Value.Chart as Chart)!);
 
@@ -72,14 +69,14 @@ public partial class Editor : ScreenWithChartBackground, IKeyBindingHandler<Plat
                 Chart = { BindTarget = workingChart }
             }
         });
-        
+
         screenStack.ScreenPushed += onScreenChanged;
         screenStack.ScreenExited += onScreenChanged;
     }
 
     private void onScreenChanged(IScreen current, IScreen newScreen)
     {
-        CurrentScreen.Value = (EditorScreen)newScreen;
+        CurrentScreen.Value = (EditorScreen) newScreen;
     }
 
     [Resolved(CanBeNull = true)]
@@ -95,12 +92,12 @@ public partial class Editor : ScreenWithChartBackground, IKeyBindingHandler<Plat
         screenStack.Push(new ComposeScreen());
     }
 
-    protected override void Dispose(bool isDisposing)
+    public override void OnEntering(ScreenTransitionEvent e)
     {
-        base.Dispose(isDisposing);
+        base.OnEntering(e);
 
-        if (musicController != null)
-            musicController.TrackChanged -= onTrackChanged;
+        clock.Seek(0);
+        clock.Stop();
     }
 
     private void onTrackChanged(WorkingChart working)
@@ -119,7 +116,7 @@ public partial class Editor : ScreenWithChartBackground, IKeyBindingHandler<Plat
 
     public void Copy(bool cut)
         => screenStack.CurrentScreen.Copy(cut);
-    
+
     public void Paste()
         => screenStack.CurrentScreen.Paste();
 
@@ -134,15 +131,15 @@ public partial class Editor : ScreenWithChartBackground, IKeyBindingHandler<Plat
             case PlatformAction.Redo:
                 Redo();
                 return true;
-            
+
             case PlatformAction.Cut:
                 Copy(true);
                 return true;
-            
+
             case PlatformAction.Copy:
                 Copy(false);
                 return true;
-            
+
             case PlatformAction.Paste:
                 Paste();
                 return true;
@@ -210,5 +207,13 @@ public partial class Editor : ScreenWithChartBackground, IKeyBindingHandler<Plat
             clock.SeekBackward(amount);
         else
             clock.SeekForward(amount);
+    }
+
+    protected override void Dispose(bool isDisposing)
+    {
+        base.Dispose(isDisposing);
+
+        if (musicController != null)
+            musicController.TrackChanged -= onTrackChanged;
     }
 }
