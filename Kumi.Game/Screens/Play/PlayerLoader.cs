@@ -1,4 +1,5 @@
 ﻿using Kumi.Game.Charts;
+using Kumi.Game.Overlays;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Extensions.Color4Extensions;
@@ -14,10 +15,9 @@ namespace Kumi.Game.Screens.Play;
 
 public partial class PlayerLoader : ScreenWithChartBackground
 {
+    protected override OverlayActivation InitialOverlayActivation => Overlays.OverlayActivation.UserTriggered;
     public override float BlurAmount => 0f;
     public override float DimAmount => 0.9f;
-    public override bool ShowTaskbar => false;
-    public override bool DisableTaskbarControl => true;
 
     private bool readyForPush
         => player?.LoadState == LoadState.Ready;
@@ -33,7 +33,7 @@ public partial class PlayerLoader : ScreenWithChartBackground
     private Box background = null!;
 
     [Resolved]
-    private IBindable<WorkingChart> chart { get; set; } = null!;
+    private Bindable<WorkingChart> chart { get; set; } = null!;
 
     [BackgroundDependencyLoader]
     private void load()
@@ -66,8 +66,6 @@ public partial class PlayerLoader : ScreenWithChartBackground
 
         contentIn();
 
-        chart.Value.Track.Stop();
-
         display.Delay(700).FadeIn(500, Easing.OutQuint);
 
         Scheduler.Add(new ScheduledDelegate(pushWhenLoaded, Clock.CurrentTime + 1000, 0));
@@ -79,6 +77,9 @@ public partial class PlayerLoader : ScreenWithChartBackground
 
         player = null;
         cancelLoad();
+
+        chart.Disabled = true;
+        chart.Value.Track.Stop();
 
         contentIn();
     }

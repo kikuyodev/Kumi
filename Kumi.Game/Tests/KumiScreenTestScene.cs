@@ -2,6 +2,7 @@
 using Kumi.Game.Overlays;
 using Kumi.Game.Screens;
 using osu.Framework.Allocation;
+using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Testing;
@@ -49,6 +50,8 @@ public abstract partial class KumiScreenTestScene : KumiTestScene, IOverlayManag
             return false;
         });
     }
+
+    IBindable<OverlayActivation> IOverlayManager.OverlayActivation { get; } = new Bindable<OverlayActivation>();
 
     public IDisposable RegisterBlockingOverlay(OverlayContainer container)
     {

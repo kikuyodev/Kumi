@@ -1,4 +1,5 @@
 using Kumi.Game.Graphics.Sprites;
+using Kumi.Game.Overlays;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Sprites;
@@ -10,8 +11,7 @@ namespace Kumi.Game.Screens;
 
 public partial class LoaderScreen : KumiScreen
 {
-    public override bool ShowTaskbar => false;
-    public override bool DisableTaskbarControl => true;
+    protected override OverlayActivation InitialOverlayActivation => Overlays.OverlayActivation.Disabled;
 
     private LoadAnimation loadAnimation = null!;
     private Sprite logo = null!;

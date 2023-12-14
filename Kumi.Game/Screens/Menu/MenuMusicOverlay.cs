@@ -1,7 +1,7 @@
 using Kumi.Game.Charts;
 using Kumi.Game.Graphics;
-using Kumi.Game.Overlays;
 using osu.Framework.Allocation;
+using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Sprites;
@@ -21,6 +21,7 @@ public partial class MenuMusicOverlay : FillFlowContainer
         Anchor = Anchor.TopLeft;
         Origin = Anchor.TopLeft;
         Alpha = 0;
+        AlwaysPresent = true;
 
         Children = new Drawable[]
         {
@@ -45,12 +46,12 @@ public partial class MenuMusicOverlay : FillFlowContainer
     }
 
     [BackgroundDependencyLoader]
-    private void load(MusicController controller)
+    private void load(IBindable<WorkingChart> chart)
     {
-        controller.TrackChanged += trackChanged;
+        chart.ValueChanged += c => chartChanged(c.NewValue);
     }
 
-    private void trackChanged(WorkingChart chart)
+    private void chartChanged(WorkingChart chart)
     {
         var metadata = chart.Metadata;
 
@@ -60,7 +61,7 @@ public partial class MenuMusicOverlay : FillFlowContainer
         Scheduler.AddOnce(() =>
         {
             // 500 delay so that the track can fade in before the overlay does.
-            this.Delay(500).FadeInFromZero(1000, Easing.OutQuint).Then(5000).FadeOutFromOne(1000, Easing.InQuint);
+            this.Delay(500).FadeIn(1000, Easing.OutQuint).Then(5000).FadeOut(1000, Easing.InQuint);
         });
     }
 }

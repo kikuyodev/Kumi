@@ -1,15 +1,19 @@
 ﻿using Kumi.Game.Graphics;
+using Kumi.Game.Input;
 using Kumi.Game.Online.API;
 using Kumi.Game.Overlays.Taskbar;
 using osu.Framework.Allocation;
+using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
 using osu.Framework.Graphics.Sprites;
+using osu.Framework.Input.Bindings;
+using osu.Framework.Input.Events;
 
 namespace Kumi.Game.Overlays;
 
-public partial class TaskbarOverlay : OverlayContainer
+public partial class TaskbarOverlay : OverlayContainer, IKeyBindingHandler<GlobalAction>
 {
     public const float HEIGHT = 48;
 
@@ -23,11 +27,15 @@ public partial class TaskbarOverlay : OverlayContainer
     
     protected override bool StartHidden => true;
     
+    public readonly IBindable<OverlayActivation> OverlayActivation = new Bindable<OverlayActivation>(Overlays.OverlayActivation.Any);
+
+    public override bool PropagateNonPositionalInputSubTree => OverlayActivation.Value != Overlays.OverlayActivation.Disabled;
+
     [Resolved]
     private IAPIConnectionProvider api { get; set;  } = null!;
 
-    [BackgroundDependencyLoader]
-    private void load()
+    [BackgroundDependencyLoader(true)]
+    private void load(KumiGame? kumiGame)
     {
         RelativeSizeAxes = Axes.X;
         AutoSizeAxes = Axes.Y;
@@ -128,6 +136,22 @@ public partial class TaskbarOverlay : OverlayContainer
                     break;
             }
         });
+        
+        if (kumiGame != null)
+            OverlayActivation.BindTo(kumiGame.OverlayActivation);
+    }
+
+    protected override void UpdateState(ValueChangedEvent<Visibility> state)
+    {
+        var blocked = OverlayActivation.Value == Overlays.OverlayActivation.Disabled;
+
+        if (state.NewValue == Visibility.Visible && blocked)
+        {
+            State.Value = Visibility.Hidden;
+            return;
+        }
+        
+        base.UpdateState(state);
     }
 
     protected override void PopIn()
@@ -163,5 +187,24 @@ public partial class TaskbarOverlay : OverlayContainer
             default:
                 throw new ArgumentOutOfRangeException();
         }
+    }
+
+    public bool OnPressed(KeyBindingPressEvent<GlobalAction> e)
+    {
+        if (OverlayActivation.Value == Overlays.OverlayActivation.Disabled)
+            return false;
+
+        switch (e.Action)
+        {
+            case GlobalAction.ToggleTaskbar:
+                ToggleVisibility();
+                return true;
+        }
+        
+        return false;
+    }
+
+    public void OnReleased(KeyBindingReleaseEvent<GlobalAction> e)
+    {
     }
 }

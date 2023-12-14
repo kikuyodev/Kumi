@@ -23,8 +23,8 @@ public partial class SelectScreen : ScreenWithChartBackground, IKeyBindingHandle
     private MusicController musicController { get; set; } = null!;
 
     [Resolved]
-    private IBindable<WorkingChart> chart { get; set; } = null!;
-    
+    private Bindable<WorkingChart> chart { get; set; } = null!;
+
     private ListSelect listSelect = null!;
 
     [BackgroundDependencyLoader]
@@ -35,7 +35,7 @@ public partial class SelectScreen : ScreenWithChartBackground, IKeyBindingHandle
             new GridContainer
             {
                 RelativeSizeAxes = Axes.Both,
-                ColumnDimensions = new []
+                ColumnDimensions = new[]
                 {
                     new Dimension(maxSize: 840),
                     new Dimension(GridSizeMode.Absolute, 32),
@@ -93,9 +93,12 @@ public partial class SelectScreen : ScreenWithChartBackground, IKeyBindingHandle
                 }
             }
         };
-        
+
         listSelect.SelectedChart.BindValueChanged(c =>
         {
+            if (!this.IsCurrentScreen())
+                return;
+
             workingChart.Value = manager.GetWorkingChart(c.NewValue);
         }, true);
 
@@ -106,7 +109,7 @@ public partial class SelectScreen : ScreenWithChartBackground, IKeyBindingHandle
         {
             foreach (var set in charts)
                 listSelect.AddChartSet(set);
-            
+
             // TODO: Ideally, this should always be the last child no matter what.
             listSelect.Add(new HalfScrollContainer(this) { RelativeSizeAxes = Axes.X });
         });
@@ -123,21 +126,24 @@ public partial class SelectScreen : ScreenWithChartBackground, IKeyBindingHandle
     public override void OnResuming(ScreenTransitionEvent e)
     {
         base.OnResuming(e);
-        
+
+        // Resuming from player loader.
+        chart.Disabled = false;
         beginLooping();
     }
 
     public override void OnSuspending(ScreenTransitionEvent e)
     {
         base.OnSuspending(e);
-        
+
         endLooping();
     }
 
     public override bool OnExiting(ScreenExitEvent e)
     {
         endLooping();
-        
+        listSelect.SelectedChart.UnbindAll();
+
         return base.OnExiting(e);
     }
 
@@ -145,14 +151,14 @@ public partial class SelectScreen : ScreenWithChartBackground, IKeyBindingHandle
     {
         if (e.Repeat || !this.IsCurrentScreen())
             return false;
-        
+
         switch (e.Action)
         {
             case GlobalAction.Select:
                 this.Push(new PlayerLoader());
                 return true;
         }
-        
+
         return false;
     }
 
@@ -166,7 +172,7 @@ public partial class SelectScreen : ScreenWithChartBackground, IKeyBindingHandle
     {
         Debug.Assert(!isHandlingLooping);
         isHandlingLooping = true;
-        
+
         ensureTrackLooping(chart.Value);
 
         musicController.TrackChanged += ensureTrackLooping;
@@ -186,7 +192,7 @@ public partial class SelectScreen : ScreenWithChartBackground, IKeyBindingHandle
         workingChart.PrepareTrackForPreview(true);
         musicController.Play(true);
     }
-    
+
     private partial class HalfScrollContainer : CompositeDrawable
     {
         private readonly Drawable source;
@@ -199,7 +205,7 @@ public partial class SelectScreen : ScreenWithChartBackground, IKeyBindingHandle
         protected override void Update()
         {
             base.Update();
-            
+
             Height = source.DrawHeight / 2;
         }
     }

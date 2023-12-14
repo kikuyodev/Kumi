@@ -1,7 +1,6 @@
 ﻿using Kumi.Game.Charts;
 using Kumi.Game.Graphics;
 using Kumi.Game.Graphics.Containers;
-using Kumi.Game.Input;
 using Kumi.Game.Online.Server.Packets.Dispatch;
 using Kumi.Game.Overlays;
 using Kumi.Game.Overlays.Control;
@@ -12,8 +11,6 @@ using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Sprites;
-using osu.Framework.Input.Bindings;
-using osu.Framework.Input.Events;
 using osu.Framework.Logging;
 using osu.Framework.Platform;
 using osu.Framework.Screens;
@@ -22,10 +19,10 @@ using osuTK.Graphics;
 
 namespace Kumi.Game;
 
-public partial class KumiGame : KumiGameBase, IKeyBindingHandler<GlobalAction>, IOverlayManager
+public partial class KumiGame : KumiGameBase, IOverlayManager
 {
-    private bool taskbarEnabled;
-    private bool taskbarControlsDisabled;
+    private readonly List<string> importTasks = new List<string>();
+    private ScheduledDelegate? importTask;
 
     private float taskbarOffset => (Taskbar?.Position.Y ?? 0) + (Taskbar?.DrawHeight ?? 0);
 
@@ -44,10 +41,12 @@ public partial class KumiGame : KumiGameBase, IKeyBindingHandler<GlobalAction>, 
     private readonly List<OverlayContainer> externalOverlays = new List<OverlayContainer>();
     private readonly List<OverlayContainer> visibleBlockingOverlays = new List<OverlayContainer>();
 
-    protected TaskbarOverlay? Taskbar { get; private set; }
-    protected ControlOverlay? ControlOverlay { get; private set; }
-    private List<string> importTasks = new();
-    private ScheduledDelegate? importTask;
+    protected TaskbarOverlay Taskbar { get; private set; } = null!;
+    protected ControlOverlay ControlOverlay { get; private set; } = null!;
+    
+    public readonly IBindable<OverlayActivation> OverlayActivation = new Bindable<OverlayActivation>();
+
+    IBindable<OverlayActivation> IOverlayManager.OverlayActivation => OverlayActivation;
     
     public KumiGame()
     {
@@ -123,6 +122,12 @@ public partial class KumiGame : KumiGameBase, IKeyBindingHandler<GlobalAction>, 
                 )
             );
         });
+
+        OverlayActivation.ValueChanged += mode =>
+        {
+            if (mode.NewValue != Overlays.OverlayActivation.Any)
+                hideAllOverlays();
+        };
     }
     
     public override void SetHost(GameHost host)
@@ -161,19 +166,25 @@ public partial class KumiGame : KumiGameBase, IKeyBindingHandler<GlobalAction>, 
     {
         chart.OldValue?.CancelAsyncLoad();
         chart.NewValue?.BeginAsyncLoad();
+        
+        Logger.Log($"{chart.OldValue?.GetType().Name} changed chart to {chart.NewValue?.GetType().Name} ({chart.NewValue?.Metadata?.Title ?? "Unknown"})");
     }
 
     private void onScreenChanged(IScreen current, IScreen newScreen)
     {
+        if (current is KumiScreen currentKumiScreen)
+        {
+            OverlayActivation.UnbindFrom(currentKumiScreen.OverlayActivation);
+        }
+        
         if (newScreen is KumiScreen newKumiScreen)
         {
-            taskbarEnabled = newKumiScreen.ShowTaskbar;
-            taskbarControlsDisabled = newKumiScreen.DisableTaskbarControl;
-
-            if (newKumiScreen.ShowTaskbar)
-                Taskbar?.Show();
+            OverlayActivation.BindTo(newKumiScreen.OverlayActivation);
+            
+            if (newKumiScreen.HideOverlaysOnEnter)
+                hideAllOverlays();
             else
-                Taskbar?.Hide();
+                Taskbar.Show();
         }
     }
 
@@ -186,7 +197,7 @@ public partial class KumiGame : KumiGameBase, IKeyBindingHandler<GlobalAction>, 
 
         connector.RegisterDispatchHandler<NotificationDispatchPacket>("NOTIFICATION", (n) =>
         {
-            ControlOverlay!.Post(new BasicNotification
+            ControlOverlay.Post(new BasicNotification
             {
                 Icon = FontAwesome.Solid.Signal,
                 BackgroundColour = Colours.RED_ACCENT_LIGHT,
@@ -194,32 +205,6 @@ public partial class KumiGame : KumiGameBase, IKeyBindingHandler<GlobalAction>, 
                 Message = n.Data.Message
             });
         });
-    }
-
-    public bool OnPressed(KeyBindingPressEvent<GlobalAction> e)
-    {
-        if (e.Repeat)
-            return false;
-
-        switch (e.Action)
-        {
-            case GlobalAction.ToggleTaskbar:
-                if (!taskbarEnabled || taskbarControlsDisabled)
-                    return false;
-
-                if (Taskbar?.State.Value == Visibility.Visible)
-                    Taskbar?.Hide();
-                else
-                    Taskbar?.Show();
-
-                return true;
-        }
-
-        return false;
-    }
-
-    public void OnReleased(KeyBindingReleaseEvent<GlobalAction> e)
-    {
     }
 
     protected override void UpdateAfterChildren()
@@ -274,6 +259,15 @@ public partial class KumiGame : KumiGameBase, IKeyBindingHandler<GlobalAction>, 
 
         container.Expire();
     });
+
+    private void hideAllOverlays(bool hideTaskbar = true)
+    {
+        foreach (var overlay in externalOverlays)
+            overlay.Hide();
+
+        if (hideTaskbar)
+            Taskbar?.Hide();
+    }
 
     #endregion
     
