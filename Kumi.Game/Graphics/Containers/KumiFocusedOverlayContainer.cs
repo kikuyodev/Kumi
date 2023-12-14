@@ -15,6 +15,8 @@ public abstract partial class KumiFocusedOverlayContainer : FocusedOverlayContai
     
     protected virtual bool DimMainContent => true;
     
+    protected readonly IBindable<OverlayActivation> OverlayActivation = new Bindable<OverlayActivation>(Overlays.OverlayActivation.Any);
+    
     [Resolved]
     private IOverlayManager? overlayManager { get; set; }
 
@@ -23,6 +25,20 @@ public abstract partial class KumiFocusedOverlayContainer : FocusedOverlayContai
     public override bool ReceivePositionalInputAt(Vector2 screenSpacePos) => BlockScreenWideMouse || base.ReceivePositionalInputAt(screenSpacePos);
 
     private bool closeOnMouseUp;
+
+    protected override void LoadComplete()
+    {
+        if (overlayManager != null)
+            OverlayActivation.BindTo(overlayManager.OverlayActivation);
+        
+        OverlayActivation.BindValueChanged(m =>
+        {
+            if (m.NewValue == Overlays.OverlayActivation.Disabled)
+                State.Value = Visibility.Hidden;
+        });
+        
+        base.LoadComplete();
+    }
 
     protected override bool OnMouseDown(MouseDownEvent e)
     {
@@ -62,6 +78,12 @@ public abstract partial class KumiFocusedOverlayContainer : FocusedOverlayContai
         switch (state.NewValue)
         {
             case Visibility.Visible:
+                if (OverlayActivation.Value == Overlays.OverlayActivation.Disabled)
+                {
+                    State.Value = Visibility.Hidden;
+                    return;
+                }
+                
                 if (BlockScreenWideMouse && DimMainContent)
                     overlayManager?.ShowBlockingOverlay(this);
                 break;

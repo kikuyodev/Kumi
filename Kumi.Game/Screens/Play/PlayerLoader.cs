@@ -1,4 +1,5 @@
 ﻿using Kumi.Game.Charts;
+using Kumi.Game.Overlays;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Extensions.Color4Extensions;
@@ -14,10 +15,9 @@ namespace Kumi.Game.Screens.Play;
 
 public partial class PlayerLoader : ScreenWithChartBackground
 {
+    protected override OverlayActivation InitialOverlayActivation => Overlays.OverlayActivation.UserTriggered;
     public override float BlurAmount => 0f;
     public override float DimAmount => 0.9f;
-    public override bool ShowTaskbar => false;
-    public override bool DisableTaskbarControl => true;
 
     private bool readyForPush
         => player?.LoadState == LoadState.Ready;

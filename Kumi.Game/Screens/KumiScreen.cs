@@ -1,6 +1,8 @@
 using Kumi.Game.Graphics.Backgrounds;
+using Kumi.Game.Overlays;
 using Kumi.Game.Screens.Backgrounds;
 using osu.Framework.Allocation;
+using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Screens;
 
@@ -10,17 +12,23 @@ public partial class KumiScreen : Screen
 {
     protected BackgroundScreen CurrentBackground { get; private set; } = null!;
 
+    public readonly Bindable<OverlayActivation> OverlayActivation = null!;
+
+    protected virtual OverlayActivation InitialOverlayActivation => Overlays.OverlayActivation.Any;
+    
     public virtual float ParallaxAmount => 0.015f;
     public virtual float BlurAmount => 0f;
     public virtual float DimAmount => 0.95f;
+    
     public virtual bool AllowBackButton => true;
-    public virtual bool ShowTaskbar => true;
-    public virtual bool DisableTaskbarControl => false;
+    public virtual bool HideOverlaysOnEnter => true;
 
     public KumiScreen()
     {
         Anchor = Anchor.Centre;
         Origin = Anchor.Centre;
+        
+        OverlayActivation = new Bindable<OverlayActivation>(InitialOverlayActivation);
     }
 
     [BackgroundDependencyLoader]

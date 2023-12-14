@@ -4,6 +4,7 @@ using Kumi.Game.Gameplay.Clocks;
 using Kumi.Game.Gameplay.Scoring;
 using Kumi.Game.Input;
 using Kumi.Game.Online.API.Accounts;
+using Kumi.Game.Overlays;
 using Kumi.Game.Scoring;
 using Kumi.Game.Screens.Play.HUD;
 using osu.Framework.Allocation;
@@ -20,8 +21,7 @@ public partial class Player : ScreenWithChartBackground
 {
     private const float pass_threshold = 0.7f;
 
-    public override bool ShowTaskbar => false;
-    public override bool DisableTaskbarControl => true;
+    protected override OverlayActivation InitialOverlayActivation => Overlays.OverlayActivation.Disabled;
     public override float ParallaxAmount => 0.0025f;
     public override float BlurAmount => 10f;
     public override float DimAmount => 0.25f;

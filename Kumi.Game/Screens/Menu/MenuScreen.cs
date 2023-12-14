@@ -2,39 +2,43 @@ using Kumi.Game.Graphics;
 using Kumi.Game.Graphics.Backgrounds;
 using Kumi.Game.Overlays;
 using Kumi.Game.Screens.Backgrounds;
-using Kumi.Game.Screens.Select;
 using osu.Framework.Allocation;
+using osu.Framework.Bindables;
 using osu.Framework.Extensions.Color4Extensions;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Sprites;
 using osu.Framework.Graphics.Textures;
-using osu.Framework.Input.Events;
 using osu.Framework.Screens;
 using osuTK;
 using osuTK.Graphics;
-using osuTK.Input;
 
 namespace Kumi.Game.Screens.Menu;
 
 public partial class MenuScreen : KumiScreen
 {
-    public override bool ShowTaskbar => false;
-    
+    public override bool HideOverlaysOnEnter => true;
+    protected override OverlayActivation InitialOverlayActivation => Overlays.OverlayActivation.UserTriggered;
+
+    public override BackgroundScreen CreateBackground() => new MenuBackground();
+
+    private Container logoContainer = null!;
     private Sprite logo = null!;
     private Sprite logoShadow = null!;
+    private SpriteText ctaText = null!;
+
+    private Bindable<MenuState> state = new Bindable<MenuState>();
 
     [Resolved]
     private MusicController musicController { get; set; } = null!;
 
-    public override BackgroundScreen CreateBackground() => new MenuBackground();
 
     [BackgroundDependencyLoader]
     private void load(LargeTextureStore store)
     {
         AddRangeInternal(new Drawable[]
         {
-            new Container
+            logoContainer = new Container
             {
                 RelativeSizeAxes = Axes.Both,
                 Anchor = Anchor.Centre,
@@ -62,6 +66,15 @@ public partial class MenuScreen : KumiScreen
                     }
                 }
             },
+            ctaText = new SpriteText
+            {
+                Shadow = true,
+                Anchor = Anchor.BottomCentre,
+                Origin = Anchor.BottomCentre,
+                Y = -32,
+                Text = "Press any key",
+                Font = KumiFonts.GetFont(size: 20)
+            },
             new MenuMusicOverlay
             {
                 Margin = new MarginPadding
@@ -70,27 +83,7 @@ public partial class MenuScreen : KumiScreen
                     Vertical = 40
                 }
             },
-            new SpriteText
-            {
-                Shadow = true,
-                Anchor = Anchor.BottomCentre,
-                Origin = Anchor.BottomCentre,
-                Y = -32,
-                Text = "Press any key",
-                Font = KumiFonts.GetFont(size: 20)
-            }
         });
-    }
-
-    protected override bool OnKeyDown(KeyDownEvent e)
-    {
-        if (e.Repeat)
-            return false;
-        
-        if (e.Key != Key.Escape && e is { ControlPressed: false, ShiftPressed: false, AltPressed: false, SuperPressed: false })
-            this.Push(new SelectScreen());
-
-        return base.OnKeyDown(e);
     }
 
     public override void OnEntering(ScreenTransitionEvent e)
@@ -116,5 +109,11 @@ public partial class MenuScreen : KumiScreen
 
             background.SetBackground(store.Get("Backgrounds/bg1"));
         }
+    }
+
+    private enum MenuState
+    {
+        Logo,
+        Menu
     }
 }

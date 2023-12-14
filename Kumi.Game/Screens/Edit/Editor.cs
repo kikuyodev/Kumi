@@ -13,10 +13,9 @@ namespace Kumi.Game.Screens.Edit;
 
 public partial class Editor : ScreenWithChartBackground, IKeyBindingHandler<PlatformAction>
 {
+    protected override OverlayActivation InitialOverlayActivation => Overlays.OverlayActivation.UserTriggered;
     public override float DimAmount => 0.5f;
     public override float ParallaxAmount => 0.001f;
-    public override bool ShowTaskbar => false;
-    public override bool DisableTaskbarControl => true;
 
     private DependencyContainer dependencies = null!;
 
