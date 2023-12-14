@@ -1,8 +1,10 @@
 ﻿using Kumi.Game.Charts;
 using Kumi.Game.IO;
+using osu.Framework.Allocation;
 using osu.Framework.Development;
 using osu.Framework.Logging;
 using osu.Framework.Platform;
+using osu.Framework.Threading;
 using Realms;
 
 namespace Kumi.Game.Database;
@@ -32,7 +34,6 @@ public class RealmAccess : IDisposable
         }
     }
 
-    private readonly Storage storage;
 
     private RealmConfiguration config => new RealmConfiguration(storage.GetFullPath(FileName))
     {
@@ -40,13 +41,19 @@ public class RealmAccess : IDisposable
         MigrationCallback = onMigrate
     };
 
-    public RealmAccess(Storage storage, string fileName = "kumi.realm")
+    public RealmAccess(Storage storage, string fileName = "kumi.realm", GameThread thread = null)
     {
         this.storage = storage;
         FileName = fileName;
 
+        realmSyncContext = thread.SynchronizationContext ?? SynchronizationContext.Current;
+
         cleanupPendingDeletions();
     }
+    
+    private readonly Storage storage;
+    private SynchronizationContext? realmSyncContext;
+    private Dictionary<Func<Realm, IDisposable>, IDisposable> subscriptions = new Dictionary<Func<Realm, IDisposable>, IDisposable>();
 
     public T Run<T>(Func<Realm, T> action)
     {
@@ -99,7 +106,7 @@ public class RealmAccess : IDisposable
     /// <typeparam name="TModel">The model.</typeparam>
     public IDisposable Subscribe<TModel>(NotificationCallbackDelegate<TModel> action)
         where TModel : RealmObject
-        => Subscribe(_ => true, action);
+        => Subscribe((r) => r.All<TModel>(), action);
 
     /// <summary>
     /// Subscribes to notifications for all objects of type <typeparamref name="TModel" /> that match the query.
@@ -107,25 +114,34 @@ public class RealmAccess : IDisposable
     /// <param name="query">The query to use.</param>
     /// <param name="action">The action to execute.</param>
     /// <typeparam name="TModel">The model.</typeparam>
-    public IDisposable Subscribe<TModel>(Func<TModel, bool> query, NotificationCallbackDelegate<TModel> action)
+    public IDisposable Subscribe<TModel>(Func<Realm, IQueryable<TModel>> query, NotificationCallbackDelegate<TModel> callback)
         where TModel : RealmObject
     {
-        if (ThreadSafety.IsUpdateThread)
-            return Realm.All<TModel>().SubscribeForNotifications(handleSubscription);
+        // We need to keep a reference to the subscription object to prevent it from being garbage collected.
+        // And to dispose it when we're done with it.
+        Func<Realm, IDisposable> action = r => query(r).SubscribeForNotifications(callback);
+        
+        handleActionSafely(() => registerSubscription(action));
 
-        using var r = getInstance();
-        return r.All<TModel>().SubscribeForNotifications(handleSubscription);
-
-        void handleSubscription(IRealmCollection<TModel> sender, ChangeSet? changes)
+        return new InvokeOnDisposal(() =>
         {
-            if (changes == null)
-                return;
+            // We'll need to remove the subscription from the dictionary before disposing it, otherwise we'll get an exception.
+            void removeSubscription()
+            {
+                if (subscriptions.TryGetValue(action, out var subscription))
+                {
+                    subscription.Dispose();
+                    subscriptions.Remove(action);
+                }
+            }
 
-            if (sender.Where(query).Any())
-                return;
+            handleActionSafely(removeSubscription);
+        });
+    }
 
-            action(sender, changes);
-        }
+    private void registerSubscription(Func<Realm, IDisposable> action)
+    {
+        subscriptions[action] = action(Realm);
     }
 
     public bool Compact() => Realm.Compact(config);
@@ -182,7 +198,19 @@ public class RealmAccess : IDisposable
 
     private Realm getInstance()
         => Realm.GetInstance(config);
-
+    
+    private void handleActionSafely(Action action)
+    {
+        if (ThreadSafety.IsUpdateThread)
+        {
+            realmSyncContext.Send(_ => action(), null);
+        }
+        else
+        {
+            realmSyncContext.Post(_ => action(), null);
+        }
+    }
+    
     private void cleanupPendingDeletions()
     {
         try

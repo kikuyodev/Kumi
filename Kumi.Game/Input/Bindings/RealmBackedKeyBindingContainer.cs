@@ -30,13 +30,27 @@ public abstract partial class RealmBackedKeyBindingContainer<T> : KeyBindingCont
 
     protected override void LoadComplete()
     {
-        realm.Subscribe<Keybind>(b => b.Type == Type, (sender, changes) =>
+        realm.Subscribe<Keybind>(b => b.All<Keybind>(), (sender, changes) =>
         {
             if (changes == null)
                 return;
+            
+            // Filter out changes that aren't relevant to this container.
+            var relevantChanges = sender.Where(c => c.Type == Type).ToArray();
+            
+            if (relevantChanges.Length == 0)
+                return;
 
-            ReloadMappings(sender.AsEnumerable());
+            ReloadMappings(relevantChanges.AsEnumerable());
         });
+
+        Scheduler.AddDelayed(() =>
+        {
+            realm.Write(r =>
+            {
+                r.Add(new Keybind(KeybindType.Global, 9000, new KeyCombination(new[] { InputKey.Control, InputKey.Shift, InputKey.Alt, InputKey.F12 })));
+            });
+        }, 5000L);
         
         ReloadMappings();
     }

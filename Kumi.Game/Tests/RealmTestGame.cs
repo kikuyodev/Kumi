@@ -49,7 +49,7 @@ public partial class RealmTestGame : osu.Framework.Game
             var defaultStorage = (Storage) Dependencies.Get(typeof(Storage));
             var testStorage = defaultStorage.GetStorageForDirectory("test");
 
-            using (var realm = new RealmAccess(testStorage, $"{Guid.NewGuid().ToString()}.realm"))
+            using (var realm = new RealmAccess(testStorage, $"{Guid.NewGuid().ToString()}.realm", Host.UpdateThread))
             {
                 Logger.Log($"Running test using realm file {testStorage.GetFullPath(realm.FileName)}");
                 testAction(realm, testStorage);
@@ -73,7 +73,7 @@ public partial class RealmTestGame : osu.Framework.Game
         {
             var testStorage = (Storage) Dependencies.Get(typeof(Storage));
 
-            using (var realm = new RealmAccess(testStorage, $"{Guid.NewGuid().ToString()}.realm"))
+            using (var realm = new RealmAccess(testStorage, $"{Guid.NewGuid().ToString()}.realm", Host.UpdateThread))
             {
                 Logger.Log($"Running test using realm file {testStorage.GetFullPath(realm.FileName)}");
                 await testAction(realm, testStorage);

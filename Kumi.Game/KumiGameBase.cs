@@ -62,7 +62,7 @@ public partial class KumiGameBase : osu.Framework.Game, ICanAcceptFiles
         loadFonts();
 
         // Realm Database, Storage, and Charts
-        DependencyContainer.Cache(realm = new RealmAccess(Storage!));
+        DependencyContainer.Cache(realm = new RealmAccess(Storage!, thread: Host.UpdateThread));
         DependencyContainer.CacheAs(Storage);
 
         // TODO
