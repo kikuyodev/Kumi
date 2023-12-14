@@ -33,7 +33,7 @@ public partial class PlayerLoader : ScreenWithChartBackground
     private Box background = null!;
 
     [Resolved]
-    private IBindable<WorkingChart> chart { get; set; } = null!;
+    private Bindable<WorkingChart> chart { get; set; } = null!;
 
     [BackgroundDependencyLoader]
     private void load()
@@ -66,8 +66,6 @@ public partial class PlayerLoader : ScreenWithChartBackground
 
         contentIn();
 
-        chart.Value.Track.Stop();
-
         display.Delay(700).FadeIn(500, Easing.OutQuint);
 
         Scheduler.Add(new ScheduledDelegate(pushWhenLoaded, Clock.CurrentTime + 1000, 0));
@@ -79,6 +77,9 @@ public partial class PlayerLoader : ScreenWithChartBackground
 
         player = null;
         cancelLoad();
+
+        chart.Disabled = true;
+        chart.Value.Track.Stop();
 
         contentIn();
     }

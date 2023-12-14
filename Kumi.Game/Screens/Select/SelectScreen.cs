@@ -23,7 +23,7 @@ public partial class SelectScreen : ScreenWithChartBackground, IKeyBindingHandle
     private MusicController musicController { get; set; } = null!;
 
     [Resolved]
-    private IBindable<WorkingChart> chart { get; set; } = null!;
+    private Bindable<WorkingChart> chart { get; set; } = null!;
 
     private ListSelect listSelect = null!;
 
@@ -127,6 +127,8 @@ public partial class SelectScreen : ScreenWithChartBackground, IKeyBindingHandle
     {
         base.OnResuming(e);
 
+        // Resuming from player loader.
+        chart.Disabled = false;
         beginLooping();
     }
 
