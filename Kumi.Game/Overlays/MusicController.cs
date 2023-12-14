@@ -125,8 +125,11 @@ public partial class MusicController : CompositeDrawable
     private void changeTrack()
     {
         var newTrack = new DrawableTrack(current.LoadChartTrack());
+        newTrack.Completed += onTrackCompleted;
 
         var lastTrack = CurrentTrack;
+        lastTrack.Completed -= onTrackCompleted;
+        
         CurrentTrack = newTrack;
 
         Schedule(() =>
@@ -143,5 +146,11 @@ public partial class MusicController : CompositeDrawable
                 newTrack.Dispose();
             }
         });
+    }
+
+    private void onTrackCompleted()
+    {
+        if (!CurrentTrack.Looping && !chart.Disabled)
+            Next();
     }
 }
