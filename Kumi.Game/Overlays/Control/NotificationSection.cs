@@ -43,7 +43,7 @@ public partial class NotificationSection : FillFlowContainer
                     new SpriteText
                     {
                         Text = "Notifications",
-                        Font = KumiFonts.GetFont(),
+                        Font = KumiFonts.GetFont(size: 12),
                         Colour = Colours.GRAY_C
                     },
                     new FillFlowContainer

@@ -8,11 +8,14 @@ using osu.Framework.Graphics;
 using osu.Framework.Graphics.Audio;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Logging;
+using osu.Framework.Threading;
 
 namespace Kumi.Game.Overlays;
 
 public partial class MusicController : CompositeDrawable
 {
+    public readonly BindableBool AllowUserControl = new BindableBool(true);
+    
     [Resolved]
     private ChartManager charts { get; set; } = null!;
 
@@ -28,6 +31,20 @@ public partial class MusicController : CompositeDrawable
 
     public bool IsPlaying => CurrentTrack.IsRunning;
 
+    private ScheduledDelegate seekDelegate;
+    
+    public void SeekTo(double position)
+    {
+        seekDelegate?.Cancel();
+        seekDelegate = Schedule(() =>
+        {
+            if (chart.Disabled || !AllowUserControl.Value)
+                return;
+            
+            CurrentTrack.Seek(position);
+        });
+    }
+
     protected override void LoadComplete()
     {
         base.LoadComplete();
@@ -39,7 +56,7 @@ public partial class MusicController : CompositeDrawable
     {
         if (CurrentTrack.IsDummyDevice)
         {
-            if (chart.Disabled)
+            if (chart.Disabled || !AllowUserControl.Value)
                 return;
 
             Logger.Log($"{nameof(MusicController)} skipping dummy track.");
@@ -52,10 +69,34 @@ public partial class MusicController : CompositeDrawable
         }
     }
 
+    public void Previous()
+        => Schedule(() =>
+        {
+            if (chart.Disabled || !AllowUserControl.Value)
+                return;
+
+            var currentTime = CurrentTrack.CurrentTime;
+
+            if (currentTime >= 5000)
+            {
+                SeekTo(0);
+                return;
+            }
+            
+            var playableSet = getChartSets().AsEnumerable().TakeWhile(i => !i.Equals(current.ChartSetInfo)).LastOrDefault()
+                    ?? getChartSets().LastOrDefault();
+            
+            if (playableSet == null)
+                return;
+            
+            changeChart(charts.GetWorkingChart(playableSet.Charts.First()));
+            restartTrack();
+        });
+
     public void Next()
         => Schedule(() =>
         {
-            if (chart.Disabled)
+            if (chart.Disabled || !AllowUserControl.Value)
                 return;
 
             var playableSet = getChartSets().AsEnumerable().SkipWhile(i => !i.Equals(current.ChartSetInfo)).ElementAtOrDefault(1) ?? getChartSets().FirstOrDefault();
@@ -86,6 +127,9 @@ public partial class MusicController : CompositeDrawable
 
     public bool TogglePause()
     {
+        if (!AllowUserControl.Value)
+            return false;
+        
         if (CurrentTrack.IsRunning)
             Stop();
         else
