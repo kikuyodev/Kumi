@@ -23,7 +23,7 @@ public partial class DrawableNote : CompositeDrawable
 
     public DrawableNote(INote note)
     {
-        Note = (Note)note;
+        Note = (Note) note;
         AlwaysPresent = true;
 
         Judgement = new Judgement(Note);
@@ -49,7 +49,7 @@ public partial class DrawableNote : CompositeDrawable
         LifetimeEnd = double.MaxValue; // Expire() may have set this value to the last transform's end time
         state.Value = NoteState.Idle;
         Judgement.Reset();
-        
+
         // Force update state to idle
         updateState(State.Value, true);
     }
@@ -101,7 +101,7 @@ public partial class DrawableNote : CompositeDrawable
 
     public double StateChangeTime => Note.StartTime;
 
-    public double HitStateUpdateTime => Judgement.AbsoluteTime ?? Note.StartTime;
+    public double HitStateUpdateTime => Judgement.AbsoluteTime ?? Note.GetEndTime();
 
     #endregion
 
@@ -126,12 +126,19 @@ public partial class DrawableNote : CompositeDrawable
         OnNewJudgement?.Invoke(this, Judgement);
     }
 
+    protected void ApplyBonusResult(NoteHitResult result)
+    {
+        var judgement = new Judgement(Note, true);
+        judgement.ApplyResult(result, Time.Current);
+        OnNewJudgement?.Invoke(this, judgement);
+    }
+
     protected bool UpdateResult(bool userTriggered)
     {
         if (Judged)
             return false;
 
-        CheckForResult(userTriggered, Time.Current - Note.StartTime);
+        CheckForResult(userTriggered, Time.Current - Note.GetEndTime());
 
         return Judged;
     }
@@ -141,6 +148,7 @@ public partial class DrawableNote : CompositeDrawable
     }
 
     #endregion
+
 }
 
 public partial class DrawableNote<T> : DrawableNote

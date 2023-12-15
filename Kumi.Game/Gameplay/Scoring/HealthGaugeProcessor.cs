@@ -21,6 +21,9 @@ public partial class HealthGaugeProcessor : JudgementProcessor
 
     protected override void ApplyJudgementInternal(Judgement judgement)
     {
+        if (judgement.IsBonus)
+            return;
+        
         health += getHealthIncrementFor(judgement.Result);
         health = Math.Min(1, Math.Max(health, 0));
 

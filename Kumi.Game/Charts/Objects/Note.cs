@@ -82,3 +82,9 @@ public class Note : INote
         return Color4.White;
     }
 }
+
+public static class NoteExtensions
+{
+    public static double GetEndTime(this INote note)
+        => (note as IHasEndTime)?.EndTime ?? note.StartTime;
+}
