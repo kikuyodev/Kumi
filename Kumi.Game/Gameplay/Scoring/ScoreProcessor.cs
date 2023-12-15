@@ -23,7 +23,7 @@ public partial class ScoreProcessor : JudgementProcessor
 
         if (judgement.Result == NoteHitResult.Miss)
             combo = 0;
-        else
+        else if (!judgement.IsBonus)
             combo++;
 
         if (combo > highestCombo)
