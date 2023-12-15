@@ -126,10 +126,10 @@ public partial class DrawableNote : CompositeDrawable
         OnNewJudgement?.Invoke(this, Judgement);
     }
 
-    protected void ApplyBonusResult(NoteHitResult result)
+    protected void ApplyBonusResult(Action<Judgement> result)
     {
         var judgement = new Judgement(Note, true);
-        judgement.ApplyResult(result, Time.Current);
+        result(judgement);
         OnNewJudgement?.Invoke(this, judgement);
     }
 

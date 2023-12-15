@@ -192,6 +192,9 @@ public partial class KumiPlayfield : ScrollingPlayfield
 
             return new DrawableDrumHit(drumHit);
         }
+        
+        if (note is Balloon balloon)
+            return new DrawableBalloon(balloon);
 
         throw new ArgumentException("Unsupported note type", nameof(note));
     }
