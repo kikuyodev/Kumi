@@ -185,5 +185,21 @@ public partial class KumiGameBase : osu.Framework.Game, ICanAcceptFiles
         base.SetHost(host);
 
         Storage ??= host.Storage;
+        host.ExceptionThrown += onExceptionThrown;
+    }
+
+    private bool onExceptionThrown(Exception _)
+    {
+        return !DebugUtils.IsDebugBuild;
+    }
+
+    protected override void Dispose(bool isDisposing)
+    {
+        base.Dispose(isDisposing);
+        
+        realm.Dispose();
+        
+        if (Host != null)
+            Host.ExceptionThrown -= onExceptionThrown;
     }
 }
