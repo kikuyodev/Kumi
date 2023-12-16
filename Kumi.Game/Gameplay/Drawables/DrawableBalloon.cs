@@ -23,16 +23,18 @@ public partial class DrawableBalloon : DrawableNote<Balloon>, IKeyBindingHandler
     private const int required_hits = 3;
     private int hits;
 
-    private readonly BalloonCirclePart balloonPart;
+    private readonly YellowCirclePart corePart;
+    private readonly YellowCirclePart yellowPart;
+    private readonly FillFlowContainer content;
 
     public DrawableBalloon(Balloon note)
         : base(note)
     {
         RelativeSizeAxes = Axes.Y;
         Anchor = Anchor.CentreLeft;
-        Origin = Anchor.Centre;
+        Origin = Anchor.CentreLeft;
 
-        AddInternal(new FillFlowContainer
+        AddInternal(content = new FillFlowContainer
         {
             RelativeSizeAxes = Axes.Y,
             AutoSizeAxes = Axes.X,
@@ -40,10 +42,9 @@ public partial class DrawableBalloon : DrawableNote<Balloon>, IKeyBindingHandler
             Origin = Anchor.CentreLeft,
             Direction = FillDirection.Horizontal,
             Spacing = new Vector2(8),
-            X = 18,
             Children = new Drawable[]
             {
-                new BalloonCirclePart
+                corePart = new YellowCirclePart
                 {
                     Anchor = Anchor.CentreLeft,
                     Origin = Anchor.CentreLeft,
@@ -57,7 +58,7 @@ public partial class DrawableBalloon : DrawableNote<Balloon>, IKeyBindingHandler
                     Anchor = Anchor.CentreLeft,
                     Origin = Anchor.CentreLeft,
                 },
-                balloonPart = new BalloonCirclePart(false)
+                yellowPart = new YellowCirclePart(false)
                 {
                     Anchor = Anchor.CentreLeft,
                     Origin = Anchor.CentreLeft,
@@ -74,6 +75,10 @@ public partial class DrawableBalloon : DrawableNote<Balloon>, IKeyBindingHandler
     {
         base.UpdateAfterChildren();
         Width = DrawSize.Y;
+        corePart.Width = corePart.DrawHeight;
+        yellowPart.Width = yellowPart.DrawHeight;
+        
+        content.X = -(content.DrawHeight / 2) + 18;
     }
 
     protected override void CheckForResult(bool userTriggered, double deltaTime)
@@ -82,7 +87,7 @@ public partial class DrawableBalloon : DrawableNote<Balloon>, IKeyBindingHandler
         {
             hits++;
 
-            balloonPart.ScaleTo(Math.Clamp((float) hits / required_hits, 0f, 1f), 100, Easing.OutQuint);
+            yellowPart.ScaleTo(Math.Clamp((float) hits / required_hits, 0f, 1f), 100, Easing.OutQuint);
 
             ApplyBonusResult(j => j.ApplyResult(NoteHitResult.Good, Time.Current));
         }

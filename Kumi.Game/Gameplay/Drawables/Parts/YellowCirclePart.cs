@@ -9,19 +9,14 @@ using osuTK.Graphics;
 
 namespace Kumi.Game.Gameplay.Drawables.Parts;
 
-public partial class BalloonCirclePart : ConstrictedScalingContainer
+public partial class YellowCirclePart : ConstrictedScalingContainer
 {
     private readonly bool withBorder;
     
-    public BalloonCirclePart(bool withBorder = true)
+    public YellowCirclePart(bool withBorder = true)
     {
         this.withBorder = withBorder;
         PreferredSize = new Vector2(72);
-    }
-
-    protected override void UpdateAfterChildren()
-    {
-        Width = DrawSize.Y;
     }
 
     [BackgroundDependencyLoader]
