@@ -18,6 +18,12 @@ public class DynamicScrollAlgorithm : IScrollAlgorithm
         return TimeAt(-(length + offset), originTime, timeRange, length);
     }
 
+    public float GetLength(double startTime, double endTime, double timeRange, float length)
+    {
+        var noteLength = relativePositionAt(endTime, timeRange) - relativePositionAt(startTime, timeRange);
+        return (float) (noteLength * length);
+    }
+
     public float PositionAt(double time, double currentTime, double timeRange, float length)
     {
         var timelineLength = relativePositionAt(time, timeRange) - relativePositionAt(currentTime, timeRange);
