@@ -32,6 +32,9 @@ public abstract partial class JudgementProcessor : Component
 
     public void ApplyJudgement(Judgement judgement)
     {
+        if (judgement.Ignored)
+            return;
+        
         if (!judgement.IsBonus)
             JudgedHits++;
 

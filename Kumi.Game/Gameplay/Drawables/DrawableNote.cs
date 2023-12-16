@@ -26,7 +26,7 @@ public partial class DrawableNote : CompositeDrawable
         Note = (Note) note;
         AlwaysPresent = true;
 
-        Judgement = new Judgement(Note);
+        Judgement = CreateJudgement();
     }
 
     protected override void LoadComplete()
@@ -53,6 +53,9 @@ public partial class DrawableNote : CompositeDrawable
         // Force update state to idle
         updateState(State.Value, true);
     }
+    
+    protected virtual Judgement CreateJudgement()
+        => new Judgement(Note);
 
     #region Animations
 

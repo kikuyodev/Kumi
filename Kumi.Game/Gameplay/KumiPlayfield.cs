@@ -194,6 +194,8 @@ public partial class KumiPlayfield : ScrollingPlayfield
                 }
             }
         };
+        
+        new BarLineGenerator((Chart) Chart).BarLines.ForEach(Add);
     }
 
     protected override DrawableNote CreateDrawableNote(INote note)
@@ -211,6 +213,9 @@ public partial class KumiPlayfield : ScrollingPlayfield
         
         if (note is DrumRoll drumRoll)
             return new DrawableDrumRoll(drumRoll);
+        
+        if (note is BarLine barLine)
+            return new DrawableBarLine(barLine);
 
         throw new ArgumentException("Unsupported note type", nameof(note));
     }
