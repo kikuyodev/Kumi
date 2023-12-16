@@ -1,4 +1,5 @@
 ﻿using Kumi.Game.Charts.Objects;
+using Kumi.Game.Screens.Edit.Compose;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
@@ -13,7 +14,10 @@ public abstract partial class PlacementBlueprint : CompositeDrawable
     public readonly Note Note;
 
     [Resolved]
-    private EditorClock editorClock { get; set; } = null!;
+    protected ComposeScreen Composer { get; private set; } = null!;
+
+    [Resolved]
+    protected EditorClock EditorClock { get; private set; } = null!;
     
     [Resolved]
     private EditorChart chart { get; set; } = null!;
@@ -68,7 +72,7 @@ public abstract partial class PlacementBlueprint : CompositeDrawable
     {
         if (PlacementActive == PlacementState.Waiting)
         {
-            Note.StartTime = time ?? editorClock.CurrentTime;
+            Note.StartTime = time ?? EditorClock.CurrentTime;
         }
     }
 }

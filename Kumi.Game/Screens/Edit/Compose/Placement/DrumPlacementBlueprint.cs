@@ -1,23 +1,16 @@
 ﻿using Kumi.Game.Charts.Objects;
 using Kumi.Game.Screens.Edit.Blueprints;
 using Kumi.Game.Screens.Edit.Compose.Pieces;
-using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Input.Events;
 using osuTK;
 using osuTK.Input;
 
-namespace Kumi.Game.Screens.Edit.Compose.Tools;
+namespace Kumi.Game.Screens.Edit.Compose.Placement;
 
 public partial class DrumPlacementBlueprint : PlacementBlueprint
 {
     private readonly HitPiece piece;
-
-    [Resolved]
-    private ComposeScreen composer { get; set; } = null!;
-
-    [Resolved]
-    private EditorClock clock { get; set; } = null!;
 
     public DrumPlacementBlueprint()
         : base(new DrumHit())
@@ -52,7 +45,7 @@ public partial class DrumPlacementBlueprint : PlacementBlueprint
 
     public override void UpdateTimeAndPosition(double? time)
     {
-        piece.Position = ToLocalSpace(composer.Playfield!.ScreenSpacePositionAtTime(time ?? clock.CurrentTime));
+        piece.Position = ToLocalSpace(Composer.Playfield!.ScreenSpacePositionAtTime(time ?? EditorClock.CurrentTime));
         piece.X -= piece.DrawWidth / 2;
         base.UpdateTimeAndPosition(time);
     }

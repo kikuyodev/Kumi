@@ -1,6 +1,7 @@
 ﻿using Kumi.Game.Charts;
 using Kumi.Game.Charts.Objects;
 using Kumi.Game.Screens.Edit.Blueprints;
+using Kumi.Game.Screens.Edit.Compose.Selection;
 using Kumi.Game.Screens.Edit.Compose.Tools;
 using osu.Framework.Allocation;
 using osu.Framework.Extensions.EnumExtensions;
@@ -78,6 +79,8 @@ public partial class ComposeBlueprintContainer : EditorBlueprintContainer
             DrumHit drumHit => drumHit.Flags.Value.HasFlagFast(NoteFlags.Big)
                 ? new BigDrumNoteSelectionBlueprint(note)
                 : new DrumNoteSelectionBlueprint(note),
+            Balloon balloon => new BalloonSelectionBlueprint(balloon),
+            DrumRoll drumRoll => new DrumRollSelectionBlueprint(drumRoll),
             _ => null
         };
 

@@ -18,7 +18,7 @@ public partial class DrawableDrumRoll : DrawableNote<DrumRoll>, IKeyBindingHandl
     private const int required_hits = 3;
     private int hits;
 
-    private readonly Container content;
+    internal readonly Container Content;
     private readonly YellowCirclePart corePart;
     private readonly CircularContainer spanPart;
 
@@ -29,7 +29,7 @@ public partial class DrawableDrumRoll : DrawableNote<DrumRoll>, IKeyBindingHandl
         Anchor = Anchor.CentreLeft;
         Origin = Anchor.CentreLeft;
 
-        AddInternal(content = new Container
+        AddInternal(Content = new Container
         {
             RelativeSizeAxes = Axes.Both,
             Anchor = Anchor.CentreLeft,
@@ -86,8 +86,6 @@ public partial class DrawableDrumRoll : DrawableNote<DrumRoll>, IKeyBindingHandl
     {
         base.UpdateAfterChildren();
         corePart.Width = corePart.DrawHeight;
-
-        content.X = content.DrawHeight / 2;
     }
 
     protected override void CheckForResult(bool userTriggered, double deltaTime)

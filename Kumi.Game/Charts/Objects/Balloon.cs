@@ -21,6 +21,11 @@ public class Balloon : Note, IHasEndTime
 
     public Bindable<double> EndTimeBindable { get; } = new Bindable<double>();
 
+    public Balloon()
+        : this(0)
+    {
+    }
+    
     public Balloon(float startTime)
         : base(startTime)
     {

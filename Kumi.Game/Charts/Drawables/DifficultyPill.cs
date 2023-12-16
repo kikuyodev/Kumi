@@ -6,7 +6,7 @@ using osu.Framework.Graphics.Shapes;
 using osu.Framework.Graphics.Sprites;
 using osuTK.Graphics;
 
-namespace Kumi.Game.Screens.Select.List;
+namespace Kumi.Game.Charts.Drawables;
 
 public partial class DifficultyPill : CircularContainer
 {

@@ -23,9 +23,10 @@ public partial class DrawableBalloon : DrawableNote<Balloon>, IKeyBindingHandler
     private const int required_hits = 3;
     private int hits;
 
+    internal readonly FillFlowContainer Content;
+
     private readonly YellowCirclePart corePart;
     private readonly YellowCirclePart yellowPart;
-    private readonly FillFlowContainer content;
 
     public DrawableBalloon(Balloon note)
         : base(note)
@@ -34,7 +35,7 @@ public partial class DrawableBalloon : DrawableNote<Balloon>, IKeyBindingHandler
         Anchor = Anchor.CentreLeft;
         Origin = Anchor.CentreLeft;
 
-        AddInternal(content = new FillFlowContainer
+        AddInternal(Content = new FillFlowContainer
         {
             RelativeSizeAxes = Axes.Y,
             AutoSizeAxes = Axes.X,
@@ -74,11 +75,10 @@ public partial class DrawableBalloon : DrawableNote<Balloon>, IKeyBindingHandler
     protected override void UpdateAfterChildren()
     {
         base.UpdateAfterChildren();
-        Width = DrawSize.Y;
         corePart.Width = corePart.DrawHeight;
         yellowPart.Width = yellowPart.DrawHeight;
-        
-        content.X = -(content.DrawHeight / 2) + 18;
+
+        Content.X = -(Content.DrawHeight / 2) + 18;
     }
 
     protected override void CheckForResult(bool userTriggered, double deltaTime)
