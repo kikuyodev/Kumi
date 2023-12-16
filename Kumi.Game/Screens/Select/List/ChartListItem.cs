@@ -1,4 +1,5 @@
 ﻿using Kumi.Game.Charts;
+using Kumi.Game.Charts.Drawables;
 using Kumi.Game.Graphics;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;

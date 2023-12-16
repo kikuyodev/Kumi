@@ -4,7 +4,7 @@ using Kumi.Game.Screens.Edit.Compose.Pieces;
 using osu.Framework.Graphics;
 using osuTK;
 
-namespace Kumi.Game.Screens.Edit.Compose;
+namespace Kumi.Game.Screens.Edit.Compose.Selection;
 
 public partial class BigDrumNoteSelectionBlueprint : NoteSelectionBlueprint
 {

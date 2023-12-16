@@ -7,7 +7,7 @@ using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 
-namespace Kumi.Tests.Visual.Overlays;
+namespace Kumi.Tests.Visual.UserInterface;
 
 public partial class AccountRegistrationOverlayTestScene : KumiTestScene
 {

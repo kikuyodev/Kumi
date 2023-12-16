@@ -2,6 +2,7 @@
 using System.Diagnostics;
 using Kumi.Game.Charts;
 using Kumi.Game.Charts.Objects;
+using Kumi.Game.Screens.Edit.Compose;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;

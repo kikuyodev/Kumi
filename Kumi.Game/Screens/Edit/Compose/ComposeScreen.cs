@@ -5,7 +5,6 @@ using Kumi.Game.Extensions;
 using Kumi.Game.Gameplay;
 using Kumi.Game.Gameplay.Drawables;
 using Kumi.Game.Graphics.Containers;
-using Kumi.Game.Screens.Edit.Compose;
 using Kumi.Game.Utils;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
@@ -14,7 +13,7 @@ using osu.Framework.Graphics.Containers;
 using osu.Framework.Input;
 using osuTK;
 
-namespace Kumi.Game.Screens.Edit;
+namespace Kumi.Game.Screens.Edit.Compose;
 
 [Cached]
 public partial class ComposeScreen : EditorScreenWithTimeline

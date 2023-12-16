@@ -1,9 +1,9 @@
 ﻿using System.Collections.Specialized;
 using Kumi.Game.Charts.Objects;
-using Kumi.Game.Screens.Edit.Blueprints;
+using Kumi.Game.Screens.Edit.Compose;
 using osu.Framework.Allocation;
 
-namespace Kumi.Game.Screens.Edit.Compose;
+namespace Kumi.Game.Screens.Edit.Blueprints;
 
 public partial class EditorBlueprintContainer : BlueprintContainer
 {

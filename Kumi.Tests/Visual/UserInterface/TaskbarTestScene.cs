@@ -3,7 +3,7 @@ using Kumi.Game.Tests;
 using NUnit.Framework;
 using osu.Framework.Graphics.Containers;
 
-namespace Kumi.Tests.Visual.Overlays;
+namespace Kumi.Tests.Visual.UserInterface;
 
 public partial class TaskbarTestScene : KumiTestScene
 {

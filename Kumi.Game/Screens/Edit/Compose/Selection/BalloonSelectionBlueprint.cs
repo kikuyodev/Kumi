@@ -4,13 +4,13 @@ using Kumi.Game.Screens.Edit.Compose.Pieces;
 using osu.Framework.Graphics;
 using osuTK;
 
-namespace Kumi.Game.Screens.Edit.Compose;
+namespace Kumi.Game.Screens.Edit.Compose.Selection;
 
-public partial class DrumRollSelectionBlueprint : NoteSelectionBlueprint<DrumRoll>
+public partial class BalloonSelectionBlueprint : NoteSelectionBlueprint<Balloon>
 {
-    public new DrawableDrumRoll DrawableNote => (DrawableDrumRoll) base.DrawableNote;
+    public new DrawableBalloon DrawableNote => (DrawableBalloon) base.DrawableNote;
     
-    public DrumRollSelectionBlueprint(DrumRoll item)
+    public BalloonSelectionBlueprint(Balloon item)
         : base(item)
     {
         RelativeSizeAxes = Axes.None;

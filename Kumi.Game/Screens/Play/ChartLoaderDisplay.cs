@@ -1,7 +1,7 @@
 ﻿using Kumi.Game.Charts;
+using Kumi.Game.Charts.Drawables;
 using Kumi.Game.Graphics;
 using Kumi.Game.Graphics.Sprites;
-using Kumi.Game.Screens.Select.List;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Extensions.Color4Extensions;
