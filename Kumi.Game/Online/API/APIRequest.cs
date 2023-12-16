@@ -89,9 +89,10 @@ public abstract class APIRequest
         {
             Request.Perform();
         }
-        catch
+        catch (Exception e)
         {
-            // ignored
+            TriggerFailure(e);
+            return;
         }
 
         if (isFailing)

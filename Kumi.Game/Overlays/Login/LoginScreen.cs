@@ -68,7 +68,10 @@ public partial class LoginScreen : Container
                     BackgroundColour = Colours.ORANGE_ACCENT_LIGHT,
                     Action = () =>
                     {
-                        api.Login(username.Text, password.Text);
+                        Task.Run(() =>
+                        {
+                            api.Login(username.Text, password.Text);
+                        });
                     }
                 },
                 new KumiCheckbox

@@ -155,7 +155,6 @@ public partial class APIConnection : Component, IAPIConnectionProvider
         catch (Exception e)
         {
             Logger.Error(e, $"Failed to perform {req}");
-            req.TriggerFailure(e);
         }
 
         return false;

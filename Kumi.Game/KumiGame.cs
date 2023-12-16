@@ -51,6 +51,8 @@ public partial class KumiGame : KumiGameBase, IOverlayManager
     public KumiGame()
     {
         Name = "Kumi";
+        
+        pushLogsToNotifications();
     }
 
     [BackgroundDependencyLoader]
@@ -205,6 +207,24 @@ public partial class KumiGame : KumiGameBase, IOverlayManager
                 Message = n.Data.Message
             });
         });
+    }
+
+    private void pushLogsToNotifications()
+    {
+        Logger.NewEntry += entry =>
+        {
+            if (entry.Level < LogLevel.Important || entry.Target == null)
+                return;
+            
+            var truncated = entry.Message.Length > 256 ? entry.Message[..256] + "..." : entry.Message;
+
+            Schedule(() => ControlOverlay.Post(new BasicNotification
+            {
+                Icon = entry.Level == LogLevel.Important ? FontAwesome.Solid.ExclamationCircle : FontAwesome.Solid.TimesCircle,
+                Header = entry.Level.ToString(),
+                Message = truncated
+            }));
+        };
     }
 
     protected override void UpdateAfterChildren()
