@@ -24,6 +24,11 @@ public class DrumRoll : Note, IHasEndTime
     
     public Bindable<double> EndTimeBindable { get; } = new Bindable<double>();
 
+    public DrumRoll()
+        : this(0)
+    {
+    }
+    
     public DrumRoll(float startTime)
         : base(startTime)
     {
