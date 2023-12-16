@@ -79,6 +79,7 @@ public partial class ComposeBlueprintContainer : EditorBlueprintContainer
                 ? new BigDrumNoteSelectionBlueprint(note)
                 : new DrumNoteSelectionBlueprint(note),
             Balloon balloon => new BalloonSelectionBlueprint(balloon),
+            DrumRoll drumRoll => new DrumRollSelectionBlueprint(drumRoll),
             _ => null
         };
 
