@@ -40,6 +40,7 @@ public partial class NoteComposer : CompositeDrawable, IPlacementHandler
             {
                 new SelectTool(),
                 new HitCompositionTool(),
+                new BalloonCompositionTool()
             }.Select(t => new RadioButton(t.Name, () => toolSelected(t), t.CreateIcon))
            .ToList();
         

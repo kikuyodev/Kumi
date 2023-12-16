@@ -14,10 +14,10 @@ public abstract partial class PlacementBlueprint : CompositeDrawable
     public readonly Note Note;
 
     [Resolved]
-    protected ComposeScreen Composer { get; set; } = null!;
+    protected ComposeScreen Composer { get; private set; } = null!;
 
     [Resolved]
-    protected EditorClock EditorClock { get; set; } = null!;
+    protected EditorClock EditorClock { get; private set; } = null!;
     
     [Resolved]
     private EditorChart chart { get; set; } = null!;
