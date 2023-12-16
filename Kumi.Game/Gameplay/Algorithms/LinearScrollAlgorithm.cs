@@ -8,6 +8,9 @@ public class LinearScrollAlgorithm : IScrollAlgorithm
         return time - timeRange;
     }
 
+    public float GetLength(double startTime, double endTime, double timeRange, float length)
+        => -PositionAt(startTime, endTime, timeRange, length);
+
     public float PositionAt(double time, double currentTime, double timeRange, float length)
         => (float) ((time - currentTime) / timeRange * length);
 

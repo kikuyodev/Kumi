@@ -74,7 +74,7 @@ public partial class KumiPlayfield : ScrollingPlayfield
                             RelativePositionAxes = Axes.X,
                             Size = new Vector2(0.8f),
                             X = 0.3f,
-                            Child = drawableDrum.CreateProxy()
+                            Child = drawableDrum
                         }
                     },
                     new Circle
@@ -144,13 +144,26 @@ public partial class KumiPlayfield : ScrollingPlayfield
             },
             new Container
             {
-                RelativeSizeAxes = Axes.X,
-                Height = 200 * 0.6f,
+                RelativeSizeAxes = Axes.Both,
                 Anchor = Anchor.CentreRight,
                 Origin = Anchor.CentreRight,
                 RelativePositionAxes = Axes.Both,
-                Width = 1 - 0.325f,
-                Child = ScrollContainer
+                Width = 1 - 0.2275f,
+                Masking = true,
+                Padding = new MarginPadding
+                {
+                    Left = 3
+                },
+                Child = new Container
+                {
+                    RelativeSizeAxes = Axes.X,
+                    Height = 200 * 0.6f,
+                    Anchor = Anchor.CentreRight,
+                    Origin = Anchor.CentreRight,
+                    RelativePositionAxes = Axes.Both,
+                    Width = 1 - 0.126f,
+                    Child = ScrollContainer
+                }
             },
             // Added to the end of the hierarchy to receive input before any objects
             new Container
@@ -175,7 +188,7 @@ public partial class KumiPlayfield : ScrollingPlayfield
                             RelativePositionAxes = Axes.X,
                             Size = new Vector2(0.8f),
                             X = 0.3f,
-                            Child = drawableDrum
+                            Child = drawableDrum.CreateProxy()
                         }
                     }
                 }
@@ -192,6 +205,12 @@ public partial class KumiPlayfield : ScrollingPlayfield
 
             return new DrawableDrumHit(drumHit);
         }
+        
+        if (note is Balloon balloon)
+            return new DrawableBalloon(balloon);
+        
+        if (note is DrumRoll drumRoll)
+            return new DrawableDrumRoll(drumRoll);
 
         throw new ArgumentException("Unsupported note type", nameof(note));
     }

@@ -10,15 +10,15 @@ namespace Kumi.Game.Gameplay.Scoring;
 public abstract partial class JudgementProcessor : Component
 {
     public event Action<Judgement>? NewJudgement;
-    
+
     protected int MaxHits { get; private set; }
-    
+
     protected bool IsSimulating { get; private set; }
-    
+
     public int JudgedHits { get; private set; }
 
     private Judgement? lastAppliedJudgement;
-    
+
     private readonly BindableBool hasCompleted = new BindableBool();
 
     public IBindable<bool> HasCompleted => hasCompleted;
@@ -29,19 +29,19 @@ public abstract partial class JudgementProcessor : Component
         simulateJudgements(chart);
         Reset(true);
     }
-    
+
     public void ApplyJudgement(Judgement judgement)
     {
-        JudgedHits++;
+        if (!judgement.IsBonus)
+            JudgedHits++;
+
         lastAppliedJudgement = judgement;
-        
         ApplyJudgementInternal(judgement);
-        
         NewJudgement?.Invoke(judgement);
     }
-    
+
     protected abstract void ApplyJudgementInternal(Judgement judgement);
-    
+
     protected virtual void Reset(bool storeResults)
     {
         if (storeResults)
@@ -49,7 +49,7 @@ public abstract partial class JudgementProcessor : Component
 
         JudgedHits = 0;
     }
-    
+
     private void simulateJudgements(IChart chart)
     {
         IsSimulating = true;
@@ -60,7 +60,7 @@ public abstract partial class JudgementProcessor : Component
             judgement.ApplyResult(NoteHitResult.Good, note.StartTime);
             ApplyJudgement(judgement);
         }
-        
+
         IsSimulating = false;
     }
 

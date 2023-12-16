@@ -8,29 +8,33 @@ public class Judgement
     public NoteHitResult Result;
 
     public readonly INote Note;
+    public readonly bool IsBonus;
+    
+    internal double? RawTime { get; set; }
 
-    public double? AbsoluteTime { get; set; }
+    public double? AbsoluteTime => RawTime != null ? Math.Min(RawTime.Value, Note.GetEndTime() + Note.Windows.WindowFor(NoteHitResult.Bad)) : Note.GetEndTime();
 
-    public double DeltaTime => AbsoluteTime ?? 0 - Note.StartTime;
+    public double DeltaTime => AbsoluteTime ?? 0 - Note.GetEndTime();
 
     public bool HasResult => Result > NoteHitResult.None;
 
     public bool IsHit => Result > NoteHitResult.Miss;
 
-    public Judgement(INote note)
+    public Judgement(INote note, bool isBonus = false)
     {
         Note = note;
+        IsBonus = isBonus;
     }
 
     public void ApplyResult(NoteHitResult result, double currentTime)
     {
         Result = result;
-        AbsoluteTime = currentTime;
+        RawTime = currentTime;
     }
 
     internal void Reset()
     {
         Result = NoteHitResult.None;
-        AbsoluteTime = null;
+        RawTime = null;
     }
 }

@@ -1,4 +1,5 @@
-﻿using Kumi.Game.Charts.Objects.Windows;
+﻿using Kumi.Game.Charts;
+using Kumi.Game.Charts.Objects.Windows;
 using Kumi.Game.Gameplay.Algorithms;
 using Kumi.Game.Gameplay.Drawables;
 using osu.Framework.Allocation;
@@ -82,6 +83,9 @@ public partial class ScrollingNoteContainer : Container<DrawableNote>
 
     private void updateLayout(DrawableNote note)
     {
+        if (note.Note is IHasEndTime endTime)
+            note.Width = lengthAtTime(note.Note.StartTime, endTime.EndTime);
+        
         updatePosition(note, note.Note.StartTime);
         setLifetimeStart(note);
     }
@@ -120,6 +124,9 @@ public partial class ScrollingNoteContainer : Container<DrawableNote>
         var position = positionAtTime(note.Note.StartTime, currentTime);
         note.X = position;
     }
+    
+    private float lengthAtTime(double startTime, double endTime)
+        => Algorithm.Value.GetLength(startTime, endTime, TimeRange.Value, DrawWidth);
 
     private float positionAtTime(double time, double currentTime)
         => Algorithm.Value.PositionAt(time, currentTime, TimeRange.Value, DrawWidth);
