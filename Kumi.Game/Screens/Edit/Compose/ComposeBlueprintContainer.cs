@@ -78,6 +78,7 @@ public partial class ComposeBlueprintContainer : EditorBlueprintContainer
             DrumHit drumHit => drumHit.Flags.Value.HasFlagFast(NoteFlags.Big)
                 ? new BigDrumNoteSelectionBlueprint(note)
                 : new DrumNoteSelectionBlueprint(note),
+            Balloon balloon => new BalloonSelectionBlueprint(balloon),
             _ => null
         };
 
