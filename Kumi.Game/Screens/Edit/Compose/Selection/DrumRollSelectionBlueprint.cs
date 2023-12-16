@@ -14,9 +14,10 @@ public partial class DrumRollSelectionBlueprint : NoteSelectionBlueprint<DrumRol
         : base(item)
     {
         RelativeSizeAxes = Axes.None;
+        Padding = new MarginPadding { Right = -24 };
         InternalChild = new HitPiece
         {
-            Size = new Vector2(0.8f),
+            Size = new Vector2(1f, 0.8f),
             Anchor = Anchor.CentreLeft,
             Origin = Anchor.CentreLeft
         };

@@ -24,6 +24,7 @@ public partial class DrawableBalloon : DrawableNote<Balloon>, IKeyBindingHandler
     private int hits;
 
     internal readonly FillFlowContainer Content;
+
     private readonly YellowCirclePart corePart;
     private readonly YellowCirclePart yellowPart;
 
@@ -74,10 +75,9 @@ public partial class DrawableBalloon : DrawableNote<Balloon>, IKeyBindingHandler
     protected override void UpdateAfterChildren()
     {
         base.UpdateAfterChildren();
-        Width = DrawSize.Y;
         corePart.Width = corePart.DrawHeight;
         yellowPart.Width = yellowPart.DrawHeight;
-        
+
         Content.X = -(Content.DrawHeight / 2) + 18;
     }
 
