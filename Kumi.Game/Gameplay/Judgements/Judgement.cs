@@ -9,6 +9,8 @@ public class Judgement
 
     public readonly INote Note;
     public readonly bool IsBonus;
+
+    public bool Ignored { get; set; }
     
     internal double? RawTime { get; set; }
 
