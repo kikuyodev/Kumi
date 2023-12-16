@@ -5,5 +5,5 @@ public interface IHasEndTime
     /// <summary>
     /// The time in milliseconds at which this <see cref="IHasEndTime" /> ends.
     /// </summary>
-    double EndTime { get; }
+    double EndTime { get; set; }
 }

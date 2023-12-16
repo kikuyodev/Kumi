@@ -10,7 +10,7 @@ public class BreakTimeEvent : Event, IHasEndTime
     protected override EventType ExpectedType => EventType.Break;
     protected override int ExpectedLength => 1;
 
-    public double EndTime { get; private set; }
+    public double EndTime { get; set; }
 
     public BreakTimeEvent(float startTime, float endTime)
         : base(startTime)

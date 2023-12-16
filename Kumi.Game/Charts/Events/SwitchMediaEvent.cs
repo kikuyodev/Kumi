@@ -11,7 +11,7 @@ public class SwitchMediaEvent : MediaEvent, IHasEndTime
     protected override EventType ExpectedType => EventType.SwitchMedia;
     protected override int ExpectedLength => 3;
 
-    public double EndTime { get; private set; }
+    public double EndTime { get; set; }
     public Easing Easing { get; private set; }
 
     public SwitchMediaEvent(string filename, float startTime, float endTime, Easing easing = Easing.None)
