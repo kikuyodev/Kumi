@@ -10,7 +10,8 @@ public partial class TimelineSummary : Container
     {
         Children = new Drawable[]
         {
-            new MarkerPart { RelativeSizeAxes = Axes.Both }
+            new MarkerPart { RelativeSizeAxes = Axes.Both },
+            new TimingPointsPart { RelativeSizeAxes = Axes.Both },
         };
     }
 }
