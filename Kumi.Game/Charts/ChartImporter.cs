@@ -11,12 +11,12 @@ namespace Kumi.Game.Charts;
 
 public class ChartImporter : RealmModelImporter<ChartSetInfo>
 {
-    private const string kumi_archive = ".kcs";
-    private const string kumi_chart = ".kch";
+    public const string KUMI_ARCHIVE = ".kcs";
+    public const string KUMI_CHART = ".kch";
 
-    public override IEnumerable<string> HandledFileExtensions => new[] { kumi_archive };
+    public override IEnumerable<string> HandledFileExtensions => new[] { KUMI_ARCHIVE };
 
-    protected override string[] HashableFileTypes => new[] { kumi_chart };
+    protected override string[] HashableFileTypes => new[] { KUMI_CHART };
 
     public Action<ChartSetInfo>? ProcessChart { private get; set; }
 
@@ -27,7 +27,7 @@ public class ChartImporter : RealmModelImporter<ChartSetInfo>
 
     protected override ChartSetInfo? CreateModel(ArchiveReader archive)
     {
-        var chartsExists = archive.FileNames.FirstOrDefault(f => f.EndsWith(kumi_chart, StringComparison.OrdinalIgnoreCase));
+        var chartsExists = archive.FileNames.FirstOrDefault(f => f.EndsWith(KUMI_CHART, StringComparison.OrdinalIgnoreCase));
 
         if (string.IsNullOrEmpty(chartsExists))
         {
@@ -44,7 +44,7 @@ public class ChartImporter : RealmModelImporter<ChartSetInfo>
 
         if (archive != null)
         {
-            var chartFiles = archive.FileNames.Where(f => f.EndsWith(kumi_chart, StringComparison.OrdinalIgnoreCase));
+            var chartFiles = archive.FileNames.Where(f => f.EndsWith(KUMI_CHART, StringComparison.OrdinalIgnoreCase));
 
             try
             {
@@ -56,7 +56,7 @@ public class ChartImporter : RealmModelImporter<ChartSetInfo>
                     {
                         using var stream = archive.GetStream(chartFile)!;
                         imported.Hash = stream.ComputeSHA2Hash();
-                        imported.File!.FileName = imported.GetModelDisplayString(realm) + kumi_chart;
+                        imported.File!.FileName = imported.GetModelDisplayString(realm) + KUMI_CHART;
                         model.Charts.Add(imported);
                     }
                 }
