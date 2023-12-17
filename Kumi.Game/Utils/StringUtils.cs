@@ -1,9 +1,13 @@
 ﻿using System.Globalization;
+using System.Text.RegularExpressions;
 
 namespace Kumi.Game.Utils;
 
-public static class StringUtils
+public static partial class StringUtils
 {
+    [GeneratedRegex(@"(?!$)[^A-Za-z0-9_()[\]. \-]", RegexOptions.Compiled)]
+    private static partial Regex invalidFilenameChars();
+    
     public static T AssertAndFetch<T>(string value)
         where T : unmanaged
     {
@@ -29,7 +33,7 @@ public static class StringUtils
     }
 
     /// <summary>
-    /// A more complex version of the standard <see cref="string.Split(char,int,System.StringSplitOptions)" /> method that
+    /// A more complex version of the standard <see cref="string.Split(char,int,StringSplitOptions)" /> method that
     /// splits the input string by the <paramref name="delimiter" />.
     /// This function can handle strings that contain the delimiter as part of the value.
     /// </summary>
@@ -74,4 +78,7 @@ public static class StringUtils
         if (currentValue != null)
             yield return currentValue;
     }
+
+    public static string GetValidFilename(this string filename)
+        => invalidFilenameChars().Replace(filename, "_");
 }
