@@ -83,8 +83,8 @@ public partial class ControlOverlay : KumiFocusedOverlayContainer, INotification
     
     protected override void PopIn()
     {
-        this.MoveToX(0, 600, Easing.OutQuint);
-        content.FadeTo(1, 600, Easing.OutQuint);
+        this.MoveToX(0, 300, Easing.OutQuint);
+        content.FadeTo(1, 300, Easing.OutQuint);
         content.FadeEdgeEffectTo(0.25f, 600, Easing.OutQuint);
     }
 
@@ -92,9 +92,9 @@ public partial class ControlOverlay : KumiFocusedOverlayContainer, INotification
     {
         markAllRead();
 
-        this.MoveToX(WIDTH, 600, Easing.OutQuint);
-        content.FadeTo(0, 600, Easing.OutQuint);
-        content.FadeEdgeEffectTo(0, 600, Easing.OutQuint);
+        this.MoveToX(WIDTH, 300, Easing.OutQuint);
+        content.FadeTo(0, 300, Easing.OutQuint);
+        content.FadeEdgeEffectTo(0, 300, Easing.OutQuint);
     }
 
     public void Post(Notification notification)
