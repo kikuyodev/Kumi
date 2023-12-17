@@ -17,6 +17,8 @@ public partial class MessageGroup : CompositeDrawable
     
     public MessageGroup(APIAccount account)
     {
+        RelativeSizeAxes = Axes.X;
+        AutoSizeAxes = Axes.Y;
         Account = account;
         
         InternalChild = new FillFlowContainer

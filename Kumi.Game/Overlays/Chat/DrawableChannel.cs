@@ -4,6 +4,7 @@ using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.UserInterface;
+using osuTK;
 
 namespace Kumi.Game.Overlays.Chat;
 
@@ -12,6 +13,7 @@ public partial class DrawableChannel : CompositeDrawable
     public DrawableChannel()
     {
         RelativeSizeAxes = Axes.Both;
+        Padding = new MarginPadding { Right = 12 };
     }
 
     private FillFlowContainer<MessageGroup> messages = null!;
@@ -35,7 +37,7 @@ public partial class DrawableChannel : CompositeDrawable
             {
                 new Drawable[]
                 {
-                    new BasicScrollContainer
+                    new ChannelScrollContainer
                     {
                         RelativeSizeAxes = Axes.Both,
                         Child = messages = new FillFlowContainer<MessageGroup>
@@ -43,19 +45,20 @@ public partial class DrawableChannel : CompositeDrawable
                             RelativeSizeAxes = Axes.X,
                             AutoSizeAxes = Axes.Y,
                             Direction = FillDirection.Vertical,
-                            Spacing = new osuTK.Vector2(0, 2),
+                            Spacing = new Vector2(0, 2),
                             Padding = new MarginPadding { Vertical = 8 },
                         }
                     }
                 },
                 new Drawable[]
                 {
-                    textBox = new KumiTextBox
+                    textBox = new ChannelTextBox
                     {
                         RelativeSizeAxes = Axes.X,
                         Height = 32,
                         PlaceholderText = "Message #Kumi",
                         Padding = new MarginPadding { Bottom = 8 },
+                        ReleaseFocusOnCommit = false
                     }
                 }
             }
