@@ -10,9 +10,9 @@ namespace Kumi.Game.Graphics.Sprites;
 public partial class AvatarSprite : Sprite
 {
     private readonly IAccount? user;
-    
+
     [Resolved]
-    private IAPIConnectionProvider api { get; set;  }
+    private IAPIConnectionProvider api { get; set; } = null!;
 
     public AvatarSprite(IAccount? user)
     {

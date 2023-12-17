@@ -60,7 +60,8 @@ public partial class ChatOverlay : KumiFocusedOverlayContainer
                     {
                         new Drawable[]
                         {
-                            new ChannelListing()
+                            new ChannelListing(),
+                            new DrawableChannel()
                         }
                     }
                 }
