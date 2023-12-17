@@ -1,6 +1,5 @@
 ﻿using System.Collections.Specialized;
 using System.Diagnostics;
-using Kumi.Game.Charts;
 using Kumi.Game.Charts.Timings;
 using osu.Framework.Bindables;
 
@@ -10,12 +9,12 @@ public partial class TimingPointsPart : TimelinePart<DrawableTimingPoint>
 {
     private readonly IBindableList<TimingPoint> timingPoints = new BindableList<TimingPoint>();
     
-    protected override void LoadChart(IChart chart)
+    protected override void LoadChart(EditorChart chart)
     {
         base.LoadChart(chart);
         
         timingPoints.UnbindAll();
-        timingPoints.BindTo(((Chart) chart).TimingPoints);
+        timingPoints.BindTo(chart.TimingPointHandler.TimingPoints);
         timingPoints.BindCollectionChanged((_, args) =>
         {
             switch (args.Action)
