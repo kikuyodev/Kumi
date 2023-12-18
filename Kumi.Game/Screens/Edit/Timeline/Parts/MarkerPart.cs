@@ -1,5 +1,4 @@
-﻿using Kumi.Game.Charts;
-using Kumi.Game.Graphics;
+﻿using Kumi.Game.Graphics;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
@@ -54,7 +53,7 @@ public partial class MarkerPart : TimelinePart
         marker.X = (float) clock.CurrentTime;
     }
 
-    protected override void LoadChart(IChart chart)
+    protected override void LoadChart(EditorChart chart)
     {
     }
 

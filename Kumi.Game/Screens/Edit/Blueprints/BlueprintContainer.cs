@@ -16,7 +16,7 @@ public abstract partial class BlueprintContainer : CompositeDrawable
 {
     private readonly Dictionary<Note, SelectionBlueprint<Note>> blueprintMap = new Dictionary<Note, SelectionBlueprint<Note>>();
 
-    public NoteOrderedSelectionContainer SelectionBlueprints { get; private set; } = null!;
+    public Container<SelectionBlueprint<Note>> SelectionBlueprints { get; private set; } = null!;
 
     public SelectionHandler SelectionHandler { get; private set; } = null!;
 
@@ -27,7 +27,7 @@ public abstract partial class BlueprintContainer : CompositeDrawable
 
     [Resolved]
     private EditorChart editorChart { get; set; } = null!;
-    
+
     [Resolved]
     private BindableBeatDivisor divisor { get; set; } = null!;
 
@@ -67,18 +67,24 @@ public abstract partial class BlueprintContainer : CompositeDrawable
             }
         };
 
-        SelectionHandler = new SelectionHandler();
+        SelectionHandler = CreateSelectionHandler();
         SelectionHandler.SelectedItems.BindTo(SelectedItems);
 
         AddRangeInternal(new Drawable[]
         {
             SelectionHandler,
-            SelectionBlueprints = new NoteOrderedSelectionContainer
+            SelectionBlueprints = CreateSelectionBlueprintContainer().With(b =>
             {
-                RelativeSizeAxes = Axes.Both
-            }
+                b.RelativeSizeAxes = Axes.Both;
+            })
         });
     }
+    
+    protected virtual SelectionHandler CreateSelectionHandler()
+        => new SelectionHandler();
+    
+    protected virtual Container<SelectionBlueprint<Note>> CreateSelectionBlueprintContainer()
+        => new NoteOrderedSelectionContainer();
 
     protected virtual void AddBlueprintFor(Note note)
     {
@@ -317,11 +323,14 @@ public abstract partial class BlueprintContainer : CompositeDrawable
         var targetTime = composer.Playfield!.TimeAtScreenSpacePosition(e.ScreenSpaceMousePosition);
         targetTime = composer.Playfield.SnapTime(targetTime, divisor.Value);
         var offset = targetTime - BlueprintPivot?.Item.StartTime ?? targetTime;
-        
 
         editorChart.PerformOnSelection(n =>
         {
             n.StartTime += offset;
+
+            if (n is IHasEndTime endTime)
+                endTime.EndTime += offset;
+
             editorChart.Update(n);
         });
 

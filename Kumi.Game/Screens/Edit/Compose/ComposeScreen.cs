@@ -5,6 +5,7 @@ using Kumi.Game.Extensions;
 using Kumi.Game.Gameplay;
 using Kumi.Game.Gameplay.Drawables;
 using Kumi.Game.Graphics.Containers;
+using Kumi.Game.Screens.Edit.Timeline;
 using Kumi.Game.Utils;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
@@ -102,6 +103,9 @@ public partial class ComposeScreen : EditorScreenWithTimeline
 
     protected override Drawable CreateMainContent()
         => playfieldContainer = new Container { RelativeSizeAxes = Axes.Both };
+
+    protected override Drawable CreateTimelineContent()
+        => new TimelineBlueprintContainer();
 
     public override void Copy(bool cut)
     {

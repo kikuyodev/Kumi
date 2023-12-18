@@ -18,7 +18,10 @@ public partial class EditorChart : TransactionalCommitComponent, IChart
     public readonly Bindable<Note?> PlacementNote = new Bindable<Note?>();
 
     private readonly ChartInfo chartInfo;
+
     public readonly IChart PlayableChart;
+    
+    public BindableInt PreviewTime { get; }
 
     private readonly Dictionary<Note, Bindable<double>> startTimeBindable = new Dictionary<Note, Bindable<double>>();
 
@@ -29,6 +32,14 @@ public partial class EditorChart : TransactionalCommitComponent, IChart
 
         foreach (var note in Notes)
             trackStartTime((Note) note);
+
+        PreviewTime = new BindableInt(this.chartInfo.Metadata.PreviewTime);
+        PreviewTime.BindValueChanged(s =>
+        {
+            BeginChange();
+            this.chartInfo.Metadata.PreviewTime = s.NewValue;
+            EndChange();
+        });
     }
 
     public ChartInfo ChartInfo
