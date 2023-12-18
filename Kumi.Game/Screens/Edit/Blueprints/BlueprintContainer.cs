@@ -27,7 +27,7 @@ public abstract partial class BlueprintContainer : CompositeDrawable
 
     [Resolved]
     private EditorChart editorChart { get; set; } = null!;
-    
+
     [Resolved]
     private BindableBeatDivisor divisor { get; set; } = null!;
 
@@ -317,11 +317,14 @@ public abstract partial class BlueprintContainer : CompositeDrawable
         var targetTime = composer.Playfield!.TimeAtScreenSpacePosition(e.ScreenSpaceMousePosition);
         targetTime = composer.Playfield.SnapTime(targetTime, divisor.Value);
         var offset = targetTime - BlueprintPivot?.Item.StartTime ?? targetTime;
-        
 
         editorChart.PerformOnSelection(n =>
         {
             n.StartTime += offset;
+
+            if (n is IHasEndTime endTime)
+                endTime.EndTime += offset;
+
             editorChart.Update(n);
         });
 
