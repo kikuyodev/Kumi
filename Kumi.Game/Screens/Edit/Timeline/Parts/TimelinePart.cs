@@ -16,8 +16,11 @@ public partial class TimelinePart<T> : Container<T>
     where T : Drawable
 {
     private readonly IBindable<WorkingChart> chart = new Bindable<WorkingChart>();
-    
+
     protected readonly IBindable<Track> Track = new Bindable<Track>();
+
+    [Resolved]
+    protected EditorChart EditorChart { get; private set; } = null!;
 
     private readonly Container<T> content;
 
@@ -26,7 +29,7 @@ public partial class TimelinePart<T> : Container<T>
     public TimelinePart(Container<T>? content = null)
     {
         this.content = content ?? new Container<T> { RelativeSizeAxes = Axes.Both };
-        
+
         AddInternal(this.content);
 
         chart.ValueChanged += _ => updateRelativeChildSize();
@@ -37,8 +40,8 @@ public partial class TimelinePart<T> : Container<T>
     private void load(IBindable<WorkingChart> chart, EditorClock clock)
     {
         this.chart.BindTo(chart);
-        LoadChart(chart.Value.Chart);
-        
+        LoadChart(EditorChart);
+
         Track.BindTo(clock.Track);
     }
 
@@ -51,7 +54,7 @@ public partial class TimelinePart<T> : Container<T>
             Schedule(updateRelativeChildSize);
     }
 
-    protected virtual void LoadChart(IChart chart)
+    protected virtual void LoadChart(EditorChart editorChart)
     {
         content.Clear();
     }

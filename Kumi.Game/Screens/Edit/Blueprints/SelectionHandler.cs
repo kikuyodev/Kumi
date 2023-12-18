@@ -87,7 +87,7 @@ public partial class SelectionHandler : CompositeDrawable, IKeyBindingHandler<Pl
         selectedBlueprints.Remove(blueprint);
     }
 
-    internal bool MouseDownSelectionRequested(SelectionBlueprint<Note> blueprint, MouseButtonEvent e)
+    internal virtual bool MouseDownSelectionRequested(SelectionBlueprint<Note> blueprint, MouseButtonEvent e)
     {
         if (e is { ShiftPressed: true, Button: MouseButton.Left } && !blueprint.IsSelected)
         {
@@ -103,7 +103,7 @@ public partial class SelectionHandler : CompositeDrawable, IKeyBindingHandler<Pl
         return true;
     }
 
-    internal bool MouseUpSelectionRequested(SelectionBlueprint<Note> blueprint, MouseButtonEvent e)
+    internal virtual bool MouseUpSelectionRequested(SelectionBlueprint<Note> blueprint, MouseButtonEvent e)
     {
         if (blueprint.IsSelected)
         {
