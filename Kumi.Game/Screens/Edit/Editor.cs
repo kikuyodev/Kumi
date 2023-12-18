@@ -7,6 +7,7 @@ using osu.Framework.Graphics;
 using osu.Framework.Input;
 using osu.Framework.Input.Bindings;
 using osu.Framework.Input.Events;
+using osu.Framework.Logging;
 using osu.Framework.Screens;
 using osuTK.Input;
 
@@ -22,6 +23,9 @@ public partial class Editor : ScreenWithChartBackground, IKeyBindingHandler<Plat
 
     protected override IReadOnlyDependencyContainer CreateChildDependencies(IReadOnlyDependencyContainer parent)
         => dependencies = new DependencyContainer(base.CreateChildDependencies(parent));
+    
+    [Resolved]
+    private ChartManager chartManager { get; set; } = null!;
 
     private EditorClock clock = null!;
     private BindableBeatDivisor beatDivisor = null!;
@@ -144,6 +148,13 @@ public partial class Editor : ScreenWithChartBackground, IKeyBindingHandler<Plat
             case PlatformAction.Paste:
                 Paste();
                 return true;
+            
+            case PlatformAction.Save:
+                if (e.Repeat)
+                    return false;
+                
+                save();
+                return true;
         }
 
         return false;
@@ -195,6 +206,21 @@ public partial class Editor : ScreenWithChartBackground, IKeyBindingHandler<Plat
                 seek(e, 1);
 
             scrollAccumulation = scrollAccumulation < 0 ? Math.Min(0, scrollAccumulation + 1d) : Math.Max(0, scrollAccumulation - 1d);
+        }
+
+        return true;
+    }
+
+    private bool save()
+    {
+        try
+        {
+            chartManager.Save(editorChart.ChartInfo, editorChart.PlayableChart);
+        }
+        catch (Exception e)
+        {
+            Logger.Error(e, e.Message);
+            return false;
         }
 
         return true;

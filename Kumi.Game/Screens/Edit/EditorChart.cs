@@ -18,7 +18,8 @@ public partial class EditorChart : TransactionalCommitComponent, IChart
     public readonly Bindable<Note?> PlacementNote = new Bindable<Note?>();
 
     private readonly ChartInfo chartInfo;
-    private readonly IChart playableChart;
+
+    public readonly IChart PlayableChart;
     
     public BindableInt PreviewTime { get; }
 
@@ -27,7 +28,7 @@ public partial class EditorChart : TransactionalCommitComponent, IChart
     public EditorChart(IChart playableChart, ChartInfo? chartInfo = null)
     {
         this.chartInfo = chartInfo ?? playableChart.ChartInfo;
-        this.playableChart = playableChart;
+        PlayableChart = playableChart;
 
         foreach (var note in Notes)
             trackStartTime((Note) note);
@@ -48,13 +49,13 @@ public partial class EditorChart : TransactionalCommitComponent, IChart
     }
 
     public ChartMetadata Metadata => chartInfo.Metadata;
-    public IReadOnlyList<IEvent> Events => playableChart.Events;
-    public IReadOnlyList<ITimingPoint> TimingPoints => playableChart.TimingPoints;
-    public IReadOnlyList<INote> Notes => playableChart.Notes;
+    public IReadOnlyList<IEvent> Events => PlayableChart.Events;
+    public IReadOnlyList<ITimingPoint> TimingPoints => PlayableChart.TimingPoints;
+    public IReadOnlyList<INote> Notes => PlayableChart.Notes;
     
-    public TimingPointHandler TimingPointHandler => ((Chart) playableChart).TimingHandler;
+    public TimingPointHandler TimingPointHandler => ((Chart) PlayableChart).TimingHandler;
 
-    private IList mutableNotes => (IList) playableChart.Notes;
+    private IList mutableNotes => (IList) PlayableChart.Notes;
 
     private readonly List<Note> batchPendingInsertions = new List<Note>();
     private readonly List<Note> batchPendingRemovals = new List<Note>();
@@ -73,7 +74,7 @@ public partial class EditorChart : TransactionalCommitComponent, IChart
 
     public void Add(Note note)
     {
-        var insertionIndex = findInsertionIndex(playableChart.Notes, note.StartTime);
+        var insertionIndex = findInsertionIndex(PlayableChart.Notes, note.StartTime);
         Insert(insertionIndex + 1, note);
     }
     
@@ -181,7 +182,7 @@ public partial class EditorChart : TransactionalCommitComponent, IChart
     }
 
     private void processNote(Note note)
-        => note.ApplyChartDefaults(playableChart);
+        => note.ApplyChartDefaults(PlayableChart);
 
     private void trackStartTime(Note note)
     {
@@ -190,7 +191,7 @@ public partial class EditorChart : TransactionalCommitComponent, IChart
         {
             mutableNotes.Remove(note);
 
-            var insertionIndex = findInsertionIndex(playableChart.Notes, note.StartTime);
+            var insertionIndex = findInsertionIndex(PlayableChart.Notes, note.StartTime);
             mutableNotes.Insert(insertionIndex + 1, note);
 
             Update(note);
