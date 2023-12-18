@@ -37,6 +37,14 @@ public partial class EditorBlueprintContainer : BlueprintContainer
         }
     }
 
+    protected override void AddBlueprintFor(Note note)
+    {
+        if (note is BarLine)
+            return;
+        
+        base.AddBlueprintFor(note);
+    }
+
     private void updateSelectionLifetime(object? sender, NotifyCollectionChangedEventArgs args)
     {
         if (args.NewItems != null)

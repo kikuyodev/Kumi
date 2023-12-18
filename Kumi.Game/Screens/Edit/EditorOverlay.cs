@@ -134,7 +134,7 @@ public partial class EditorOverlay : Container
                     }
                 }
             },
-            new TopBarTimeline
+            new BottomBarTimeline
             {
                 Anchor = Anchor.BottomLeft,
                 Origin = Anchor.BottomLeft

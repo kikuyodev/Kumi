@@ -8,7 +8,7 @@ using osuTK;
 
 namespace Kumi.Game.Screens.Edit.Timeline;
 
-public partial class TopBarTimeline : GridContainer
+public partial class BottomBarTimeline : GridContainer
 {
     private const float padding = 8;
     
@@ -17,7 +17,7 @@ public partial class TopBarTimeline : GridContainer
 
     private SpriteText timeText = null!;
 
-    public TopBarTimeline()
+    public BottomBarTimeline()
     {
         RelativeSizeAxes = Axes.X;
         Height = 24;

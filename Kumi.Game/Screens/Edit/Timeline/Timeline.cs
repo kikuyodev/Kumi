@@ -20,6 +20,8 @@ public partial class Timeline : ZoomableScrollContainer
     
     public readonly BindableBool WaveformVisible = new BindableBool(true);
     
+    private readonly Drawable screenContent;
+    
     [Resolved]
     private EditorClock editorClock { get; set; } = null!;
 
@@ -29,8 +31,10 @@ public partial class Timeline : ZoomableScrollContainer
     private bool trackWasPlaying;
     private float defaultTimelineZoom;
 
-    public Timeline()
+    public Timeline(Drawable screenContent)
     {
+        this.screenContent = screenContent;
+        
         RelativeSizeAxes = Axes.X;
         Height = HEIGHT;
 
@@ -41,7 +45,7 @@ public partial class Timeline : ZoomableScrollContainer
 
     private WaveformGraph waveform = null!;
 
-    private TimelineTickDisplay ticks;
+    private TimelineTickDisplay ticks = null!;
 
     private Container mainContent = null!;
 
@@ -67,7 +71,7 @@ public partial class Timeline : ZoomableScrollContainer
                 {
                     Vertical = 4
                 },
-                Children = new Drawable[]
+                Children = new[]
                 {
                     waveform = new WaveformGraph
                     {
@@ -77,7 +81,8 @@ public partial class Timeline : ZoomableScrollContainer
                         MidColour = Colours.BLUE_LIGHT,
                         HighColour = Colours.BLUE_LIGHTER
                     },
-                    ticks = new TimelineTickDisplay()
+                    ticks = new TimelineTickDisplay(),
+                    screenContent
                 }
             }
         });

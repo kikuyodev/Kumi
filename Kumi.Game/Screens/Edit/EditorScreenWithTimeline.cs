@@ -27,8 +27,8 @@ public abstract partial class EditorScreenWithTimeline : EditorScreen
                 },
                 Content = new[]
                 {
-                    new[] { createTimelineContent() },
-                    new[] { createMainContent() }
+                    new[] { loadTimelineContent() },
+                    new[] { loadMainContent() }
                 }
             };    
         }
@@ -40,15 +40,13 @@ public abstract partial class EditorScreenWithTimeline : EditorScreen
                 Children = new[]
                 {
                     CreateMainContent(),
-                    createTimelineContent()
+                    loadTimelineContent()
                 }
             };
         }
     }
-
-    protected abstract Drawable CreateMainContent();
     
-    private Drawable createMainContent()
+    private Drawable loadMainContent()
     {
         MainContent = new Container
         {
@@ -65,7 +63,7 @@ public abstract partial class EditorScreenWithTimeline : EditorScreen
         return MainContent;
     }
 
-    private Drawable createTimelineContent()
+    private Drawable loadTimelineContent()
     {
         TimelineContent = new Container
         {
@@ -74,8 +72,13 @@ public abstract partial class EditorScreenWithTimeline : EditorScreen
             Padding = new MarginPadding { Top = 12 + EditorOverlay.TOP_BAR_HEIGHT + PADDING, Horizontal = 12 },
         };
 
-        Scheduler.AddOnce(() => LoadComponentAsync(new TimelineArea(), TimelineContent.Add));
+        Scheduler.AddOnce(() => LoadComponentAsync(new TimelineArea(CreateTimelineContent()), TimelineContent.Add));
 
         return TimelineContent;
     }
+
+    protected abstract Drawable CreateMainContent();
+
+    protected virtual Drawable CreateTimelineContent()
+        => new Container();
 }
