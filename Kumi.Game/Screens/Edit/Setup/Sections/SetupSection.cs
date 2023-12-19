@@ -1,4 +1,5 @@
 ﻿using Kumi.Game.Graphics;
+using Kumi.Game.Graphics.UserInterface;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
@@ -20,6 +21,19 @@ public partial class SetupSection : FillFlowContainer
 
         AutoSizeDuration = 200;
         AutoSizeEasing = Easing.OutQuint;
+    }
+
+    protected T CreateTextBox<T>(string text)
+        where T : KumiTextBox, new()
+    {
+        return new T
+        {
+            RelativeSizeAxes = Axes.X,
+            Height = 30,
+            Text = text,
+            CommitOnFocusLost = true,
+            TabbableContentContainer = this
+        };
     }
     
     protected Drawable CreateLabelledComponent(Drawable component, string title, Action<TextFlowContainer>? description = null)

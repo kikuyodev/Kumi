@@ -27,44 +27,32 @@ public partial class MetadataSection : SetupSection
 
         AddRange(new[]
         {
-            CreateLabelledComponent(titleTextBox = createDefaultTextBox<KumiTextBox>(
+            CreateLabelledComponent(titleTextBox = CreateTextBox<KumiTextBox>(
                                         !string.IsNullOrEmpty(metadata.Title) ? metadata.Title : metadata.TitleRomanised), "Title"),
-            titleRomanisedLabel = CreateLabelledComponent(titleRomanisedTextBox = createDefaultTextBox<RomanisedTextBox>(
+            titleRomanisedLabel = CreateLabelledComponent(titleRomanisedTextBox = CreateTextBox<RomanisedTextBox>(
                                                               !string.IsNullOrEmpty(metadata.TitleRomanised)
                                                                   ? metadata.TitleRomanised
                                                                   : MetadataUtils.StripNonRomanisedCharacters(metadata.Title)), "Title Romanised"),
 
-            CreateLabelledComponent(artistTextBox = createDefaultTextBox<KumiTextBox>(
+            CreateLabelledComponent(artistTextBox = CreateTextBox<KumiTextBox>(
                                         !string.IsNullOrEmpty(metadata.Artist) ? metadata.Artist : metadata.ArtistRomanised), "Artist"),
-            artistRomanisedLabel = CreateLabelledComponent(artistRomanisedTextBox = createDefaultTextBox<RomanisedTextBox>(
+            artistRomanisedLabel = CreateLabelledComponent(artistRomanisedTextBox = CreateTextBox<RomanisedTextBox>(
                                                               !string.IsNullOrEmpty(metadata.ArtistRomanised)
                                                                   ? metadata.ArtistRomanised
                                                                   : MetadataUtils.StripNonRomanisedCharacters(metadata.Artist)), "Artist Romanised"),
             
-            CreateLabelledComponent(sourceTextBox = createDefaultTextBox<KumiTextBox>(metadata.Source), "Source"),
-            CreateLabelledComponent(genreTextBox = createDefaultTextBox<RomanisedTextBox>(metadata.Genre), "Genre"),
-            CreateLabelledComponent(tagsTextBox = createDefaultTextBox<KumiTextBox>(metadata.Tags), "Tags"),
+            CreateLabelledComponent(sourceTextBox = CreateTextBox<KumiTextBox>(metadata.Source), "Source"),
+            CreateLabelledComponent(genreTextBox = CreateTextBox<RomanisedTextBox>(metadata.Genre), "Genre"),
+            CreateLabelledComponent(tagsTextBox = CreateTextBox<KumiTextBox>(metadata.Tags), "Tags"),
         });
-
-        foreach (var textBox in Children.OfType<KumiTextBox>())
-            textBox.OnCommit += onCommit;
-    }
-
-    private T createDefaultTextBox<T>(string text)
-        where T : KumiTextBox, new()
-    {
-        return new T
-        {
-            RelativeSizeAxes = Axes.X,
-            Height = 30,
-            Text = text,
-            TabbableContentContainer = this
-        };
     }
 
     protected override void LoadComplete()
     {
         base.LoadComplete();
+
+        foreach (var textBox in new[] { titleTextBox, titleRomanisedTextBox, artistTextBox, artistRomanisedTextBox, sourceTextBox, genreTextBox, tagsTextBox })
+            textBox.OnCommit += onCommit;
         
         titleTextBox.Current.BindValueChanged(e => transferIfRomanised(e.NewValue, titleRomanisedTextBox));
         artistTextBox.Current.BindValueChanged(e => transferIfRomanised(e.NewValue, artistRomanisedTextBox));

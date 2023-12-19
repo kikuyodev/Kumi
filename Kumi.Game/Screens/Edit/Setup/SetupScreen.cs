@@ -27,7 +27,7 @@ public partial class SetupScreen : EditorScreen
             Horizontal = 12
         };
 
-        InternalChild = new Container
+        Content.Child = new Container
         {
             RelativeSizeAxes = Axes.Both,
             Masking = true,
@@ -75,6 +75,7 @@ public partial class SetupScreen : EditorScreen
                                         Spacing = new Vector2(0, 32),
                                         Children = new Drawable[]
                                         {
+                                            new ResourcesSection(),
                                             new MetadataSection()
                                         }
                                     }

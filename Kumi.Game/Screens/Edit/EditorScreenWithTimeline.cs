@@ -17,7 +17,7 @@ public abstract partial class EditorScreenWithTimeline : EditorScreen
     {
         if (pushContent)
         {
-            InternalChild = new GridContainer
+            Content.Child = new GridContainer
             {
                 RelativeSizeAxes = Axes.Both,
                 RowDimensions = new []
@@ -34,7 +34,7 @@ public abstract partial class EditorScreenWithTimeline : EditorScreen
         }
         else
         {
-            InternalChild = new Container
+            Content.Child = new Container
             {
                 RelativeSizeAxes = Axes.Both,
                 Children = new[]

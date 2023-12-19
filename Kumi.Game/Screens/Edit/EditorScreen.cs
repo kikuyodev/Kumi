@@ -12,7 +12,7 @@ public abstract partial class EditorScreen : Screen
     [Resolved]
     protected EditorChart EditorChart { get; private set; } = null!;
     
-    private readonly Container content;
+    protected readonly Container Content;
 
     public readonly EditorScreenMode Type;
 
@@ -23,7 +23,7 @@ public abstract partial class EditorScreen : Screen
         Anchor = Anchor.Centre;
         Origin = Anchor.Centre;
 
-        InternalChild = content = new PopoverContainer { RelativeSizeAxes = Axes.Both };
+        InternalChild = Content = new PopoverContainer { RelativeSizeAxes = Axes.Both };
     }
     
     public readonly BindableBool CanCopy = new BindableBool();

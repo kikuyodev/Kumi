@@ -30,11 +30,9 @@ public partial class ChartSection : SetupSection
 
         AddRange(new[]
         {
-            CreateLabelledComponent(creatorTextBox = createDefaultTextBox<KumiTextBox>(Chart.Metadata.Creator?.Username ?? string.Empty), "Creator", f =>
-            {
-                f.AddText("Separate creators should by separated by commas (,).");
-            }),
-            CreateLabelledComponent(difficultyTextBox = createDefaultTextBox<KumiTextBox>(Chart.ChartInfo.DifficultyName), "Difficulty name"),
+            CreateLabelledComponent(creatorTextBox = CreateTextBox<KumiTextBox>(Chart.Metadata.Creator?.Username ?? string.Empty), "Creator", f
+                => f.AddText("Separate creators should by separated by commas (,).")),
+            CreateLabelledComponent(difficultyTextBox = CreateTextBox<KumiTextBox>(Chart.ChartInfo.DifficultyName), "Difficulty name"),
             CreateLabelledComponent(scrollSpeedSlider = new EditorSliderBar<float>
             {
                 RelativeSizeAxes = Axes.X,
@@ -42,28 +40,14 @@ public partial class ChartSection : SetupSection
                 BarHeight = 30,
                 BackgroundColour = Colours.Gray(0.1f),
                 BarColour = Colours.BLUE_ACCENT
-            }, "Scroll speed", f =>
-            {
-                f.AddText("Initial scroll speed, every inherited timing point will be relative to this value.");
-            })
+            }, "Scroll speed", f
+                => f.AddText("Initial scroll speed, every inherited timing point will be relative to this value."))
         });
-        
-        foreach (var textBox in Children.OfType<KumiTextBox>())
-            textBox.OnCommit += onCommit;
-        
-        scrollSpeedSlider.Current.BindValueChanged(onScrollSpeedChanged, true);
-    }
 
-    private T createDefaultTextBox<T>(string text)
-        where T : KumiTextBox, new()
-    {
-        return new T
-        {
-            RelativeSizeAxes = Axes.X,
-            Height = 30,
-            Text = text,
-            TabbableContentContainer = this
-        };
+        foreach (var textBox in new[] { creatorTextBox, difficultyTextBox })
+            textBox.OnCommit += onCommit;
+
+        scrollSpeedSlider.Current.BindValueChanged(onScrollSpeedChanged, true);
     }
 
     private void onCommit(TextBox sender, bool newText)
@@ -71,21 +55,21 @@ public partial class ChartSection : SetupSection
         if (!newText)
             return;
 
-        Scheduler.AddOnce(updateMetadata);
-    }
-    
-    private void onScrollSpeedChanged(ValueChangedEvent<float> e)
-    {
-        Scheduler.AddOnce(updateMetadata);
+        Scheduler.AddOnce(updateChart);
     }
 
-    private void updateMetadata()
+    private void onScrollSpeedChanged(ValueChangedEvent<float> e)
+    {
+        Scheduler.AddOnce(updateChart);
+    }
+
+    private void updateChart()
     {
         Chart.Metadata.Creator ??= new RealmAccount();
         Chart.Metadata.Creator.Username = creatorTextBox.Text;
 
         Chart.ChartInfo.DifficultyName = difficultyTextBox.Text;
-        
+
         Chart.ChartInfo.InitialScrollSpeed = scrollSpeed.Value;
 
         Chart.SaveState();
