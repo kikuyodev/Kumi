@@ -30,7 +30,7 @@ public partial class TimelineTickDisplay : TimelinePart<DrawableTick>
 
     public TimelineTickDisplay()
     {
-        RelativeSizeAxes = Axes.Both;
+        RelativeSizeAxes = Axes.X;
     }
 
     [BackgroundDependencyLoader]
@@ -108,7 +108,7 @@ public partial class TimelineTickDisplay : TimelinePart<DrawableTick>
                     var tick = getNextDrawableTick();
                     tick.X = xPos;
                     tick.Width = DrawableTick.TICK_MAX_WIDTH * size.X;
-                    tick.Height = size.Y;
+                    tick.Height = size.Y * 0.75f;
                     tick.Colour = colour;
                 }
 
