@@ -10,6 +10,8 @@ namespace Kumi.Game.Screens.Edit.Timeline;
 
 public partial class BottomBarTimeline : GridContainer
 {
+    public const float HEIGHT = 24;
+    
     private const float padding = 8;
     
     [Resolved]
@@ -20,7 +22,7 @@ public partial class BottomBarTimeline : GridContainer
     public BottomBarTimeline()
     {
         RelativeSizeAxes = Axes.X;
-        Height = 24;
+        Height = HEIGHT;
 
         ColumnDimensions = new[]
         {

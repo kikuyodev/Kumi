@@ -130,7 +130,7 @@ public partial class EditorSliderBar<T> : SliderBar<T>
     {
         barColouredContainer.ResizeWidthTo(NormalizedValue, 200, Easing.OutQuint);
 
-        valueText.Text = FormatValue(value);
+        valueText.Text = FormatValue(Convert.ToSingle(CurrentNumber.Value));
         valueText.MoveToX(NormalizedValue, 200, Easing.OutQuint);
     }
 

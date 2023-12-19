@@ -116,6 +116,11 @@ public partial class Editor : ScreenWithChartBackground, IKeyBindingHandler<Plat
         clock.ProcessFrame();
     }
 
+    public void PushScreen(EditorScreen screen)
+    {
+        LoadComponentAsync(screen, s => screenStack.Push(s));
+    }
+
     public void Undo() => historyHandler.RestoreState(-1);
     public void Redo() => historyHandler.RestoreState(1);
 
