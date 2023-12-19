@@ -16,6 +16,9 @@ public partial class TimelineTimingPoint : CompositeDrawable
         RelativeSizeAxes = Axes.Y;
         AutoSizeAxes = Axes.X;
 
+        Anchor = Anchor.BottomLeft;
+        Origin = Anchor.BottomCentre;
+
         X = (float) point.StartTime;
         
         AddInternal(new TimingPointPiece(Point));

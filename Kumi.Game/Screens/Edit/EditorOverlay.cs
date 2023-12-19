@@ -4,6 +4,7 @@ using Kumi.Game.Screens.Edit.Compose;
 using Kumi.Game.Screens.Edit.Menus;
 using Kumi.Game.Screens.Edit.Setup;
 using Kumi.Game.Screens.Edit.Timeline;
+using Kumi.Game.Screens.Edit.Timing;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
@@ -161,6 +162,9 @@ public partial class EditorOverlay : Container
                     break;
                 case EditorScreenMode.Setup:
                     newScreen = new SetupScreen();
+                    break;
+                case EditorScreenMode.Timing:
+                    newScreen = new TimingScreen();
                     break;
             }
 

@@ -42,7 +42,7 @@ public partial class ComposeScreen : EditorScreenWithTimeline
     public virtual bool CursorInPlacementArea => Playfield?.ReceivePositionalInputAt(inputManager?.CurrentState.Mouse.Position ?? Vector2.Zero) ?? false;
 
     public ComposeScreen()
-        : base(EditorScreenMode.Compose, false)
+        : base(EditorScreenMode.Compose)
     {
     }
 
