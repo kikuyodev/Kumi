@@ -5,6 +5,7 @@ using Kumi.Game.Input;
 using Kumi.Game.Input.Bindings;
 using Kumi.Game.Online;
 using Kumi.Game.Online.API;
+using Kumi.Game.Overlays;
 using Kumi.Game.Scoring;
 using Kumi.Game.Screens;
 using Kumi.Resources;
@@ -17,12 +18,16 @@ using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Textures;
 using osu.Framework.IO.Stores;
 using osu.Framework.Platform;
+using osu.Framework.Threading;
 using osuTK;
 
 namespace Kumi.Game;
 
 public partial class KumiGameBase : osu.Framework.Game, ICanAcceptFiles
 {
+    private readonly List<string> importTasks = new List<string>();
+    private ScheduledDelegate? importTask;
+    
     protected Storage? Storage { get; set; }
 
     private RealmAccess realm = null!;
@@ -35,12 +40,14 @@ public partial class KumiGameBase : osu.Framework.Game, ICanAcceptFiles
     protected Colours GameColours { get; private set; } = null!;
     protected IAPIConnectionProvider API { get; set; } = null!;
     protected Bindable<WorkingChart> Chart { get; private set; } = null!;
+    protected MusicController MusicController { get; private set; } = null!;
+    
     protected KumiScreenStack ScreenStack = null!;
     protected override Container<Drawable> Content => content;
 
     protected DependencyContainer DependencyContainer = null!;
     
-    private List<ICanAcceptFiles> fileAcceptors = new();
+    private readonly List<ICanAcceptFiles> fileAcceptors = new List<ICanAcceptFiles>();
 
     protected override IReadOnlyDependencyContainer CreateChildDependencies(IReadOnlyDependencyContainer parent)
     {
@@ -108,6 +115,9 @@ public partial class KumiGameBase : osu.Framework.Game, ICanAcceptFiles
                 }
             }
         });
+        
+        Add(MusicController = new MusicController());
+        DependencyContainer.CacheAs(MusicController);
 
         fileAcceptors.Add(chartManager);
 
@@ -117,25 +127,6 @@ public partial class KumiGameBase : osu.Framework.Game, ICanAcceptFiles
         keybindStore.AssignDefaultsFor(new GameplayKeybindContainer());
         keybindStore.RegisterDefaults();
     }
-
-    public async Task Import(params string[] paths)
-    {
-        if (paths.Length == 0)
-            return;
-        
-        foreach (var path in paths)
-        {   
-            var file = new FileInfo(path);
-            var acceptor = fileAcceptors.FirstOrDefault(a => a.HandledFileExtensions.Contains(file.Extension));
-            if (acceptor == null)
-                continue;
-            
-            await acceptor.Import(path);
-        }
-    }
-    public Task Import(ImportTask[] tasks) => Task.WhenAll(tasks.Select(t => Import(t.Path)));
-    
-    public IEnumerable<string> HandledFileExtensions => fileAcceptors.SelectMany(a => a.HandledFileExtensions);
 
     private void loadFonts()
     {
@@ -180,12 +171,63 @@ public partial class KumiGameBase : osu.Framework.Game, ICanAcceptFiles
         AddFont(Resources, @"Fonts/Montserrat/Montserrat-BlackItalic");
     }
 
+    public async Task Import(params string[] paths)
+    {
+        if (paths.Length == 0)
+            return;
+        
+        foreach (var path in paths)
+        {   
+            var file = new FileInfo(path);
+            var acceptor = fileAcceptors.FirstOrDefault(a => a.HandledFileExtensions.Contains(file.Extension));
+            if (acceptor == null)
+                continue;
+            
+            await acceptor.Import(path);
+        }
+    }
+    public Task Import(ImportTask[] tasks) => Task.WhenAll(tasks.Select(t => Import(t.Path)));
+    
+    public IEnumerable<string> HandledFileExtensions => fileAcceptors.SelectMany(a => a.HandledFileExtensions);
+    
+    public void RegisterFileAcceptor(ICanAcceptFiles acceptor) => fileAcceptors.Add(acceptor);
+    
+    public void UnregisterFileAcceptor(ICanAcceptFiles acceptor) => fileAcceptors.Remove(acceptor);
+    
+    private void handleDragDropPath(string path)
+    {
+        lock (importTasks)
+            importTasks.Add(path);
+        
+        if (importTask != null)
+            importTask.Cancel();
+
+        importTask = Scheduler.AddDelayed(handlePendingImports, 1000);
+    }
+    
+    private void handlePendingImports()
+    {
+        lock (importTasks)
+        {
+            if (importTasks.Count == 0)
+                return;
+
+            Import(importTasks.ToArray()).ConfigureAwait(false);
+            importTasks.Clear();
+        }
+    }
+
     public override void SetHost(GameHost host)
     {
         base.SetHost(host);
 
         Storage ??= host.Storage;
         host.ExceptionThrown += onExceptionThrown;
+
+        if (host.Window != null)
+        {
+            host.Window.DragDrop += handleDragDropPath;
+        }
     }
 
     private bool onExceptionThrown(Exception _)

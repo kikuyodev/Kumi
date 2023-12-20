@@ -105,15 +105,25 @@ public partial class Editor : ScreenWithChartBackground, IKeyBindingHandler<Plat
         clock.Stop();
     }
 
+    protected override void Update()
+    {
+        base.Update();
+        clock.ProcessFrame();
+    }
+
     private void onTrackChanged(WorkingChart working)
     {
         clock.ChangeSource(working.Track);
     }
 
-    protected override void Update()
+    public void PushScreen(EditorScreen screen)
     {
-        base.Update();
-        clock.ProcessFrame();
+        LoadComponentAsync(screen, s => screenStack.Push(s));
+    }
+
+    public void RefreshBackground()
+    {
+        workingChart.TriggerChange();
     }
 
     public void Undo() => historyHandler.RestoreState(-1);
