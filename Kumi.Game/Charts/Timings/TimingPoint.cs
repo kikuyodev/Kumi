@@ -1,4 +1,5 @@
 ﻿using Kumi.Game.IO;
+using osu.Framework.Bindables;
 
 namespace Kumi.Game.Charts.Timings;
 
@@ -12,11 +13,42 @@ public class TimingPoint : ITimingPoint, IComparablyEquatable<TimingPoint>
     /// </summary>
     public const char DELIMITER = ',';
 
-    public TimingPointType PointType { get; set; }
-    public TimingFlags Flags { get; set; }
-    public int Volume { get; set; }
-    public float RelativeScrollSpeed { get; set; }
-    public double StartTime { get; }
+    public TimingPointType PointType
+    {
+        get => PointTypeBindable.Value;
+        set => PointTypeBindable.Value = value;
+    }
+
+    public TimingFlags Flags
+    {
+        get => FlagsBindable.Value;
+        set => FlagsBindable.Value = value;
+    }
+
+    public int Volume
+    {
+        get => VolumeBindable.Value;
+        set => VolumeBindable.Value = value;
+    }
+
+    public float RelativeScrollSpeed
+    {
+        get => RelativeScrollSpeedBindable.Value;
+        set => RelativeScrollSpeedBindable.Value = value;
+    }
+
+    public Bindable<TimingPointType> PointTypeBindable { get; set; } = new Bindable<TimingPointType>();
+    public Bindable<TimingFlags> FlagsBindable { get; set; } = new Bindable<TimingFlags>();
+    public Bindable<int> VolumeBindable { get; set; } = new Bindable<int>();
+    public Bindable<float> RelativeScrollSpeedBindable { get; set; } = new Bindable<float>();
+
+    public double StartTime
+    {
+        get => StartTimeBindable.Value;
+        set => StartTimeBindable.Value = value;
+    }
+    
+    public Bindable<double> StartTimeBindable { get; } = new Bindable<double>();
 
     internal TimingPoint(double time)
     {
@@ -28,15 +60,7 @@ public class TimingPoint : ITimingPoint, IComparablyEquatable<TimingPoint>
     public int CompareTo(TimingPoint? other) => StartTime < other!.StartTime ? -1 : StartTime > other.StartTime ? 1 : 0;
 
     public bool Equals(TimingPoint? other)
-    {
-        if (ReferenceEquals(other, null))
-            return false;
-
-        if (ReferenceEquals(other, this))
-            return false;
-
-        return StartTime.Equals(other.StartTime);
-    }
+        => StartTime == other?.StartTime;
 
     internal class DefaultTimingPoint : UninheritedTimingPoint
     {
