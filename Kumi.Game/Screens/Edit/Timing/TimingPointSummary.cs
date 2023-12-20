@@ -39,6 +39,7 @@ public partial class TimingPointSummary : ClickableContainer
     
     private SpriteText volumeText = null!;
     private SpriteText relativeText = null!;
+    private SummarySliderBar<float> relativeSlider = null!;
 
     [BackgroundDependencyLoader]
     private void load()
@@ -154,12 +155,37 @@ public partial class TimingPointSummary : ClickableContainer
                                             Font = KumiFonts.GetFont(FontFamily.Montserrat, FontWeight.SemiBold, size: 12),
                                             Colour = Colours.RED_ACCENT_LIGHT
                                         },
-                                        relativeText = new SpriteText
+                                        new FillFlowContainer
                                         {
+                                            RelativeSizeAxes = Axes.Both,
+                                            Spacing = new Vector2(8, 0),
+                                            Direction = FillDirection.Horizontal,
                                             Anchor = Anchor.CentreRight,
                                             Origin = Anchor.CentreRight,
-                                            Font = KumiFonts.GetFont(FontFamily.Montserrat, FontWeight.SemiBold, size: 12),
-                                            Colour = Colours.BLUE_ACCENT_LIGHT
+                                            Children = new Drawable[]
+                                            {
+                                                relativeText = new SpriteText
+                                                {
+                                                    Anchor = Anchor.CentreRight,
+                                                    Origin = Anchor.CentreRight,
+                                                    Font = KumiFonts.GetFont(FontFamily.Montserrat, FontWeight.SemiBold, size: 12),
+                                                    Colour = Colours.BLUE_ACCENT_LIGHT
+                                                },
+                                                relativeSlider = new SummarySliderBar<float>
+                                                {
+                                                    Anchor = Anchor.CentreRight,
+                                                    Origin = Anchor.CentreRight,
+                                                    Height = 8,
+                                                    Width = 100,
+                                                    ForegroundColour = Colours.BLUE_ACCENT_LIGHT,
+                                                    Current = new BindableFloat
+                                                    {
+                                                        Value = point.RelativeScrollSpeed,
+                                                        MinValue = 0.5f,
+                                                        MaxValue = 2.5f,
+                                                    }
+                                                }
+                                            }
                                         }
                                     }
                                 }
@@ -174,6 +200,15 @@ public partial class TimingPointSummary : ClickableContainer
         selectedPoint.BindValueChanged(_ => updateBackground(), true);
 
         point.StartTimeBindable.BindValueChanged(_ => updateContents(), true);
+        point.RelativeScrollSpeedBindable.BindValueChanged(_ => updateContents(), true);
+        point.VolumeBindable.BindValueChanged(_ => updateContents(), true);
+        point.PointTypeBindable.BindValueChanged(_ => updateContents(), true);
+        point.FlagsBindable.BindValueChanged(_ => updateContents(), true);
+    }
+
+    protected override void LoadComplete()
+    {
+        relativeSlider.Current.Disabled = true;
     }
 
     private void updateMarker()
@@ -200,5 +235,9 @@ public partial class TimingPointSummary : ClickableContainer
             bpmText.Text = $"{uninheritedPoint.BPM:0.##} BPM";
             signatureText.Text = $"{uninheritedPoint.TimeSignature.Numerator} / {uninheritedPoint.TimeSignature.Denominator}";
         }
+
+        relativeSlider.Current.Disabled = false; // Enable the bindable temporarily to update the slider
+        relativeSlider.Current.Value = point.RelativeScrollSpeed;
+        relativeSlider.Current.Disabled = true;
     }
 }
