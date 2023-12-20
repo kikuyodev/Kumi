@@ -1,4 +1,5 @@
-﻿using Kumi.Game.Charts.Objects.Windows;
+﻿using Kumi.Game.Bindables;
+using Kumi.Game.Charts.Objects.Windows;
 
 namespace Kumi.Game.Charts.Objects;
 
@@ -9,7 +10,7 @@ namespace Kumi.Game.Charts.Objects;
 // though not implementing any judgement logic for it.
 public class BarLine : Note
 {
-    public NoteProperty<bool> Major { get; } = new NoteProperty<bool>();
+    public LazyBindable<bool> Major { get; } = new LazyBindable<bool>();
     
     public BarLine()
         : this(0)
