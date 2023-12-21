@@ -19,7 +19,7 @@ public partial class DrawableDrumRoll : DrawableNote<DrumRoll>, IKeyBindingHandl
     private int hits;
 
     internal readonly Container Content;
-    private readonly YellowCirclePart corePart;
+    internal readonly YellowCirclePart CorePart;
     private readonly CircularContainer spanPart;
 
     public DrawableDrumRoll(DrumRoll note)
@@ -52,10 +52,10 @@ public partial class DrawableDrumRoll : DrawableNote<DrumRoll>, IKeyBindingHandl
                         Colour = DrawableBalloon.BALLOON_COLOUR_GRADIENT
                     }
                 },
-                corePart = new YellowCirclePart
+                CorePart = new YellowCirclePart
                 {
                     Anchor = Anchor.CentreLeft,
-                    Origin = Anchor.CentreLeft,
+                    Origin = Anchor.Centre,
                     RelativeSizeAxes = Axes.Y,
                     Height = 0.7f
                 },
@@ -71,12 +71,12 @@ public partial class DrawableDrumRoll : DrawableNote<DrumRoll>, IKeyBindingHandl
         {
             if (f.NewValue.HasFlagFast(NoteFlags.Big))
             {
-                corePart.Height = 1f;
+                CorePart.Height = 1f;
                 spanPart.Height = 0.75f;
             }
             else
             {
-                corePart.Height = 0.7f;
+                CorePart.Height = 0.7f;
                 spanPart.Height = 0.7f * 0.75f;
             }
         }, true);
@@ -85,7 +85,9 @@ public partial class DrawableDrumRoll : DrawableNote<DrumRoll>, IKeyBindingHandl
     protected override void UpdateAfterChildren()
     {
         base.UpdateAfterChildren();
-        corePart.Width = corePart.DrawHeight;
+
+        CorePart.Width = CorePart.DrawHeight;
+        Padding = new MarginPadding { Right = -(CorePart.DrawHeight / 4) };
     }
 
     protected override void CheckForResult(bool userTriggered, double deltaTime)
@@ -138,7 +140,7 @@ public partial class DrawableDrumRoll : DrawableNote<DrumRoll>, IKeyBindingHandl
     private GameplayAction? previousAction;
     private bool? isRim;
     private bool? lastResult;
-    
+
     private bool handleBigInput(KeyBindingPressEvent<GameplayAction> e)
     {
         if (lastResult.HasValue)
@@ -149,7 +151,7 @@ public partial class DrawableDrumRoll : DrawableNote<DrumRoll>, IKeyBindingHandl
             if (!lastResult.Value && e.Action is GameplayAction.RightCentre or GameplayAction.LeftCentre)
                 return false;
         }
-        
+
         // Make the user press the same key twice to hit a big note, alternating between the centre and the edge.
         if (previousAction == null)
         {
@@ -160,7 +162,7 @@ public partial class DrawableDrumRoll : DrawableNote<DrumRoll>, IKeyBindingHandl
 
         if (previousAction == e.Action)
             return false;
-        
+
         if (isRim!.Value)
         {
             if ((previousAction != GameplayAction.RightRim || e.Action != GameplayAction.LeftRim) &&
