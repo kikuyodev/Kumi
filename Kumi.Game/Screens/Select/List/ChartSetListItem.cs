@@ -6,16 +6,18 @@ using osu.Framework.Extensions.Color4Extensions;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Colour;
 using osu.Framework.Graphics.Containers;
+using osu.Framework.Graphics.Cursor;
 using osu.Framework.Graphics.Effects;
 using osu.Framework.Graphics.Shapes;
 using osu.Framework.Graphics.Sprites;
+using osu.Framework.Graphics.UserInterface;
 using osu.Framework.Input.Events;
 using osu.Framework.Localisation;
 using osuTK;
 
 namespace Kumi.Game.Screens.Select.List;
 
-public partial class ChartSetListItem : CompositeDrawable
+public partial class ChartSetListItem : CompositeDrawable, IHasContextMenu
 {
     public readonly ChartSetInfo ChartSetInfo;
     public readonly BindableBool Selected = new BindableBool();
@@ -25,18 +27,25 @@ public partial class ChartSetListItem : CompositeDrawable
     private Box highlight = null!;
     private Container content = null!;
 
+    [Resolved]
+    private ChartManager manager { get; set; } = null!;
+
     public ChartSetListItem(ChartSetInfo chartSetInfo)
     {
         ChartSetInfo = chartSetInfo;
     }
 
+    private MenuItem[]? selectMenuItems;
+
     [BackgroundDependencyLoader]
-    private void load(ChartManager manager)
+    private void load(ChartManager manager, SelectScreen select)
     {
         RelativeSizeAxes = Axes.X;
         AutoSizeAxes = Axes.Y;
 
         DelayedLoadWrapper background;
+
+        selectMenuItems = select.CreateContextMenuItemsForChartSet(ChartSetInfo);
 
         InternalChildren = new Drawable[]
         {
@@ -141,6 +150,21 @@ public partial class ChartSetListItem : CompositeDrawable
         {
             highlight.FadeOut(200, Easing.OutQuint);
             content.FadeEdgeEffectTo(Colours.CYAN_ACCENT_LIGHT.Opacity(0), 200, Easing.OutQuint);
+        }
+    }
+
+    public MenuItem[]? ContextMenuItems
+    {
+        get
+        {
+            var items = new List<MenuItem>();
+
+            if (selectMenuItems != null)
+                items.AddRange(selectMenuItems);
+
+            items.Add(new MenuItem("Delete", () => manager.Delete(ChartSetInfo)));
+
+            return items.ToArray();
         }
     }
 }

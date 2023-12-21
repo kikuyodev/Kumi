@@ -161,19 +161,19 @@ public class EditorChartPatcherTest
         runTest(patch);
     }
 
-    private void runTest(IChart patch)
+    private void runTest(Chart patch)
     {
         patch = decode(encode(patch));
 
-        patcher.Patch(encode(current), encode(patch));
+        patcher.Patch(encode((Chart) current.PlayableChart), encode(patch));
 
-        var currentStr = Encoding.ASCII.GetString(encode(current));
+        var currentStr = Encoding.ASCII.GetString(encode((Chart) current.PlayableChart));
         var patchStr = Encoding.ASCII.GetString(encode(patch));
 
         Assert.That(currentStr, Is.EqualTo(patchStr));
     }
 
-    private byte[] encode(IChart chart)
+    private byte[] encode(Chart chart)
     {
         using var stream = new MemoryStream();
         new ChartEncoder().Encode(chart, stream);
@@ -183,7 +183,7 @@ public class EditorChartPatcherTest
         return data;
     }
 
-    private IChart decode(byte[] data)
+    private Chart decode(byte[] data)
     {
         using var stream = new MemoryStream(data);
         return new ChartDecoder().Decode(stream);
