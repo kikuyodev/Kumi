@@ -1,5 +1,6 @@
 ﻿using osu.Framework.Extensions.Color4Extensions;
 using osu.Framework.Graphics;
+using osu.Framework.Graphics.Colour;
 using osu.Framework.Graphics.Shapes;
 using osu.Framework.Graphics.Sprites;
 using osu.Framework.Graphics.UserInterface;
@@ -13,8 +14,14 @@ public partial class KumiTextBox : TextBox
 
     private readonly Box background;
 
-    private readonly Color4 backgroundColor = Colours.Gray(0.07f);
+    private readonly Color4 initialBackgroundColor = Colours.Gray(0.07f);
     private readonly Color4 inputErrorColour = Colours.RED;
+    
+    public ColourInfo BackgroundColour
+    {
+        get => background.Colour;
+        set => background.Colour = value;
+    }
     
     public KumiTextBox()
     {
@@ -27,7 +34,7 @@ public partial class KumiTextBox : TextBox
             {
                 RelativeSizeAxes = Axes.Both,
                 Depth = 1,
-                Colour = backgroundColor,
+                Colour = initialBackgroundColor,
             },
         });
 

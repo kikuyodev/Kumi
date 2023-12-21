@@ -12,6 +12,8 @@ namespace Kumi.Game.Screens.Edit.Timing;
 
 public partial class TimingPointSummary : ClickableContainer
 {
+    public const float HEIGHT = 30;
+    
     private readonly TimingPoint point;
 
     [Resolved(name: "selected_point")]
@@ -25,7 +27,7 @@ public partial class TimingPointSummary : ClickableContainer
         this.point = point;
 
         RelativeSizeAxes = Axes.X;
-        Height = 30;
+        Height = HEIGHT;
     }
 
     private Container markerContainer = null!;

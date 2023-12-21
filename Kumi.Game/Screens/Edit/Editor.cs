@@ -225,7 +225,7 @@ public partial class Editor : ScreenWithChartBackground, IKeyBindingHandler<Plat
     {
         try
         {
-            chartManager.Save(editorChart.ChartInfo, editorChart.PlayableChart);
+            chartManager.Save(editorChart.ChartInfo, (Chart) editorChart.PlayableChart);
         }
         catch (Exception e)
         {

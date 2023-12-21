@@ -20,18 +20,29 @@ public partial class DrawableTimingPoint : ClickableContainer
         RelativeSizeAxes = Axes.X;
         AutoSizeAxes = Axes.Y;
     }
-
-    private TimingPointSummary summary = null!;
+    
+    private TimingPointConfiguration configuration = null!;
 
     [BackgroundDependencyLoader]
     private void load()
     {
         InternalChildren = new Drawable[]
         {
-            summary = new TimingPointSummary(point)
+            configuration = new TimingPointConfiguration(point),
+            new TimingPointSummary(point)
             {
                 Action = () => selectedPoint.Value = point
-            }
+            },
         };
+        
+        selectedPoint.BindValueChanged(onSelectedPointChanged, true);
+    }
+    
+    private void onSelectedPointChanged(ValueChangedEvent<TimingPoint> newPoint)
+    {
+        if (ReferenceEquals(newPoint.NewValue, point))
+            configuration.Show();
+        else
+            configuration.Hide();
     }
 }

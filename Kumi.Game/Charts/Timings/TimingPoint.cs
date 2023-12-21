@@ -62,6 +62,15 @@ public class TimingPoint : ITimingPoint, IComparablyEquatable<TimingPoint>
     public bool Equals(TimingPoint? other)
         => StartTime == other?.StartTime;
 
+    public virtual TimingPoint DeepClone()
+        => new TimingPoint(StartTime)
+        {
+            PointType = PointType,
+            Flags = Flags,
+            Volume = Volume,
+            RelativeScrollSpeed = RelativeScrollSpeed
+        };
+
     internal class DefaultTimingPoint : UninheritedTimingPoint
     {
         public DefaultTimingPoint(float time)

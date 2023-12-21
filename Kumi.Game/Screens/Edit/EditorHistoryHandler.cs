@@ -1,4 +1,5 @@
-﻿using Kumi.Game.Charts.Formats;
+﻿using Kumi.Game.Charts;
+using Kumi.Game.Charts.Formats;
 using osu.Framework.Bindables;
 using osu.Framework.Extensions;
 
@@ -137,7 +138,7 @@ public partial class EditorHistoryHandler : TransactionalCommitComponent
     private void writeCurrentStateToStream(Stream stream)
     {
         var encoder = new ChartEncoder();
-        encoder.Encode(editorChart, stream);
+        encoder.Encode((Chart) editorChart.PlayableChart, stream);
     }
 
     private void updateBindables()
