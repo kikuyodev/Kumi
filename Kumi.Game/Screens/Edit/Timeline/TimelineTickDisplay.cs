@@ -18,6 +18,9 @@ public partial class TimelineTickDisplay : TimelinePart<DrawableTick>
 
     [Resolved]
     private BindableBeatDivisor beatDivisor { get; set; } = null!;
+    
+    [Resolved]
+    private EditorHistoryHandler? historyHandler { get; set; }
 
     [Resolved]
     private Timeline? timeline { get; set; }
@@ -37,6 +40,9 @@ public partial class TimelineTickDisplay : TimelinePart<DrawableTick>
     private void load()
     {
         beatDivisor.BindValueChanged(_ => invalidateTicks());
+        
+        if (historyHandler != null)
+            historyHandler.OnStateChange += invalidateTicks;
     }
 
     private void invalidateTicks()
