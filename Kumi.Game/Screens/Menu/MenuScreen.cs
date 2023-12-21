@@ -2,7 +2,6 @@ using Kumi.Game.Graphics;
 using Kumi.Game.Graphics.Backgrounds;
 using Kumi.Game.Overlays;
 using Kumi.Game.Screens.Backgrounds;
-using Kumi.Game.Screens.Edit;
 using Kumi.Game.Screens.Select;
 using osu.Framework.Allocation;
 using osu.Framework.Extensions.Color4Extensions;
@@ -81,7 +80,7 @@ public partial class MenuScreen : KumiScreen
                 {
                     Height = 0.75f,
                     OnPlay = () => this.Push(consumeSelect()),
-                    OnEdit = () => this.Push(new Editor()),
+                    OnEdit = () => this.Push(new EditSelectScreen()),
                     OnExit = this.Exit
                 }
             },
@@ -111,7 +110,7 @@ public partial class MenuScreen : KumiScreen
     private void preloadSelect()
     {
         if (selectScreen == null)
-            LoadComponentAsync(selectScreen = new SelectScreen());
+            LoadComponentAsync(selectScreen = new PlaySelectScreen());
     }
 
     private Screen consumeSelect()
