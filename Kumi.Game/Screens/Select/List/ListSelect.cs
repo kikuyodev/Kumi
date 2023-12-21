@@ -25,13 +25,27 @@ public partial class ListSelect : FillFlowContainer
     protected override void LoadComplete()
     {
         base.LoadComplete();
-        
+
         scrollContainer = (Parent!.Parent as ScrollContainer<Drawable>)!;
 
         // select random chart
         var groups = Children.OfType<ListItemGroup>().ToArray();
         currentlySelected = groups[RNG.Next(0, groups.Length)];
         currentlySelected.Selected.Value = true;
+
+        SelectedChart.BindValueChanged(s =>
+        {
+            if (s.NewValue == null)
+                return;
+
+            var group = Children.OfType<ListItemGroup>().FirstOrDefault(g => g.ChartSetInfo.Charts.Contains(s.NewValue));
+            if (group == null)
+                return;
+
+            currentlySelected.Selected.Value = false;
+            currentlySelected = group;
+            currentlySelected.Selected.Value = true;
+        }, true);
     }
 
     public void AddChartSet(ChartSetInfo setInfo, Action? onSelected = null)
@@ -47,7 +61,7 @@ public partial class ListSelect : FillFlowContainer
         };
 
         item.OnSelectionChanged = c => SelectedChart.Value = c;
-        
+
         // Inserting one before to let the HalfScrollContainer be the very last child.
         Add(item);
     }

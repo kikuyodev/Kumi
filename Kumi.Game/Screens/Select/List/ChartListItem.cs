@@ -6,16 +6,18 @@ using osu.Framework.Bindables;
 using osu.Framework.Extensions.Color4Extensions;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
+using osu.Framework.Graphics.Cursor;
 using osu.Framework.Graphics.Effects;
 using osu.Framework.Graphics.Shapes;
 using osu.Framework.Graphics.Sprites;
+using osu.Framework.Graphics.UserInterface;
 using osu.Framework.Input.Events;
 using osuTK;
 using osuTK.Graphics;
 
 namespace Kumi.Game.Screens.Select.List;
 
-public partial class ChartListItem : CompositeDrawable
+public partial class ChartListItem : CompositeDrawable, IHasContextMenu
 {
     private const float height = 50;
     private const float height_selected = 48;
@@ -32,8 +34,10 @@ public partial class ChartListItem : CompositeDrawable
         ChartInfo = chartInfo;
     }
 
+    private MenuItem[]? selectMenuItems;
+
     [BackgroundDependencyLoader]
-    private void load()
+    private void load(SelectScreen select)
     {
         RelativeSizeAxes = Axes.X;
         Width = 0.75f;
@@ -43,6 +47,8 @@ public partial class ChartListItem : CompositeDrawable
 
         TextFlowContainer textFlowContainer;
 
+        selectMenuItems = select.CreateContextMenuItemsForChart(ChartInfo);
+        
         InternalChildren = new Drawable[]
         {
             new Box
@@ -170,5 +176,18 @@ public partial class ChartListItem : CompositeDrawable
     {
         // TODO
         return Colours.Gray(0.2f);
+    }
+
+    public MenuItem[]? ContextMenuItems
+    {
+        get
+        {
+            var items = new List<MenuItem>();
+
+            if (selectMenuItems != null)
+                items.AddRange(selectMenuItems);
+
+            return items.ToArray();
+        }
     }
 }
