@@ -28,10 +28,7 @@ public partial class TimelineBlueprintContainer : EditorBlueprintContainer
         => new TimelineSelectionBlueprintContainer();
 
     protected override SelectionBlueprint<Note>? CreateBlueprintFor(Note note)
-        => new TimelineNoteBlueprint(note)
-        {
-
-        };
+        => new TimelineNoteBlueprint(note);
 
     protected partial class TimelineSelectionBlueprintContainer : Container<SelectionBlueprint<Note>>
     {

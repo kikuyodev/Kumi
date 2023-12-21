@@ -42,6 +42,11 @@ public class ChartDecoder : FileDecoder<Chart, ChartSections>
         }
     }
 
+    protected override void PreProcess(Chart input)
+    {
+        points.Clear();
+    }
+
     protected override void PostProcess()
     {
         if (Current.Events.Any())
@@ -58,6 +63,8 @@ public class ChartDecoder : FileDecoder<Chart, ChartSections>
 
         if (string.IsNullOrEmpty(Current.Metadata.TitleRomanised))
             Current.Metadata.TitleRomanised = Current.Metadata.Title;
+        
+        Current.TimingPoints.AddRange(points);
     }
 
     private void processMetadata(string line)
@@ -142,6 +149,8 @@ public class ChartDecoder : FileDecoder<Chart, ChartSections>
         Current.Events.Add(ev);
     }
 
+    private readonly List<TimingPoint> points = new List<TimingPoint>();
+
     private void processTimings(string line)
     {
         var args = line.SplitComplex(TimingPoint.DELIMITER).ToArray();
@@ -158,7 +167,7 @@ public class ChartDecoder : FileDecoder<Chart, ChartSections>
                 break;
 
             case TimingPointType.Uninherited:
-                var timingPoint = new UninheritedTimingPoint(StringUtils.AssertAndFetch<int>(args[1]));
+                var timingPoint = new UninheritedTimingPoint(StringUtils.AssertAndFetch<float>(args[1]));
                 timingPoint.BPM = StringUtils.AssertAndFetch<float>(args[2]);
 
             {
@@ -186,7 +195,7 @@ public class ChartDecoder : FileDecoder<Chart, ChartSections>
         }
 
         tp.PointType = typeValue;
-        Current.TimingPoints.Add(tp);
+        points.Add(tp);
     }
 
     private void processNotes(string line)

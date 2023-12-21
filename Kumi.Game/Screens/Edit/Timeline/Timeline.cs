@@ -36,7 +36,7 @@ public partial class Timeline : ZoomableScrollContainer
         this.screenContent = screenContent;
         
         RelativeSizeAxes = Axes.X;
-        Height = HEIGHT;
+        Height = 94;
 
         ZoomDuration = 200;
         ZoomEasing = Easing.OutQuint;
@@ -62,6 +62,10 @@ public partial class Timeline : ZoomableScrollContainer
     {
         AddRange(new Drawable[]
         {
+            new TimelineTimingPointDisplay
+            {
+                RelativeSizeAxes = Axes.Both
+            },
             mainContent = new Container
             {
                 RelativeSizeAxes = Axes.X,
@@ -75,13 +79,14 @@ public partial class Timeline : ZoomableScrollContainer
                 {
                     waveform = new WaveformGraph
                     {
-                        RelativeSizeAxes = Axes.Both,
+                        RelativeSizeAxes = Axes.X,
+                        Height = 72,
                         BaseColour = Colours.BLUE_LIGHT,
                         LowColour = Colours.BLUE,
                         MidColour = Colours.BLUE_LIGHT,
                         HighColour = Colours.BLUE_LIGHTER
                     },
-                    ticks = new TimelineTickDisplay(),
+                    ticks = new TimelineTickDisplay { Height = 72 },
                     screenContent
                 }
             }

@@ -111,7 +111,7 @@ public class ChartManager : ModelManager<ChartSetInfo>, IModelImporter<ChartSetI
 
     public IWorkingChart? DefaultChart => workingChartCache.DefaultChart;
 
-    public virtual void Save(ChartInfo chartInfo, IChart chartContent)
+    public virtual void Save(ChartInfo chartInfo, Chart chartContent)
         => save(chartInfo, chartContent);
 
     public void Delete(Expression<Func<ChartSetInfo, bool>>? filter = null)
@@ -132,7 +132,7 @@ public class ChartManager : ModelManager<ChartSetInfo>, IModelImporter<ChartSetI
         Realm.Run(r => Undelete(r.All<ChartSetInfo>().Where(s => s.DeletePending).ToList()));
     }
 
-    private void save(ChartInfo chartInfo, IChart chartContent)
+    private void save(ChartInfo chartInfo, Chart chartContent)
     {
         var set = chartInfo.ChartSet;
         Debug.Assert(set != null);

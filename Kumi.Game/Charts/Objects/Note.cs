@@ -1,4 +1,5 @@
-﻿using Kumi.Game.Charts.Objects.Windows;
+﻿using Kumi.Game.Bindables;
+using Kumi.Game.Charts.Objects.Windows;
 using Kumi.Game.Graphics;
 using osu.Framework.Bindables;
 using osuTK.Graphics;
@@ -33,9 +34,9 @@ public class Note : INote
         }
     }
 
-    public NoteProperty<NoteType> Type { get; } = new NoteProperty<NoteType>();
-    public NoteProperty<NoteFlags> Flags { get; } = new NoteProperty<NoteFlags>();
-    public NoteProperty<Color4> NoteColor { get; } = new NoteProperty<Color4>();
+    public LazyBindable<NoteType> Type { get; } = new LazyBindable<NoteType>();
+    public LazyBindable<NoteFlags> Flags { get; } = new LazyBindable<NoteFlags>();
+    public LazyBindable<Color4> NoteColor { get; } = new LazyBindable<Color4>();
     public Bindable<double> StartTimeBindable { get; } = new Bindable<double>();
 
     // TODO: Initialize this somewhere, we're not guaranteed to have a window for every note,
