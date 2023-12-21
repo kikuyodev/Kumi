@@ -15,6 +15,8 @@ public partial class EditorHistoryHandler : TransactionalCommitComponent
     
     public readonly Bindable<bool> CanUndo = new Bindable<bool>();
     public readonly Bindable<bool> CanRedo = new Bindable<bool>();
+
+    public event Action? OnStateChange;
     
     private readonly List<byte[]> savedStates = new List<byte[]>();
 
@@ -109,6 +111,8 @@ public partial class EditorHistoryHandler : TransactionalCommitComponent
             savedStates.Add(newState);
 
             currentState = savedStates.Count - 1;
+            
+            OnStateChange?.Invoke();
             updateBindables();
         }
     }
@@ -132,6 +136,7 @@ public partial class EditorHistoryHandler : TransactionalCommitComponent
         
         isRestoring = false;
         
+        OnStateChange?.Invoke();
         updateBindables();
     }
 

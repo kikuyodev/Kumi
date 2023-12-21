@@ -101,12 +101,20 @@ public partial class StartTimeSection : ConfigurationSection
 
         HistoryHandler?.BeginChange();
 
+        var timingPoints = Chart.TimingPointHandler.TimingPoints;
         var clone = Point.DeepClone();
         clone.StartTime = newTime;
         
         // remove the old point
-        Chart.TimingPointHandler.TimingPoints.Remove(Point);
-        Chart.TimingPointHandler.TimingPoints.Add(clone);
+        timingPoints.Remove(Point);
+        
+        var closestPoint = Chart.TimingPointHandler.GetTimingPointAt(clone.StartTime);
+        var idx = timingPoints.BinarySearch(closestPoint);
+
+        if (idx == -1)
+            timingPoints.Insert(0, clone);
+        else
+            timingPoints.Insert(idx + 1, clone);
         
         Point = Chart.TimingPointHandler.TimingPoints.SingleOrDefault(p => p.StartTime == clone.StartTime)!;
         
