@@ -2,8 +2,6 @@
 using Kumi.Game.Charts;
 using Kumi.Game.Input;
 using Kumi.Game.Overlays;
-using Kumi.Game.Screens.Edit;
-using Kumi.Game.Screens.Play;
 using Kumi.Game.Screens.Select.List;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
@@ -18,7 +16,7 @@ using osu.Framework.Screens;
 namespace Kumi.Game.Screens.Select;
 
 [Cached]
-public partial class SelectScreen : ScreenWithChartBackground, IKeyBindingHandler<GlobalAction>
+public abstract partial class SelectScreen : ScreenWithChartBackground, IKeyBindingHandler<GlobalAction>
 {
     public override float BlurAmount => 10f;
     public override float DimAmount => 0.5f;
@@ -27,10 +25,10 @@ public partial class SelectScreen : ScreenWithChartBackground, IKeyBindingHandle
     private MusicController musicController { get; set; } = null!;
 
     [Resolved]
-    private ChartManager manager { get; set; } = null!;
+    protected ChartManager Manager { get; private set; } = null!;
     
     [Resolved]
-    private Bindable<WorkingChart> chart { get; set; } = null!;
+    protected Bindable<WorkingChart> Chart { get; private set; } = null!;
 
     private ListSelect listSelect = null!;
     
@@ -38,12 +36,6 @@ public partial class SelectScreen : ScreenWithChartBackground, IKeyBindingHandle
     {
         return new[]
         {
-            new MenuItem("Play", () => FinaliseSelection(chartSetInfo.Charts.First())),
-            new MenuItem("Edit", () =>
-            {
-                chart.Value = manager.GetWorkingChart(chartSetInfo.Charts.First());
-                this.Push(new Editor());
-            }),
             new MenuItem("Select", () => listSelect.SelectedChart.Value = chartSetInfo.Charts.First()),
         };
     }
@@ -52,12 +44,6 @@ public partial class SelectScreen : ScreenWithChartBackground, IKeyBindingHandle
     {
         return new[]
         {
-            new MenuItem("Play", () => FinaliseSelection(chartInfo)),
-            new MenuItem("Edit", () =>
-            {
-                chart.Value = manager.GetWorkingChart(chartInfo);
-                this.Push(new Editor());
-            }),
             new MenuItem("Select", () => listSelect.SelectedChart.Value = chartInfo),
         };
     }
@@ -122,12 +108,9 @@ public partial class SelectScreen : ScreenWithChartBackground, IKeyBindingHandle
                             },
                             Content = new[]
                             {
-                                new Drawable[]
+                                new[]
                                 {
-                                    new ChartSetInfoWedge
-                                    {
-                                        RelativeSizeAxes = Axes.Both
-                                    }
+                                    CreateWedge()
                                 }
                             }
                         }
@@ -141,10 +124,10 @@ public partial class SelectScreen : ScreenWithChartBackground, IKeyBindingHandle
             if (!this.IsCurrentScreen())
                 return;
 
-            workingChart.Value = manager.GetWorkingChart(c.NewValue);
+            workingChart.Value = Manager.GetWorkingChart(c.NewValue);
         }, true);
 
-        var charts = manager.GetAllUsableCharts();
+        var charts = Manager.GetAllUsableCharts();
         charts = charts.Where(c => c.Charts.Any() && !c.DeletePending).ToList();
 
         Schedule(() =>
@@ -156,6 +139,12 @@ public partial class SelectScreen : ScreenWithChartBackground, IKeyBindingHandle
             listSelect.Add(new HalfScrollContainer(this) { RelativeSizeAxes = Axes.X });
         });
     }
+
+    protected virtual Drawable CreateWedge()
+        => new ChartSetInfoWedge
+        {
+            RelativeSizeAxes = Axes.Both
+        };
 
     public override void OnEntering(ScreenTransitionEvent e)
     {
@@ -170,7 +159,7 @@ public partial class SelectScreen : ScreenWithChartBackground, IKeyBindingHandle
         base.OnResuming(e);
 
         // Resuming from player loader.
-        chart.Disabled = false;
+        Chart.Disabled = false;
         beginLooping();
     }
 
@@ -197,7 +186,7 @@ public partial class SelectScreen : ScreenWithChartBackground, IKeyBindingHandle
         switch (e.Action)
         {
             case GlobalAction.Select:
-                return FinaliseSelection(chart.Value.ChartInfo);
+                return FinaliseSelection(Chart.Value.ChartInfo);
         }
 
         return false;
@@ -207,18 +196,19 @@ public partial class SelectScreen : ScreenWithChartBackground, IKeyBindingHandle
     {
     }
     
-    protected virtual bool FinaliseSelection(ChartInfo chartInfo)
+    protected bool FinaliseSelection(ChartInfo chartInfo)
     {
-        if (chart.Disabled)
+        if (Chart.Disabled)
             return false;
 
-        if (!chart.Value.ChartInfo.Equals(chartInfo))
-            chart.Value = manager.GetWorkingChart(chartInfo);
-        
-        chart.Disabled = true;
-        this.Push(new PlayerLoader());
-        return true;
+        if (!Chart.Value.ChartInfo.Equals(chartInfo))
+            Chart.Value = Manager.GetWorkingChart(chartInfo);
+
+        Chart.Disabled = true;
+        return FinaliseSelectionInternal(chartInfo);
     }
+
+    protected abstract bool FinaliseSelectionInternal(ChartInfo chartInfo);
 
     private bool isHandlingLooping;
 
@@ -227,7 +217,7 @@ public partial class SelectScreen : ScreenWithChartBackground, IKeyBindingHandle
         Debug.Assert(!isHandlingLooping);
         isHandlingLooping = true;
 
-        ensureTrackLooping(chart.Value);
+        ensureTrackLooping(Chart.Value);
 
         musicController.TrackChanged += ensureTrackLooping;
     }

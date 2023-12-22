@@ -26,6 +26,17 @@ public partial class AlwaysLastFillFlowContainer : FillFlowContainer
         CreateComponent = createComponent;
     }
 
+    public override void Clear(bool disposeChildren)
+    {
+        base.Clear(disposeChildren);
+        
+        component?.Expire();
+        component = CreateComponent?.Invoke();
+        
+        if (component != null)
+            base.Add(component);
+    }
+
     private bool isBatch;
 
     public new void AddRange(IEnumerable<Drawable> drawables)
