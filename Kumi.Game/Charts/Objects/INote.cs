@@ -1,4 +1,5 @@
-﻿using Kumi.Game.Charts.Objects.Windows;
+﻿using Kumi.Game.Bindables;
+using Kumi.Game.Charts.Objects.Windows;
 using osuTK.Graphics;
 
 namespace Kumi.Game.Charts.Objects;
@@ -8,14 +9,14 @@ public interface INote : IHasStartTime
     /// <summary>
     /// The type of <see cref="Note" />.
     /// </summary>
-    NoteProperty<NoteType> Type { get; }
+    LazyBindable<NoteType> Type { get; }
 
-    NoteProperty<NoteFlags> Flags { get; }
+    LazyBindable<NoteFlags> Flags { get; }
 
     /// <summary>
     /// The color of this note, for rendering.
     /// </summary>
-    NoteProperty<Color4> NoteColor { get; }
+    LazyBindable<Color4> NoteColor { get; }
 
     /// <summary>
     /// The result timing windows for this note, as well as the result of the note.

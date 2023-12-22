@@ -18,6 +18,9 @@ public partial class TimelineTickDisplay : TimelinePart<DrawableTick>
 
     [Resolved]
     private BindableBeatDivisor beatDivisor { get; set; } = null!;
+    
+    [Resolved]
+    private EditorHistoryHandler? historyHandler { get; set; }
 
     [Resolved]
     private Timeline? timeline { get; set; }
@@ -30,13 +33,16 @@ public partial class TimelineTickDisplay : TimelinePart<DrawableTick>
 
     public TimelineTickDisplay()
     {
-        RelativeSizeAxes = Axes.Both;
+        RelativeSizeAxes = Axes.X;
     }
 
     [BackgroundDependencyLoader]
     private void load()
     {
         beatDivisor.BindValueChanged(_ => invalidateTicks());
+        
+        if (historyHandler != null)
+            historyHandler.OnStateChange += invalidateTicks;
     }
 
     private void invalidateTicks()
@@ -108,7 +114,7 @@ public partial class TimelineTickDisplay : TimelinePart<DrawableTick>
                     var tick = getNextDrawableTick();
                     tick.X = xPos;
                     tick.Width = DrawableTick.TICK_MAX_WIDTH * size.X;
-                    tick.Height = size.Y;
+                    tick.Height = size.Y * 0.75f;
                     tick.Colour = colour;
                 }
 

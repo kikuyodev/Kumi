@@ -113,10 +113,7 @@ public partial class KumiButton : Button
             {
                 RelativeSizeAxes = Axes.X,
                 AutoSizeAxes = Axes.Y,
-                Padding = new MarginPadding
-                {
-                    Vertical = 4
-                },
+                Padding = new MarginPadding(4),
                 Children = new Drawable[]
                 {
                     spriteText = new SpriteText

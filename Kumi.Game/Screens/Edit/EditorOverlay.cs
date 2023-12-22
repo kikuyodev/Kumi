@@ -1,7 +1,10 @@
 ﻿using Kumi.Game.Charts;
 using Kumi.Game.Graphics;
+using Kumi.Game.Screens.Edit.Compose;
 using Kumi.Game.Screens.Edit.Menus;
+using Kumi.Game.Screens.Edit.Setup;
 using Kumi.Game.Screens.Edit.Timeline;
+using Kumi.Game.Screens.Edit.Timing;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
@@ -26,6 +29,8 @@ public partial class EditorOverlay : Container
     private MenuItem pasteMenuItem = null!;
 
     public IBindable<WorkingChart> Chart { get; } = new Bindable<WorkingChart>();
+    
+    private readonly IBindable<EditorScreenMode> currentScreen = new Bindable<EditorScreenMode>(EditorScreenMode.Compose);
     
     [Resolved]
     private Editor editor { get; set; } = null!;
@@ -128,7 +133,8 @@ public partial class EditorOverlay : Container
                             },
                             new EditorScreenTabControl
                             {
-                                Current = { Value = EditorScreenMode.Compose }
+                                // Current = { Value = EditorScreenMode.Compose }
+                                Current = { BindTarget = currentScreen }
                             }
                         }
                     }
@@ -143,6 +149,27 @@ public partial class EditorOverlay : Container
         
         historyHandler.CanUndo.BindValueChanged(v => undoMenuItem.Action.Disabled = !v.NewValue, true);
         historyHandler.CanRedo.BindValueChanged(v => redoMenuItem.Action.Disabled = !v.NewValue, true);
+        
+        currentScreen.BindValueChanged(v =>
+        {
+            EditorScreen newScreen;
+
+            switch (v.NewValue)
+            {
+                default:
+                case EditorScreenMode.Compose:
+                    newScreen = new ComposeScreen();
+                    break;
+                case EditorScreenMode.Setup:
+                    newScreen = new SetupScreen();
+                    break;
+                case EditorScreenMode.Timing:
+                    newScreen = new TimingScreen();
+                    break;
+            }
+
+            editor.PushScreen(newScreen);
+        });
         
         editor.CurrentScreen.BindValueChanged(v =>
         {
