@@ -2,12 +2,13 @@
 
 public enum GlobalAction
 {
+    // Screens
+    Back,
+    Select,
+
     // Overlays
     ToggleTaskbar,
     ToggleNotifications,
     ToggleSettings,
-
-    // Screens
-    Back,
-    Select,
+    ToggleChat,
 }

@@ -7,14 +7,14 @@ using osu.Framework.Input.Events;
 
 namespace Kumi.Game.Overlays.Taskbar;
 
-public partial class TaskbarSettingButton : TaskbarIconButton, IKeyBindingHandler<GlobalAction>
+public partial class TaskbarChatButton : TaskbarIconButton, IKeyBindingHandler<GlobalAction>
 {
     [Resolved]
-    private SettingOverlay? settingOverlay { get; set; }
+    private ChatOverlay? Overlay { get; set; }
     
-    public TaskbarSettingButton()
+    public TaskbarChatButton()
     {
-        Icon = FontAwesome.Solid.Cog;
+        Icon = FontAwesome.Solid.Comment;
         Action = toggleOverlay;
     }
 
@@ -22,7 +22,7 @@ public partial class TaskbarSettingButton : TaskbarIconButton, IKeyBindingHandle
     {
         switch (e.Action)
         {
-            case GlobalAction.ToggleSettings:
+            case GlobalAction.ToggleChat:
                 toggleOverlay();
                 return true;
         }
@@ -36,9 +36,9 @@ public partial class TaskbarSettingButton : TaskbarIconButton, IKeyBindingHandle
 
     private void toggleOverlay()
     {
-        if (settingOverlay?.State.Value == Visibility.Hidden)
-            settingOverlay.Show();
+        if (Overlay?.State.Value == Visibility.Hidden)
+            Overlay.Show();
         else
-            settingOverlay?.Hide();
+            Overlay?.Hide();
     }
 }
