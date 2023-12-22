@@ -21,9 +21,6 @@ namespace Kumi.Game;
 
 public partial class KumiGame : KumiGameBase, IOverlayManager
 {
-    private readonly List<string> importTasks = new List<string>();
-    private ScheduledDelegate? importTask;
-
     private float taskbarOffset => (Taskbar?.Position.Y ?? 0) + (Taskbar?.DrawHeight ?? 0);
 
     private Container screenContainer = null!;
@@ -107,8 +104,8 @@ public partial class KumiGame : KumiGameBase, IOverlayManager
         {
             pushNotificationOnConnection();
 
-            loadComponent(new MusicController(), Add);
             loadComponent(new AccountRegistrationOverlay(), d => topOverlayContainer.Add(d));
+            loadComponent(new SettingOverlay(), d => topOverlayContainer.Add(d));
             Taskbar = loadComponent(new TaskbarOverlay(), d => topOverlayContainer.Add(d));
 
             loadComponent<INotificationManager>(ControlOverlay = new ControlOverlay
@@ -136,32 +133,6 @@ public partial class KumiGame : KumiGameBase, IOverlayManager
     {
         base.SetHost(host);
         host.Window.Title = "Kumi";
-
-        if (host.Window != null)
-        {
-            host.Window.DragDrop += handleDragDropPath;
-        }
-    }
-
-    private void handleDragDropPath(string path)
-    {
-        importTasks.Add(path);
-        
-        if (importTask != null)
-            importTask.Cancel();
-
-        importTask = Scheduler.AddDelayed(handlePendingImports, 1000);
-    }
-    
-    private void handlePendingImports()
-    {
-        lock (importTasks)
-        {
-            if (importTasks.Count == 0)
-                return;
-
-            Import(importTasks.ToArray());
-        }
     }
 
     private void chartChanged(ValueChangedEvent<WorkingChart> chart)
@@ -354,9 +325,4 @@ public partial class KumiGame : KumiGameBase, IOverlayManager
     }
 
     #endregion
-    
-    private enum ImportTaskType
-    {
-        KumiChart,
-    }
 }

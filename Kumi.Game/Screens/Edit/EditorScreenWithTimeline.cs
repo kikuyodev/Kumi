@@ -11,44 +11,22 @@ public abstract partial class EditorScreenWithTimeline : EditorScreen
     public Container TimelineContent { get; private set; } = null!;
 
     public Container MainContent { get; private set; } = null!;
-
-    protected EditorScreenWithTimeline(EditorScreenMode type, bool pushContent = true)
+    
+    protected EditorScreenWithTimeline(EditorScreenMode type)
         : base(type)
     {
-        if (pushContent)
+        Content.Child = new Container
         {
-            InternalChild = new GridContainer
+            RelativeSizeAxes = Axes.Both,
+            Children = new[]
             {
-                RelativeSizeAxes = Axes.Both,
-                RowDimensions = new []
-                {
-                    new Dimension(GridSizeMode.AutoSize),
-                    new Dimension()
-                },
-                Content = new[]
-                {
-                    new[] { createTimelineContent() },
-                    new[] { createMainContent() }
-                }
-            };    
-        }
-        else
-        {
-            InternalChild = new Container
-            {
-                RelativeSizeAxes = Axes.Both,
-                Children = new[]
-                {
-                    CreateMainContent(),
-                    createTimelineContent()
-                }
-            };
-        }
+                loadMainContent(),
+                loadTimelineContent()
+            }
+        };
     }
-
-    protected abstract Drawable CreateMainContent();
     
-    private Drawable createMainContent()
+    private Drawable loadMainContent()
     {
         MainContent = new Container
         {
@@ -65,7 +43,7 @@ public abstract partial class EditorScreenWithTimeline : EditorScreen
         return MainContent;
     }
 
-    private Drawable createTimelineContent()
+    private Drawable loadTimelineContent()
     {
         TimelineContent = new Container
         {
@@ -74,8 +52,20 @@ public abstract partial class EditorScreenWithTimeline : EditorScreen
             Padding = new MarginPadding { Top = 12 + EditorOverlay.TOP_BAR_HEIGHT + PADDING, Horizontal = 12 },
         };
 
-        Scheduler.AddOnce(() => LoadComponentAsync(new TimelineArea(), TimelineContent.Add));
+        Scheduler.AddOnce(() => LoadComponentAsync(new TimelineArea(CreateTimelineContent()), TimelineContent.Add));
 
         return TimelineContent;
     }
+
+    protected override void Update()
+    {
+        base.Update();
+
+        MainContent.Padding = new MarginPadding { Top = TimelineContent.DrawHeight };
+    }
+
+    protected abstract Drawable CreateMainContent();
+
+    protected virtual Drawable CreateTimelineContent()
+        => new Container();
 }

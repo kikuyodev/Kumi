@@ -20,6 +20,8 @@ public partial class Timeline : ZoomableScrollContainer
     
     public readonly BindableBool WaveformVisible = new BindableBool(true);
     
+    private readonly Drawable screenContent;
+    
     [Resolved]
     private EditorClock editorClock { get; set; } = null!;
 
@@ -29,10 +31,12 @@ public partial class Timeline : ZoomableScrollContainer
     private bool trackWasPlaying;
     private float defaultTimelineZoom;
 
-    public Timeline()
+    public Timeline(Drawable screenContent)
     {
+        this.screenContent = screenContent;
+        
         RelativeSizeAxes = Axes.X;
-        Height = HEIGHT;
+        Height = 94;
 
         ZoomDuration = 200;
         ZoomEasing = Easing.OutQuint;
@@ -41,7 +45,7 @@ public partial class Timeline : ZoomableScrollContainer
 
     private WaveformGraph waveform = null!;
 
-    private TimelineTickDisplay ticks;
+    private TimelineTickDisplay ticks = null!;
 
     private Container mainContent = null!;
 
@@ -58,6 +62,10 @@ public partial class Timeline : ZoomableScrollContainer
     {
         AddRange(new Drawable[]
         {
+            new TimelineTimingPointDisplay
+            {
+                RelativeSizeAxes = Axes.Both
+            },
             mainContent = new Container
             {
                 RelativeSizeAxes = Axes.X,
@@ -67,17 +75,19 @@ public partial class Timeline : ZoomableScrollContainer
                 {
                     Vertical = 4
                 },
-                Children = new Drawable[]
+                Children = new[]
                 {
                     waveform = new WaveformGraph
                     {
-                        RelativeSizeAxes = Axes.Both,
+                        RelativeSizeAxes = Axes.X,
+                        Height = 72,
                         BaseColour = Colours.BLUE_LIGHT,
                         LowColour = Colours.BLUE,
                         MidColour = Colours.BLUE_LIGHT,
                         HighColour = Colours.BLUE_LIGHTER
                     },
-                    ticks = new TimelineTickDisplay()
+                    ticks = new TimelineTickDisplay { Height = 72 },
+                    screenContent
                 }
             }
         });

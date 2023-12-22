@@ -2,19 +2,21 @@
 using Kumi.Game.Charts;
 using Kumi.Game.Input;
 using Kumi.Game.Overlays;
-using Kumi.Game.Screens.Play;
 using Kumi.Game.Screens.Select.List;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
+using osu.Framework.Graphics.Cursor;
+using osu.Framework.Graphics.UserInterface;
 using osu.Framework.Input.Bindings;
 using osu.Framework.Input.Events;
 using osu.Framework.Screens;
 
 namespace Kumi.Game.Screens.Select;
 
-public partial class SelectScreen : ScreenWithChartBackground, IKeyBindingHandler<GlobalAction>
+[Cached]
+public abstract partial class SelectScreen : ScreenWithChartBackground, IKeyBindingHandler<GlobalAction>
 {
     public override float BlurAmount => 10f;
     public override float DimAmount => 0.5f;
@@ -23,12 +25,31 @@ public partial class SelectScreen : ScreenWithChartBackground, IKeyBindingHandle
     private MusicController musicController { get; set; } = null!;
 
     [Resolved]
-    private Bindable<WorkingChart> chart { get; set; } = null!;
+    protected ChartManager Manager { get; private set; } = null!;
+    
+    [Resolved]
+    protected Bindable<WorkingChart> Chart { get; private set; } = null!;
 
     private ListSelect listSelect = null!;
+    
+    public virtual MenuItem[] CreateContextMenuItemsForChartSet(ChartSetInfo chartSetInfo)
+    {
+        return new[]
+        {
+            new MenuItem("Select", () => listSelect.SelectedChart.Value = chartSetInfo.Charts.First()),
+        };
+    }
+    
+    public virtual MenuItem[] CreateContextMenuItemsForChart(ChartInfo chartInfo)
+    {
+        return new[]
+        {
+            new MenuItem("Select", () => listSelect.SelectedChart.Value = chartInfo),
+        };
+    }
 
     [BackgroundDependencyLoader]
-    private void load(Bindable<WorkingChart> workingChart, ChartManager manager)
+    private void load(Bindable<WorkingChart> workingChart)
     {
         InternalChildren = new Drawable[]
         {
@@ -52,16 +73,23 @@ public partial class SelectScreen : ScreenWithChartBackground, IKeyBindingHandle
                             Masking = false,
                             Children = new Drawable[]
                             {
-                                listSelect = new ListSelect
+                                new BasicContextMenuContainer
                                 {
+                                    RelativeSizeAxes = Axes.X,
+                                    AutoSizeAxes = Axes.Y,
                                     Anchor = Anchor.Centre,
                                     Origin = Anchor.Centre,
-                                    Padding = new MarginPadding { Left = 32 },
-                                    Children = new Drawable[]
+                                    Child = listSelect = new ListSelect
                                     {
-                                        new HalfScrollContainer(this) { RelativeSizeAxes = Axes.X },
+                                        Anchor = Anchor.Centre,
+                                        Origin = Anchor.Centre,
+                                        Padding = new MarginPadding { Left = 32 },
+                                        Children = new Drawable[]
+                                        {
+                                            new HalfScrollContainer(this) { RelativeSizeAxes = Axes.X },
+                                        }
                                     }
-                                },
+                                }
                             }
                         },
                         Empty(), // padding
@@ -80,12 +108,9 @@ public partial class SelectScreen : ScreenWithChartBackground, IKeyBindingHandle
                             },
                             Content = new[]
                             {
-                                new Drawable[]
+                                new[]
                                 {
-                                    new ChartSetInfoWedge
-                                    {
-                                        RelativeSizeAxes = Axes.Both
-                                    }
+                                    CreateWedge()
                                 }
                             }
                         }
@@ -99,10 +124,10 @@ public partial class SelectScreen : ScreenWithChartBackground, IKeyBindingHandle
             if (!this.IsCurrentScreen())
                 return;
 
-            workingChart.Value = manager.GetWorkingChart(c.NewValue);
+            workingChart.Value = Manager.GetWorkingChart(c.NewValue);
         }, true);
 
-        var charts = manager.GetAllUsableCharts();
+        var charts = Manager.GetAllUsableCharts();
         charts = charts.Where(c => c.Charts.Any() && !c.DeletePending).ToList();
 
         Schedule(() =>
@@ -114,6 +139,12 @@ public partial class SelectScreen : ScreenWithChartBackground, IKeyBindingHandle
             listSelect.Add(new HalfScrollContainer(this) { RelativeSizeAxes = Axes.X });
         });
     }
+
+    protected virtual Drawable CreateWedge()
+        => new ChartSetInfoWedge
+        {
+            RelativeSizeAxes = Axes.Both
+        };
 
     public override void OnEntering(ScreenTransitionEvent e)
     {
@@ -128,7 +159,7 @@ public partial class SelectScreen : ScreenWithChartBackground, IKeyBindingHandle
         base.OnResuming(e);
 
         // Resuming from player loader.
-        chart.Disabled = false;
+        Chart.Disabled = false;
         beginLooping();
     }
 
@@ -155,8 +186,7 @@ public partial class SelectScreen : ScreenWithChartBackground, IKeyBindingHandle
         switch (e.Action)
         {
             case GlobalAction.Select:
-                this.Push(new PlayerLoader());
-                return true;
+                return FinaliseSelection(Chart.Value.ChartInfo);
         }
 
         return false;
@@ -165,6 +195,20 @@ public partial class SelectScreen : ScreenWithChartBackground, IKeyBindingHandle
     public void OnReleased(KeyBindingReleaseEvent<GlobalAction> e)
     {
     }
+    
+    protected bool FinaliseSelection(ChartInfo chartInfo)
+    {
+        if (Chart.Disabled)
+            return false;
+
+        if (!Chart.Value.ChartInfo.Equals(chartInfo))
+            Chart.Value = Manager.GetWorkingChart(chartInfo);
+
+        Chart.Disabled = true;
+        return FinaliseSelectionInternal(chartInfo);
+    }
+
+    protected abstract bool FinaliseSelectionInternal(ChartInfo chartInfo);
 
     private bool isHandlingLooping;
 
@@ -173,7 +217,7 @@ public partial class SelectScreen : ScreenWithChartBackground, IKeyBindingHandle
         Debug.Assert(!isHandlingLooping);
         isHandlingLooping = true;
 
-        ensureTrackLooping(chart.Value);
+        ensureTrackLooping(Chart.Value);
 
         musicController.TrackChanged += ensureTrackLooping;
     }

@@ -52,6 +52,12 @@ public partial class MusicController : CompositeDrawable
         chart.BindValueChanged(c => changeChart(c.NewValue), true);
     }
 
+    public void ReloadCurrentTrack()
+    {
+        changeTrack();
+        TrackChanged?.Invoke(current);
+    }
+
     public void EnsurePlayingSong()
     {
         if (CurrentTrack.IsDummyDevice)

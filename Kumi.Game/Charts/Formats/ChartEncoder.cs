@@ -5,7 +5,7 @@ using Kumi.Game.IO.Formats;
 
 namespace Kumi.Game.Charts.Formats;
 
-public class ChartEncoder : FileEncoder<IChart, ChartSections>
+public class ChartEncoder : FileEncoder<Chart, ChartSections>
 {
     public ChartEncoder()
         : base(Chart.CURRENT_VERSION)
@@ -101,7 +101,9 @@ public class ChartEncoder : FileEncoder<IChart, ChartSections>
 
     private void handleTimings()
     {
-        foreach (var point in Current.TimingPoints)
+        var sortedPoints = Current.TimingPoints.OrderBy(p => p.StartTime).ToList();
+        
+        foreach (var point in sortedPoints)
         {
             var values = new List<string>
             {

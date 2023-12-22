@@ -12,7 +12,7 @@ using osuTK;
 
 namespace Kumi.Game.Graphics.UserInterface;
 
-public abstract partial class KumiTabControl<T> : TabControl<T>
+public partial class KumiTabControl<T> : TabControl<T>
 {
     protected override TabItem<T> CreateTabItem(T value) => new KumiTabItem(value);
     protected override Dropdown<T> CreateDropdown() => null!;
@@ -26,7 +26,7 @@ public abstract partial class KumiTabControl<T> : TabControl<T>
 
     private readonly Circle strip;
 
-    protected KumiTabControl()
+    public KumiTabControl()
     {
         RelativeSizeAxes = Axes.Both;
         TabContainer.Spacing = Vector2.Zero;

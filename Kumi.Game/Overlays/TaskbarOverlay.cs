@@ -105,6 +105,11 @@ public partial class TaskbarOverlay : OverlayContainer, IKeyBindingHandler<Globa
             Alignment = TaskbarButtonAlignment.Left,
             Icon = FontAwesome.Solid.Home
         });
+        
+        addButton(new TaskbarSettingButton
+        {
+            Alignment = TaskbarButtonAlignment.Left
+        });
 
         addButton(new TaskbarUserButton
         {

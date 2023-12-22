@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics;
+using Kumi.Game.Bindables;
 using Kumi.Game.Charts;
 using Kumi.Game.Charts.Objects;
 using Kumi.Game.Charts.Objects.Windows;
@@ -111,9 +112,9 @@ public abstract partial class PlayfieldTestScene : KumiTestScene
         return new TestNote
         {
             StartTime = startTime,
-            Type = new NoteProperty<NoteType>(),
-            Flags = new NoteProperty<NoteFlags>(),
-            NoteColor = new NoteProperty<Color4>(Color4.White),
+            Type = new LazyBindable<NoteType>(),
+            Flags = new LazyBindable<NoteFlags>(),
+            NoteColor = new LazyBindable<Color4>(Color4.White),
             Windows = new NoteWindows()
         };
     }
@@ -128,9 +129,9 @@ public abstract partial class PlayfieldTestScene : KumiTestScene
             set => StartTimeBindable.Value = value;
         }
         
-        public NoteProperty<NoteType> Type { get; init; } = null!;
-        public NoteProperty<NoteFlags> Flags { get; init; } = null!;
-        public NoteProperty<Color4> NoteColor { get; init; } = null!;
+        public LazyBindable<NoteType> Type { get; init; } = null!;
+        public LazyBindable<NoteFlags> Flags { get; init; } = null!;
+        public LazyBindable<Color4> NoteColor { get; init; } = null!;
         public NoteWindows Windows { get; set; } = null!;
 
         public Bindable<double> StartTimeBindable { get; } = new Bindable<double>();

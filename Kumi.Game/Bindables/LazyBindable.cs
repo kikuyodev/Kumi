@@ -1,8 +1,8 @@
 ﻿using osu.Framework.Bindables;
 
-namespace Kumi.Game.Charts.Objects;
+namespace Kumi.Game.Bindables;
 
-public class NoteProperty<T>
+public class LazyBindable<T>
 {
     private Bindable<T>? backingBindable;
 
@@ -24,7 +24,7 @@ public class NoteProperty<T>
 
     private readonly T defaultValue;
 
-    public NoteProperty(T value = default!)
+    public LazyBindable(T value = default!)
     {
         backingValue = defaultValue = value;
         backingBindable = null;

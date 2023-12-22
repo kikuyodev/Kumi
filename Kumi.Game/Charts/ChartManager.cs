@@ -1,11 +1,14 @@
 ﻿using System.Diagnostics;
 using System.Linq.Expressions;
+using Kumi.Game.Charts.Formats;
 using Kumi.Game.Database;
+using Kumi.Game.Extensions;
 using Kumi.Game.IO;
 using Kumi.Game.IO.Archives;
 using Kumi.Game.Models;
 using osu.Framework.Audio;
 using osu.Framework.Audio.Track;
+using osu.Framework.Extensions;
 using osu.Framework.IO.Stores;
 using osu.Framework.Platform;
 
@@ -108,7 +111,7 @@ public class ChartManager : ModelManager<ChartSetInfo>, IModelImporter<ChartSetI
 
     public IWorkingChart? DefaultChart => workingChartCache.DefaultChart;
 
-    public virtual void Save(ChartInfo chartInfo, IChart chartContent)
+    public virtual void Save(ChartInfo chartInfo, Chart chartContent)
         => save(chartInfo, chartContent);
 
     public void Delete(Expression<Func<ChartSetInfo, bool>>? filter = null)
@@ -129,14 +132,55 @@ public class ChartManager : ModelManager<ChartSetInfo>, IModelImporter<ChartSetI
         Realm.Run(r => Undelete(r.All<ChartSetInfo>().Where(s => s.DeletePending).ToList()));
     }
 
-    private void save(ChartInfo chartInfo, IChart chartContent)
+    private void save(ChartInfo chartInfo, Chart chartContent)
     {
         var set = chartInfo.ChartSet;
         Debug.Assert(set != null);
 
         chartContent.ChartInfo = chartInfo;
 
-        // todo
+        Realm.Write(r =>
+        {
+            using var stream = new MemoryStream();
+            using var encoder = new ChartEncoder();
+            
+            encoder.Encode(chartContent, stream);
+
+            stream.Seek(0, SeekOrigin.Begin);
+
+            var existingFile = chartInfo.Path != null ? set.GetFile(chartInfo.Path) : null;
+            var targetFilename = createChartFilenameFromMetadata(chartInfo);
+
+            if (set.Charts.Any(c => c.ID != chartInfo.ID && string.Equals(c.Path, targetFilename, StringComparison.OrdinalIgnoreCase)))
+                throw new InvalidOperationException($"{set} already has a difficulty with the name of '{chartInfo.DifficultyName}'");
+            
+            if (existingFile != null)
+                DeleteFile(set, existingFile);
+            
+            var oldHash = chartInfo.Hash;
+            chartInfo.Hash = stream.ComputeSHA2Hash();
+            
+            AddFile(set, stream, createChartFilenameFromMetadata(chartInfo));
+            updateHash(set);
+            
+            var realmSetInfo = r.Find<ChartSetInfo>(set.ID)!;
+            set.CopyChangesToRealm(realmSetInfo);
+            
+            realmSetInfo.Charts.Single(c => c.ID == chartInfo.ID).UpdateLocalScores(r);
+            
+            ProcessChart?.Invoke(realmSetInfo);
+        });
+
+        string createChartFilenameFromMetadata(ChartInfo info)
+        {
+            var metadata = info.Metadata;
+            return $"{metadata?.ArtistRomanised ?? metadata?.Artist} - {metadata?.TitleRomanised ?? metadata?.Title} ({metadata?.Creator?.Username ?? "unknown"}){ChartImporter.KUMI_CHART}";
+        }
+    }
+
+    private void updateHash(ChartSetInfo set)
+    {
+        set.Hash = chartImporter.ComputeHash(set);
     }
 
     #region ICanAcceptFiles Implementation

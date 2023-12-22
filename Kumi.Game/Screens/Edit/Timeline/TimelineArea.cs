@@ -13,10 +13,14 @@ public partial class TimelineArea : CompositeDrawable
 {
     private Timeline timeline = null!;
 
-    public TimelineArea()
+    private readonly Drawable screenContent;
+    
+    public TimelineArea(Drawable? content = null)
     {
         RelativeSizeAxes = Axes.X;
         AutoSizeAxes = Axes.Y;
+        
+        screenContent = content ?? Empty();
     }
 
     [BackgroundDependencyLoader]
@@ -50,7 +54,7 @@ public partial class TimelineArea : CompositeDrawable
                                     Depth = float.MaxValue,
                                     Colour = Colours.Gray(0.05f)
                                 },
-                                timeline = new Timeline()
+                                timeline = new Timeline(screenContent)
                             }
                         },
                         new Container
