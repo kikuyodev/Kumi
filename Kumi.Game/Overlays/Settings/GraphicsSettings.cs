@@ -11,7 +11,8 @@ public partial class GraphicsSettings : SettingScreen
     {
         Children = new Drawable[]
         {
-            new LayoutSection()
+            new LayoutSection(),
+            new RendererSettings(),
         };
     }
 }
