@@ -12,7 +12,7 @@ public partial class KumiPasswordTextBox : KumiTextBox
         Child = new SpriteText
         {
             Text = "•",
-            Font = KumiFonts.GetFont(size: CalculatedTextSize)
+            Font = KumiFonts.GetFont(size: FontSize)
         }
     };
 }
