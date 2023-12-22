@@ -15,6 +15,7 @@ public partial class GlobalKeybindContainer : RealmBackedKeyBindingContainer<Glo
         {
             new KeyBinding(new KeyCombination(InputKey.Control, InputKey.T), GlobalAction.ToggleTaskbar),
             new KeyBinding(new KeyCombination(InputKey.Control, InputKey.N), GlobalAction.ToggleNotifications),
+            new KeyBinding(new KeyCombination(InputKey.Control, InputKey.O), GlobalAction.ToggleSettings),
             
             new KeyBinding(InputKey.Escape, GlobalAction.Back),
             new KeyBinding(InputKey.ExtraMouseButton1, GlobalAction.Back),
