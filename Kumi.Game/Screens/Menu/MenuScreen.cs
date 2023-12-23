@@ -1,5 +1,6 @@
 using Kumi.Game.Graphics;
 using Kumi.Game.Graphics.Backgrounds;
+using Kumi.Game.Online;
 using Kumi.Game.Overlays;
 using Kumi.Game.Screens.Backgrounds;
 using Kumi.Game.Screens.Select;
@@ -19,6 +20,7 @@ public partial class MenuScreen : KumiScreen
 {
     public override bool HideOverlaysOnEnter => buttons == null || buttons.State == ButtonsState.Hidden;
     protected override OverlayActivation InitialOverlayActivation => Overlays.OverlayActivation.UserTriggered;
+    public override PlayerActivity InitialActivity { get; } = new PlayerActivity.Idle();
 
     public override BackgroundScreen CreateBackground() => new MenuBackground();
 
