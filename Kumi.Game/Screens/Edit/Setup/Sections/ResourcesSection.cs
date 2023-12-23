@@ -34,7 +34,7 @@ public partial class ResourcesSection : SetupSection
                 TabbableContentContainer = this
             }, "Background", f =>
             {
-                f.AddText("Backgrounds should follow common usage guidelines, and should be appropriate for all ages. More information can be found in our");
+                f.AddText("Backgrounds should follow common usage guidelines, and should be appropriate for all ages. More information can be found in our ");
                 f.AddText("Content usage guidelines ", s => s.Colour = Color4Extensions.FromHex("69C"));
                 f.AddText("and our ");
                 f.AddText("Visual content guidelines ", s => s.Colour = Color4Extensions.FromHex("69C"));
