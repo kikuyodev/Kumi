@@ -38,12 +38,21 @@ public partial class EditorOverlay : Container
     [Resolved]
     private EditorHistoryHandler historyHandler { get; set; } = null!;
 
+    private readonly IBindable<bool> unsavedChanges;
+    
+    public EditorOverlay(BindableBool unsavedChanges)
+    {
+        this.unsavedChanges = unsavedChanges.GetBoundCopy();
+    }
+
     [BackgroundDependencyLoader]
     private void load()
     {
         Chart.BindValueChanged(_ => constructDisplay(), true);
     }
 
+    private SpriteText chartInfoText = null!;
+    
     private void constructDisplay()
     {
         Padding = new MarginPadding(12);
@@ -75,7 +84,8 @@ public partial class EditorOverlay : Container
                                     {
                                         Items = new[]
                                         {
-                                            new MenuItem("Exit")
+                                            new MenuItem("Save", () => editor.Save()),
+                                            new MenuItem("Exit", () => editor.AttemptExit())
                                         }
                                     },
                                     new MenuItem("Edit")
@@ -101,13 +111,12 @@ public partial class EditorOverlay : Container
                                     new MenuItem("Settings")
                                 }
                             },
-                            new SpriteText
+                            chartInfoText = new SpriteText
                             {
                                 Anchor = Anchor.CentreLeft,
                                 Origin = Anchor.CentreLeft,
                                 Alpha = 0.5f,
                                 Colour = Colours.GRAY_C,
-                                Text = getRomanisableString(),
                                 Font = KumiFonts.GetFont(size: 12)
                             }
                         }
@@ -133,7 +142,6 @@ public partial class EditorOverlay : Container
                             },
                             new EditorScreenTabControl
                             {
-                                // Current = { Value = EditorScreenMode.Compose }
                                 Current = { BindTarget = currentScreen }
                             }
                         }
@@ -191,16 +199,22 @@ public partial class EditorOverlay : Container
                 v.NewValue.CanPaste.BindValueChanged(c => pasteMenuItem.Action.Disabled = !c.NewValue, true);
             }
         }, true);
+
+        updateChartInfoText();
+        unsavedChanges.BindValueChanged(_ => updateChartInfoText(), true);
+        Chart.BindValueChanged(_ => updateChartInfoText(), true);
     }
     
-    private RomanisableString getRomanisableString()
+    private void updateChartInfoText()
     {
         if (Chart.Value == null)
-            return new RomanisableString(null, null);
+            return;
         
         var original = $"{Chart.Value.Metadata.Artist} - {Chart.Value.Metadata.Title} [{Chart.Value.Chart.ChartInfo.DifficultyName}]";
         var romanised = $"{Chart.Value.Metadata.ArtistRomanised} - {Chart.Value.Metadata.TitleRomanised} [{Chart.Value.Chart.ChartInfo.DifficultyName}]";
 
-        return new RomanisableString(original, romanised);
+        chartInfoText.Text = new RomanisableString(original, romanised);
+        if (unsavedChanges.Value)
+            chartInfoText.Text += " (UNSAVED)";
     }
 }
