@@ -33,6 +33,14 @@ public partial class TimingPointPiece : CompositeDrawable
     {
         InternalChildren = new Drawable[]
         {
+            new Circle
+            {
+                RelativeSizeAxes = Axes.Y,
+                Width = 3,
+                Anchor = Anchor.Centre,
+                Origin = Anchor.Centre,
+                Colour = Colours.YELLOW_ACCENT_LIGHT
+            },
             new Container
             {
                 AutoSizeAxes = Axes.Both,
@@ -57,14 +65,6 @@ public partial class TimingPointPiece : CompositeDrawable
                         Text = isInherited ? $"{point.RelativeScrollSpeed:N2}x" : $"{((UninheritedTimingPoint)point).BPM:N1} BPM"
                     }
                 }
-            },
-            new Circle
-            {
-                RelativeSizeAxes = Axes.Y,
-                Width = 3,
-                Anchor = Anchor.Centre,
-                Origin = Anchor.Centre,
-                Colour = Colours.YELLOW_ACCENT_LIGHT
             }
         };
 
