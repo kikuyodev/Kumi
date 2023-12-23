@@ -75,7 +75,7 @@ public partial class KumiPlayfield : ScrollingPlayfield, ISnapProvider
                             RelativePositionAxes = Axes.X,
                             Size = new Vector2(0.8f),
                             X = 0.3f,
-                            Child = drawableDrum
+                            Child = drawableDrum.CreateProxy()
                         }
                     },
                     new Circle
@@ -189,7 +189,7 @@ public partial class KumiPlayfield : ScrollingPlayfield, ISnapProvider
                             RelativePositionAxes = Axes.X,
                             Size = new Vector2(0.8f),
                             X = 0.3f,
-                            Child = drawableDrum.CreateProxy()
+                            Child = drawableDrum
                         }
                     }
                 }
