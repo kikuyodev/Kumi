@@ -28,6 +28,7 @@ public partial class TimingPointConfiguration : VisibilityContainer
     }
 
     private Container content = null!;
+    private FillFlowContainer leftConfiguration = null!;
 
     [BackgroundDependencyLoader]
     private void load()
@@ -59,7 +60,7 @@ public partial class TimingPointConfiguration : VisibilityContainer
                     Padding = new MarginPadding { Horizontal = 12 },
                     Children = new Drawable[]
                     {
-                        new FillFlowContainer
+                        leftConfiguration = new FillFlowContainer
                         {
                             RelativeSizeAxes = Axes.X,
                             AutoSizeAxes = Axes.Y,
@@ -68,7 +69,6 @@ public partial class TimingPointConfiguration : VisibilityContainer
                             Children = new Drawable[]
                             {
                                 new StartTimeSection(point),
-                                new UninheritedSection(point)
                             }
                         },
                         new FillFlowContainer
@@ -97,6 +97,9 @@ public partial class TimingPointConfiguration : VisibilityContainer
                 }
             }
         };
+
+        if (point.PointType == TimingPointType.Uninherited)
+            leftConfiguration.Add(new UninheritedSection(point));
     }
 
     protected override void PopIn()
