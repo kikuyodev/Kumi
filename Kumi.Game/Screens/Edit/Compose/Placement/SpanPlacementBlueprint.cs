@@ -23,6 +23,7 @@ public partial class SpanPlacementBlueprint : PlacementBlueprint
     {
         endTimeNote = (note as IHasEndTime)!;
         RelativeSizeAxes = Axes.None;
+        Origin = Anchor.Centre;
         Height = 120;
 
         InternalChildren = new Drawable[]
@@ -32,24 +33,23 @@ public partial class SpanPlacementBlueprint : PlacementBlueprint
                 RelativeSizeAxes = Axes.None,
                 Size = new Vector2(72),
                 Anchor = Anchor.Centre,
-                Origin = Anchor.CentreLeft
+                Origin = Anchor.Centre
             },
             spanPiece = new Container
             {
                 RelativeSizeAxes = Axes.None,
-                Size = new Vector2(54),
+                Size = new Vector2(0, 52),
                 Anchor = Anchor.Centre,
                 Origin = Anchor.CentreLeft,
-                X = 72f / 4f,
-                Padding = new MarginPadding { Right = -(72f / 2f) },
+                Padding = new MarginPadding { Horizontal = -(52f / 2f) },
                 Child = new HitPiece()
             },
             tailPiece = new HitPiece
             {
                 RelativeSizeAxes = Axes.None,
-                Size = new Vector2(72),
+                Size = new Vector2(52),
                 Anchor = Anchor.Centre,
-                Origin = Anchor.CentreLeft
+                Origin = Anchor.Centre
             },
         };
     }
