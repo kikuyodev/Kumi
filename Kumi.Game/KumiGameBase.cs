@@ -41,6 +41,7 @@ public partial class KumiGameBase : osu.Framework.Game, ICanAcceptFiles
     protected IAPIConnectionProvider API { get; set; } = null!;
     protected Bindable<WorkingChart> Chart { get; private set; } = null!;
     protected MusicController MusicController { get; private set; } = null!;
+    protected ChannelManager ChannelManager { get; private set; } = null!;
     
     protected KumiScreenStack ScreenStack = null!;
     protected override Container<Drawable> Content => content;
@@ -118,6 +119,9 @@ public partial class KumiGameBase : osu.Framework.Game, ICanAcceptFiles
         
         Add(MusicController = new MusicController());
         DependencyContainer.CacheAs(MusicController);
+        
+        Add(ChannelManager = new ChannelManager());
+        DependencyContainer.CacheAs(ChannelManager);
 
         fileAcceptors.Add(chartManager);
 

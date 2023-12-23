@@ -1,4 +1,8 @@
-﻿using Kumi.Game.Graphics;
+﻿using System.Collections.Specialized;
+using System.Diagnostics;
+using Kumi.Game.Graphics;
+using Kumi.Game.Online;
+using Kumi.Game.Online.Channels;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
@@ -9,13 +13,16 @@ namespace Kumi.Game.Overlays.Chat;
 
 public partial class ChannelListing : CompositeComponent
 {
-    private FillFlowContainer<DrawableChannelItem> channels = null!;
+    [Resolved]
+    private ChannelManager channelsManager { get; set; } = null!;
 
     public ChannelListing()
     {
         RelativeSizeAxes = Axes.Y;
         Width = 200;
     }
+
+    private FillFlowContainer<DrawableChannelItem> channelsFlow = null!;
 
     [BackgroundDependencyLoader]
     private void load()
@@ -35,7 +42,7 @@ public partial class ChannelListing : CompositeComponent
                     new BasicScrollContainer
                     {
                         RelativeSizeAxes = Axes.Both,
-                        Child = channels = new FillFlowContainer<DrawableChannelItem>
+                        Child = channelsFlow = new FillFlowContainer<DrawableChannelItem>
                         {
                             RelativeSizeAxes = Axes.X,
                             AutoSizeAxes = Axes.Y,
@@ -72,7 +79,7 @@ public partial class ChannelListing : CompositeComponent
                                 Origin = Anchor.TopCentre,
                                 Width = 0.8f
                             },
-                            new DrawableChannelItem(false)
+                            new DrawableChannelItem(null, false)
                             {
                                 Icon = "+",
                                 ChannelName = "Add Channel",
@@ -85,16 +92,36 @@ public partial class ChannelListing : CompositeComponent
             }
         };
         
-        channels.Add(new DrawableChannelItem
+        channelsManager.Channels.BindCollectionChanged(onChannelsChanged, true);
+    }
+
+    private void onChannelsChanged(object? _, NotifyCollectionChangedEventArgs args)
+    {
+        switch (args.Action)
         {
-            Icon = "#",
-            ChannelName = "Kumi"
-        });
-        
-        channels.Add(new DrawableChannelItem
-        {
-            Icon = "#",
-            ChannelName = "Modding"
-        });
+            case NotifyCollectionChangedAction.Reset:
+                channelsFlow.Clear();
+                break;
+            
+            case NotifyCollectionChangedAction.Add:
+                Debug.Assert(args.NewItems != null);
+                
+                foreach (var item in args.NewItems)
+                {
+                    var channel = (Channel) item;
+                    channelsFlow.Add(new DrawableChannelItem(channel) { Icon = "#" });
+                }
+                break;
+            
+            case NotifyCollectionChangedAction.Remove:
+                Debug.Assert(args.OldItems != null);
+                
+                foreach (var item in args.OldItems)
+                {
+                    var channel = (Channel) item;
+                    channelsFlow.RemoveAll(c => c.Channel == channel, true);
+                }
+                break;
+        }
     }
 }

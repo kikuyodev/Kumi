@@ -115,7 +115,7 @@ public partial class LoginScreen : Container
             }
         };
 
-        api.State.BindValueChanged(v =>
+        api.State.BindValueChanged(v => Schedule(() =>
         {
             if (v.NewValue == APIState.Offline)
             {
@@ -133,7 +133,7 @@ public partial class LoginScreen : Container
 
                 this.FadeColour(Colours.Gray(0.5f), 100, Easing.OutQuint);
             }
-        }, true);
+        }), true);
     }
 
     public override bool AcceptsFocus => true;

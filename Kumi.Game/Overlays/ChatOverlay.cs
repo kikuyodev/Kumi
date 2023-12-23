@@ -1,7 +1,10 @@
 ﻿using Kumi.Game.Graphics;
 using Kumi.Game.Graphics.Containers;
+using Kumi.Game.Online;
+using Kumi.Game.Online.Channels;
 using Kumi.Game.Overlays.Chat;
 using osu.Framework.Allocation;
+using osu.Framework.Bindables;
 using osu.Framework.Extensions.Color4Extensions;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
@@ -15,7 +18,14 @@ public partial class ChatOverlay : KumiFocusedOverlayContainer
 {
     public const float HEIGHT = 400;
 
+    [Resolved]
+    private ChannelManager channelManager { get; set; } = null!;
+
     private Container content = null!;
+
+    private readonly Bindable<Channel> currentChannel = new Bindable<Channel>();
+
+    private readonly Dictionary<Channel, DrawableChannel> channelDrawables = new Dictionary<Channel, DrawableChannel>();
 
     public ChatOverlay()
     {
@@ -25,6 +35,8 @@ public partial class ChatOverlay : KumiFocusedOverlayContainer
         Origin = Anchor.BottomCentre;
         Padding = new MarginPadding(4);
     }
+
+    private Container channelContainer = null!;
 
     [BackgroundDependencyLoader]
     private void load()
@@ -61,12 +73,44 @@ public partial class ChatOverlay : KumiFocusedOverlayContainer
                         new Drawable[]
                         {
                             new ChannelListing(),
-                            new DrawableChannel()
+                            channelContainer = new Container
+                            {
+                                RelativeSizeAxes = Axes.Both
+                            }
                         }
                     }
                 }
             }
         };
+
+        currentChannel.BindTo(channelManager.CurrentChannel);
+        currentChannel.BindValueChanged(c => onChannelChanged(c.NewValue), true);
+    }
+
+    private void onChannelChanged(Channel? newChannel)
+    {
+        if (newChannel == null)
+            return;
+
+        var drawable = getDrawableChannel(newChannel);
+
+        // hide previous channel
+        foreach (var channel in channelDrawables.Values)
+            channel.Hide();
+
+        if (!drawable.IsLoaded)
+            channelContainer.Add(drawable);
+
+        drawable.Show();
+    }
+
+    private DrawableChannel getDrawableChannel(Channel channel)
+    {
+        if (channelDrawables.TryGetValue(channel, out var drawable))
+            return drawable;
+
+        channelDrawables[channel] = drawable = new DrawableChannel(channel);
+        return drawable;
     }
 
     protected override void PopIn()

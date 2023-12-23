@@ -1,5 +1,6 @@
 ﻿using Kumi.Game.Graphics;
 using Kumi.Game.Graphics.UserInterface;
+using Kumi.Game.Online.Channels;
 using osu.Framework.Extensions.Color4Extensions;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
@@ -25,7 +26,7 @@ public partial class DrawableChannelItem : CompositeDrawable
         }
     }
 
-    private LocalisableString channelName = string.Empty;
+    private LocalisableString channelName;
 
     public LocalisableString ChannelName
     {
@@ -37,15 +38,22 @@ public partial class DrawableChannelItem : CompositeDrawable
         }
     }
 
-    public Action? Action;
-    public Action? OnClose;
+    public Action<Channel?>? Action;
+    public Action<Channel?>? OnClose;
 
     private readonly Box background;
     private readonly SpriteText iconText;
     private readonly SpriteText nameText;
 
-    public DrawableChannelItem(bool showClose = true)
+    public readonly Channel? Channel;
+
+    public DrawableChannelItem(Channel? channel, bool showClose = true)
     {
+        Channel = channel;
+
+        if (channel != null)
+            channelName = channel.APIChannel.Name;
+
         RelativeSizeAxes = Axes.X;
         Height = 32;
         Masking = true;
@@ -96,7 +104,7 @@ public partial class DrawableChannelItem : CompositeDrawable
                     IconScale = new Vector2(0.6f),
                     Size = new Vector2(24),
                     Colour = Colours.GRAY_6,
-                    Action = () => OnClose?.Invoke(),
+                    Action = () => OnClose?.Invoke(channel),
                 }
                 : Empty()
         };
@@ -107,7 +115,7 @@ public partial class DrawableChannelItem : CompositeDrawable
         background.FadeTo(1f, 100);
         return base.OnHover(e);
     }
-    
+
     protected override void OnHoverLost(HoverLostEvent e)
     {
         background.FadeTo(0f, 100);
@@ -116,7 +124,7 @@ public partial class DrawableChannelItem : CompositeDrawable
 
     protected override bool OnClick(ClickEvent e)
     {
-        Action?.Invoke();
+        Action?.Invoke(Channel);
         return base.OnClick(e);
     }
 }

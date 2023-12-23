@@ -110,8 +110,8 @@ public partial class MessageGroup : CompositeDrawable
         return container;
     }
     
-    public void AddMessage(string message)
+    public void AddMessage(string content)
     {
-        messages.Add(new MessageItem(message));
+        messages.Add(new MessageItem(content));
     }
 }

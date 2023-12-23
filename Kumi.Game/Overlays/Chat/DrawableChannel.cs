@@ -1,5 +1,7 @@
 ﻿using Kumi.Game.Graphics.UserInterface;
 using Kumi.Game.Online.API;
+using Kumi.Game.Online.API.Chat;
+using Kumi.Game.Online.Channels;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
@@ -10,8 +12,12 @@ namespace Kumi.Game.Overlays.Chat;
 
 public partial class DrawableChannel : CompositeDrawable
 {
-    public DrawableChannel()
+    private readonly Channel boundChannel;
+
+    public DrawableChannel(Channel boundChannel)
     {
+        this.boundChannel = boundChannel;
+
         RelativeSizeAxes = Axes.Both;
         Padding = new MarginPadding { Right = 12 };
     }
@@ -56,15 +62,17 @@ public partial class DrawableChannel : CompositeDrawable
                     {
                         RelativeSizeAxes = Axes.X,
                         Height = 32,
-                        PlaceholderText = "Message #Kumi",
+                        PlaceholderText = $"Message #{boundChannel.APIChannel.Name}",
                         Padding = new MarginPadding { Bottom = 8 },
-                        ReleaseFocusOnCommit = false
+                        ReleaseFocusOnCommit = false,
+                        LengthLimit = 255
                     }
                 }
             }
         };
 
         textBox.OnCommit += sendMessage;
+        boundChannel.OnNewMessage += addMessage;
     }
 
     private void sendMessage(TextBox sender, bool _)
@@ -72,22 +80,28 @@ public partial class DrawableChannel : CompositeDrawable
         if (string.IsNullOrWhiteSpace(sender.Text))
             return;
 
+        // TODO: remove this and replace with an API call.
+        addMessage(new APIChatMessage { Content = sender.Text });
+
+        sender.Text = string.Empty;
+    }
+
+    private void addMessage(APIChatMessage message)
+    {
         // check and see if the last message was sent by the same user
         var lastMessage = messages.Children.LastOrDefault();
 
         if (lastMessage?.Account.Id == api.LocalAccount.Value.Id)
         {
             // if so, add the message to the last message
-            lastMessage.AddMessage(sender.Text);
+            lastMessage.AddMessage(message.Content);
         }
         else
         {
             // otherwise, create a new message group
-            var message = new MessageGroup(api.LocalAccount.Value);
-            message.AddMessage(sender.Text);
-            messages.Add(message);
+            var group = new MessageGroup(api.LocalAccount.Value);
+            group.AddMessage(message.Content);
+            messages.Add(group);
         }
-
-        sender.Text = string.Empty;
     }
 }
