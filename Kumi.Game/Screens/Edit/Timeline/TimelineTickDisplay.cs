@@ -33,7 +33,7 @@ public partial class TimelineTickDisplay : TimelinePart<DrawableTick>
 
     public TimelineTickDisplay()
     {
-        RelativeSizeAxes = Axes.X;
+        RelativeSizeAxes = Axes.Both;
     }
 
     [BackgroundDependencyLoader]

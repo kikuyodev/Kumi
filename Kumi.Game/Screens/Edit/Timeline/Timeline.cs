@@ -69,7 +69,7 @@ public partial class Timeline : ZoomableScrollContainer
             mainContent = new Container
             {
                 RelativeSizeAxes = Axes.X,
-                Height = HEIGHT,
+                Height = 72,
                 Depth = float.MaxValue,
                 Padding = new MarginPadding
                 {
@@ -79,14 +79,13 @@ public partial class Timeline : ZoomableScrollContainer
                 {
                     waveform = new WaveformGraph
                     {
-                        RelativeSizeAxes = Axes.X,
-                        Height = 72,
+                        RelativeSizeAxes = Axes.Both,
                         BaseColour = Colours.BLUE_LIGHT,
                         LowColour = Colours.BLUE,
                         MidColour = Colours.BLUE_LIGHT,
                         HighColour = Colours.BLUE_LIGHTER
                     },
-                    ticks = new TimelineTickDisplay { Height = 72 },
+                    ticks = new TimelineTickDisplay(),
                     screenContent
                 }
             }
