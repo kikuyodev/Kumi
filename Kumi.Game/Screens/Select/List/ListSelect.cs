@@ -30,6 +30,9 @@ public partial class ListSelect : FillFlowContainer
 
         // select random chart
         var groups = Children.OfType<ListItemGroup>().ToArray();
+        if (groups.Length == 0)
+            return;
+        
         currentlySelected = groups[RNG.Next(0, groups.Length)];
         currentlySelected.Selected.Value = true;
 

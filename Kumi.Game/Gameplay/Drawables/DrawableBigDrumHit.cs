@@ -23,7 +23,7 @@ public partial class DrawableBigDrumHit : DrawableNote<DrumHit>, IKeyBindingHand
         Anchor = Anchor.CentreLeft;
         Origin = Anchor.Centre;
 
-        AddInternal(DrumHitPart = createDrawable(new BigDrumHitPart(note.Type.Value)));
+        AddInternal(DrumHitPart = createDrawable(new BigDrumHitPart(note.Type)));
     }
 
     protected override void UpdateAfterChildren()

@@ -11,14 +11,14 @@ namespace Kumi.Game.Charts.Objects;
 public class BarLine : Note
 {
     public LazyBindable<bool> Major { get; } = new LazyBindable<bool>();
-    
+
     public BarLine()
         : this(0)
     {
     }
-    
+
     public BarLine(float startTime)
-        : base(startTime)
+        : base(startTime, NoteType.Don)
     {
         Windows = new NoteWindows();
     }

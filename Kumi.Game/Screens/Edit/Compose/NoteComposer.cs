@@ -6,7 +6,9 @@ using Kumi.Game.Screens.Edit.Compose.Tools;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
+using osu.Framework.Input.Events;
 using osuTK;
+using osuTK.Input;
 
 namespace Kumi.Game.Screens.Edit.Compose;
 
@@ -43,7 +45,8 @@ public partial class NoteComposer : CompositeDrawable, IPlacementHandler, ISnapP
         toolboxCollection.Items = new NoteCompositionTool[]
             {
                 new SelectTool(),
-                new HitCompositionTool(),
+                new DrumCompositionTool(),
+                new BigDrumCompositionTool(),
                 new DrumRollCompositionTool(),
                 new BalloonCompositionTool()
             }.Select(t => new RadioButton(t.Name, () => toolSelected(t), t.CreateIcon))
@@ -67,6 +70,39 @@ public partial class NoteComposer : CompositeDrawable, IPlacementHandler, ISnapP
         
         if (!(tool is SelectTool))
             editorChart.SelectedNotes.Clear();
+    }
+
+    protected override bool OnKeyDown(KeyDownEvent e)
+    {
+        if (e.ControlPressed || e.AltPressed || e.SuperPressed)
+            return false;
+
+        if (checkNumberToggleFromKey(e.Key, out var index))
+        {
+            var item = toolboxCollection.Items.ElementAtOrDefault(index);
+
+            if (item != null)
+            {
+                if (!item.Selected.Disabled)
+                    item.Select();
+                
+                return true;
+            }
+        }
+        
+        return base.OnKeyDown(e);
+    }
+
+    private bool checkNumberToggleFromKey(Key key, out int index)
+    {
+        if (key < Key.Number1 || key > Key.Number9)
+        {
+            index = -1;
+            return false;
+        }
+
+        index = key - Key.Number1;
+        return true;
     }
 
     #region IPlacementHandler

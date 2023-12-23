@@ -1,31 +1,41 @@
 ﻿using Kumi.Game.Charts;
+using Kumi.Game.Input;
 using Kumi.Game.Overlays;
 using Kumi.Game.Screens.Edit.Compose;
+using Kumi.Game.Screens.Edit.Popup;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
+using osu.Framework.Extensions.Color4Extensions;
 using osu.Framework.Graphics;
+using osu.Framework.Graphics.Containers;
+using osu.Framework.Graphics.Shapes;
 using osu.Framework.Input;
 using osu.Framework.Input.Bindings;
 using osu.Framework.Input.Events;
 using osu.Framework.Logging;
 using osu.Framework.Screens;
+using osuTK.Graphics;
 using osuTK.Input;
 
 namespace Kumi.Game.Screens.Edit;
 
-public partial class Editor : ScreenWithChartBackground, IKeyBindingHandler<PlatformAction>
+public partial class Editor : ScreenWithChartBackground, IKeyBindingHandler<PlatformAction>, IKeyBindingHandler<GlobalAction>
 {
     protected override OverlayActivation InitialOverlayActivation => Overlays.OverlayActivation.UserTriggered;
     public override float DimAmount => 0.5f;
     public override float ParallaxAmount => 0.001f;
+    public override bool AllowBackButton => false;
 
     private DependencyContainer dependencies = null!;
 
     protected override IReadOnlyDependencyContainer CreateChildDependencies(IReadOnlyDependencyContainer parent)
         => dependencies = new DependencyContainer(base.CreateChildDependencies(parent));
-    
+
     [Resolved]
     private ChartManager chartManager { get; set; } = null!;
+    
+    [Resolved]
+    private Bindable<WorkingChart> chart { get; set; } = null!;
 
     private EditorClock clock = null!;
     private BindableBeatDivisor beatDivisor = null!;
@@ -33,12 +43,20 @@ public partial class Editor : ScreenWithChartBackground, IKeyBindingHandler<Plat
     private EditorScreenStack screenStack = null!;
 
     private readonly Bindable<WorkingChart> workingChart = new Bindable<WorkingChart>();
+    private readonly BindableBool hasUnsavedChanges = new BindableBool();
 
     private EditorChart editorChart = null!;
     private EditorHistoryHandler historyHandler = null!;
 
     public readonly Bindable<EditorScreen> CurrentScreen = new Bindable<EditorScreen>();
-
+    
+    private string lastSavedHash = string.Empty;
+    
+    private Box popupBackground = null!;
+    private ExitWithoutSavingPopup exitWithoutSavingPopup = null!;
+    
+    private readonly List<EditorPopup> openPopups = new List<EditorPopup>();
+    
     [BackgroundDependencyLoader]
     private void load(IBindable<WorkingChart> working)
     {
@@ -59,6 +77,11 @@ public partial class Editor : ScreenWithChartBackground, IKeyBindingHandler<Plat
         AddInternal(historyHandler = new EditorHistoryHandler(editorChart));
         dependencies.CacheAs(historyHandler);
 
+        historyHandler.OnStateChange += () =>
+        {
+            hasUnsavedChanges.Value = lastSavedHash != historyHandler.CurrentStateHash;
+        };
+
         clock.ChangeSource(workingChart.Value.Track);
         AddInternal(clock);
 
@@ -68,15 +91,49 @@ public partial class Editor : ScreenWithChartBackground, IKeyBindingHandler<Plat
             {
                 RelativeSizeAxes = Axes.Both
             },
-            new EditorOverlay
+            new EditorOverlay(hasUnsavedChanges)
             {
                 RelativeSizeAxes = Axes.Both,
                 Chart = { BindTarget = workingChart }
+            },
+            new Container
+            {
+                RelativeSizeAxes = Axes.Both,
+                Children = new Drawable[]
+                {
+                    popupBackground = new Box
+                    {
+                        RelativeSizeAxes = Axes.Both,
+                        Colour = Color4.Black.Opacity(0.5f),
+                        Alpha = 0
+                    },
+                    exitWithoutSavingPopup = new ExitWithoutSavingPopup
+                    {
+                        Anchor = Anchor.Centre,
+                        Origin = Anchor.Centre,
+                        Action = this.Exit
+                    }
+                }
             }
+        });
+        
+        exitWithoutSavingPopup.State.BindValueChanged(v =>
+        {
+            if (v.NewValue == Visibility.Visible)
+                openPopups.Add(exitWithoutSavingPopup);
+            else
+                openPopups.Remove(exitWithoutSavingPopup);
+
+            Schedule(updatePopupBackground);
         });
 
         screenStack.ScreenPushed += onScreenChanged;
         screenStack.ScreenExited += onScreenChanged;
+    }
+    
+    private void updatePopupBackground()
+    {
+        popupBackground.FadeTo(openPopups.Count > 0 ? 1 : 0, 200, Easing.OutQuint);
     }
 
     private void onScreenChanged(IScreen current, IScreen newScreen)
@@ -108,10 +165,26 @@ public partial class Editor : ScreenWithChartBackground, IKeyBindingHandler<Plat
 
     public override bool OnExiting(ScreenExitEvent e)
     {
-        save(); // just in case
         workingChart.Disabled = false;
-        
+        refetchChart();
+
         return base.OnExiting(e);
+    }
+
+    private void refetchChart()
+    {
+        var refetched = chartManager.GetWorkingChart(editorChart.ChartInfo, true);
+
+        if (!(refetched is DummyWorkingChart))
+            chart.Value = refetched;
+    }
+
+    public void AttemptExit()
+    {
+        if (hasUnsavedChanges.Value)
+            exitWithoutSavingPopup.Show();
+        else
+            this.Exit();
     }
 
     protected override void Update()
@@ -167,12 +240,12 @@ public partial class Editor : ScreenWithChartBackground, IKeyBindingHandler<Plat
             case PlatformAction.Paste:
                 Paste();
                 return true;
-            
+
             case PlatformAction.Save:
                 if (e.Repeat)
                     return false;
-                
-                save();
+
+                Save();
                 return true;
         }
 
@@ -180,6 +253,25 @@ public partial class Editor : ScreenWithChartBackground, IKeyBindingHandler<Plat
     }
 
     public void OnReleased(KeyBindingReleaseEvent<PlatformAction> e)
+    {
+    }
+
+    public bool OnPressed(KeyBindingPressEvent<GlobalAction> e)
+    {
+        if (e.Repeat)
+            return false;
+
+        switch (e.Action)
+        {
+            case GlobalAction.Back:
+                AttemptExit();
+                break;
+        }
+        
+        return false;
+    }
+
+    public void OnReleased(KeyBindingReleaseEvent<GlobalAction> e)
     {
     }
 
@@ -230,11 +322,13 @@ public partial class Editor : ScreenWithChartBackground, IKeyBindingHandler<Plat
         return true;
     }
 
-    private bool save()
+    public bool Save()
     {
         try
         {
             chartManager.Save(editorChart.ChartInfo, (Chart) editorChart.PlayableChart);
+            lastSavedHash = historyHandler.CurrentStateHash;
+            hasUnsavedChanges.Value = lastSavedHash != historyHandler.CurrentStateHash;
         }
         catch (Exception e)
         {

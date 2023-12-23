@@ -7,9 +7,9 @@ public class NoteWindows
     /// </summary>
     public static readonly NoteWindowRange[] LOWER_NOTE_WINDOWS =
     {
-        new NoteWindowRange(NoteHitResult.Bad, 125.0f),
-        new NoteWindowRange(NoteHitResult.Ok, 108.0f),
-        new NoteWindowRange(NoteHitResult.Good, 42.0f)
+        new NoteWindowRange(NoteHitResult.Bad, 62.5f),
+        new NoteWindowRange(NoteHitResult.Ok, 54.0f),
+        new NoteWindowRange(NoteHitResult.Good, 21.0f)
     };
 
     /// <summary>
@@ -17,9 +17,9 @@ public class NoteWindows
     /// </summary>
     public static readonly NoteWindowRange[] UPPER_NOTE_WINDOWS =
     {
-        new NoteWindowRange(NoteHitResult.Bad, 125.0f),
-        new NoteWindowRange(NoteHitResult.Ok, 108.0f),
-        new NoteWindowRange(NoteHitResult.Good, 42.0f)
+        new NoteWindowRange(NoteHitResult.Bad, 62.5f),
+        new NoteWindowRange(NoteHitResult.Ok, 54.0f),
+        new NoteWindowRange(NoteHitResult.Good, 21.0f)
     };
 
     /// <summary>

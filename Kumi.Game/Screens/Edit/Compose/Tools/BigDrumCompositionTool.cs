@@ -3,13 +3,13 @@ using Kumi.Game.Screens.Edit.Compose.Placement;
 
 namespace Kumi.Game.Screens.Edit.Compose.Tools;
 
-public class DrumRollCompositionTool : NoteCompositionTool
+public class BigDrumCompositionTool : NoteCompositionTool
 {
-    public DrumRollCompositionTool()
-        : base("Drum Roll")
+    public BigDrumCompositionTool()
+        : base("Big Drum")
     {
     }
 
     public override PlacementBlueprint? CreatePlacementBlueprint()
-        => new DrumRollPlacementBlueprint();
+        => new BigDrumPlacementBlueprint();
 }

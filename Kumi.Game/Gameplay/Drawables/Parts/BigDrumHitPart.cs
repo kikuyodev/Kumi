@@ -1,4 +1,5 @@
-﻿using Kumi.Game.Charts.Objects;
+﻿using Kumi.Game.Bindables;
+using Kumi.Game.Charts.Objects;
 using Kumi.Game.Graphics.Containers;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
@@ -12,13 +13,15 @@ namespace Kumi.Game.Gameplay.Drawables.Parts;
 
 public partial class BigDrumHitPart : ConstrictedScalingContainer
 {
-    private readonly NoteType noteType;
+    private readonly LazyBindable<NoteType> noteType;
     
-    public BigDrumHitPart(NoteType noteType)
+    public BigDrumHitPart(LazyBindable<NoteType> noteType)
     {
         this.noteType = noteType;
         PreferredSize = new Vector2(72);
     }
+    
+    private CircularProgress colourBox = null!;
 
     [BackgroundDependencyLoader]
     private void load()
@@ -37,7 +40,7 @@ public partial class BigDrumHitPart : ConstrictedScalingContainer
                     Alpha = 0,
                     AlwaysPresent = true
                 },
-                new CircularProgress
+                colourBox = new CircularProgress
                 {
                     Scale = new Vector2(0.8f),
                     RelativeSizeAxes = Axes.Both,
@@ -45,7 +48,6 @@ public partial class BigDrumHitPart : ConstrictedScalingContainer
                     Origin = Anchor.Centre,
                     InnerRadius = 0.675f,
                     Current = { Value = 1f },
-                    Colour = noteType == NoteType.Kat ? DrawableDrumHit.KAT_COLOUR_GRADIENT : DrawableDrumHit.DON_COLOUR_GRADIENT,
                 },
                 new Circle
                 {
@@ -56,5 +58,13 @@ public partial class BigDrumHitPart : ConstrictedScalingContainer
                 }
             }
         };
+        
+        noteType.Bindable.BindValueChanged(v =>
+        {
+            if (v.NewValue == NoteType.Kat)
+                colourBox.Colour = DrawableDrumHit.KAT_COLOUR_GRADIENT;
+            else
+                colourBox.Colour = DrawableDrumHit.DON_COLOUR_GRADIENT;
+        }, true);
     }
 }

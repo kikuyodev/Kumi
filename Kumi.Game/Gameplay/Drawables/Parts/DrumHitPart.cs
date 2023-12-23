@@ -1,4 +1,5 @@
-﻿using Kumi.Game.Charts.Objects;
+﻿using Kumi.Game.Bindables;
+using Kumi.Game.Charts.Objects;
 using Kumi.Game.Graphics.Containers;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
@@ -11,13 +12,15 @@ namespace Kumi.Game.Gameplay.Drawables.Parts;
 
 public partial class DrumHitPart : ConstrictedScalingContainer
 {
-    private readonly NoteType noteType;
+    private readonly LazyBindable<NoteType> noteType;
 
-    public DrumHitPart(NoteType noteType)
+    public DrumHitPart(LazyBindable<NoteType> noteType)
     {
         this.noteType = noteType;
         PreferredSize = new Vector2(72);
     }
+    
+    private Box colourBox = null!;
 
     [BackgroundDependencyLoader]
     private void load()
@@ -31,11 +34,18 @@ public partial class DrumHitPart : ConstrictedScalingContainer
             Size = new Vector2(0.7f),
             Anchor = Anchor.Centre,
             Origin = Anchor.Centre,
-            Child = new Box
+            Child = colourBox = new Box
             {
                 RelativeSizeAxes = Axes.Both,
-                Colour = noteType == NoteType.Kat ? DrawableDrumHit.KAT_COLOUR_GRADIENT : DrawableDrumHit.DON_COLOUR_GRADIENT
             }
         };
+        
+        noteType.Bindable.BindValueChanged(v =>
+        {
+            if (v.NewValue == NoteType.Kat)
+                colourBox.Colour = DrawableDrumHit.KAT_COLOUR_GRADIENT;
+            else
+                colourBox.Colour = DrawableDrumHit.DON_COLOUR_GRADIENT;
+        }, true);
     }
 }

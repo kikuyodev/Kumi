@@ -89,7 +89,9 @@ public abstract partial class Playfield : Container
 
     private void addNotes()
     {
-        foreach (var note in Chart.Notes)
+        var sortedNotes = Chart.Notes.OrderBy(n => n.StartTime).ToList();
+        
+        foreach (var note in sortedNotes)
             Add(note);
     }
 

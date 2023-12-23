@@ -53,6 +53,7 @@ public partial class TimelineNoteBlueprint : SelectionBlueprint<Note>
         });
         
         updateColour();
+        item.Type.Bindable.BindValueChanged(_ => updateColour(), true);
     }
 
     protected override void OnSelected()

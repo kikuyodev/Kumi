@@ -2,7 +2,9 @@
 using Kumi.Game.Gameplay.Drawables;
 using Kumi.Game.Screens.Edit.Compose.Pieces;
 using osu.Framework.Graphics;
+using osu.Framework.Input.Events;
 using osuTK;
+using osuTK.Input;
 
 namespace Kumi.Game.Screens.Edit.Compose.Selection;
 
@@ -20,6 +22,25 @@ public partial class DrumNoteSelectionBlueprint : NoteSelectionBlueprint
             Anchor = Anchor.Centre,
             Origin = Anchor.Centre
         };
+    }
+
+    protected override bool OnKeyDown(KeyDownEvent e)
+    {
+        if (e.Repeat || !IsSelected)
+            return false;
+
+        switch (e.Key)
+        {
+            case Key.Number1:
+                DrawableNote.Note.Type.Value = NoteType.Don;
+                return true;
+
+            case Key.Number2:
+                DrawableNote.Note.Type.Value = NoteType.Kat;
+                return true;
+        }
+
+        return false;
     }
 
     protected override void Update()
