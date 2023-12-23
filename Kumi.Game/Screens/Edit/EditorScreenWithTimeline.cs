@@ -8,10 +8,12 @@ public abstract partial class EditorScreenWithTimeline : EditorScreen
 {
     public const float PADDING = 8;
 
+    public virtual bool UpdatePadding => true;
+
     public Container TimelineContent { get; private set; } = null!;
 
     public Container MainContent { get; private set; } = null!;
-    
+
     protected EditorScreenWithTimeline(EditorScreenMode type)
         : base(type)
     {
@@ -25,7 +27,7 @@ public abstract partial class EditorScreenWithTimeline : EditorScreen
             }
         };
     }
-    
+
     private Drawable loadMainContent()
     {
         MainContent = new Container
@@ -61,7 +63,8 @@ public abstract partial class EditorScreenWithTimeline : EditorScreen
     {
         base.Update();
 
-        MainContent.Padding = new MarginPadding { Top = TimelineContent.DrawHeight };
+        if (UpdatePadding)
+            MainContent.Padding = new MarginPadding { Top = TimelineContent.DrawHeight };
     }
 
     protected abstract Drawable CreateMainContent();

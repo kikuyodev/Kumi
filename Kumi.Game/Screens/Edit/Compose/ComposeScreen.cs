@@ -23,6 +23,8 @@ public partial class ComposeScreen : EditorScreenWithTimeline
     private Container playfieldContainer = null!;
     private InputManager? inputManager;
 
+    public override bool UpdatePadding => false;
+
     public KumiPlayfield? Playfield { get; private set; }
 
     [Resolved]
