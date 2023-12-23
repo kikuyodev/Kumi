@@ -2,6 +2,7 @@
 using Kumi.Game.Online.API.Accounts;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
+using osu.Framework.Graphics.Rendering;
 using osu.Framework.Graphics.Sprites;
 using osu.Framework.Graphics.Textures;
 
@@ -10,9 +11,9 @@ namespace Kumi.Game.Graphics.Sprites;
 public partial class AvatarSprite : Sprite
 {
     private readonly IAccount? user;
-    
+
     [Resolved]
-    private IAPIConnectionProvider api { get; set;  }
+    private IAPIConnectionProvider api { get; set; } = null!;
 
     public AvatarSprite(IAccount? user)
     {
@@ -25,9 +26,15 @@ public partial class AvatarSprite : Sprite
     }
 
     [BackgroundDependencyLoader]
-    private void load(LargeTextureStore store)
+    private void load(LargeTextureStore store, IRenderer renderer)
     {
         Texture = store.Get($"{api.EndpointConfiguration.WebsiteUri}/cdn/avatars/{user?.Id ?? 0}");
+
+        if (Texture == null)
+        {
+            Texture = renderer.WhitePixel;
+            Colour = Colour4.Gray;
+        }
     }
 
     protected override void LoadComplete()

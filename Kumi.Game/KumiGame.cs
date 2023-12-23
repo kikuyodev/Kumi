@@ -106,6 +106,7 @@ public partial class KumiGame : KumiGameBase, IOverlayManager
 
             loadComponent(new AccountRegistrationOverlay(), d => topOverlayContainer.Add(d));
             loadComponent(new SettingOverlay(), d => topOverlayContainer.Add(d));
+            loadComponent(new ChatOverlay(), d => topOverlayContainer.Add(d));
             Taskbar = loadComponent(new TaskbarOverlay(), d => topOverlayContainer.Add(d));
 
             loadComponent<INotificationManager>(ControlOverlay = new ControlOverlay

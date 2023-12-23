@@ -20,26 +20,26 @@ public partial class TaskbarOverlay : OverlayContainer, IKeyBindingHandler<Globa
     private FillFlowContainer leftFlow = null!;
     private FillFlowContainer rightFlow = null!;
     private Container overlayContent = null!;
-    
+
     private LoginOverlay loginOverlay = null!;
 
     private bool initialShow;
-    
+
     protected override bool StartHidden => true;
-    
+
     public readonly IBindable<OverlayActivation> OverlayActivation = new Bindable<OverlayActivation>(Overlays.OverlayActivation.Any);
 
     public override bool PropagateNonPositionalInputSubTree => OverlayActivation.Value != Overlays.OverlayActivation.Disabled;
 
     [Resolved]
-    private IAPIConnectionProvider api { get; set;  } = null!;
+    private IAPIConnectionProvider api { get; set; } = null!;
 
     [BackgroundDependencyLoader(true)]
     private void load(KumiGame? kumiGame)
     {
         RelativeSizeAxes = Axes.X;
         AutoSizeAxes = Axes.Y;
-        
+
         Children = new Drawable[]
         {
             new Container
@@ -99,18 +99,11 @@ public partial class TaskbarOverlay : OverlayContainer, IKeyBindingHandler<Globa
                 }
             }
         };
-        
-        addButton(new TaskbarIconButton
-        {
-            Alignment = TaskbarButtonAlignment.Left,
-            Icon = FontAwesome.Solid.Home
-        });
-        
-        addButton(new TaskbarSettingButton
-        {
-            Alignment = TaskbarButtonAlignment.Left
-        });
 
+        addButton(new TaskbarIconButton { Alignment = TaskbarButtonAlignment.Left, Icon = FontAwesome.Solid.Home });
+        addButton(new TaskbarSettingButton { Alignment = TaskbarButtonAlignment.Left });
+
+        addButton(new TaskbarChatButton { Alignment = TaskbarButtonAlignment.Right });
         addButton(new TaskbarUserButton
         {
             Alignment = TaskbarButtonAlignment.Right,
@@ -126,11 +119,7 @@ public partial class TaskbarOverlay : OverlayContainer, IKeyBindingHandler<Globa
                                            ? Visibility.Hidden
                                            : Visibility.Visible;
         });
-        
-        addButton(new TaskbarNotificationButton
-        {
-            Alignment = TaskbarButtonAlignment.Right
-        });
+        addButton(new TaskbarNotificationButton { Alignment = TaskbarButtonAlignment.Right });
 
         api.State.BindValueChanged(state =>
         {
@@ -141,7 +130,7 @@ public partial class TaskbarOverlay : OverlayContainer, IKeyBindingHandler<Globa
                     break;
             }
         });
-        
+
         if (kumiGame != null)
             OverlayActivation.BindTo(kumiGame.OverlayActivation);
     }
@@ -155,7 +144,7 @@ public partial class TaskbarOverlay : OverlayContainer, IKeyBindingHandler<Globa
             State.Value = Visibility.Hidden;
             return;
         }
-        
+
         base.UpdateState(state);
     }
 
@@ -174,17 +163,18 @@ public partial class TaskbarOverlay : OverlayContainer, IKeyBindingHandler<Globa
     {
         this.MoveToY(-HEIGHT, 200, Easing.OutQuint);
     }
-    
+
     private void addButton(TaskbarButton button, Action? action = null)
     {
         if (action != null)
             button.Action = action;
-        
+
         switch (button.Alignment)
         {
             case TaskbarButtonAlignment.Left:
                 leftFlow.Add(button);
                 break;
+
             case TaskbarButtonAlignment.Right:
                 rightFlow.Add(button);
                 break;
@@ -205,7 +195,7 @@ public partial class TaskbarOverlay : OverlayContainer, IKeyBindingHandler<Globa
                 ToggleVisibility();
                 return true;
         }
-        
+
         return false;
     }
 

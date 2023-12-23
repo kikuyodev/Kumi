@@ -6,15 +6,15 @@ public class APIChatChannel
 {
     [JsonProperty("id")]
     public int Id { get; set; }
-    
+
     [JsonProperty("name")]
-    public string Name { get; set; }
+    public string Name { get; set; } = string.Empty;
     
     [JsonProperty("tag")]
-    public string Tag { get; set; }
+    public string Tag { get; set; } = string.Empty;
     
     [JsonProperty("description")]
-    public string Description { get; set; }
+    public string Description { get; set; } = string.Empty;
     
     [JsonProperty("type")]
     public int TypeInt { get; set; }

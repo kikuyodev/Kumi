@@ -59,7 +59,7 @@ public partial class KumiTextBox : TextBox
         Child = new SpriteText
         {
             Text = c.ToString(),
-            Font = KumiFonts.GetFont(size: 14)
+            Font = KumiFonts.GetFont(size: 12)
         }
     };
 

@@ -13,13 +13,14 @@ public partial class GlobalKeybindContainer : RealmBackedKeyBindingContainer<Glo
     public override IEnumerable<IKeyBinding> DefaultKeyBindings
         => new[]
         {
+            new KeyBinding(InputKey.Escape, GlobalAction.Back),
+            new KeyBinding(InputKey.ExtraMouseButton1, GlobalAction.Back),
+            new KeyBinding(InputKey.Enter, GlobalAction.Select),
+
             new KeyBinding(new KeyCombination(InputKey.Control, InputKey.T), GlobalAction.ToggleTaskbar),
             new KeyBinding(new KeyCombination(InputKey.Control, InputKey.N), GlobalAction.ToggleNotifications),
             new KeyBinding(new KeyCombination(InputKey.Control, InputKey.O), GlobalAction.ToggleSettings),
-            
-            new KeyBinding(InputKey.Escape, GlobalAction.Back),
-            new KeyBinding(InputKey.ExtraMouseButton1, GlobalAction.Back),
-            
-            new KeyBinding(InputKey.Enter, GlobalAction.Select)
+
+            new KeyBinding(InputKey.F8, GlobalAction.ToggleChat),
         };
 }
