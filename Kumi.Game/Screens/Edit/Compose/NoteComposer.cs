@@ -6,10 +6,11 @@ using Kumi.Game.Screens.Edit.Compose.Tools;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
+using osuTK;
 
 namespace Kumi.Game.Screens.Edit.Compose;
 
-public partial class NoteComposer : CompositeDrawable, IPlacementHandler
+public partial class NoteComposer : CompositeDrawable, IPlacementHandler, ISnapProvider
 {
     private ComposeBlueprintContainer blueprintContainer = null!;
 
@@ -17,6 +18,9 @@ public partial class NoteComposer : CompositeDrawable, IPlacementHandler
 
     [Resolved]
     private EditorChart editorChart { get; set; } = null!;
+    
+    [Resolved]
+    private ComposeScreen composeScreen { get; set; } = null!;
 
     [BackgroundDependencyLoader]
     private void load()
@@ -84,6 +88,16 @@ public partial class NoteComposer : CompositeDrawable, IPlacementHandler
     {
         editorChart.Remove(note);
     }
+
+    #endregion
+
+    #region ISnapProvider
+
+    public double TimeAtScreenSpacePosition(Vector2 screenSpacePosition)
+        => composeScreen.Playfield!.TimeAtScreenSpacePosition(screenSpacePosition);
+
+    public double SnapTime(double time, int beatDivisor)
+        => composeScreen.Playfield!.SnapTime(time, beatDivisor);
 
     #endregion
 }
