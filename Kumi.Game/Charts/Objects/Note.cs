@@ -43,9 +43,10 @@ public class Note : INote
     //       especially when we're just decoding the chart.
     public NoteWindows Windows { get; set; } = null!;
 
-    protected Note(float startTime)
+    protected Note(float startTime, NoteType type)
     {
         StartTime = startTime;
+        Type.Value = type;
         Type.Bindable.ValueChanged += v => NoteColor.Value = getColorFromType(v.NewValue);
     }
 

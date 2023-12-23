@@ -30,7 +30,7 @@ public class DrumRoll : Note, IHasEndTime
     }
     
     public DrumRoll(float startTime)
-        : base(startTime)
+        : base(startTime, NoteType.Drumroll)
     {
     }
 }

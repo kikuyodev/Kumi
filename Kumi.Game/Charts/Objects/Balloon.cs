@@ -27,7 +27,7 @@ public class Balloon : Note, IHasEndTime
     }
     
     public Balloon(float startTime)
-        : base(startTime)
+        : base(startTime, NoteType.Balloon)
     {
     }
 }

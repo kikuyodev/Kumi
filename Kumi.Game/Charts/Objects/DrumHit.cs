@@ -7,7 +7,7 @@
 public class DrumHit : Note
 {
     public DrumHit(float? startTime = null)
-        : base(startTime ?? 0)
+        : base(startTime ?? 0, NoteType.Don)
     {
     }
 }
