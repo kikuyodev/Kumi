@@ -144,7 +144,7 @@ public partial class TimelineNoteBlueprint : SelectionBlueprint<Note>
             set
             {
                 base.Colour = value;
-                Content.BorderColour = value;
+                Content.BorderColour = value.AverageColour.SRGB.Darken(0.1f);
             }
         }
 
