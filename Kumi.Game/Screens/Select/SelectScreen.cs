@@ -26,12 +26,12 @@ public abstract partial class SelectScreen : ScreenWithChartBackground, IKeyBind
 
     [Resolved]
     protected ChartManager Manager { get; private set; } = null!;
-    
+
     [Resolved]
     protected Bindable<WorkingChart> Chart { get; private set; } = null!;
 
     private ListSelect listSelect = null!;
-    
+
     public virtual MenuItem[] CreateContextMenuItemsForChartSet(ChartSetInfo chartSetInfo)
     {
         return new[]
@@ -39,7 +39,7 @@ public abstract partial class SelectScreen : ScreenWithChartBackground, IKeyBind
             new MenuItem("Select", () => listSelect.SelectedChart.Value = chartSetInfo.Charts.First()),
         };
     }
-    
+
     public virtual MenuItem[] CreateContextMenuItemsForChart(ChartInfo chartInfo)
     {
         return new[]
@@ -195,7 +195,7 @@ public abstract partial class SelectScreen : ScreenWithChartBackground, IKeyBind
     public void OnReleased(KeyBindingReleaseEvent<GlobalAction> e)
     {
     }
-    
+
     protected bool FinaliseSelection(ChartInfo chartInfo)
     {
         if (Chart.Disabled)
@@ -234,7 +234,11 @@ public abstract partial class SelectScreen : ScreenWithChartBackground, IKeyBind
     private void ensureTrackLooping(IWorkingChart workingChart)
     {
         workingChart.PrepareTrackForPreview(true);
-        musicController.Play(true);
+
+        if (!Chart.Value.ChartInfo.AudioEquals(workingChart.ChartInfo))
+            musicController.Play(true);
+        else
+            musicController.Play();
     }
 
     private partial class HalfScrollContainer : CompositeDrawable

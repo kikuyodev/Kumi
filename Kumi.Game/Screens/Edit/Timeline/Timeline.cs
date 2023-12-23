@@ -1,4 +1,5 @@
 ﻿using Kumi.Game.Charts;
+using Kumi.Game.Charts.Timings;
 using Kumi.Game.Graphics;
 using Kumi.Game.Graphics.Containers;
 using osu.Framework.Allocation;
@@ -9,12 +10,13 @@ using osu.Framework.Graphics.Audio;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Input;
 using osu.Framework.Input.Events;
+using osuTK;
 using osuTK.Input;
 
 namespace Kumi.Game.Screens.Edit.Timeline;
 
 [Cached]
-public partial class Timeline : ZoomableScrollContainer
+public partial class Timeline : ZoomableScrollContainer, ISnapProvider
 {
     public const float HEIGHT = 72;
     
@@ -24,6 +26,9 @@ public partial class Timeline : ZoomableScrollContainer
     
     [Resolved]
     private EditorClock editorClock { get; set; } = null!;
+    
+    [Resolved]
+    private EditorChart editorChart { get; set; } = null!;
 
     private float lastScrollPosition;
     private double lastTrackTime;
@@ -69,7 +74,7 @@ public partial class Timeline : ZoomableScrollContainer
             mainContent = new Container
             {
                 RelativeSizeAxes = Axes.X,
-                Height = HEIGHT,
+                Height = 72,
                 Depth = float.MaxValue,
                 Padding = new MarginPadding
                 {
@@ -79,14 +84,13 @@ public partial class Timeline : ZoomableScrollContainer
                 {
                     waveform = new WaveformGraph
                     {
-                        RelativeSizeAxes = Axes.X,
-                        Height = 72,
+                        RelativeSizeAxes = Axes.Both,
                         BaseColour = Colours.BLUE_LIGHT,
                         LowColour = Colours.BLUE,
                         MidColour = Colours.BLUE_LIGHT,
                         HighColour = Colours.BLUE_LIGHTER
                     },
-                    ticks = new TimelineTickDisplay { Height = 72 },
+                    ticks = new TimelineTickDisplay(),
                     screenContent
                 }
             }
@@ -229,4 +233,23 @@ public partial class Timeline : ZoomableScrollContainer
 
     public float PositionAtTime(double time)
         => (float) (time / editorClock.TrackLength * Content.DrawWidth);
+
+    public double TimeAtScreenSpacePosition(Vector2 screenSpacePosition)
+        => TimeAtPosition(Content.ToLocalSpace(screenSpacePosition).X);
+
+    public double SnapTime(double time, int beatDivisor)
+    {
+        // Snap to timing points
+        var timingPoint = editorChart.TimingPointHandler.GetTimingPointAt<UninheritedTimingPoint>(time, TimingPointType.Uninherited);
+        var beatLength = timingPoint.MillisecondsPerBeat / beatDivisor;
+        var beats = (Math.Max(time, 0) - timingPoint.StartTime) / beatLength;
+
+        var roundedBeats = (int) Math.Round(beats, MidpointRounding.AwayFromZero);
+        var snappedTime = timingPoint.StartTime + roundedBeats * beatLength;
+
+        if (snappedTime >= 0)
+            return snappedTime;
+
+        return snappedTime + beatLength;
+    }
 }

@@ -34,7 +34,7 @@ public partial class ResourcesSection : SetupSection
                 TabbableContentContainer = this
             }, "Background", f =>
             {
-                f.AddText("Backgrounds should follow common usage guidelines, and should be appropriate for all ages. More information can be found in our");
+                f.AddText("Backgrounds should follow common usage guidelines, and should be appropriate for all ages. More information can be found in our ");
                 f.AddText("Content usage guidelines ", s => s.Colour = Color4Extensions.FromHex("69C"));
                 f.AddText("and our ");
                 f.AddText("Visual content guidelines ", s => s.Colour = Color4Extensions.FromHex("69C"));
@@ -69,7 +69,7 @@ public partial class ResourcesSection : SetupSection
             return false;
 
         var set = workingChart.Value.ChartSetInfo;
-        var destination = new FileInfo($"background{newFile.Extension}");
+        var destination = new FileInfo(newFile.Name);
         var oldFile = set.GetFile(workingChart.Value.Metadata.BackgroundFile);
 
         using (var stream = newFile.OpenRead())
@@ -94,7 +94,7 @@ public partial class ResourcesSection : SetupSection
             return false;
 
         var set = workingChart.Value.ChartSetInfo;
-        var destination = new FileInfo($"audio{newFile.Extension}");
+        var destination = new FileInfo(newFile.Name);
         var oldFile = set.GetFile(workingChart.Value.Metadata.AudioFile);
 
         using (var stream = newFile.OpenRead())

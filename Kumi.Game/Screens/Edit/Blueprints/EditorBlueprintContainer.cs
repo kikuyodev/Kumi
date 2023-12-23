@@ -32,8 +32,11 @@ public partial class EditorBlueprintContainer : BlueprintContainer
 
         if (Composer != null)
         {
-            foreach (var note in Composer.Notes)
-                AddBlueprintFor((Note) note.Note);
+            Scheduler.AddDelayed(() =>
+            {
+                foreach (var note in Composer.Notes)
+                    AddBlueprintFor((Note) note.Note);
+            }, 10);
         }
     }
 
@@ -50,26 +53,26 @@ public partial class EditorBlueprintContainer : BlueprintContainer
         if (args.NewItems != null)
         {
             foreach (Note item in args.NewItems)
-                Composer?.Playfield.SetKeepAlive(item, true);
+                Composer?.Playfield?.SetKeepAlive(item, true);
         }
 
         if (args.OldItems != null)
         {
             foreach (Note item in args.OldItems)
-                Composer?.Playfield.SetKeepAlive(item, false);
+                Composer?.Playfield?.SetKeepAlive(item, false);
         }
     }
 
     protected override void OnBlueprintSelected(SelectionBlueprint<Note> blueprint)
     {
         base.OnBlueprintSelected(blueprint);
-        Composer?.Playfield.SetKeepAlive(blueprint.Item, true);
+        Composer?.Playfield?.SetKeepAlive(blueprint.Item, true);
     }
 
     protected override void OnBlueprintDeselected(SelectionBlueprint<Note> blueprint)
     {
         base.OnBlueprintDeselected(blueprint);
-        Composer?.Playfield.SetKeepAlive(blueprint.Item, false);
+        Composer?.Playfield?.SetKeepAlive(blueprint.Item, false);
     }
 
     protected override void Dispose(bool isDisposing)

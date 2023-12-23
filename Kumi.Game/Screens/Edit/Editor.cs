@@ -103,6 +103,15 @@ public partial class Editor : ScreenWithChartBackground, IKeyBindingHandler<Plat
 
         clock.Seek(0);
         clock.Stop();
+        workingChart.Disabled = true;
+    }
+
+    public override bool OnExiting(ScreenExitEvent e)
+    {
+        save(); // just in case
+        workingChart.Disabled = false;
+        
+        return base.OnExiting(e);
     }
 
     protected override void Update()

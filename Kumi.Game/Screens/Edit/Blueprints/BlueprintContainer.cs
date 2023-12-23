@@ -31,6 +31,9 @@ public abstract partial class BlueprintContainer : CompositeDrawable
     [Resolved]
     private BindableBeatDivisor divisor { get; set; } = null!;
 
+    [Resolved]
+    private ISnapProvider snapProvider { get; set; } = null!;
+
     protected BlueprintContainer()
     {
         RelativeSizeAxes = Axes.Both;
@@ -79,13 +82,13 @@ public abstract partial class BlueprintContainer : CompositeDrawable
             })
         });
     }
-    
+
     protected virtual SelectionHandler CreateSelectionHandler()
         => new SelectionHandler();
-    
+
     protected virtual Container<SelectionBlueprint<Note>> CreateSelectionBlueprintContainer()
         => new NoteOrderedSelectionContainer();
-
+    
     protected virtual void AddBlueprintFor(Note note)
     {
         if (blueprintMap.ContainsKey(note))
@@ -194,7 +197,7 @@ public abstract partial class BlueprintContainer : CompositeDrawable
 
         if (isDraggingBlueprint)
         {
-            composer.Playfield.UpdateLifetimeRange(editorChart.SelectedNotes.ToArray());
+            composer.Playfield?.UpdateLifetimeRange(editorChart.SelectedNotes.ToArray());
             editorChart.EndChange();
         }
     }
@@ -320,8 +323,8 @@ public abstract partial class BlueprintContainer : CompositeDrawable
         if (movementBlueprints == null)
             return false;
 
-        var targetTime = composer.Playfield!.TimeAtScreenSpacePosition(e.ScreenSpaceMousePosition);
-        targetTime = composer.Playfield.SnapTime(targetTime, divisor.Value);
+        var targetTime = snapProvider.TimeAtScreenSpacePosition(e.ScreenSpaceMousePosition);
+        targetTime = snapProvider.SnapTime(targetTime, divisor.Value);
         var offset = targetTime - BlueprintPivot?.Item.StartTime ?? targetTime;
 
         editorChart.PerformOnSelection(n =>

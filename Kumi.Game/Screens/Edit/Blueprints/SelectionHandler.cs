@@ -89,6 +89,12 @@ public partial class SelectionHandler : CompositeDrawable, IKeyBindingHandler<Pl
 
     internal virtual bool MouseDownSelectionRequested(SelectionBlueprint<Note> blueprint, MouseButtonEvent e)
     {
+        if (e.ShiftPressed && e.Button == MouseButton.Right)
+        {
+            handleQuickDeletion(blueprint);
+            return true;
+        }
+        
         if (e is { ShiftPressed: true, Button: MouseButton.Left } && !blueprint.IsSelected)
         {
             blueprint.ToggleSelection();
@@ -112,6 +118,19 @@ public partial class SelectionHandler : CompositeDrawable, IKeyBindingHandler<Pl
         }
 
         return false;
+    }
+
+    private void handleQuickDeletion(SelectionBlueprint<Note> blueprint)
+    {
+        if (!blueprint.IsSelected)
+            DeleteItems(new[] { blueprint.Item });
+        else
+            DeleteSelected();
+    }
+
+    public void DeleteItems(IEnumerable<Note> items)
+    {
+        editorChart.RemoveRange(items.ToArray());
     }
 
     #endregion
