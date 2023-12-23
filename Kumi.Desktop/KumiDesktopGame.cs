@@ -6,7 +6,7 @@ public partial class KumiDesktopGame : KumiGame
 {
     protected override void LoadComplete()
     {
-        LoadComponent(new Presence());
+        LoadComponent(new DiscordPresence());
         
         base.LoadComplete();
     }

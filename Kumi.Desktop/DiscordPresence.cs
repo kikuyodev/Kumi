@@ -7,7 +7,7 @@ using osu.Framework.Graphics;
 
 namespace Kumi.Desktop;
 
-public partial class Presence : Component
+public partial class DiscordPresence : Component
 {
     [Resolved]
     private KumiGameBase game { get; set; } = null!;
