@@ -69,13 +69,13 @@ public partial class TimingPointFlowList : AlwaysLastFillFlowContainer
                     {
                         new KumiButton
                         {
-                            Text = "Add uninherited",
+                            Text = "Add Uninherited",
                             Margin = new MarginPadding { Right = 8 },
                             Action = () => CreatePoint?.Invoke(TimingPointType.Uninherited)
                         },
                         new KumiButton
                         {
-                            Text = "Add inherited",
+                            Text = "Add Inherited",
                             Margin = new MarginPadding { Left = 8 },
                             Action = () => CreatePoint?.Invoke(TimingPointType.Inherited)
                         }
