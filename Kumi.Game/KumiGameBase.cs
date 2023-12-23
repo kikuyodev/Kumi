@@ -27,7 +27,7 @@ public partial class KumiGameBase : osu.Framework.Game, ICanAcceptFiles
 {
     private readonly List<string> importTasks = new List<string>();
     private ScheduledDelegate? importTask;
-    
+
     protected Storage? Storage { get; set; }
 
     private RealmAccess realm = null!;
@@ -42,12 +42,12 @@ public partial class KumiGameBase : osu.Framework.Game, ICanAcceptFiles
     protected Bindable<WorkingChart> Chart { get; private set; } = null!;
     protected MusicController MusicController { get; private set; } = null!;
     protected ChannelManager ChannelManager { get; private set; } = null!;
-    
+
     protected KumiScreenStack ScreenStack = null!;
     protected override Container<Drawable> Content => content;
 
     protected DependencyContainer DependencyContainer = null!;
-    
+
     private readonly List<ICanAcceptFiles> fileAcceptors = new List<ICanAcceptFiles>();
 
     protected override IReadOnlyDependencyContainer CreateChildDependencies(IReadOnlyDependencyContainer parent)
@@ -74,10 +74,10 @@ public partial class KumiGameBase : osu.Framework.Game, ICanAcceptFiles
         DependencyContainer.CacheAs(Storage);
 
         // TODO
-        // API = new APIConnection(DebugUtils.IsDebugBuild
-        //                             ? new DevelopmentServerConfiguration()
-        //                             : new ProductionServerConfiguration());
-        API = new APIConnection(new ProductionServerConfiguration());
+        API = new APIConnection(DebugUtils.IsDebugBuild
+                                    ? new DevelopmentServerConfiguration()
+                                    : new ProductionServerConfiguration());
+
         DependencyContainer.CacheAs(API);
         base.Content.Add((APIConnection) API);
 
@@ -117,10 +117,10 @@ public partial class KumiGameBase : osu.Framework.Game, ICanAcceptFiles
                 }
             }
         });
-        
+
         Add(MusicController = new MusicController());
         DependencyContainer.CacheAs(MusicController);
-        
+
         Add(ChannelManager = new ChannelManager());
         DependencyContainer.CacheAs(ChannelManager);
 
@@ -180,36 +180,37 @@ public partial class KumiGameBase : osu.Framework.Game, ICanAcceptFiles
     {
         if (paths.Length == 0)
             return;
-        
+
         foreach (var path in paths)
-        {   
+        {
             var file = new FileInfo(path);
             var acceptor = fileAcceptors.FirstOrDefault(a => a.HandledFileExtensions.Contains(file.Extension));
             if (acceptor == null)
                 continue;
-            
+
             await acceptor.Import(path);
         }
     }
+
     public Task Import(ImportTask[] tasks) => Task.WhenAll(tasks.Select(t => Import(t.Path)));
-    
+
     public IEnumerable<string> HandledFileExtensions => fileAcceptors.SelectMany(a => a.HandledFileExtensions);
-    
+
     public void RegisterFileAcceptor(ICanAcceptFiles acceptor) => fileAcceptors.Add(acceptor);
-    
+
     public void UnregisterFileAcceptor(ICanAcceptFiles acceptor) => fileAcceptors.Remove(acceptor);
-    
+
     private void handleDragDropPath(string path)
     {
         lock (importTasks)
             importTasks.Add(path);
-        
+
         if (importTask != null)
             importTask.Cancel();
 
         importTask = Scheduler.AddDelayed(handlePendingImports, 1000);
     }
-    
+
     private void handlePendingImports()
     {
         lock (importTasks)
@@ -243,9 +244,9 @@ public partial class KumiGameBase : osu.Framework.Game, ICanAcceptFiles
     protected override void Dispose(bool isDisposing)
     {
         base.Dispose(isDisposing);
-        
+
         realm.Dispose();
-        
+
         if (Host != null)
             Host.ExceptionThrown -= onExceptionThrown;
     }
