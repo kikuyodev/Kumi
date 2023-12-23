@@ -69,6 +69,39 @@ public partial class NoteComposer : CompositeDrawable, IPlacementHandler, ISnapP
             editorChart.SelectedNotes.Clear();
     }
 
+    protected override bool OnKeyDown(KeyDownEvent e)
+    {
+        if (e.ControlPressed || e.AltPressed || e.SuperPressed)
+            return false;
+
+        if (checkNumberToggleFromKey(e.Key, out var index))
+        {
+            var item = toolboxCollection.Items.ElementAtOrDefault(index);
+
+            if (item != null)
+            {
+                if (!item.Selected.Disabled)
+                    item.Select();
+                
+                return true;
+            }
+        }
+        
+        return base.OnKeyDown(e);
+    }
+
+    private bool checkNumberToggleFromKey(Key key, out int index)
+    {
+        if (key < Key.Number1 || key > Key.Number9)
+        {
+            index = -1;
+            return false;
+        }
+
+        index = key - Key.Number1;
+        return true;
+    }
+
     #region IPlacementHandler
 
     public void BeginPlacement(Note note)
