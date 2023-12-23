@@ -133,7 +133,12 @@ public partial class KumiGame : KumiGameBase, IOverlayManager
     public override void SetHost(GameHost host)
     {
         base.SetHost(host);
+
+#if DEBUG
+        host.Window.Title = "Kumi (Development)";
+#else
         host.Window.Title = "Kumi";
+#endif
     }
 
     private void chartChanged(ValueChangedEvent<WorkingChart> chart)
