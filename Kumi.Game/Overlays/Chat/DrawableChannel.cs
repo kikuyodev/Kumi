@@ -1,6 +1,7 @@
 ﻿using Kumi.Game.Graphics.UserInterface;
 using Kumi.Game.Online.API;
 using Kumi.Game.Online.API.Chat;
+using Kumi.Game.Online.API.Requests;
 using Kumi.Game.Online.Channels;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
@@ -80,28 +81,34 @@ public partial class DrawableChannel : CompositeDrawable
         if (string.IsNullOrWhiteSpace(sender.Text))
             return;
 
-        // TODO: remove this and replace with an API call.
-        addMessage(new APIChatMessage { Content = sender.Text });
+        var req = new SendMessageRequest
+        {
+            Channel = boundChannel.APIChannel,
+            Content = sender.Text
+        };
+        
+        api.PerformAsync(req);
 
         sender.Text = string.Empty;
     }
 
     private void addMessage(APIChatMessage message)
-    {
-        // check and see if the last message was sent by the same user
-        var lastMessage = messages.Children.LastOrDefault();
+        => Schedule(() =>
+        {
+            // check and see if the last message was sent by the same user
+            var lastMessage = messages.Children.LastOrDefault();
 
-        if (lastMessage?.Account.Id == api.LocalAccount.Value.Id)
-        {
-            // if so, add the message to the last message
-            lastMessage.AddMessage(message.Content);
-        }
-        else
-        {
-            // otherwise, create a new message group
-            var group = new MessageGroup(api.LocalAccount.Value);
-            group.AddMessage(message.Content);
-            messages.Add(group);
-        }
-    }
+            if (lastMessage?.Account.Id == message.Account.Id)
+            {
+                // if so, add the message to the last message
+                lastMessage.AddMessage(message.Content);
+            }
+            else
+            {
+                // otherwise, create a new message group
+                var group = new MessageGroup(message.Account);
+                group.AddMessage(message.Content);
+                messages.Add(group);
+            }
+        });
 }

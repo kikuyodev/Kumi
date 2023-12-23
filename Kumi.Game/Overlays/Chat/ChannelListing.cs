@@ -96,32 +96,35 @@ public partial class ChannelListing : CompositeComponent
     }
 
     private void onChannelsChanged(object? _, NotifyCollectionChangedEventArgs args)
-    {
-        switch (args.Action)
+        => Schedule(() =>
         {
-            case NotifyCollectionChangedAction.Reset:
-                channelsFlow.Clear();
-                break;
-            
-            case NotifyCollectionChangedAction.Add:
-                Debug.Assert(args.NewItems != null);
-                
-                foreach (var item in args.NewItems)
-                {
-                    var channel = (Channel) item;
-                    channelsFlow.Add(new DrawableChannelItem(channel) { Icon = "#" });
-                }
-                break;
-            
-            case NotifyCollectionChangedAction.Remove:
-                Debug.Assert(args.OldItems != null);
-                
-                foreach (var item in args.OldItems)
-                {
-                    var channel = (Channel) item;
-                    channelsFlow.RemoveAll(c => c.Channel == channel, true);
-                }
-                break;
-        }
-    }
+            switch (args.Action)
+            {
+                case NotifyCollectionChangedAction.Reset:
+                    channelsFlow.Clear();
+                    break;
+
+                case NotifyCollectionChangedAction.Add:
+                    Debug.Assert(args.NewItems != null);
+
+                    foreach (var item in args.NewItems)
+                    {
+                        var channel = (Channel) item;
+                        channelsFlow.Add(new DrawableChannelItem(channel) { Icon = "#" });
+                    }
+
+                    break;
+
+                case NotifyCollectionChangedAction.Remove:
+                    Debug.Assert(args.OldItems != null);
+
+                    foreach (var item in args.OldItems)
+                    {
+                        var channel = (Channel) item;
+                        channelsFlow.RemoveAll(c => c.Channel == channel, true);
+                    }
+
+                    break;
+            }
+        });
 }

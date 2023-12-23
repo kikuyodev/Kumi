@@ -4,7 +4,6 @@ using Kumi.Game.Online.API.Accounts;
 using osu.Framework.Extensions.Color4Extensions;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
-using osu.Framework.Graphics.Shapes;
 using osu.Framework.Graphics.Sprites;
 using osuTK;
 
@@ -44,7 +43,7 @@ public partial class MessageGroup : CompositeDrawable
                     Spacing = new Vector2(4),
                     Children = new[]
                     {
-                        CreateUsername(),
+                        CreateUsernameFlow(),
                     }
                 }
             }
@@ -54,51 +53,24 @@ public partial class MessageGroup : CompositeDrawable
     protected virtual Drawable CreateAvatar()
         => new AvatarSprite(Account);
 
-    protected virtual Drawable CreateUsername()
+    protected virtual Drawable CreateUsernameFlow()
     {
+        var group = Account.Groups.FirstOrDefault();
+        
         var container = new FillFlowContainer
         {
             RelativeSizeAxes = Axes.X,
             AutoSizeAxes = Axes.Y,
             Direction = FillDirection.Horizontal,
             Spacing = new Vector2(4, 0),
-            Children = new Drawable[]
+            Children = new[]
             {
-                new SpriteText
+                new DrawableChatUsername(Account)
                 {
-                    Text = Account.Username,
-                    Font = KumiFonts.GetFont(FontFamily.Montserrat, FontWeight.SemiBold),
-                    Colour = Colours.GRAY_C
-                },
+                    AccentColour = group != null ? Color4Extensions.FromHex(group.Color) : Colours.GRAY_C
+                }
             }
         };
-
-        if (Account.Groups.Any())
-        {
-            var group = Account.Groups.First();
-            
-            container.Add(new FillFlowContainer
-            {
-                AutoSizeAxes = Axes.Both,
-                Direction = FillDirection.Horizontal,
-                Spacing = new Vector2(4, 0),
-                Children = new Drawable[]
-                {
-                    new Circle
-                    {
-                        Width = 3,
-                        RelativeSizeAxes = Axes.Y,
-                        Colour = Color4Extensions.FromHex(group.Color)
-                    },
-                    new SpriteText
-                    {
-                        Text = group.Tag,
-                        Font = KumiFonts.GetFont(FontFamily.Montserrat, FontWeight.SemiBold),
-                        Colour = Color4Extensions.FromHex(group.Color)
-                    }
-                }
-            });
-        }
         
         container.Add(new SpriteText
         {

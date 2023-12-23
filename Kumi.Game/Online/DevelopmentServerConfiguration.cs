@@ -12,6 +12,6 @@ public class DevelopmentServerConfiguration : ServerConfiguration
     {
         APIUri = "http://" + base_uri + $":{port}/api/v1"; 
         WebsocketUri = "ws://" + base_uri + $":{websocket_port}/gateway";
-        WebsiteUri = "http://" + base_uri;
+        WebsiteUri = "http://" + base_uri + $":{port}";
     }
 }

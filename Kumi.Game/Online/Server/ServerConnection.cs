@@ -4,7 +4,6 @@ using System.Text;
 using Kumi.Game.Online.Server.Packets;
 using Newtonsoft.Json;
 using osu.Framework.Logging;
-using SixLabors.ImageSharp;
 
 namespace Kumi.Game.Online.Server;
 
@@ -166,20 +165,22 @@ public class ServerConnection : IAsyncDisposable
         if (Connection.State != WebSocketState.Open || token.IsCancellationRequested)
             return;
 
-        var message = "";
-        var endOfMessage = false;
-
-        while (!endOfMessage)
+        const int data_per_packet = 1024;
+        var receiveBuffer = new byte[2048];
+        var offset = 0;
+        
+        while (true)
         {
-            var buffer = Configuration.Default.MemoryAllocator.Allocate<byte>(128);
-            var result = await Connection.ReceiveAsync(buffer.Memory, token);
+            var buffer = new ArraySegment<byte>(receiveBuffer, offset, data_per_packet);
+            var result = await Connection.ReceiveAsync(buffer, token);
 
-            // Append the message to the buffer.
-            message += Encoding.UTF8.GetString(buffer.Memory.Span).TrimEnd('\0');
-            buffer.Dispose();
-
-            endOfMessage = result.EndOfMessage;
+            offset += result.Count;
+            
+            if (result.EndOfMessage)
+                break;
         }
+
+        var message = Encoding.UTF8.GetString(receiveBuffer, 0, offset);
 
         if (string.IsNullOrEmpty(message))
             return;

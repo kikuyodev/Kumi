@@ -45,7 +45,7 @@ public partial class ChannelManager : Component
     private void onConnectorLoaded()
     {
         connector.RegisterDispatchHandler<ChatChannelAddEvent>("CHAT_CHANNEL_CREATE", e => onChannelAdd(e.Data));
-        connector.RegisterDispatchHandler<ChatMessageEvent>("CHAT_MESSAGE", e => onMessage(e.Data));
+        connector.RegisterDispatchHandler<ChatMessageEvent>("CHAT_MESSAGE_CREATE", e => onMessage(e.Data));
 
         var channelsListRequest = new ChannelListRequest();
         channelsListRequest.Success += () =>
@@ -58,7 +58,7 @@ public partial class ChannelManager : Component
             CurrentChannel.Value = channels.First();
         };
         
-        API.PerformAsync(channelsListRequest);
+        API.Perform(channelsListRequest);
     }
 
     private void onChannelAdd(ChatChannelAddEvent.ChatChannelAddEventData channel)
