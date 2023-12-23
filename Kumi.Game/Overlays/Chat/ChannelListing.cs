@@ -4,14 +4,17 @@ using Kumi.Game.Graphics;
 using Kumi.Game.Online;
 using Kumi.Game.Online.Channels;
 using osu.Framework.Allocation;
+using osu.Framework.Extensions;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
+using osu.Framework.Graphics.Cursor;
 using osu.Framework.Graphics.Shapes;
+using osu.Framework.Graphics.UserInterface;
 using osuTK;
 
 namespace Kumi.Game.Overlays.Chat;
 
-public partial class ChannelListing : CompositeComponent
+public partial class ChannelListing : CompositeComponent, IHasPopover
 {
     [Resolved]
     private ChannelManager channelsManager { get; set; } = null!;
@@ -85,6 +88,7 @@ public partial class ChannelListing : CompositeComponent
                                 ChannelName = "Add Channel",
                                 Anchor = Anchor.TopCentre,
                                 Origin = Anchor.TopCentre,
+                                Action = _ => this.ShowPopover()
                             }
                         }
                     }
@@ -92,7 +96,7 @@ public partial class ChannelListing : CompositeComponent
             }
         };
         
-        channelsManager.Channels.BindCollectionChanged(onChannelsChanged, true);
+        channelsManager.SubscribedChannels.BindCollectionChanged(onChannelsChanged, true);
     }
 
     private void onChannelsChanged(object? _, NotifyCollectionChangedEventArgs args)
@@ -110,7 +114,11 @@ public partial class ChannelListing : CompositeComponent
                     foreach (var item in args.NewItems)
                     {
                         var channel = (Channel) item;
-                        channelsFlow.Add(new DrawableChannelItem(channel) { Icon = "#" });
+                        channelsFlow.Add(new DrawableChannelItem(channel)
+                        {
+                            Icon = "#",
+                            Action = v => channelsManager.CurrentChannel.Value = v
+                        });
                     }
 
                     break;
@@ -127,4 +135,6 @@ public partial class ChannelListing : CompositeComponent
                     break;
             }
         });
+
+    public Popover GetPopover() => new ChannelPickerPopover();
 }

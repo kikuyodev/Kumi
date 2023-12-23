@@ -25,7 +25,7 @@ public partial class MessageGroup : CompositeDrawable
             RelativeSizeAxes = Axes.X,
             AutoSizeAxes = Axes.Y,
             Direction = FillDirection.Horizontal,
-            Spacing = new Vector2(4, 0),
+            Spacing = new Vector2(8, 0),
             Children = new Drawable[]
             {
                 new Container
@@ -62,7 +62,7 @@ public partial class MessageGroup : CompositeDrawable
             RelativeSizeAxes = Axes.X,
             AutoSizeAxes = Axes.Y,
             Direction = FillDirection.Horizontal,
-            Spacing = new Vector2(4, 0),
+            Spacing = new Vector2(8, 0),
             Children = new[]
             {
                 new DrawableChatUsername(Account)

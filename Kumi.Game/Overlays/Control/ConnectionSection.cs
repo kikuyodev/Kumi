@@ -121,6 +121,9 @@ public partial class ConnectionSection : Container
 
         Scheduler.Add(pingScheduler = new ScheduledDelegate(async () =>
         {
+            if (!IsPresent)
+                return;
+            
             var ping = await connector.CurrentConnection!.Ping();
 
             pingText.Delay.Value = (int) ping;

@@ -16,6 +16,9 @@ public partial class ChannelManager : Component
     private readonly BindableList<Channel> channels = new BindableList<Channel>();
     public IBindableList<Channel> Channels => channels;
 
+    private readonly BindableList<Channel> subscribedChannels = new BindableList<Channel>();
+    public IBindableList<Channel> SubscribedChannels => subscribedChannels;
+
     public Bindable<Channel> CurrentChannel { get; } = new Bindable<Channel>();
 
     [Resolved]
@@ -32,7 +35,7 @@ public partial class ChannelManager : Component
             var serverConnector = API.GetServerConnector();
             if (serverConnector == null)
                 return;
-            
+
             if (!(serverConnector.CurrentConnection?.IsConnected ?? false))
                 return;
 
@@ -40,6 +43,20 @@ public partial class ChannelManager : Component
             connector = serverConnector;
             onConnectorLoaded();
         }, 0, 200));
+    }
+
+    public void JoinChannel(Channel channel)
+    {
+        var req = new JoinChannelRequest { Channel = channel.APIChannel };
+        req.Success += () =>
+        {
+            if (!subscribedChannels.Contains(channel))
+                subscribedChannels.Add(channel);
+
+            CurrentChannel.Value = channel;
+        };
+
+        API.PerformAsync(req);
     }
 
     private void onConnectorLoaded()
@@ -54,10 +71,8 @@ public partial class ChannelManager : Component
 
             foreach (var channel in list)
                 channels.Add(new Channel(channel));
-            
-            CurrentChannel.Value = channels.First();
         };
-        
+
         API.Perform(channelsListRequest);
     }
 

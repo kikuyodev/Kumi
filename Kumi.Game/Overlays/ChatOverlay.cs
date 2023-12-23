@@ -8,6 +8,7 @@ using osu.Framework.Bindables;
 using osu.Framework.Extensions.Color4Extensions;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
+using osu.Framework.Graphics.Cursor;
 using osu.Framework.Graphics.Effects;
 using osu.Framework.Graphics.Shapes;
 using osuTK.Graphics;
@@ -60,22 +61,27 @@ public partial class ChatOverlay : KumiFocusedOverlayContainer
                     RelativeSizeAxes = Axes.Both,
                     Colour = Colours.Gray(0.05f)
                 },
-                new GridContainer
+                new PopoverContainer
                 {
                     RelativeSizeAxes = Axes.Both,
-                    ColumnDimensions = new[]
+                    Child = new GridContainer
                     {
-                        new Dimension(GridSizeMode.AutoSize),
-                        new Dimension()
-                    },
-                    Content = new[]
-                    {
-                        new Drawable[]
+                        RelativeSizeAxes = Axes.Both,
+                        ColumnDimensions = new[]
                         {
-                            new ChannelListing(),
-                            channelContainer = new Container
+                            new Dimension(GridSizeMode.AutoSize),
+                            new Dimension()
+                        },
+                        Content = new[]
+                        {
+                            new Drawable[]
                             {
-                                RelativeSizeAxes = Axes.Both
+                                new ChannelListing(),
+                                channelContainer = new Container
+                                {
+                                    RelativeSizeAxes = Axes.Both,
+                                    Padding = new MarginPadding { Left = 8 }
+                                }
                             }
                         }
                     }

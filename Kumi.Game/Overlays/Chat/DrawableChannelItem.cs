@@ -1,6 +1,9 @@
 ﻿using Kumi.Game.Graphics;
 using Kumi.Game.Graphics.UserInterface;
+using Kumi.Game.Online;
 using Kumi.Game.Online.Channels;
+using osu.Framework.Allocation;
+using osu.Framework.Bindables;
 using osu.Framework.Extensions.Color4Extensions;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
@@ -110,16 +113,29 @@ public partial class DrawableChannelItem : CompositeDrawable
         };
     }
 
-    protected override bool OnHover(HoverEvent e)
+    private Bindable<Channel> currentChannel = null!;
+
+    [BackgroundDependencyLoader]
+    private void load(ChannelManager channels)
     {
-        background.FadeTo(1f, 100);
-        return base.OnHover(e);
+        currentChannel = channels.CurrentChannel.GetBoundCopy();
+
+        currentChannel.BindValueChanged(_ => updateBackground(), true);
     }
 
-    protected override void OnHoverLost(HoverLostEvent e)
+    private void updateBackground()
     {
-        background.FadeTo(0f, 100);
-        base.OnHoverLost(e);
+        if (Channel != null && currentChannel.Value.APIChannel.Id == Channel.APIChannel.Id)
+        {
+            background.FadeTo(1f, 100);
+        }
+        else
+        {
+            if (IsHovered)
+                background.FadeTo(1f, 100);
+            else
+                background.FadeTo(0f, 100);
+        }
     }
 
     protected override bool OnClick(ClickEvent e)

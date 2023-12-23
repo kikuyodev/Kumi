@@ -52,7 +52,7 @@ public partial class DrawableChannel : CompositeDrawable
                             RelativeSizeAxes = Axes.X,
                             AutoSizeAxes = Axes.Y,
                             Direction = FillDirection.Vertical,
-                            Spacing = new Vector2(0, 2),
+                            Spacing = new Vector2(0, 8),
                             Padding = new MarginPadding { Vertical = 8 },
                         }
                     }

@@ -7,7 +7,7 @@ public class ProductionServerConfiguration : ServerConfiguration
     public ProductionServerConfiguration()
     {
         APIUri = "https://" + base_uri + "/api/v1"; 
-        WebsocketUri = "ws://" + base_uri + "/gateway";
+        WebsocketUri = "wss://" + base_uri + "/gateway";
         WebsiteUri = "https://" + base_uri;
     }
 }
