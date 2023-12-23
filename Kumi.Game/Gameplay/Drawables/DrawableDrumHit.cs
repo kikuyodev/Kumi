@@ -33,7 +33,7 @@ public partial class DrawableDrumHit : DrawableNote<DrumHit>, IKeyBindingHandler
         Anchor = Anchor.CentreLeft;
         Origin = Anchor.Centre;
         
-        AddInternal(DrumHitPart = createDrawable(new DrumHitPart(note.Type.Value)));
+        AddInternal(DrumHitPart = createDrawable(new DrumHitPart(note.Type)));
     }
 
     protected override void UpdateAfterChildren()
