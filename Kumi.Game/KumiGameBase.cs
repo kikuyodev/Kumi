@@ -39,6 +39,7 @@ public partial class KumiGameBase : osu.Framework.Game, ICanAcceptFiles
 
     protected Colours GameColours { get; private set; } = null!;
     protected IAPIConnectionProvider API { get; set; } = null!;
+    public Bindable<PlayerActivity> Activity { get; private set; } = null!;
     protected Bindable<WorkingChart> Chart { get; private set; } = null!;
     protected MusicController MusicController { get; private set; } = null!;
     protected ChannelManager ChannelManager { get; private set; } = null!;
@@ -80,6 +81,8 @@ public partial class KumiGameBase : osu.Framework.Game, ICanAcceptFiles
         API = new APIConnection(new ProductionServerConfiguration());
         DependencyContainer.CacheAs(API);
         base.Content.Add((APIConnection) API);
+        
+        DependencyContainer.Cache(Activity = new Bindable<PlayerActivity>());
 
         var defaultChart = new DummyWorkingChart(Audio, Textures);
         DependencyContainer.Cache(chartManager = new ChartManager(Storage!, realm, Audio, Resources, Host, defaultChart));

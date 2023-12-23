@@ -1,4 +1,5 @@
 using Kumi.Game.Graphics.Backgrounds;
+using Kumi.Game.Online;
 using Kumi.Game.Overlays;
 using Kumi.Game.Screens.Backgrounds;
 using osu.Framework.Allocation;
@@ -23,6 +24,19 @@ public partial class KumiScreen : Screen
     public virtual bool AllowBackButton => true;
     public virtual bool HideOverlaysOnEnter => true;
 
+    /// <summary>
+    /// The initial activity of the player, set upon entering the screen.
+    /// </summary>
+    public virtual PlayerActivity InitialActivity => null;
+    
+    /// <summary>
+    /// The current activity of the player.
+    /// </summary>
+    protected Bindable<PlayerActivity> CurrentActivity { get; private set; } = new Bindable<PlayerActivity>();
+
+    [Resolved]
+    private KumiGameBase game { get; set; } = null!;
+
     public KumiScreen()
     {
         Anchor = Anchor.Centre;
@@ -35,6 +49,14 @@ public partial class KumiScreen : Screen
     private void load()
     {
         LoadComponent(CurrentBackground = CreateBackground());
+        
+        game.Activity.BindTo(CurrentActivity);
+    }
+
+    protected override void LoadComplete()
+    {
+        if (InitialActivity != null)
+            CurrentActivity.Value = InitialActivity;
     }
 
     [Resolved]

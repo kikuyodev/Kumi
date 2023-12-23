@@ -1,6 +1,5 @@
 ﻿using Kumi.Game;
 using osu.Framework;
-using osu.Framework.Development;
 using Squirrel;
 
 namespace Kumi.Desktop;
@@ -16,7 +15,7 @@ public static class Program
     public static void Main(string[] args)
     {
         using var host = Host.GetSuitableDesktopHost(APP_NAME);
-        using var game = new KumiGame();
+        using var game = new KumiDesktopGame();
 
         handleSquirrelEvents();
         host.Run(game);
