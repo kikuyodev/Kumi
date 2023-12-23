@@ -6,6 +6,7 @@ using Kumi.Game.Gameplay.Drawables;
 using Kumi.Game.Gameplay.UI;
 using Kumi.Game.Graphics;
 using Kumi.Game.Graphics.Containers;
+using Kumi.Game.Screens.Edit;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Extensions.Color4Extensions;
@@ -18,7 +19,7 @@ using osuTK.Graphics;
 
 namespace Kumi.Game.Gameplay;
 
-public partial class KumiPlayfield : ScrollingPlayfield
+public partial class KumiPlayfield : ScrollingPlayfield, ISnapProvider
 {
     private Container contentContainer = null!;
 
@@ -33,7 +34,7 @@ public partial class KumiPlayfield : ScrollingPlayfield
         ScrollContainer.Algorithm.BindTo(algorithm);
         ScrollContainer.TimeRange.BindTo(timeRange);
 
-        timeRange.Value = 1000 * workingChart.Chart.ChartInfo.InitialScrollSpeed;
+        timeRange.Value = 1000 / workingChart.Chart.ChartInfo.InitialScrollSpeed;
         algorithm.Value = new DynamicScrollAlgorithm(((Chart)workingChart.Chart).TimingPoints);
     }
 
@@ -96,7 +97,7 @@ public partial class KumiPlayfield : ScrollingPlayfield
                         Height = 200,
                         Size = new Vector2(0.6f),
                         RelativePositionAxes = Axes.X,
-                        X = 0.325f,
+                        X = 0.32575f,
                         Child = new CircularContainer
                         {
                             Masking = true,
