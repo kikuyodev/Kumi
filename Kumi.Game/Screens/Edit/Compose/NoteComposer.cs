@@ -6,7 +6,9 @@ using Kumi.Game.Screens.Edit.Compose.Tools;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
+using osu.Framework.Input.Events;
 using osuTK;
+using osuTK.Input;
 
 namespace Kumi.Game.Screens.Edit.Compose;
 
@@ -43,7 +45,8 @@ public partial class NoteComposer : CompositeDrawable, IPlacementHandler, ISnapP
         toolboxCollection.Items = new NoteCompositionTool[]
             {
                 new SelectTool(),
-                new HitCompositionTool(),
+                new DrumCompositionTool(),
+                new BigDrumCompositionTool(),
                 new DrumRollCompositionTool(),
                 new BalloonCompositionTool()
             }.Select(t => new RadioButton(t.Name, () => toolSelected(t), t.CreateIcon))
