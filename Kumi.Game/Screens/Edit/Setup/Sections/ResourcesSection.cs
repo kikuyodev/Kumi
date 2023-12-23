@@ -69,7 +69,7 @@ public partial class ResourcesSection : SetupSection
             return false;
 
         var set = workingChart.Value.ChartSetInfo;
-        var destination = new FileInfo($"background{newFile.Extension}");
+        var destination = new FileInfo(newFile.Name);
         var oldFile = set.GetFile(workingChart.Value.Metadata.BackgroundFile);
 
         using (var stream = newFile.OpenRead())
@@ -94,7 +94,7 @@ public partial class ResourcesSection : SetupSection
             return false;
 
         var set = workingChart.Value.ChartSetInfo;
-        var destination = new FileInfo($"audio{newFile.Extension}");
+        var destination = new FileInfo(newFile.Name);
         var oldFile = set.GetFile(workingChart.Value.Metadata.AudioFile);
 
         using (var stream = newFile.OpenRead())
