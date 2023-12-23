@@ -17,12 +17,15 @@ public partial class DrawableBarLine : DrawableNote<BarLine>
         RelativeSizeAxes = Axes.Y;
         AutoSizeAxes = Axes.X;
 
+        Anchor = Anchor.CentreLeft;
+        Origin = Anchor.Centre;
+
         AddRangeInternal(new[]
         {
             new Circle
             {
                 Anchor = Anchor.CentreLeft,
-                Origin = Anchor.CentreLeft,
+                Origin = Anchor.Centre,
                 Width = 3,
                 RelativeSizeAxes = Axes.Y,
                 Height = 0.8f,
@@ -33,7 +36,7 @@ public partial class DrawableBarLine : DrawableNote<BarLine>
                 {
                     RelativeSizeAxes = Axes.Both,
                     Anchor = Anchor.CentreLeft,
-                    Origin = Anchor.CentreLeft,
+                    Origin = Anchor.Centre,
                     Children = new Drawable[]
                     {
                         new Circle
