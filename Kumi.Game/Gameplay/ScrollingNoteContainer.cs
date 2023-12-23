@@ -109,8 +109,7 @@ public partial class ScrollingNoteContainer : Container<DrawableNote>
         var boundingBox = getBoundingBox();
         var startOffset = -boundingBox.Left;
 
-        var adjustedTime = Algorithm.Value.TimeAt(-startOffset, note.Note.StartTime, TimeRange.Value, DrawWidth);
-        return adjustedTime - TimeRange.Value;
+        return Algorithm.Value.GetDrawableStartTime(note.Note.StartTime, startOffset, TimeRange.Value, DrawWidth);
     }
     
     private void setLifetimeStart(DrawableNote note)
