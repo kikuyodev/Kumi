@@ -127,7 +127,7 @@ public partial class BeatDivisorControl : CompositeDrawable
             Add(tripletsButton = new DivisorTextButton
             {
                 Text = "triplets",
-                Action = () => beatDivisor.SetArbitraryDivisor(6)
+                Action = () => beatDivisor.SetArbitraryDivisor(3)
             });
         }
 
