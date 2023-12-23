@@ -54,7 +54,7 @@ public partial class ComposeScreen : EditorScreenWithTimeline
 
         inputManager = GetContainingInputManager();
         loadPlayfield();
-        
+
         editorChart.SelectedNotes.BindCollectionChanged((_, __) => updateClipboardActionAvailability());
         historyHandler.Contents[EditorClipboardType.Note].BindCollectionChanged((_, __) => updateClipboardActionAvailability());
         updateClipboardActionAvailability();
@@ -64,7 +64,7 @@ public partial class ComposeScreen : EditorScreenWithTimeline
     {
         Schedule(() =>
         {
-            if (!workingChart.Value.ChartLoaded)
+            if (!workingChart.Value.ChartLoaded || !playfieldContainer.IsLoaded)
             {
                 loadPlayfield();
                 return;
