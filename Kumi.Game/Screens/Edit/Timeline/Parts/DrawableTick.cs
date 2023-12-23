@@ -18,7 +18,8 @@ public partial class DrawableTick : Circle
         RelativePositionAxes = Axes.Both;
         RelativeSizeAxes = Axes.Y;
 
-        Origin = Anchor.TopCentre;
+        Anchor = Anchor.CentreLeft;
+        Origin = Anchor.Centre;
 
         Width = TICK_MAX_WIDTH;
         Height = 0.5f;
