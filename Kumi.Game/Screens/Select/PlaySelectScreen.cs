@@ -1,6 +1,8 @@
 ﻿using Kumi.Game.Charts;
+using Kumi.Game.Overlays.Select;
 using Kumi.Game.Screens.Edit;
 using Kumi.Game.Screens.Play;
+using osu.Framework.Allocation;
 using osu.Framework.Graphics.UserInterface;
 using osu.Framework.Screens;
 
@@ -8,6 +10,15 @@ namespace Kumi.Game.Screens.Select;
 
 public partial class PlaySelectScreen : SelectScreen
 {
+    protected ModSelectionOverlay ModSelection { get; private set;}
+
+    [BackgroundDependencyLoader]
+    private void load()
+    {
+        // TODO: Mod selection overlay
+        LoadComponent(ModSelection = new ModSelectionOverlay());
+    }
+    
     public override MenuItem[] CreateContextMenuItemsForChartSet(ChartSetInfo chartSetInfo)
         => base.CreateContextMenuItemsForChartSet(chartSetInfo)
            .Concat(new[]
