@@ -40,6 +40,12 @@ public partial class ControlOverlayTestScene : KumiTestScene
             Header = "Test",
             Message = "This is a test notification."
         }));
+        AddStep("Send cancellable progress notification", () => overlay.Post(new TestProgressNotification(100)
+        {
+            Header = "Test",
+            Message = "This is a test notification.",
+            Cancellable = true
+        }));
         
         AddStep("Set progress to 50", () => progressNotification.Set(50));
         AddStep("Set progress to 100", () => progressNotification.Set(100));

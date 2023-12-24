@@ -16,8 +16,26 @@ public abstract partial class ProgressNotification : BasicNotification
     /// Whether the notification should close automatically when the progress is complete.
     /// </summary>
     public virtual bool AutoCloseUponCompletion { get; set; } = true;
+    
+    /// <summary>
+    /// Whether the notification can be canceled by the user.
+    /// </summary>
+    public virtual bool Cancellable { get; set; }
+    
+    /// <summary>
+    /// Whether the progress is complete.
+    /// </summary>
+    public bool IsFinished => Current.Value == Target.Value;
 
+    /// <summary>
+    /// An event that is fired when the progress is complete. Does not fire if the notification is canceled.
+    /// </summary>
     public event Action? Finished;
+    
+    /// <summary>
+    /// An event that is fired when the notification is canceled.
+    /// </summary>
+    public event Action? Canceled;
 
     public ProgressNotification(int target, int current = 0)
     {
@@ -36,12 +54,32 @@ public abstract partial class ProgressNotification : BasicNotification
             _current.MaxValue = Target.Value;
             updateProgress();
         }, true);
-        
     }
-
+    
     public void Increment(int amount = 1) => Current.Set(Current.Value + amount);
     public void Decrement(int amount = 1) => Current.Set(Current.Value - amount);
     public void Set(int value) => Current.Set(value);
+
+    [BackgroundDependencyLoader]
+    private void load()
+    {
+        if (!Cancellable)
+            Closeable = false;
+    }
+
+    public override void Close(bool force = false)
+    {
+        if (!force && !Cancellable)
+            return;
+        
+        if (IsFinished)
+            Finished?.Invoke();
+        
+        if (!IsFinished)
+            Canceled?.Invoke();
+        
+        base.Close(force);
+    }
 
     private void updateProgress()
     {
@@ -50,11 +88,9 @@ public abstract partial class ProgressNotification : BasicNotification
             if (AutoCloseUponCompletion)
                 Close(true);
             
-            Finished?.Invoke();
             return;
         }
         
-        Closeable = false;
         _current.Set(Current.Value);
     }
 

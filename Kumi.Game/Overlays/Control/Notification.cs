@@ -199,14 +199,13 @@ public abstract partial class Notification : Container
 
     public void Close() => Close(false);
 
-    public void Close(bool force = false)
+    public virtual void Close(bool force = false)
     {
         if (IsClosed || (!force && !Closeable))
             return;
 
-        IsClosed = true;
-
         Closed?.Invoke();
+        IsClosed = true;
 
         Schedule(() =>
         {
