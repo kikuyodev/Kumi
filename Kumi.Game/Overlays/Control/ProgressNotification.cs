@@ -4,7 +4,7 @@ using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
-;
+
 namespace Kumi.Game.Overlays.Control;
 
 public abstract partial class ProgressNotification : BasicNotification
@@ -47,10 +47,8 @@ public abstract partial class ProgressNotification : BasicNotification
     {
         if (Current.Value == Target.Value)
         {
-            Closeable = true;
-            
             if (AutoCloseUponCompletion)
-                Close();
+                Close(true);
             
             Finished?.Invoke();
             return;
