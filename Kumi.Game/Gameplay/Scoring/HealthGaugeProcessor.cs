@@ -33,7 +33,6 @@ public partial class HealthGaugeProcessor : JudgementProcessor
     }
     protected override void ApplyMods(IReadOnlyList<Mod> mods)
     {
-        return;
     }
 
     protected override void Reset(bool storeResults)

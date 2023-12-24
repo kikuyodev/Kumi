@@ -44,27 +44,28 @@ public partial class Player : ScreenWithChartBackground
     private HealthDisplay healthBar = null!;
 
     private DependencyContainer dependencies = null!;
-    
+
     [Resolved]
-    private Bindable<IReadOnlyList<Mod>> selectedMods { get; set; } = null!;
+    private IBindableList<Mod> selectedMods { get; set; } = null!;
+
+    [Resolved]
+    private IBindable<WorkingChart> chart { get; set; } = null!;
 
     protected override IReadOnlyDependencyContainer CreateChildDependencies(IReadOnlyDependencyContainer parent)
         => dependencies = new DependencyContainer(base.CreateChildDependencies(parent));
 
     [BackgroundDependencyLoader]
-    private void load(IBindable<WorkingChart> chart)
+    private void load()
     {
         if (chart.Value is DummyWorkingChart)
             return;
-        
-        selectedMods.Value = new List<Mod>() { new ModDoubleTime() };
 
         scoreProcessor = new ScoreProcessor();
-        scoreProcessor.Mods.Value = selectedMods.Value;
+        scoreProcessor.Mods = selectedMods;
         scoreProcessor.ApplyChart(chart.Value.Chart);
 
         healthGaugeProcessor = new HealthGaugeProcessor();
-        healthGaugeProcessor.Mods.Value = selectedMods.Value;
+        healthGaugeProcessor.Mods = selectedMods;
         healthGaugeProcessor.ApplyChart(chart.Value.Chart);
 
         dependencies.CacheAs(scoreProcessor);
@@ -108,14 +109,14 @@ public partial class Player : ScreenWithChartBackground
             return;
 
         scoreProcessor.NewJudgement += _ => scoreProcessor.PopulateScore(Score);
+
+        foreach (var mods in selectedMods)
+            mods.ApplyToPlayer(this);
     }
 
     public override void OnEntering(ScreenTransitionEvent e)
     {
         base.OnEntering(e);
-        
-        foreach (var mod in selectedMods.Value)
-            mod.Apply(this, clockContainer);
 
         healthBar.MoveToX(0)
            .FadeOut()
@@ -128,6 +129,16 @@ public partial class Player : ScreenWithChartBackground
             if (clockContainer != null)
                 clockContainer.Start();
         }, 500);
+    }
+
+    public override bool OnExiting(ScreenExitEvent e)
+    {
+        if (chart.Value is DummyWorkingChart)
+            return base.OnExiting(e);
+
+        chart.Value.Track.ResetSpeedAdjustments();
+
+        return base.OnExiting(e);
     }
 
     private Drawable createGameplayClockContainer(WorkingChart chart, double startDelay = 1000)
@@ -146,6 +157,9 @@ public partial class Player : ScreenWithChartBackground
 
         playfield.Clock = clockContainer;
         playfield.ProcessCustomClock = false;
+
+        foreach (var mod in selectedMods)
+            mod.ApplyToTrack(chart.Track);
 
         return keybindContainer;
     }

@@ -24,11 +24,11 @@ public abstract partial class JudgementProcessor : Component
 
     public IBindable<bool> HasCompleted => hasCompleted;
     
-    public readonly Bindable<IReadOnlyList<Mod>> Mods = new Bindable<IReadOnlyList<Mod>>(Array.Empty<Mod>());
+    public IBindableList<Mod> Mods = new BindableList<Mod>();
 
     protected JudgementProcessor()
     {
-        Mods.BindValueChanged(value => ApplyMods(value.NewValue));
+        Mods.BindCollectionChanged((_, _) => ApplyMods(Mods));
     }
 
     public void ApplyChart(IChart chart)
