@@ -21,6 +21,7 @@ public partial class GlobalKeybindContainer : RealmBackedKeyBindingContainer<Glo
             new KeyBinding(new KeyCombination(InputKey.Control, InputKey.N), GlobalAction.ToggleNotifications),
             new KeyBinding(new KeyCombination(InputKey.Control, InputKey.O), GlobalAction.ToggleSettings),
 
+            new KeyBinding(InputKey.F1, GlobalAction.ToggleModSelect),
             new KeyBinding(InputKey.F8, GlobalAction.ToggleChat),
         };
 }

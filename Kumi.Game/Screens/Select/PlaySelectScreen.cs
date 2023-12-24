@@ -43,6 +43,29 @@ public partial class PlaySelectScreen : SelectScreen
             })
            .ToArray();
 
+    protected override Drawable CreateExtraSelectionButtons()
+        => new FillFlowContainer
+        {
+            Anchor = Anchor.BottomRight,
+            Origin = Anchor.BottomRight,
+            AutoSizeAxes = Axes.Both,
+            Direction = FillDirection.Horizontal,
+            Spacing = new Vector2(8, 0),
+            Children = new Drawable[]
+            {
+                new SelectedModsIndicator(),
+                new ModSelectButton
+                {
+                    RelativeSizeAxes = Axes.None,
+                    Height = 32,
+                    Width = 125,
+                    Font = KumiFonts.GetFont(FontFamily.Montserrat, FontWeight.Medium, 14),
+                    BackgroundColour = Colours.Gray(0.05f),
+                    Text = "Select mods",
+                }
+            }
+        };
+
     protected override bool FinaliseSelectionInternal(ChartInfo chartInfo)
     {
         this.Push(new PlayerLoader());

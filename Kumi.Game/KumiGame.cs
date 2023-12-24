@@ -6,6 +6,7 @@ using Kumi.Game.Overlays;
 using Kumi.Game.Overlays.Control;
 using Kumi.Game.Screens;
 using Kumi.Game.Screens.Menu;
+using Kumi.Game.Screens.Select.Mods;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
@@ -115,6 +116,12 @@ public partial class KumiGame : KumiGameBase, IOverlayManager
                 Origin = Anchor.TopRight
             }, d => rightOverlayContainer.Add(d));
 
+            // TODO: this probably shouldn't be here?
+            loadComponent(new ModSelectionOverlay
+            {
+                Anchor = Anchor.TopRight,
+                Origin = Anchor.TopRight
+            }, d => rightOverlayContainer.Add(d));
 
             flushLoadTasks(()
                 => LoadComponentAsync(new MenuScreen(), c
