@@ -1,6 +1,7 @@
 ﻿using Kumi.Game.Charts;
 using Kumi.Game.Gameplay;
 using Kumi.Game.Gameplay.Clocks;
+using Kumi.Game.Gameplay.Mods;
 using Kumi.Game.Gameplay.Scoring;
 using Kumi.Game.Input;
 using Kumi.Game.Online.API.Accounts;
@@ -43,6 +44,9 @@ public partial class Player : ScreenWithChartBackground
     private HealthDisplay healthBar = null!;
 
     private DependencyContainer dependencies = null!;
+    
+    [Resolved]
+    private Bindable<IReadOnlyList<Mod>> selectedMods { get; set; } = null!;
 
     protected override IReadOnlyDependencyContainer CreateChildDependencies(IReadOnlyDependencyContainer parent)
         => dependencies = new DependencyContainer(base.CreateChildDependencies(parent));
@@ -52,11 +56,15 @@ public partial class Player : ScreenWithChartBackground
     {
         if (chart.Value is DummyWorkingChart)
             return;
+        
+        selectedMods.Value = new List<Mod>() { new ModDoubleTime() };
 
         scoreProcessor = new ScoreProcessor();
+        scoreProcessor.Mods.Value = selectedMods.Value;
         scoreProcessor.ApplyChart(chart.Value.Chart);
 
         healthGaugeProcessor = new HealthGaugeProcessor();
+        healthGaugeProcessor.Mods.Value = selectedMods.Value;
         healthGaugeProcessor.ApplyChart(chart.Value.Chart);
 
         dependencies.CacheAs(scoreProcessor);
@@ -105,6 +113,9 @@ public partial class Player : ScreenWithChartBackground
     public override void OnEntering(ScreenTransitionEvent e)
     {
         base.OnEntering(e);
+        
+        foreach (var mod in selectedMods.Value)
+            mod.Apply(this, clockContainer);
 
         healthBar.MoveToX(0)
            .FadeOut()

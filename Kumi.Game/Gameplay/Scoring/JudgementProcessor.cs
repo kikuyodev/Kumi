@@ -1,6 +1,7 @@
 ﻿using Kumi.Game.Charts;
 using Kumi.Game.Charts.Objects.Windows;
 using Kumi.Game.Gameplay.Judgements;
+using Kumi.Game.Gameplay.Mods;
 using osu.Framework.Bindables;
 using osu.Framework.Extensions.ObjectExtensions;
 using osu.Framework.Graphics;
@@ -22,6 +23,13 @@ public abstract partial class JudgementProcessor : Component
     private readonly BindableBool hasCompleted = new BindableBool();
 
     public IBindable<bool> HasCompleted => hasCompleted;
+    
+    public readonly Bindable<IReadOnlyList<Mod>> Mods = new Bindable<IReadOnlyList<Mod>>(Array.Empty<Mod>());
+
+    protected JudgementProcessor()
+    {
+        Mods.BindValueChanged(value => ApplyMods(value.NewValue));
+    }
 
     public void ApplyChart(IChart chart)
     {
@@ -44,6 +52,8 @@ public abstract partial class JudgementProcessor : Component
     }
 
     protected abstract void ApplyJudgementInternal(Judgement judgement);
+    
+    protected abstract void ApplyMods(IReadOnlyList<Mod> mods);
 
     protected virtual void Reset(bool storeResults)
     {

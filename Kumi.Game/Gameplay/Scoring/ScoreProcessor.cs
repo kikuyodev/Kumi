@@ -1,6 +1,7 @@
 ﻿using Kumi.Game.Charts.Objects.Windows;
 using Kumi.Game.Extensions;
 using Kumi.Game.Gameplay.Judgements;
+using Kumi.Game.Gameplay.Mods;
 using Kumi.Game.Scoring;
 
 namespace Kumi.Game.Gameplay.Scoring;
@@ -33,6 +34,10 @@ public partial class ScoreProcessor : JudgementProcessor
         {
             totalScore += calculateScore(judgement.Result, combo);
         }
+    }
+    protected override void ApplyMods(IReadOnlyList<Mod> mods)
+    {
+        return;
     }
 
     public ScoreRank GetScoreRank()
