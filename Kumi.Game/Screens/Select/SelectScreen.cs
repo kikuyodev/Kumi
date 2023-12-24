@@ -1,6 +1,8 @@
 ﻿using System.Diagnostics;
 using Kumi.Game.Charts;
 using Kumi.Game.Database;
+using Kumi.Game.Graphics;
+using Kumi.Game.Graphics.UserInterface;
 using Kumi.Game.Input;
 using Kumi.Game.Overlays;
 using Kumi.Game.Screens.Select.List;
@@ -13,6 +15,8 @@ using osu.Framework.Graphics.UserInterface;
 using osu.Framework.Input.Bindings;
 using osu.Framework.Input.Events;
 using osu.Framework.Screens;
+using osuTK;
+using osuTK.Graphics;
 
 namespace Kumi.Game.Screens.Select;
 
@@ -22,6 +26,10 @@ public abstract partial class SelectScreen : ScreenWithChartBackground, IKeyBind
     public override float BlurAmount => 10f;
     public override float DimAmount => 0.5f;
 
+    protected abstract string FinaliseButtonText { get; }
+
+    protected abstract Color4 FinaliseButtonColour { get; }
+
     [Resolved]
     private MusicController musicController { get; set; } = null!;
 
@@ -30,7 +38,7 @@ public abstract partial class SelectScreen : ScreenWithChartBackground, IKeyBind
 
     [Resolved]
     protected Bindable<WorkingChart> Chart { get; private set; } = null!;
-    
+
     [Resolved]
     protected RealmAccess Realm { get; private set; } = null!;
 
@@ -120,6 +128,44 @@ public abstract partial class SelectScreen : ScreenWithChartBackground, IKeyBind
                         }
                     },
                 }
+            },
+            new Container
+            {
+                AutoSizeAxes = Axes.Both,
+                Anchor = Anchor.BottomRight,
+                Origin = Anchor.BottomRight,
+                Padding = new MarginPadding(12),
+                Child = new FillFlowContainer
+                {
+                    Direction = FillDirection.Horizontal,
+                    AutoSizeAxes = Axes.Both,
+                    Spacing = new Vector2(12, 0),
+                    Anchor = Anchor.BottomRight,
+                    Origin = Anchor.BottomRight,
+                    Children = new[]
+                    {
+                        new KumiButton
+                        {
+                            RelativeSizeAxes = Axes.None,
+                            Width = 150,
+                            Height = 60,
+                            Font = KumiFonts.GetFont(FontFamily.Montserrat, FontWeight.SemiBold, 20),
+                            Important = true,
+                            BackgroundColour = FinaliseButtonColour,
+                            Text = FinaliseButtonText,
+                            Anchor = Anchor.BottomRight,
+                            Origin = Anchor.BottomRight,
+                            Action = () => FinaliseSelection(Chart.Value.ChartInfo)
+                        },
+                        new Container
+                        {
+                            Anchor = Anchor.BottomRight,
+                            Origin = Anchor.BottomRight,
+                            AutoSizeAxes = Axes.Both,
+                            Child = CreateExtraSelectionButtons(),
+                        },
+                    }
+                }
             }
         };
 
@@ -135,9 +181,10 @@ public abstract partial class SelectScreen : ScreenWithChartBackground, IKeyBind
         {
             foreach (var set in sender.AsQueryable())
             {
-                if (set.DeletePending) {
+                if (set.DeletePending)
+                {
                     listSelect.RemoveChartSet(set);
-                    
+
                     // use random chart if the deleted chart was selected
                     if (listSelect.SelectedChart.Value?.ID == set.ID)
                         listSelect.SelectedChart.Value = set.Charts.First();
@@ -146,11 +193,16 @@ public abstract partial class SelectScreen : ScreenWithChartBackground, IKeyBind
                 {
                     if (listSelect.Groups.ContainsKey(set.ID))
                         listSelect.RemoveChartSet(set);
-                    
+
                     listSelect.AddChartSet(set);
                 }
             }
         });
+
+        var charts = Manager.GetAllUsableCharts();
+
+        foreach (var set in charts)
+            listSelect.AddChartSet(set);
     }
 
     protected virtual Drawable CreateWedge()
@@ -158,6 +210,9 @@ public abstract partial class SelectScreen : ScreenWithChartBackground, IKeyBind
         {
             RelativeSizeAxes = Axes.Both
         };
+
+    protected virtual Drawable CreateExtraSelectionButtons()
+        => Empty();
 
     public override void OnEntering(ScreenTransitionEvent e)
     {

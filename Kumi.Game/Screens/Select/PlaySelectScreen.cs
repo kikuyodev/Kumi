@@ -1,24 +1,22 @@
 ﻿using Kumi.Game.Charts;
-using Kumi.Game.Overlays.Select;
+using Kumi.Game.Graphics;
 using Kumi.Game.Screens.Edit;
 using Kumi.Game.Screens.Play;
-using osu.Framework.Allocation;
+using Kumi.Game.Screens.Select.Mods;
+using osu.Framework.Graphics;
+using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.UserInterface;
 using osu.Framework.Screens;
+using osuTK;
+using osuTK.Graphics;
 
 namespace Kumi.Game.Screens.Select;
 
 public partial class PlaySelectScreen : SelectScreen
 {
-    protected ModSelectionOverlay ModSelection { get; private set;}
+    protected override Color4 FinaliseButtonColour => Colours.BLUE;
+    protected override string FinaliseButtonText => "Play!";
 
-    [BackgroundDependencyLoader]
-    private void load()
-    {
-        // TODO: Mod selection overlay
-        LoadComponent(ModSelection = new ModSelectionOverlay());
-    }
-    
     public override MenuItem[] CreateContextMenuItemsForChartSet(ChartSetInfo chartSetInfo)
         => base.CreateContextMenuItemsForChartSet(chartSetInfo)
            .Concat(new[]
@@ -44,6 +42,29 @@ public partial class PlaySelectScreen : SelectScreen
                 }),
             })
            .ToArray();
+
+    protected override Drawable CreateExtraSelectionButtons()
+        => new FillFlowContainer
+        {
+            Anchor = Anchor.BottomRight,
+            Origin = Anchor.BottomRight,
+            AutoSizeAxes = Axes.Both,
+            Direction = FillDirection.Horizontal,
+            Spacing = new Vector2(8, 0),
+            Children = new Drawable[]
+            {
+                new SelectedModsIndicator(),
+                new ModSelectButton
+                {
+                    RelativeSizeAxes = Axes.None,
+                    Height = 32,
+                    Width = 125,
+                    Font = KumiFonts.GetFont(FontFamily.Montserrat, FontWeight.Medium, 14),
+                    BackgroundColour = Colours.Gray(0.05f),
+                    Text = "Select mods",
+                }
+            }
+        };
 
     protected override bool FinaliseSelectionInternal(ChartInfo chartInfo)
     {

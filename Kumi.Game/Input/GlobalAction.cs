@@ -11,4 +11,5 @@ public enum GlobalAction
     ToggleNotifications,
     ToggleSettings,
     ToggleChat,
+    ToggleModSelect,
 }

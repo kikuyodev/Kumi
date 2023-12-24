@@ -1,4 +1,5 @@
 ﻿using Kumi.Game.Charts;
+using Kumi.Game.Gameplay.Mods;
 using Kumi.Game.Input;
 using Kumi.Game.Overlays;
 using Kumi.Game.Screens.Edit.Compose;
@@ -38,6 +39,9 @@ public partial class Editor : ScreenWithChartBackground, IKeyBindingHandler<Plat
     private Bindable<WorkingChart> chart { get; set; } = null!;
     
     [Resolved]
+    private BindableList<Mod> mods { get; set; } = null!;
+    
+    [Resolved]
     private KumiGameBase game { get; set; } = null!;
 
     private EditorClock clock = null!;
@@ -60,9 +64,14 @@ public partial class Editor : ScreenWithChartBackground, IKeyBindingHandler<Plat
     
     private readonly List<EditorPopup> openPopups = new List<EditorPopup>();
     
+    private readonly List<Mod> previouslyAppliedMods = new List<Mod>();
+    
     [BackgroundDependencyLoader]
     private void load(IBindable<WorkingChart> working)
     {
+        previouslyAppliedMods.AddRange(mods);
+        mods.Clear();
+        
         workingChart.BindTarget = working;
 
         dependencies.CacheAs(this);
@@ -170,6 +179,8 @@ public partial class Editor : ScreenWithChartBackground, IKeyBindingHandler<Plat
     {
         workingChart.Disabled = false;
         refetchChart();
+        
+        previouslyAppliedMods.ForEach(m => mods.Add(m));
 
         return base.OnExiting(e);
     }
