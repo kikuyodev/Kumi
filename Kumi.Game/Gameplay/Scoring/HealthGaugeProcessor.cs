@@ -1,5 +1,6 @@
 ﻿using Kumi.Game.Charts.Objects.Windows;
 using Kumi.Game.Gameplay.Judgements;
+using Kumi.Game.Gameplay.Mods;
 using osu.Framework.Bindables;
 
 namespace Kumi.Game.Gameplay.Scoring;
@@ -29,6 +30,10 @@ public partial class HealthGaugeProcessor : JudgementProcessor
 
         if (!IsSimulating)
             healthBindable.Value = health / maxHealth;
+    }
+    protected override void ApplyMods(IReadOnlyList<Mod> mods)
+    {
+        return;
     }
 
     protected override void Reset(bool storeResults)
