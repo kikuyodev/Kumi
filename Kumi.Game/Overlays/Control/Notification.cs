@@ -27,6 +27,11 @@ public abstract partial class Notification : Container
     private FillFlowContainer content = null!;
 
     protected override Container<Drawable> Content => content;
+    
+    /// <summary>
+    /// Whether the notification can be closed by the user.
+    /// </summary>
+    public virtual bool Closeable { get; set; } = true;
 
     protected Notification()
     {
@@ -175,7 +180,7 @@ public abstract partial class Notification : Container
 
     public void Close()
     {
-        if (IsClosed)
+        if (IsClosed || !Closeable)
             return;
 
         IsClosed = true;

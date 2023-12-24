@@ -10,7 +10,7 @@ namespace Kumi.Game.Overlays.Control;
 public abstract partial class ProgressNotification : BasicNotification
 {
     public BindableInt Current { get; set; } = new BindableInt();
-    public BindableInt Target { get; set; } =new BindableInt();
+    public BindableInt Target { get; set; } = new BindableInt();
 
     public ProgressNotification(int target, int current = 0)
     {
