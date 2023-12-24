@@ -1,15 +1,16 @@
-﻿using Kumi.Game.Screens.Play;
-using osu.Framework.Timing;
+﻿using osu.Framework.Audio;
+using osu.Framework.Audio.Track;
+using osu.Framework.Bindables;
 
 namespace Kumi.Game.Gameplay.Mods;
 
 public class ModDoubleTime : Mod
 {
+    public override string Name => "Double Time";
+    public override string Acronym => "DT";
 
-    public override string Name { get; } = "Double Time";
-    public override string Tag { get; } = "DT";
-    public override void Apply(Player player, IAdjustableClock clock)
+    public override void ApplyToTrack(Track track)
     {
-        clock.Rate = 1.5f;
+        track.AddAdjustment(AdjustableProperty.Tempo, new BindableDouble(1.5f));
     }
 }

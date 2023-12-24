@@ -1,6 +1,5 @@
 ﻿using System.Diagnostics;
 using Kumi.Game.Charts;
-using Kumi.Game.Overlays.Select;
 using Kumi.Game.Screens.Play;
 using Kumi.Game.Tests;
 using osu.Framework.Allocation;
@@ -20,8 +19,6 @@ public partial class PlayerTestScene : KumiScreenTestScene
         Schedule(() =>
         {
             Debug.Assert(ThreadSafety.IsUpdateThread);
-            LoadComponent(new ModSelectionOverlay());
-            Dependencies.CacheAs(new ModSelectionOverlay().SelectedMods);
             
             var manager = Dependencies.Get<ChartManager>();
             workingChart = manager.GetWorkingChart(manager.GetAllUsableCharts().First().Charts.First(), true);

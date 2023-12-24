@@ -40,15 +40,15 @@ public partial class KumiGame : KumiGameBase, IOverlayManager
 
     protected TaskbarOverlay Taskbar { get; private set; } = null!;
     protected ControlOverlay ControlOverlay { get; private set; } = null!;
-    
+
     public readonly IBindable<OverlayActivation> OverlayActivation = new Bindable<OverlayActivation>();
 
     IBindable<OverlayActivation> IOverlayManager.OverlayActivation => OverlayActivation;
-    
+
     public KumiGame()
     {
         Name = "Kumi";
-        
+
         pushLogsToNotifications();
     }
 
@@ -129,7 +129,7 @@ public partial class KumiGame : KumiGameBase, IOverlayManager
                 hideAllOverlays();
         };
     }
-    
+
     public override void SetHost(GameHost host)
     {
         base.SetHost(host);
@@ -145,7 +145,7 @@ public partial class KumiGame : KumiGameBase, IOverlayManager
     {
         chart.OldValue?.CancelAsyncLoad();
         chart.NewValue?.BeginAsyncLoad();
-        
+
         Logger.Log($"{chart.OldValue?.GetType().Name} changed chart to {chart.NewValue?.GetType().Name} ({chart.NewValue?.Metadata?.Title ?? "Unknown"})");
     }
 
@@ -155,11 +155,11 @@ public partial class KumiGame : KumiGameBase, IOverlayManager
         {
             OverlayActivation.UnbindFrom(currentKumiScreen.OverlayActivation);
         }
-        
+
         if (newScreen is KumiScreen newKumiScreen)
         {
             OverlayActivation.BindTo(newKumiScreen.OverlayActivation);
-            
+
             if (newKumiScreen.HideOverlaysOnEnter)
                 hideAllOverlays();
             else
@@ -192,7 +192,7 @@ public partial class KumiGame : KumiGameBase, IOverlayManager
         {
             if (entry.Level < LogLevel.Important || entry.Target == null)
                 return;
-            
+
             var truncated = entry.Message.Length > 256 ? entry.Message[..256] + "..." : entry.Message;
 
             Schedule(() => ControlOverlay.Post(new BasicNotification
@@ -267,7 +267,7 @@ public partial class KumiGame : KumiGameBase, IOverlayManager
     }
 
     #endregion
-    
+
     #region Component loading
 
     private readonly List<Task> loadTasks = new List<Task>();
@@ -331,4 +331,5 @@ public partial class KumiGame : KumiGameBase, IOverlayManager
     }
 
     #endregion
+
 }

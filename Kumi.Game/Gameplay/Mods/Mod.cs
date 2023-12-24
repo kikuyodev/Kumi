@@ -1,5 +1,5 @@
 ﻿using Kumi.Game.Screens.Play;
-using osu.Framework.Timing;
+using osu.Framework.Audio.Track;
 
 namespace Kumi.Game.Gameplay.Mods;
 
@@ -16,7 +16,7 @@ public abstract class Mod
     /// <summary>
     /// The named tag of the mod, usually an abbreviation of the name.
     /// </summary>
-    public abstract string Tag { get; }
+    public abstract string Acronym { get; }
 
     /// <summary>
     /// A description of the mod, used to explain what the mod does.
@@ -26,10 +26,16 @@ public abstract class Mod
     /// <summary>
     /// A list of mods that are incompatible with this mod.
     /// </summary>
-    public virtual Type[] IncompatibleMods => new Type[0];
-    
+    public virtual Type[] IncompatibleMods => Type.EmptyTypes;
+
     /// <summary>
     /// Applies the mod to the player.
     /// </summary>
-    public abstract void Apply(Player player, IAdjustableClock clock);
+    public virtual void ApplyToPlayer(Player player)
+    {
+    }
+
+    public virtual void ApplyToTrack(Track track)
+    {
+    }
 }

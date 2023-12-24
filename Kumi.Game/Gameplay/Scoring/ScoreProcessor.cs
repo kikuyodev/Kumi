@@ -37,7 +37,6 @@ public partial class ScoreProcessor : JudgementProcessor
     }
     protected override void ApplyMods(IReadOnlyList<Mod> mods)
     {
-        return;
     }
 
     public ScoreRank GetScoreRank()

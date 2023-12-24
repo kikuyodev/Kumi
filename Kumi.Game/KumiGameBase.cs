@@ -1,5 +1,6 @@
 ﻿using Kumi.Game.Charts;
 using Kumi.Game.Database;
+using Kumi.Game.Gameplay.Mods;
 using Kumi.Game.Graphics;
 using Kumi.Game.Input;
 using Kumi.Game.Input.Bindings;
@@ -45,11 +46,16 @@ public partial class KumiGameBase : osu.Framework.Game, ICanAcceptFiles
     protected ChannelManager ChannelManager { get; private set; } = null!;
 
     protected KumiScreenStack ScreenStack = null!;
+    
+    [Cached]
+    [Cached(typeof(IBindableList<Mod>))]
+    protected readonly BindableList<Mod> SelectedMods = new BindableList<Mod>();
+
+    private readonly List<ICanAcceptFiles> fileAcceptors = new List<ICanAcceptFiles>();
+
     protected override Container<Drawable> Content => content;
 
     protected DependencyContainer DependencyContainer = null!;
-
-    private readonly List<ICanAcceptFiles> fileAcceptors = new List<ICanAcceptFiles>();
 
     protected override IReadOnlyDependencyContainer CreateChildDependencies(IReadOnlyDependencyContainer parent)
     {
@@ -81,7 +87,7 @@ public partial class KumiGameBase : osu.Framework.Game, ICanAcceptFiles
 
         DependencyContainer.CacheAs(API);
         base.Content.Add((APIConnection) API);
-        
+
         DependencyContainer.Cache(Activity = new Bindable<PlayerActivity>());
 
         var defaultChart = new DummyWorkingChart(Audio, Textures);
