@@ -30,8 +30,21 @@ public class RealmAccess : IDisposable
             if (!ThreadSafety.IsUpdateThread)
                 throw new InvalidOperationException("Realm can only be accessed from the update thread.");
 
-            return updateRealm ??= getInstance();
+            ensureRealm();
+
+            return updateRealm;
         }
+    }
+
+    private void ensureRealm()
+    {
+        if (updateRealm != null)
+            return;
+
+        updateRealm = getInstance();
+        
+        foreach (var subscription in subscriptions)
+            registerSubscription(subscription.Key);
     }
 
 
