@@ -10,6 +10,7 @@ namespace Kumi.Tests.Visual.UserInterface;
 public partial class ControlOverlayTestScene : KumiTestScene
 {
     private ControlOverlay overlay = null!;
+    private TestProgressNotification progressNotification = null!;
 
     [SetUp]
     public void Setup()
@@ -33,5 +34,22 @@ public partial class ControlOverlayTestScene : KumiTestScene
             Header = "Test",
             Message = "This is a test notification."
         }));
+        
+        AddStep("Send progress notification", () => overlay.Post(progressNotification =new TestProgressNotification(100)
+        {
+            Header = "Test",
+            Message = "This is a test notification."
+        }));
+        
+        AddStep("Set progress to 50", () => progressNotification.Set(50));
+        AddStep("Set progress to 100", () => progressNotification.Set(100));
+    }
+    
+    internal partial class TestProgressNotification : ProgressNotification
+    {
+        public TestProgressNotification(int target)
+            : base(target)
+        {
+        }
     }
 }
