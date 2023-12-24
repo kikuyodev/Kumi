@@ -7,5 +7,5 @@ public interface IModelExporter<TModel>
     /// Export a model to a designated export path.
     /// </summary>
     /// <param name="model">The model to export.</param>
-    Task Export(TModel model);
+    Task<string> Export(TModel model);
 }

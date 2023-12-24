@@ -85,6 +85,7 @@ public partial class EditorOverlay : Container
                                         Items = new[]
                                         {
                                             new MenuItem("Save", () => editor.Save()),
+                                            new MenuItem("Export", () => editor.Export()),
                                             new MenuItem("Exit", () => editor.AttemptExit())
                                         }
                                     },
