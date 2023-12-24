@@ -4,31 +4,39 @@ using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
-
+;
 namespace Kumi.Game.Overlays.Control;
 
 public abstract partial class ProgressNotification : BasicNotification
 {
     public BindableInt Current { get; set; } = new BindableInt();
     public BindableInt Target { get; set; } = new BindableInt();
+    
+    /// <summary>
+    /// Whether the notification should close automatically when the progress is complete.
+    /// </summary>
+    public virtual bool AutoCloseUponCompletion { get; set; } = true;
+
+    public event Action? Finished;
 
     public ProgressNotification(int target, int current = 0)
     {
         Current.Set(current);
         Target.Set(target);
         
-        Current.BindValueChanged(_ => updateProgress());
-        Target.BindValueChanged(_ =>
-        {
-            _current.MaxValue = Target.Value;
-            updateProgress();
-        });
-        
         _current = new BindableNumberWithCurrent<float>()
         {
             MinValue = 0,
             MaxValue = target
         };
+        
+        Current.BindValueChanged(_ => updateProgress(), true);
+        Target.BindValueChanged(_ =>
+        {
+            _current.MaxValue = Target.Value;
+            updateProgress();
+        }, true);
+        
     }
 
     public void Increment(int amount = 1) => Current.Set(Current.Value + amount);
@@ -39,10 +47,16 @@ public abstract partial class ProgressNotification : BasicNotification
     {
         if (Current.Value == Target.Value)
         {
-            Hide();
+            Closeable = true;
+            
+            if (AutoCloseUponCompletion)
+                Close();
+            
+            Finished?.Invoke();
             return;
         }
         
+        Closeable = false;
         _current.Set(Current.Value);
     }
 
