@@ -1,4 +1,5 @@
-﻿using Kumi.Game.Charts.Objects;
+﻿using Kumi.Game.Bindables;
+using Kumi.Game.Charts.Objects;
 using Kumi.Game.Gameplay.Drawables.Parts;
 using Kumi.Game.Tests;
 using NUnit.Framework;
@@ -33,13 +34,13 @@ public partial class DrumHitPartTestScene : KumiTestScene
                 {
                     new[]
                     {
-                        createContainer(new DrumHitPart(NoteType.Don)),
-                        createContainer(new DrumHitPart(NoteType.Kat)),
+                        createContainer(new DrumHitPart(new LazyBindable<NoteType>(NoteType.Don))),
+                        createContainer(new DrumHitPart(new LazyBindable<NoteType>(NoteType.Kat))),
                     },
                     new[]
                     {
-                        createContainer(new BigDrumHitPart(NoteType.Don)),
-                        createContainer(new BigDrumHitPart(NoteType.Kat)),
+                        createContainer(new DrumHitPart(new LazyBindable<NoteType>(NoteType.Don))),
+                        createContainer(new DrumHitPart(new LazyBindable<NoteType>(NoteType.Kat))),
                     }
                 }
             });

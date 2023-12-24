@@ -16,7 +16,6 @@ public class SetMediaEvent : MediaEvent
     internal SetMediaEvent()
         : base(0)
     {
-
     }
 
     public override void ParseFrom(string[] input)

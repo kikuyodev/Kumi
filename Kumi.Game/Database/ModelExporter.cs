@@ -33,7 +33,7 @@ public abstract class ModelExporter<TModel> : IModelExporter<TModel>
 
     private readonly Storage exportLocation;
 
-    public async Task Export(TModel model)
+    public async Task<string> Export(TModel model)
     {
         if (!model.IsManaged)
             model = realm.Realm.Find<TModel>(model.ID)!;
@@ -49,15 +49,19 @@ public abstract class ModelExporter<TModel> : IModelExporter<TModel>
 
         try
         {
-            await using (var stream = exportLocation.CreateFileSafely($@"{endFile}{Extension}"))
+            using (var stream = exportLocation.CreateFileSafely($@"{endFile}{Extension}"))
             {
-                await ExportModelToStream(model, stream);
+                await ExportModelToStream(model, stream).ConfigureAwait(false);
             }
+            
+            return $@"{endFile}{Extension}";
         }
         catch
         {
             exportLocation.Delete($@"{endFile}*{Extension}");
         }
+        
+        return string.Empty;
     }
 
     protected virtual Task ExportModelToStream(TModel model, Stream output)

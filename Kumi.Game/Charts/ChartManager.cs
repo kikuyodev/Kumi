@@ -14,11 +14,12 @@ using osu.Framework.Platform;
 
 namespace Kumi.Game.Charts;
 
-public class ChartManager : ModelManager<ChartSetInfo>, IModelImporter<ChartSetInfo>, IWorkingChartCache
+public class ChartManager : ModelManager<ChartSetInfo>, IModelImporter<ChartSetInfo>, IModelExporter<ChartSetInfo>, IWorkingChartCache
 {
     public ITrackStore ChartTrackStore { get; }
 
     private readonly ChartImporter chartImporter;
+    private readonly ChartExporter chartExporter;
     private readonly WorkingChartCache workingChartCache;
 
     public Action<ChartSetInfo>? ProcessChart { private get; set; }
@@ -33,6 +34,8 @@ public class ChartManager : ModelManager<ChartSetInfo>, IModelImporter<ChartSetI
 
         chartImporter = CreateChartImporter(storage, realm);
         chartImporter.ProcessChart = args => ProcessChart?.Invoke(args);
+        
+        chartExporter = CreateChartExporter(storage, realm);
 
         workingChartCache = CreateWorkingChartCache(audioManager, gameResources, userResources, defaultChart, host);
     }
@@ -43,6 +46,9 @@ public class ChartManager : ModelManager<ChartSetInfo>, IModelImporter<ChartSetI
 
     protected virtual ChartImporter CreateChartImporter(Storage storage, RealmAccess realm)
         => new ChartImporter(storage, realm);
+    
+    protected virtual ChartExporter CreateChartExporter(Storage storage, RealmAccess realm)
+        => new ChartExporter(storage, realm);
 
     public WorkingChart CreateNew()
     {
@@ -183,6 +189,9 @@ public class ChartManager : ModelManager<ChartSetInfo>, IModelImporter<ChartSetI
         set.Hash = chartImporter.ComputeHash(set);
     }
 
+    public Task<string> Export(ChartSetInfo model)
+        => chartExporter.Export(model);
+
     #region ICanAcceptFiles Implementation
 
     public Task Import(params string[] paths) => chartImporter.Import(paths);
@@ -234,5 +243,4 @@ public class ChartManager : ModelManager<ChartSetInfo>, IModelImporter<ChartSetI
     }
 
     #endregion
-
 }

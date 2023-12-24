@@ -28,7 +28,7 @@ public partial class KumiGameBase : osu.Framework.Game, ICanAcceptFiles
     private readonly List<string> importTasks = new List<string>();
     private ScheduledDelegate? importTask;
 
-    protected Storage? Storage { get; set; }
+    public Storage? Storage { get; private set; }
 
     private RealmAccess realm = null!;
     private ChartManager chartManager = null!;
