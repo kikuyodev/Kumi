@@ -1,5 +1,6 @@
 ﻿using System.Diagnostics;
 using Kumi.Game.Charts;
+using Kumi.Game.Database;
 using Kumi.Game.Input;
 using Kumi.Game.Overlays;
 using Kumi.Game.Screens.Select.List;
@@ -29,6 +30,9 @@ public abstract partial class SelectScreen : ScreenWithChartBackground, IKeyBind
 
     [Resolved]
     protected Bindable<WorkingChart> Chart { get; private set; } = null!;
+    
+    [Resolved]
+    protected RealmAccess Realm { get; private set; } = null!;
 
     private ListSelect listSelect = null!;
 
@@ -127,16 +131,25 @@ public abstract partial class SelectScreen : ScreenWithChartBackground, IKeyBind
             workingChart.Value = Manager.GetWorkingChart(c.NewValue);
         }, true);
 
-        var charts = Manager.GetAllUsableCharts();
-        charts = charts.Where(c => c.Charts.Any() && !c.DeletePending).ToList();
-
-        Schedule(() =>
+        Realm.Subscribe((r) => r.All<ChartSetInfo>(), (sender, _) =>
         {
-            foreach (var set in charts)
-                listSelect.AddChartSet(set);
-
-            // TODO: Ideally, this should always be the last child no matter what.
-            listSelect.Add(new HalfScrollContainer(this) { RelativeSizeAxes = Axes.X });
+            foreach (var set in sender.AsQueryable())
+            {
+                if (set.DeletePending) {
+                    listSelect.RemoveChartSet(set);
+                    
+                    // use random chart if the deleted chart was selected
+                    if (listSelect.SelectedChart.Value?.ID == set.ID)
+                        listSelect.SelectedChart.Value = set.Charts.First();
+                }
+                else
+                {
+                    if (listSelect.Groups.ContainsKey(set.ID))
+                        listSelect.RemoveChartSet(set);
+                    
+                    listSelect.AddChartSet(set);
+                }
+            }
         });
     }
 
