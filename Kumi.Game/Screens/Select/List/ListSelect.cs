@@ -13,6 +13,7 @@ public partial class ListSelect : FillFlowContainer
     private ScrollContainer<Drawable> scrollContainer = null!;
 
     public readonly Bindable<ChartInfo> SelectedChart = new Bindable<ChartInfo>();
+    public Dictionary<Guid, ListItemGroup> Groups = new Dictionary<Guid, ListItemGroup>();
 
     public ListSelect()
     {
@@ -64,8 +65,18 @@ public partial class ListSelect : FillFlowContainer
         };
 
         item.OnSelectionChanged = c => SelectedChart.Value = c;
+        Groups.Add(setInfo.ID, item);
 
         // Inserting one before to let the HalfScrollContainer be the very last child.
         Add(item);
+    }
+    
+    public void RemoveChartSet(ChartSetInfo setInfo)
+    {
+        if (!Groups.TryGetValue(setInfo.ID, out var group))
+            return;
+
+        Groups.Remove(setInfo.ID);
+        Remove(group, true);
     }
 }
