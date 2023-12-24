@@ -9,8 +9,22 @@ namespace Kumi.Game.Overlays.Control;
 
 public abstract partial class ProgressNotification : BasicNotification
 {
-    public BindableInt Current { get; set; } = new BindableInt();
-    public BindableInt Target { get; set; } = new BindableInt();
+    public int Current {
+        get => current;
+        set {
+            current = value;
+            updateProgress();
+        }
+    }
+
+    public int Target {
+        get => target;
+        set {
+            target = value;
+            updateProgress();
+        }
+    }
+    
     
     /// <summary>
     /// Whether the notification should close automatically when the progress is complete.
@@ -25,7 +39,7 @@ public abstract partial class ProgressNotification : BasicNotification
     /// <summary>
     /// Whether the progress is complete.
     /// </summary>
-    public bool IsFinished => Current.Value == Target.Value;
+    public bool IsFinished => Current == Target;
 
     /// <summary>
     /// An event that is fired when the progress is complete. Does not fire if the notification is canceled.
@@ -35,30 +49,22 @@ public abstract partial class ProgressNotification : BasicNotification
     /// <summary>
     /// An event that is fired when the notification is canceled.
     /// </summary>
-    public event Action? Canceled;
+    public event Func<bool>? Canceled;
 
     public ProgressNotification(int target, int current = 0)
     {
-        Current.Set(current);
-        Target.Set(target);
+        this.current = current;
+        this.target = target;
         
         _current = new BindableNumberWithCurrent<float>()
         {
             MinValue = 0,
             MaxValue = target
         };
-        
-        Current.BindValueChanged(_ => updateProgress(), true);
-        Target.BindValueChanged(_ =>
-        {
-            _current.MaxValue = Target.Value;
-            updateProgress();
-        }, true);
     }
     
-    public void Increment(int amount = 1) => Current.Set(Current.Value + amount);
-    public void Decrement(int amount = 1) => Current.Set(Current.Value - amount);
-    public void Set(int value) => Current.Set(value);
+    private int current;
+    private int target;
 
     [BackgroundDependencyLoader]
     private void load()
@@ -75,15 +81,15 @@ public abstract partial class ProgressNotification : BasicNotification
         if (IsFinished)
             Finished?.Invoke();
         
-        if (!IsFinished)
-            Canceled?.Invoke();
+        if (!IsFinished && Canceled?.Invoke() == false)
+            return;
         
         base.Close(force);
     }
 
     private void updateProgress()
     {
-        if (Current.Value == Target.Value)
+        if (Current == Target)
         {
             if (AutoCloseUponCompletion)
                 Close(true);
@@ -91,12 +97,12 @@ public abstract partial class ProgressNotification : BasicNotification
             return;
         }
         
-        _current.Set(Current.Value);
+        _current.Set(Current);
     }
 
     private BindableNumberWithCurrent<float> _current;
 
-    protected string GetProgressText() => $"{Current.Value}/{Target}";
+    protected virtual string GetProgressText() => $"{Current}/{Target}";
 
     protected override void CreateContent()
     {

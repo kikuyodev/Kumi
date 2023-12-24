@@ -47,8 +47,8 @@ public partial class ControlOverlayTestScene : KumiTestScene
             Cancellable = true
         }));
         
-        AddStep("Set progress to 50", () => progressNotification.Set(50));
-        AddStep("Set progress to 100", () => progressNotification.Set(100));
+        AddStep("Set progress to 50", () => progressNotification.Current = 50);
+        AddStep("Set progress to 100", () => progressNotification.Current = 100);
         AddUntilStep("Wait for progress notification to close", () => progressNotification.IsClosed);
     }
     
