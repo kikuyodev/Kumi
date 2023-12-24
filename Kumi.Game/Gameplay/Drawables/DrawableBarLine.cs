@@ -20,6 +20,8 @@ public partial class DrawableBarLine : DrawableNote<BarLine>
         Anchor = Anchor.CentreLeft;
         Origin = Anchor.Centre;
 
+        Depth = float.MaxValue;
+        
         AddRangeInternal(new[]
         {
             new Circle
@@ -28,7 +30,6 @@ public partial class DrawableBarLine : DrawableNote<BarLine>
                 Origin = Anchor.Centre,
                 Width = 3,
                 RelativeSizeAxes = Axes.Y,
-                Height = 0.8f,
                 Colour = Colour4.White.Opacity(note.Major.Value ? 0.3f : 0.1f)
             },
             note.Major.Value

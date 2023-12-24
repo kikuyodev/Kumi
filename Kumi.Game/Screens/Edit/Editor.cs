@@ -36,6 +36,9 @@ public partial class Editor : ScreenWithChartBackground, IKeyBindingHandler<Plat
     
     [Resolved]
     private Bindable<WorkingChart> chart { get; set; } = null!;
+    
+    [Resolved]
+    private KumiGameBase game { get; set; } = null!;
 
     private EditorClock clock = null!;
     private BindableBeatDivisor beatDivisor = null!;
@@ -337,6 +340,18 @@ public partial class Editor : ScreenWithChartBackground, IKeyBindingHandler<Plat
         }
 
         return true;
+    }
+
+    public async void Export()
+    {
+        Save(); // ensure we're exporting the latest version of the chart.
+        var path = await chartManager.Export(editorChart.ChartInfo.ChartSet!).ConfigureAwait(false);
+        
+        if (string.IsNullOrEmpty(path))
+            return;
+        
+        var storage = game.Storage!.GetStorageForDirectory("export");
+        storage.PresentFileExternally(path);
     }
 
     private void seek(UIEvent e, int direction)
