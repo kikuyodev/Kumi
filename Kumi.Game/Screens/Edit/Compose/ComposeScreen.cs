@@ -150,7 +150,6 @@ public partial class ComposeScreen : EditorScreenWithTimeline
             else
             {
                 note.StartTime = clock.CurrentTime + (note.StartTime - previousNoteTime);
-                previousNoteTime = note.StartTime;
             }
 
             // find a note at the same time as the pasted note

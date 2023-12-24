@@ -1,6 +1,7 @@
 ﻿using Kumi.Game.Graphics;
 using Kumi.Game.Graphics.UserInterface;
 using osu.Framework.Allocation;
+using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
@@ -28,6 +29,15 @@ public abstract partial class Notification : Container
 
     protected override Container<Drawable> Content => content;
 
+    /// <summary>
+    /// Whether the notification can be closed by the user.
+    /// </summary>
+    public bool Closeable
+    {
+        get => isClosable.Value;
+        set => isClosable.Value = value;
+    }
+
     protected Notification()
     {
         Masking = true;
@@ -36,6 +46,9 @@ public abstract partial class Notification : Container
         AutoSizeAxes = Axes.Y;
     }
     
+    private Bindable<bool> isClosable = new Bindable<bool>(true);
+    private KumiIconButton closeButton = null!;
+
     [BackgroundDependencyLoader]
     private void load()
     {
@@ -86,7 +99,7 @@ public abstract partial class Notification : Container
                                     },
                                 }
                             },
-                            new KumiIconButton
+                            closeButton = new KumiIconButton
                             {
                                 Icon = FontAwesome.Solid.TimesCircle,
                                 Anchor = Anchor.TopRight,
@@ -101,6 +114,17 @@ public abstract partial class Notification : Container
                 }
             }
         };
+        
+        isClosable.BindValueChanged(v =>
+        {
+            if (closeButton is null)
+                return;
+            
+            if (v.NewValue)
+                closeButton.Show();
+            else
+                closeButton.Hide();
+        }, true);
 
         CreateContent();
     }
@@ -173,14 +197,15 @@ public abstract partial class Notification : Container
         return true;
     }
 
-    public void Close()
+    public void Close() => Close(false);
+
+    public virtual void Close(bool force = false)
     {
-        if (IsClosed)
+        if (IsClosed || (!force && !Closeable))
             return;
 
-        IsClosed = true;
-
         Closed?.Invoke();
+        IsClosed = true;
 
         Schedule(() =>
         {
