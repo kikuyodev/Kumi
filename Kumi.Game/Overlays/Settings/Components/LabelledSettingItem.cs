@@ -15,6 +15,9 @@ public abstract partial class LabelledSettingItem<T> : CompositeDrawable, ICondi
 
     protected Drawable Control { get; }
 
+    public override bool HandlePositionalInput => Current.Disabled;
+    public override bool HandleNonPositionalInput => Current.Disabled;
+
     private IHasCurrentValue<T>? controlWithCurrent => Control as IHasCurrentValue<T>;
 
     public Bindable<T> Current
@@ -99,6 +102,18 @@ public abstract partial class LabelledSettingItem<T> : CompositeDrawable, ICondi
                 d.Origin = Anchor.TopRight;
             })
         };
+    }
+
+    protected override void LoadComplete()
+    {
+        base.LoadComplete();
+        
+        Current.BindDisabledChanged(_ => updateDisabled());
+    }
+    
+    private void updateDisabled()
+    {
+        this.FadeTo(Current.Disabled ? 0.5f : 1, 200, Easing.OutQuint);
     }
 
     public IEnumerable<LocalisableString> FilterTerms => new[] { label, description };
