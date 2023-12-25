@@ -1,5 +1,6 @@
 ﻿using Kumi.Game.Charts;
 using Kumi.Game.Graphics;
+using Kumi.Game.Online.API;
 using Kumi.Game.Screens.Edit.Compose;
 using Kumi.Game.Screens.Edit.Menus;
 using Kumi.Game.Screens.Edit.Setup;
@@ -31,6 +32,9 @@ public partial class EditorOverlay : Container
     public IBindable<WorkingChart> Chart { get; } = new Bindable<WorkingChart>();
     
     private readonly IBindable<EditorScreenMode> currentScreen = new Bindable<EditorScreenMode>(EditorScreenMode.Compose);
+
+    [Resolved]
+    private IAPIConnectionProvider api { get; set; } = null!;
     
     [Resolved]
     private Editor editor { get; set; } = null!;
@@ -55,6 +59,8 @@ public partial class EditorOverlay : Container
     
     private void constructDisplay()
     {
+        MenuItem uploadMenuItem;
+        
         Padding = new MarginPadding(12);
 
         Children = new Drawable[]
@@ -86,6 +92,7 @@ public partial class EditorOverlay : Container
                                         {
                                             new MenuItem("Save", () => editor.Save()),
                                             new MenuItem("Export", () => editor.Export()),
+                                            uploadMenuItem = new MenuItem("Upload", () => editor.ShowUploadPopup()),
                                             new MenuItem("Exit", () => editor.AttemptExit())
                                         }
                                     },
@@ -158,6 +165,8 @@ public partial class EditorOverlay : Container
         
         historyHandler.CanUndo.BindValueChanged(v => undoMenuItem.Action.Disabled = !v.NewValue, true);
         historyHandler.CanRedo.BindValueChanged(v => redoMenuItem.Action.Disabled = !v.NewValue, true);
+        
+        api.LocalAccount.BindValueChanged(v => uploadMenuItem.Action.Disabled = v.NewValue.Id <= 0, true);
         
         currentScreen.BindValueChanged(v =>
         {
