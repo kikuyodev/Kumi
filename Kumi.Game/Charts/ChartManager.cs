@@ -192,6 +192,9 @@ public class ChartManager : ModelManager<ChartSetInfo>, IModelImporter<ChartSetI
     public Task<string> Export(ChartSetInfo model)
         => chartExporter.Export(model);
 
+    public Task ExportModelToStream(ChartSetInfo model, Stream output)
+        => chartExporter.ExportModelToStream(model, output);
+
     #region ICanAcceptFiles Implementation
 
     public Task Import(params string[] paths) => chartImporter.Import(paths);
