@@ -34,7 +34,13 @@ public partial class CheckboxComponent : ClickableContainer, IHasCurrentValue<bo
             }
         };
 
-        Action = () => Current.Value = !Current.Value;
+        Action = () =>
+        {
+            if (Current.Disabled)
+                return;
+            
+            Current.Value = !Current.Value;
+        };
     }
 
     protected override void LoadComplete()

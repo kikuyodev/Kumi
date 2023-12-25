@@ -64,7 +64,7 @@ public abstract class ModelExporter<TModel> : IModelExporter<TModel>
         return string.Empty;
     }
 
-    protected virtual Task ExportModelToStream(TModel model, Stream output)
+    public virtual Task ExportModelToStream(TModel model, Stream output)
     {
         using (var writer = new ZipWriter(output, new ZipWriterOptions(CompressionType.Deflate)))
         {

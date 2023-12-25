@@ -14,8 +14,6 @@ public partial class ExitWithoutSavingPopup : EditorPopup
 
     public ExitWithoutSavingPopup()
     {
-        Anchor = Anchor.Centre;
-        Origin = Anchor.Centre;
         Size = new Vector2(400, 200);
     }
 
