@@ -26,3 +26,9 @@ If you're interested in contributing, then feel free to do so! Any help is appre
 ## Support
 
 Support for this project is provided and handled over GitHub. If you have any questions, or issues, then feel free to open an issue, and we'll get back to you as soon as possible.
+
+# License
+
+Kumi's code is licenseed under the MIT license, located in the [LICENSE](/LICENSE) file. However, certain aspects of the codebase are copyrighted under the [osu!lazer](https://github.com/ppy/osu/blob/master/LICENCE) license. The appropriate copyright for the utilized files have been retained, but there are files with heavy similarities that aren't in any way taken from it's codebase. Due to these conditions, it is difficult to retain the copyright on every file where this is the case.
+
+We keep caution on the relevant files to retain such, but there will be many cases where we unintentionally miss with the circumstances provided to us.
