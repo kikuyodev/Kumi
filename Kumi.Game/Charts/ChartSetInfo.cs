@@ -19,6 +19,9 @@ public class ChartSetInfo : RealmObject, IHasGuidPrimaryKey, IChartSetInfo, ISof
     [Ignored]
     public ChartMetadata Metadata => Charts.FirstOrDefault()?.Metadata ?? new ChartMetadata();
 
+    [JsonIgnore]
+    public int? OnlineID { get; set; }
+
     public IList<ChartInfo> Charts { get; } = null!;
     public IList<RealmNamedFileUsage> Files { get; } = null!;
 

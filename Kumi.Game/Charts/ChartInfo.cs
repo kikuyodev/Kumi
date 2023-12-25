@@ -4,6 +4,7 @@ using Kumi.Game.Database;
 using Kumi.Game.Extensions;
 using Kumi.Game.Models;
 using Kumi.Game.Scoring;
+using Newtonsoft.Json;
 using Realms;
 
 namespace Kumi.Game.Charts;
@@ -22,6 +23,9 @@ public class ChartInfo : RealmObject, IHasGuidPrimaryKey, IChartInfo, IEquatable
     public IQueryable<ScoreInfo> Scores { get; } = null!;
 
     public float InitialScrollSpeed { get; set; }
+
+    [JsonIgnore]
+    public int? OnlineID { get; set; }
 
     public ChartInfo(ChartMetadata? metadata = null)
     {
