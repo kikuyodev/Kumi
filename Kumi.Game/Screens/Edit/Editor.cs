@@ -34,13 +34,13 @@ public partial class Editor : ScreenWithChartBackground, IKeyBindingHandler<Plat
 
     [Resolved]
     private ChartManager chartManager { get; set; } = null!;
-    
+
     [Resolved]
     private Bindable<WorkingChart> chart { get; set; } = null!;
-    
+
     [Resolved]
     private BindableList<Mod> mods { get; set; } = null!;
-    
+
     [Resolved]
     private KumiGameBase game { get; set; } = null!;
 
@@ -56,22 +56,24 @@ public partial class Editor : ScreenWithChartBackground, IKeyBindingHandler<Plat
     private EditorHistoryHandler historyHandler = null!;
 
     public readonly Bindable<EditorScreen> CurrentScreen = new Bindable<EditorScreen>();
-    
+
     private string lastSavedHash = string.Empty;
-    
+
+    private Container popupContainer = null!;
     private Box popupBackground = null!;
-    private ExitWithoutSavingPopup exitWithoutSavingPopup = null!;
-    
     private readonly List<EditorPopup> openPopups = new List<EditorPopup>();
-    
+
+    private ExitWithoutSavingPopup exitWithoutSavingPopup = null!;
+    private UploadPopup uploadPopup = null!;
+
     private readonly List<Mod> previouslyAppliedMods = new List<Mod>();
-    
+
     [BackgroundDependencyLoader]
     private void load(IBindable<WorkingChart> working)
     {
         previouslyAppliedMods.AddRange(mods);
         mods.Clear();
-        
+
         workingChart.BindTarget = working;
 
         dependencies.CacheAs(this);
@@ -108,7 +110,7 @@ public partial class Editor : ScreenWithChartBackground, IKeyBindingHandler<Plat
                 RelativeSizeAxes = Axes.Both,
                 Chart = { BindTarget = workingChart }
             },
-            new Container
+            popupContainer = new Container
             {
                 RelativeSizeAxes = Axes.Both,
                 Children = new Drawable[]
@@ -119,33 +121,35 @@ public partial class Editor : ScreenWithChartBackground, IKeyBindingHandler<Plat
                         Colour = Color4.Black.Opacity(0.5f),
                         Alpha = 0
                     },
-                    exitWithoutSavingPopup = new ExitWithoutSavingPopup
-                    {
-                        Anchor = Anchor.Centre,
-                        Origin = Anchor.Centre,
-                        Action = this.Exit
-                    }
                 }
             }
         });
-        
-        exitWithoutSavingPopup.State.BindValueChanged(v =>
-        {
-            if (v.NewValue == Visibility.Visible)
-                openPopups.Add(exitWithoutSavingPopup);
-            else
-                openPopups.Remove(exitWithoutSavingPopup);
 
-            Schedule(updatePopupBackground);
-        });
+        registerPopup(exitWithoutSavingPopup = new ExitWithoutSavingPopup { Action = this.Exit });
+        registerPopup(uploadPopup = new UploadPopup());
 
         screenStack.ScreenPushed += onScreenChanged;
         screenStack.ScreenExited += onScreenChanged;
     }
-    
+
     private void updatePopupBackground()
     {
         popupBackground.FadeTo(openPopups.Count > 0 ? 1 : 0, 200, Easing.OutQuint);
+    }
+
+    private void registerPopup(EditorPopup popup)
+    {
+        popupContainer.Add(popup);
+
+        popup.State.BindValueChanged(v =>
+        {
+            if (v.NewValue == Visibility.Visible)
+                openPopups.Add(popup);
+            else
+                openPopups.Remove(popup);
+
+            Schedule(updatePopupBackground);
+        });
     }
 
     private void onScreenChanged(IScreen current, IScreen newScreen)
@@ -179,7 +183,7 @@ public partial class Editor : ScreenWithChartBackground, IKeyBindingHandler<Plat
     {
         workingChart.Disabled = false;
         refetchChart();
-        
+
         previouslyAppliedMods.ForEach(m => mods.Add(m));
 
         return base.OnExiting(e);
@@ -230,6 +234,9 @@ public partial class Editor : ScreenWithChartBackground, IKeyBindingHandler<Plat
 
     public void Paste()
         => screenStack.CurrentScreen.Paste();
+    
+    public void ShowUploadPopup()
+        => uploadPopup.Show();
 
     public bool OnPressed(KeyBindingPressEvent<PlatformAction> e)
     {
@@ -281,7 +288,7 @@ public partial class Editor : ScreenWithChartBackground, IKeyBindingHandler<Plat
                 AttemptExit();
                 break;
         }
-        
+
         return false;
     }
 
@@ -357,10 +364,10 @@ public partial class Editor : ScreenWithChartBackground, IKeyBindingHandler<Plat
     {
         Save(); // ensure we're exporting the latest version of the chart.
         var path = await chartManager.Export(editorChart.ChartInfo.ChartSet!).ConfigureAwait(false);
-        
+
         if (string.IsNullOrEmpty(path))
             return;
-        
+
         var storage = game.Storage!.GetStorageForDirectory("export");
         storage.PresentFileExternally(path);
     }
