@@ -128,6 +128,15 @@ public class ChartDecoder : FileDecoder<Chart, ChartSections>
             case "music_file":
                 Current.Metadata.AudioFile = pair.Value;
                 break;
+            
+            case "chart_set_id":
+                if (Current.ChartInfo.ChartSet != null)
+                    Current.ChartInfo.ChartSet!.OnlineID = StringUtils.AssertAndFetch<int>(pair.Value);
+                break;
+            
+            case "chart_id":
+                Current.ChartInfo.OnlineID = StringUtils.AssertAndFetch<int>(pair.Value);
+                break;
         }
     }
 
