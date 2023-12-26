@@ -1,6 +1,10 @@
+using Kumi.Game.Audio;
 using Kumi.Game.Charts.Objects;
 using Kumi.Game.Charts.Objects.Windows;
 using Kumi.Game.Gameplay.Judgements;
+using osu.Framework.Allocation;
+using osu.Framework.Audio;
+using osu.Framework.Audio.Sample;
 using osu.Framework.Bindables;
 using osu.Framework.Extensions.TypeExtensions;
 using osu.Framework.Graphics.Containers;
@@ -11,9 +15,13 @@ public partial class DrawableNote : CompositeDrawable
 {
     public INote Note { get; private set; }
 
+    internal bool InEditor { get; set; }
+
     public override bool IsPresent => base.IsPresent || (state.Value == NoteState.Idle && Clock.CurrentTime >= LifetimeStart);
     public override bool RemoveWhenNotAlive => false;
     public override bool RemoveCompletedTransforms => false;
+
+    protected DrawablePausableSample Sample { get; private set; } = null!;
 
     public event Action<DrawableNote, Judgement>? OnNewJudgement;
 
@@ -27,6 +35,12 @@ public partial class DrawableNote : CompositeDrawable
         AlwaysPresent = true;
 
         Judgement = CreateJudgement();
+    }
+
+    [BackgroundDependencyLoader]
+    private void load(AudioManager manager)
+    {
+        base.AddInternal(Sample = new DrawablePausableSample(CreateSample(manager.Samples)));
     }
 
     protected override void LoadComplete()
@@ -53,9 +67,12 @@ public partial class DrawableNote : CompositeDrawable
         // Force update state to idle
         updateState(State.Value, true);
     }
-    
+
     protected virtual Judgement CreateJudgement()
         => new Judgement(Note);
+
+    protected virtual ISample? CreateSample(ISampleStore store)
+        => null;
 
     #region Animations
 
@@ -86,6 +103,9 @@ public partial class DrawableNote : CompositeDrawable
         }
 
         state.Value = newState;
+        
+        if (!force && newState == NoteState.Hit)
+            Sample.Play();
     }
 
     protected virtual void InitialTransforms()
