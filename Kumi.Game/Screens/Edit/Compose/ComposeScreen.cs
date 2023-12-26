@@ -12,12 +12,14 @@ using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Input;
+using osu.Framework.Input.Bindings;
+using osu.Framework.Input.Events;
 using osuTK;
 
 namespace Kumi.Game.Screens.Edit.Compose;
 
 [Cached]
-public partial class ComposeScreen : EditorScreenWithTimeline
+public partial class ComposeScreen : EditorScreenWithTimeline, IKeyBindingHandler<PlatformAction>
 {
     private NoteComposer noteComposer = null!;
     private Container playfieldContainer = null!;
@@ -222,5 +224,22 @@ public partial class ComposeScreen : EditorScreenWithTimeline
 
         editorChart.NoteAdded -= onNoteAdded;
         editorChart.NoteRemoved -= onNoteRemoved;
+    }
+
+    public bool OnPressed(KeyBindingPressEvent<PlatformAction> e)
+    {
+        switch (e.Action)
+        {
+            case PlatformAction.SelectAll:
+                editorChart.SelectedNotes.Clear();
+                editorChart.SelectedNotes.AddRange(editorChart.Notes.Cast<Note>());
+                return true;
+        }
+        
+        return false;
+    }
+
+    public void OnReleased(KeyBindingReleaseEvent<PlatformAction> e)
+    {
     }
 }
