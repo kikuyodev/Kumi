@@ -131,14 +131,11 @@ public partial class Player : ScreenWithChartBackground
         }, 500);
     }
 
-    public override bool OnExiting(ScreenExitEvent e)
+    public override void OnSuspending(ScreenTransitionEvent e)
     {
-        if (chart.Value is DummyWorkingChart)
-            return base.OnExiting(e);
+        base.OnSuspending(e);
 
         chart.Value.Track.ResetSpeedAdjustments();
-
-        return base.OnExiting(e);
     }
 
     private Drawable createGameplayClockContainer(WorkingChart chart, double startDelay = 1000)
@@ -165,7 +162,10 @@ public partial class Player : ScreenWithChartBackground
     }
 
     protected virtual Task PrepareScoreForResultsAsync(ScoreInfo score)
-        => Task.CompletedTask;
+    {
+        score.Failed = healthGaugeProcessor.Health.Value < pass_threshold;
+        return Task.CompletedTask;
+    }
 
     protected virtual ScoreInfo CreateScore(IChart chart) => new ScoreInfo
     {
@@ -242,6 +242,7 @@ public partial class Player : ScreenWithChartBackground
             return Task.FromResult<ScoreInfo?>(null);
 
         var scoreCopy = Score.DeepClone();
+        var statisticsCopy = scoreCopy.Statistics.DeepClone();
 
         return prepareScoreForDisplayTask = Task.Run(async () =>
         {
@@ -262,7 +263,10 @@ public partial class Player : ScreenWithChartBackground
             {
                 Logger.Error(e, "Score import failed");
             }
-
+            
+            // For some reason, the statistics aren't being automatically copied over,
+            // resulting in an exception when trying to access any properties of the statistics. (RealmClosedException)
+            scoreCopy.Statistics = statisticsCopy;
             return scoreCopy;
         })!;
     }

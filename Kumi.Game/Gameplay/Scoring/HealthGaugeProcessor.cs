@@ -40,7 +40,7 @@ public partial class HealthGaugeProcessor : JudgementProcessor
         base.Reset(storeResults);
 
         if (storeResults)
-            maxHealth = MaxHits * good_health;
+            maxHealth = MaxHits * ok_health;
 
         health = 0;
     }

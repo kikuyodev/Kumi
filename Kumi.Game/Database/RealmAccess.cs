@@ -17,8 +17,9 @@ public class RealmAccess : IDisposable
     /// 2    2023-12-07   Rename RealmUser to RealmAccount.
     /// 3    2023-12-08   Add more properties to ScoreInfo.
     /// 4    2023-12-24   Add online IDs to ChartSetInfo and ChartInfo.
+    /// 5    2023-12-25   Store score statistics in ScoreInfo.
     /// </summary>
-    private const int schema_version = 4;
+    private const int schema_version = 5;
 
     public string FileName { get; }
 

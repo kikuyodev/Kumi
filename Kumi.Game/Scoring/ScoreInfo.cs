@@ -26,6 +26,8 @@ public class ScoreInfo : RealmObject, IHasGuidPrimaryKey, ISoftDelete, IHasFiles
     public long TotalScore { get; set; }
 
     public int MaxCombo { get; set; }
+
+    public ScoreStatistics Statistics { get; set; } = null!;
     
     [Ignored]
     public ScoreRank ScoreRank
@@ -41,7 +43,7 @@ public class ScoreInfo : RealmObject, IHasGuidPrimaryKey, ISoftDelete, IHasFiles
         set => ComboRankInt = (int) value;
     }
     
-    public bool Failed { get; set; } = false;
+    public bool Failed { get; set; }
 
     public DateTimeOffset Date { get; set; }
 
@@ -62,6 +64,7 @@ public class ScoreInfo : RealmObject, IHasGuidPrimaryKey, ISoftDelete, IHasFiles
         ChartInfo = chart ?? new ChartInfo();
         ChartHash = ChartInfo.Hash;
         RealmAccount = realmAccount ?? new RealmAccount();
+        Statistics = new ScoreStatistics();
     }
     
     [UsedImplicitly]

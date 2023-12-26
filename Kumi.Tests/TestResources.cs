@@ -1,6 +1,7 @@
 ﻿using System.Reflection;
 using Kumi.Game.Charts;
 using Kumi.Game.Models;
+using Kumi.Game.Scoring;
 using Kumi.Game.Tests;
 using osu.Framework.Audio;
 using osu.Framework.Graphics.Rendering;
@@ -133,6 +134,28 @@ public class TestResources
         }
 
         return chartSetInfo;
+    }
+
+    public static ScoreInfo CreateScoreInfo(ChartInfo? chart = null, RealmAccount? realmAccount = null)
+    {
+        var testChart = chart ?? CreateChartSet(1).Charts.First();
+        var testAccount = realmAccount ?? new RealmAccount { Username = $"Test Player {RNG.Next(0, 50)}" };
+
+        var scoreInfo = new ScoreInfo(testChart, testAccount);
+
+        scoreInfo.TotalScore = RNG.Next(0, 1000000);
+        scoreInfo.Failed = RNG.NextBool();
+        scoreInfo.MaxCombo = RNG.Next(0, 1000);
+        scoreInfo.Date = DateTimeOffset.Now;
+        scoreInfo.ComboRank = (ScoreComboRank) RNG.Next(0, 3);
+        scoreInfo.ScoreRank = (ScoreRank) RNG.Next(0, 6);
+
+        scoreInfo.Statistics.Bad = RNG.Next(0, 1000);
+        scoreInfo.Statistics.Good = RNG.Next(0, 1000);
+        scoreInfo.Statistics.Miss = RNG.Next(0, 1000);
+        scoreInfo.Statistics.Ok = RNG.Next(0, 1000);
+
+        return scoreInfo;
     }
 
     public static TestWorkingChart CreateWorkingChart(AudioManager audio, TextureStore textures, Action<Chart> createChartData)

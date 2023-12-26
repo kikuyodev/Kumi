@@ -143,6 +143,7 @@ public static class RealmObjectUtils
         c.CreateMap<ChartMetadata, ChartMetadata>();
         c.CreateMap<ChartSetInfo, ChartSetInfo>();
         c.CreateMap<ScoreInfo, ScoreInfo>();
+        c.CreateMap<ScoreStatistics, ScoreStatistics>();
         c.CreateMap<RealmAccount, RealmAccount>();
         c.CreateMap<RealmFile, RealmFile>();
         c.CreateMap<RealmNamedFileUsage, RealmNamedFileUsage>();
