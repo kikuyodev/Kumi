@@ -59,6 +59,11 @@ public class ChartEncoder : FileEncoder<Chart, ChartSections>
     {
         WriteLine($"INITIAL_SCROLL_SPEED = {Current.ChartInfo.InitialScrollSpeed}");
         WriteLine($"MUSIC_FILE = {Current.Metadata.AudioFile}");
+
+        if ((Current.ChartInfo.ChartSet?.OnlineID ?? 0) > 0)
+            WriteLine($"CHART_SET_ID = {Current.ChartInfo.ChartSet!.OnlineID}");
+        if (Current.ChartInfo.OnlineID > 0)
+            WriteLine($"CHART_ID = {Current.ChartInfo.OnlineID}");
     }
 
     private void handleEvents()
@@ -102,7 +107,7 @@ public class ChartEncoder : FileEncoder<Chart, ChartSections>
     private void handleTimings()
     {
         var sortedPoints = Current.TimingPoints.OrderBy(p => p.StartTime).ToList();
-        
+
         foreach (var point in sortedPoints)
         {
             var values = new List<string>
