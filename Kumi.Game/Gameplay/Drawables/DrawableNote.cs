@@ -172,6 +172,10 @@ public partial class DrawableNote : CompositeDrawable
 
     #endregion
 
+    internal void OnRevertResult()
+    {
+        updateState(NoteState.Idle);
+    }
 }
 
 public partial class DrawableNote<T> : DrawableNote

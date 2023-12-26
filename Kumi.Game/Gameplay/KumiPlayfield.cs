@@ -196,7 +196,7 @@ public partial class KumiPlayfield : ScrollingPlayfield, ISnapProvider
             }
         };
         
-        new BarLineGenerator((Chart) Chart).BarLines.ForEach(Add);
+        new BarLineGenerator((Chart) Chart).BarLines.ForEach(l => Add(l));
     }
 
     protected override DrawableNote CreateDrawableNote(INote note)
