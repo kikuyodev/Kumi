@@ -15,7 +15,11 @@ public partial class ScoreProcessor : JudgementProcessor
     private long totalScore;
     private int combo;
     private int highestCombo;
-    private int goodHits;
+
+    private int misses;
+    private int good;
+    private int okay;
+    private int bad;
 
     protected override void ApplyJudgementInternal(Judgement judgement)
     {
@@ -30,11 +34,21 @@ public partial class ScoreProcessor : JudgementProcessor
         if (combo > highestCombo)
             highestCombo = combo;
 
+        if (judgement.Result == NoteHitResult.Miss)
+            misses++;
+        if (judgement.Result == NoteHitResult.Good)
+            good++;
+        if (judgement.Result == NoteHitResult.Ok)
+            okay++;
+        if (judgement.Result == NoteHitResult.Bad)
+            bad++;
+
         if (judgement.Result.AffectsScore())
         {
             totalScore += calculateScore(judgement.Result, combo);
         }
     }
+
     protected override void ApplyMods(IReadOnlyList<Mod> mods)
     {
     }
@@ -67,9 +81,14 @@ public partial class ScoreProcessor : JudgementProcessor
         score.MaxCombo = highestCombo;
         score.TotalScore = totalScore;
         score.ScoreRank = GetScoreRank();
-        score.ComboRank = (goodHits == MaxHits) ? ScoreComboRank.PerfectCombo
-                          : (highestCombo == MaxHits) ? ScoreComboRank.FullCombo
+        score.ComboRank = good == MaxHits ? ScoreComboRank.PerfectCombo
+                          : highestCombo == MaxHits ? ScoreComboRank.FullCombo
                           : ScoreComboRank.Clear;
+
+        score.Statistics.Miss = misses;
+        score.Statistics.Good = good;
+        score.Statistics.Ok = okay;
+        score.Statistics.Bad = bad;
     }
 
     private long getTotalPossibleScore()
