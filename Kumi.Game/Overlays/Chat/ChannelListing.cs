@@ -1,6 +1,7 @@
 ﻿using System.Collections.Specialized;
 using System.Diagnostics;
 using Kumi.Game.Graphics;
+using Kumi.Game.Graphics.Containers;
 using Kumi.Game.Online;
 using Kumi.Game.Online.Channels;
 using osu.Framework.Allocation;
@@ -42,7 +43,7 @@ public partial class ChannelListing : CompositeComponent, IHasPopover
             {
                 new Drawable[]
                 {
-                    new BasicScrollContainer
+                    new KumiScrollContainer
                     {
                         RelativeSizeAxes = Axes.Both,
                         Child = channelsFlow = new FillFlowContainer<DrawableChannelItem>

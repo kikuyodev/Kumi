@@ -61,7 +61,7 @@ public partial class TimingPointFlowList : AlwaysLastFillFlowContainer
                 },
                 RowDimensions = new[]
                 {
-                    new Dimension()
+                    new Dimension(GridSizeMode.AutoSize)
                 },
                 Content = new[]
                 {

@@ -1,4 +1,5 @@
 ﻿using Kumi.Game.Charts;
+using Kumi.Game.Graphics.Containers;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
@@ -7,7 +8,7 @@ using osuTK;
 
 namespace Kumi.Game.Screens.Select.List;
 
-public partial class ListSelect : FillFlowContainer
+public partial class ListSelect : AlwaysLastFillFlowContainer
 {
     private ListItemGroup currentlySelected = null!;
     private ScrollContainer<Drawable> scrollContainer = null!;
@@ -15,7 +16,8 @@ public partial class ListSelect : FillFlowContainer
     public readonly Bindable<ChartInfo> SelectedChart = new Bindable<ChartInfo>();
     public Dictionary<Guid, ListItemGroup> Groups = new Dictionary<Guid, ListItemGroup>();
 
-    public ListSelect()
+    public ListSelect(Func<Drawable>? createComponent = null)
+        : base(createComponent)
     {
         RelativeSizeAxes = Axes.X;
         AutoSizeAxes = Axes.Y;

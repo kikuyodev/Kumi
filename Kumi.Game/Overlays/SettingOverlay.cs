@@ -107,7 +107,7 @@ public partial class SettingOverlay : KumiFocusedOverlayContainer
                             },
                             new Drawable[]
                             {
-                                new BasicScrollContainer
+                                new KumiScrollContainer
                                 {
                                     RelativeSizeAxes = Axes.Both,
                                     Child = screenContainer = new SearchContainer

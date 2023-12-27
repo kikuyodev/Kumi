@@ -78,7 +78,7 @@ public abstract partial class SelectScreen : ScreenWithChartBackground, IKeyBind
                 {
                     new Drawable[]
                     {
-                        new BasicScrollContainer
+                        new KumiScrollContainer
                         {
                             RelativeSizeAxes = Axes.Both,
                             ScrollbarVisible = true,
@@ -91,7 +91,7 @@ public abstract partial class SelectScreen : ScreenWithChartBackground, IKeyBind
                                     AutoSizeAxes = Axes.Y,
                                     Anchor = Anchor.Centre,
                                     Origin = Anchor.Centre,
-                                    Child = listSelect = new ListSelect
+                                    Child = listSelect = new ListSelect(() => new HalfScrollContainer(this) { RelativeSizeAxes = Axes.X })
                                     {
                                         Anchor = Anchor.Centre,
                                         Origin = Anchor.Centre,

@@ -32,7 +32,7 @@ using osuTK;
 
 namespace Kumi.Game.Graphics.Containers;
 
-public partial class ZoomableScrollContainer : BasicScrollContainer
+public partial class ZoomableScrollContainer : KumiScrollContainer
 {
     public double ZoomDuration;
 
