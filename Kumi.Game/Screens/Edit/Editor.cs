@@ -1,4 +1,5 @@
-﻿using Kumi.Game.Charts;
+﻿using Kumi.Game.Audio;
+using Kumi.Game.Charts;
 using Kumi.Game.Gameplay.Mods;
 using Kumi.Game.Input;
 using Kumi.Game.Overlays;
@@ -15,17 +16,20 @@ using osu.Framework.Input.Bindings;
 using osu.Framework.Input.Events;
 using osu.Framework.Logging;
 using osu.Framework.Screens;
+using osu.Framework.Threading;
 using osuTK.Graphics;
 using osuTK.Input;
 
 namespace Kumi.Game.Screens.Edit;
 
-public partial class Editor : ScreenWithChartBackground, IKeyBindingHandler<PlatformAction>, IKeyBindingHandler<GlobalAction>
+public partial class Editor : ScreenWithChartBackground, ISamplePausablePlayback, IKeyBindingHandler<PlatformAction>, IKeyBindingHandler<GlobalAction>
 {
     protected override OverlayActivation InitialOverlayActivation => Overlays.OverlayActivation.UserTriggered;
     public override float DimAmount => 0.5f;
     public override float ParallaxAmount => 0.001f;
     public override bool AllowBackButton => false;
+    
+    public IBindable<bool> SamplePaused => samplePaused;
 
     private DependencyContainer dependencies = null!;
 
@@ -51,6 +55,7 @@ public partial class Editor : ScreenWithChartBackground, IKeyBindingHandler<Plat
 
     private readonly Bindable<WorkingChart> workingChart = new Bindable<WorkingChart>();
     private readonly BindableBool hasUnsavedChanges = new BindableBool();
+    private readonly BindableBool samplePaused = new BindableBool();
 
     private EditorChart editorChart = null!;
     private EditorHistoryHandler historyHandler = null!;
@@ -84,9 +89,13 @@ public partial class Editor : ScreenWithChartBackground, IKeyBindingHandler<Plat
 
         dependencies.CacheAs(clock);
         dependencies.CacheAs(beatDivisor);
+        
+        clock.SeekingOrStopped.BindValueChanged(_ => updateSamplePausedState());
 
         AddInternal(editorChart = new EditorChart(working.Value.Chart, working.Value.ChartInfo));
         dependencies.CacheAs(editorChart);
+        
+        editorChart.UpdateInProgress.BindValueChanged(_ => updateSamplePausedState());
 
         AddInternal(historyHandler = new EditorHistoryHandler(editorChart));
         dependencies.CacheAs(historyHandler);
@@ -155,6 +164,7 @@ public partial class Editor : ScreenWithChartBackground, IKeyBindingHandler<Plat
     private void onScreenChanged(IScreen current, IScreen newScreen)
     {
         CurrentScreen.Value = (EditorScreen) newScreen;
+        updateSamplePausedState();
     }
 
     [Resolved(CanBeNull = true)]
@@ -370,6 +380,22 @@ public partial class Editor : ScreenWithChartBackground, IKeyBindingHandler<Plat
 
         var storage = game.Storage!.GetStorageForDirectory("export");
         storage.PresentFileExternally(path);
+    }
+
+    private ScheduledDelegate? playbackSamplePauseDebounce;
+    
+    private void updateSamplePausedState()
+    {
+        var shouldPauseSamples = clock.SeekingOrStopped.Value
+                                 || CurrentScreen.Value is not ComposeScreen
+                                 || editorChart.UpdateInProgress.Value;
+        
+        playbackSamplePauseDebounce?.Cancel();
+
+        if (shouldPauseSamples)
+            samplePaused.Value = true;
+        else
+            playbackSamplePauseDebounce = Scheduler.AddDelayed(() => samplePaused.Value = false, 50);
     }
 
     private void seek(UIEvent e, int direction)

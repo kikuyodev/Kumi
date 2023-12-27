@@ -12,7 +12,7 @@ namespace Kumi.Game.Screens.Edit;
 public partial class EditorClock : CompositeComponent, IFrameBasedClock, IAdjustableClock, ISourceChangeableClock
 {
     private bool playbackFinished;
-    
+
     private readonly DecouplingFramedClock underlyingClock = new DecouplingFramedClock { AllowDecoupling = true };
     private readonly Bindable<Track> track = new Bindable<Track>();
     private readonly BindableBeatDivisor beatDivisor;
@@ -24,6 +24,10 @@ public partial class EditorClock : CompositeComponent, IFrameBasedClock, IAdjust
 
     [Resolved]
     private Bindable<WorkingChart> chart { get; set; } = null!;
+
+    public IBindable<bool> SeekingOrStopped => seekingOrStopped;
+
+    private readonly BindableBool seekingOrStopped = new BindableBool(true);
 
     public EditorClock(BindableBeatDivisor? beatDivisor = null)
     {
@@ -45,11 +49,14 @@ public partial class EditorClock : CompositeComponent, IFrameBasedClock, IAdjust
 
     public void Stop()
     {
+        seekingOrStopped.Value = true;
         underlyingClock.Stop();
     }
 
     public bool Seek(double position)
     {
+        seekingOrStopped.Value = true;
+
         position = Math.Clamp(position, 0, TrackLength);
         return underlyingClock.Seek(position);
     }
@@ -60,17 +67,35 @@ public partial class EditorClock : CompositeComponent, IFrameBasedClock, IAdjust
     public void SeekBackward(double amount = 1)
         => seek(-1, amount);
 
+    protected override void Update()
+    {
+        base.Update();
+
+        updateSeekingState();
+
+        playbackFinished = CurrentTime >= TrackLength;
+
+        if (!playbackFinished)
+            return;
+
+        if (IsRunning)
+            underlyingClock.Stop();
+
+        if (CurrentTime > TrackLength)
+            underlyingClock.Seek(TrackLength);
+    }
+
     private void seek(int direction, double amount = 1)
     {
         if (direction == 0)
             return;
 
-        var nativeChart = (Chart)chart.Value.Chart;
+        var nativeChart = (Chart) chart.Value.Chart;
         var point = nativeChart.TimingHandler.GetTimingPointAt<UninheritedTimingPoint>(CurrentTime, TimingPointType.Uninherited);
 
         if (direction < 0 && point.StartTime == CurrentTime)
             point = nativeChart.TimingHandler.GetTimingPointAt<UninheritedTimingPoint>(CurrentTime - 1, TimingPointType.Uninherited);
-        
+
         var seekAmount = point.MillisecondsPerBeat / beatDivisor.Value * amount;
         var newPosition = CurrentTime + (seekAmount * direction);
 
@@ -99,11 +124,22 @@ public partial class EditorClock : CompositeComponent, IFrameBasedClock, IAdjust
             closestBeat += direction > 0 ? 1 : -1;
             newPosition = point.StartTime + closestBeat * seekAmount;
         }
-        
+
         if (newPosition < point.StartTime && !ReferenceEquals(point, nativeChart.TimingHandler.UninheritedTimingPoints.First()))
             newPosition = point.StartTime;
-        
+
         Seek(newPosition);
+    }
+
+    private void updateSeekingState()
+    {
+        if (seekingOrStopped.Value)
+        {
+            if (!IsRunning)
+                return;
+
+            seekingOrStopped.Value = false;
+        }
     }
 
     public void ResetSpeedAdjustments()
@@ -136,19 +172,4 @@ public partial class EditorClock : CompositeComponent, IFrameBasedClock, IAdjust
 
     public IClock? Source => underlyingClock.Source;
 
-    protected override void Update()
-    {
-        base.Update();
-
-        playbackFinished = CurrentTime >= TrackLength;
-
-        if (!playbackFinished)
-            return;
-
-        if (IsRunning)
-            underlyingClock.Stop();
-
-        if (CurrentTime > TrackLength)
-            underlyingClock.Seek(TrackLength);
-    }
 }

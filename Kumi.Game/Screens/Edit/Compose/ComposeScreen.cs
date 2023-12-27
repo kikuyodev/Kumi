@@ -90,6 +90,8 @@ public partial class ComposeScreen : EditorScreenWithTimeline, IKeyBindingHandle
                 }
             });
 
+            generateAutoplay();
+
             editorChart.NoteAdded += onNoteAdded;
             editorChart.NoteRemoved += onNoteRemoved;
         });
@@ -97,12 +99,24 @@ public partial class ComposeScreen : EditorScreenWithTimeline, IKeyBindingHandle
 
     private void onNoteAdded(Note note)
     {
-        Playfield?.Add(note);
+        var drawable = Playfield?.Add(note);
+
+        if (drawable != null)
+            drawable.InEditor = true;
     }
 
     private void onNoteRemoved(Note note)
     {
         Playfield?.Remove(note);
+    }
+
+    private void generateAutoplay()
+    {
+        if (Playfield == null)
+            return;
+
+        foreach (var note in Playfield.Notes)
+            note.InEditor = true;
     }
 
     protected override Drawable CreateMainContent()
@@ -235,7 +249,7 @@ public partial class ComposeScreen : EditorScreenWithTimeline, IKeyBindingHandle
                 editorChart.SelectedNotes.AddRange(editorChart.Notes.Cast<Note>());
                 return true;
         }
-        
+
         return false;
     }
 

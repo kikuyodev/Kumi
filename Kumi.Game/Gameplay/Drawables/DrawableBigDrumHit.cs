@@ -4,6 +4,7 @@ using Kumi.Game.Charts.Objects.Windows;
 using Kumi.Game.Gameplay.Drawables.Parts;
 using Kumi.Game.Graphics;
 using Kumi.Game.Input;
+using osu.Framework.Audio.Sample;
 using osu.Framework.Extensions.Color4Extensions;
 using osu.Framework.Extensions.EnumExtensions;
 using osu.Framework.Graphics;
@@ -24,6 +25,20 @@ public partial class DrawableBigDrumHit : DrawableNote<DrumHit>, IKeyBindingHand
         Origin = Anchor.Centre;
 
         AddInternal(DrumHitPart = createDrawable(new BigDrumHitPart(note.Type)));
+    }
+
+    protected override ISample? CreateSample(ISampleStore store)
+    {
+        switch (Note.Type.Value)
+        {
+            case NoteType.Don:
+                return store.Get("gameplay/drum");
+
+            case NoteType.Kat:
+                return store.Get("gameplay/drum-rim");
+        }
+
+        return null;
     }
 
     protected override void UpdateAfterChildren()
@@ -66,8 +81,10 @@ public partial class DrawableBigDrumHit : DrawableNote<DrumHit>, IKeyBindingHand
 
         if (!userTriggered)
         {
-            if (Time.Current > Note.StartTime - Note.Windows.WindowFor(NoteHitResult.Bad) && !Note.Windows.IsWithinWindow(deltaTime))
+            if (!InEditor && Time.Current > Note.StartTime - Note.Windows.WindowFor(NoteHitResult.Bad) && !Note.Windows.IsWithinWindow(deltaTime))
                 ApplyResult(NoteHitResult.Miss);
+            else if (InEditor && Time.Current > Note.StartTime)
+                ApplyResult(NoteHitResult.Good);
 
             return;
         }
@@ -88,7 +105,7 @@ public partial class DrawableBigDrumHit : DrawableNote<DrumHit>, IKeyBindingHand
                 return;
 
             ApplyBonusResult(j => j.ApplyResult(result.Value, Time.Current));
-            
+
             extraJudged = true;
         }
     }

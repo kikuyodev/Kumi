@@ -164,6 +164,7 @@ public partial class Player : ScreenWithChartBackground
     protected virtual Task PrepareScoreForResultsAsync(ScoreInfo score)
     {
         score.Failed = healthGaugeProcessor.Health.Value < pass_threshold;
+        score.Date = DateTimeOffset.Now;
         return Task.CompletedTask;
     }
 

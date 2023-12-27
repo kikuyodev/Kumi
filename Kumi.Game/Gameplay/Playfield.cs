@@ -26,6 +26,8 @@ public abstract partial class Playfield : Container
     // Testing purposes
     internal Container<DrawableNote> NoteContainerInternal => NoteContainer;
 
+    private readonly Stack<DrawableNote> judgedNotes;
+
     protected Playfield(WorkingChart workingChart)
     {
         RelativeSizeAxes = Axes.Both;
@@ -38,6 +40,8 @@ public abstract partial class Playfield : Container
 
         WorkingChart = workingChart;
         Chart = WorkingChart.Chart;
+        
+        judgedNotes = new Stack<DrawableNote>();
     }
 
     [BackgroundDependencyLoader]
@@ -53,12 +57,41 @@ public abstract partial class Playfield : Container
         addNotes();
     }
 
-    public void Add(INote note)
+    protected override void Update()
+    {
+        base.Update();
+
+        while (judgedNotes.Count > 0)
+        {
+            var judgement = judgedNotes.Peek().Judgement;
+            
+            if (Time.Current >= judgement.RawTime!.Value)
+                break;
+
+            revertResult(judgedNotes.Pop());
+        }
+    }
+
+    // Reverts the judgement for seeking purposes.
+    private void revertResult(DrawableNote note)
+    {
+        note.OnRevertResult();
+        note.Judgement.Reset();
+    }
+
+    public DrawableNote Add(INote note)
     {
         var drawableNote = createDrawableNote(note);
         NoteContainer.Add(drawableNote);
         
-        drawableNote.OnNewJudgement += (n, j) => NewJudgement?.Invoke(n, j);
+        drawableNote.OnNewJudgement += onNewResult;
+        return drawableNote;
+    }
+
+    private void onNewResult(DrawableNote note, Judgement judgement)
+    {
+        judgedNotes.Push(note);
+        NewJudgement?.Invoke(note, judgement);
     }
 
     public bool Remove(INote note)

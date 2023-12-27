@@ -20,7 +20,7 @@
         <EmbeddedResource Include="Textures/**/*"/>
         <EmbeddedResource Include="Fonts/**/*"/>
         <EmbeddedResource Include="Shaders/**/*"/>
-        <EmbeddedResource Include="Audio/**/*"/>
+        <EmbeddedResource Include="Samples/**/*"/>
         <EmbeddedResource Include="Music/**/*"/>
     </ItemGroup>
 

@@ -9,6 +9,10 @@ namespace Kumi.Game.Screens.Edit;
 
 public partial class EditorChart : TransactionalCommitComponent, IChart
 {
+    public IBindable<bool> UpdateInProgress => updateInProgress;
+    
+    private readonly BindableBool updateInProgress = new BindableBool();
+    
     public event Action<Note>? NoteAdded;
     public event Action<Note>? NoteRemoved;
     public event Action<Note>? NoteUpdated;
@@ -100,12 +104,16 @@ public partial class EditorChart : TransactionalCommitComponent, IChart
     public void Update(INote note)
     {
         batchPendingUpdates.Add(note);
+
+        updateInProgress.Value = true;
     }
 
     public void UpdateAllNotes()
     {
         foreach (var note in Notes)
             batchPendingUpdates.Add(note);
+
+        updateInProgress.Value = true;
     }
 
     public bool Remove(Note note)
@@ -179,6 +187,8 @@ public partial class EditorChart : TransactionalCommitComponent, IChart
         foreach (var n in removals) NoteRemoved?.Invoke(n);
         foreach (var n in inserts) NoteAdded?.Invoke(n);
         foreach (var n in updates) NoteUpdated?.Invoke((Note) n);
+
+        updateInProgress.Value = false;
     }
 
     private void processNote(Note note)
