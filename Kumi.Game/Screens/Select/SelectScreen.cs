@@ -2,6 +2,7 @@
 using Kumi.Game.Charts;
 using Kumi.Game.Database;
 using Kumi.Game.Graphics;
+using Kumi.Game.Graphics.Containers;
 using Kumi.Game.Graphics.UserInterface;
 using Kumi.Game.Input;
 using Kumi.Game.Overlays;
@@ -10,7 +11,6 @@ using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
-using osu.Framework.Graphics.Cursor;
 using osu.Framework.Graphics.UserInterface;
 using osu.Framework.Input.Bindings;
 using osu.Framework.Input.Events;
@@ -85,7 +85,7 @@ public abstract partial class SelectScreen : ScreenWithChartBackground, IKeyBind
                             Masking = false,
                             Children = new Drawable[]
                             {
-                                new BasicContextMenuContainer
+                                new KumiContextMenuContainer
                                 {
                                     RelativeSizeAxes = Axes.X,
                                     AutoSizeAxes = Axes.Y,

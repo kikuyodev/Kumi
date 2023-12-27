@@ -19,11 +19,6 @@ public partial class DrawableEditorBarMenuItem : osu.Framework.Graphics.UserInte
     public DrawableEditorBarMenuItem(MenuItem item)
         : base(item)
     {
-        Foreground.Anchor = Anchor.CentreLeft;
-        Foreground.Origin = Anchor.CentreLeft;
-        Foreground.AutoSizeAxes = Axes.X;
-        Foreground.RelativeSizeAxes = Axes.Y;
-
         Padding = new MarginPadding(2);
     }
 

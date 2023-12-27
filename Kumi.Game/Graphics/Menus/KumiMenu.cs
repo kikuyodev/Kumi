@@ -1,13 +1,13 @@
-﻿using Kumi.Game.Graphics;
+﻿using Kumi.Game.Screens.Edit.Menus;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.UserInterface;
 
-namespace Kumi.Game.Screens.Edit.Menus;
+namespace Kumi.Game.Graphics.Menus;
 
-public partial class EditorMenuBar : osu.Framework.Graphics.UserInterface.Menu
+public partial class KumiMenu : Menu
 {
-    public EditorMenuBar(Direction direction)
+    public KumiMenu(Direction direction)
         : base(direction, true)
     {
         MaskingContainer.CornerRadius = 5;
@@ -16,15 +16,15 @@ public partial class EditorMenuBar : osu.Framework.Graphics.UserInterface.Menu
         BackgroundColour = Colours.Gray(0.05f);
     }
 
-    protected override osu.Framework.Graphics.UserInterface.Menu CreateSubMenu() => new EditorBarSubMenu();
+    protected override Menu CreateSubMenu() => new KumiSubMenu();
 
     protected override DrawableMenuItem CreateDrawableMenuItem(MenuItem item) => new DrawableEditorBarMenuItem(item);
 
     protected override ScrollContainer<Drawable> CreateScrollContainer(Direction direction) => new BasicScrollContainer(direction);
 
-    private partial class EditorBarSubMenu : osu.Framework.Graphics.UserInterface.Menu
+    private partial class KumiSubMenu : Menu
     {
-        public EditorBarSubMenu()
+        public KumiSubMenu()
             : base(Direction.Vertical)
         {
             ItemsContainer.Padding = new MarginPadding();
@@ -32,7 +32,7 @@ public partial class EditorMenuBar : osu.Framework.Graphics.UserInterface.Menu
             MaskingContainer.CornerRadius = 3;
         }
 
-        protected override osu.Framework.Graphics.UserInterface.Menu CreateSubMenu() => new EditorBarSubMenu();
+        protected override Menu CreateSubMenu() => new KumiSubMenu();
 
         protected override DrawableMenuItem CreateDrawableMenuItem(MenuItem item) => new DrawableEditorBarMenuItem(item);
 
