@@ -35,7 +35,7 @@ public partial class EditorMenuBar : osu.Framework.Graphics.UserInterface.Menu
 
         protected override osu.Framework.Graphics.UserInterface.Menu CreateSubMenu() => new EditorBarSubMenu();
 
-        protected override DrawableMenuItem CreateDrawableMenuItem(MenuItem item) => new EditorMenuItem(item);
+        protected override DrawableMenuItem CreateDrawableMenuItem(MenuItem item) => new DrawableEditorBarMenuItem(item);
 
         protected override ScrollContainer<Drawable> CreateScrollContainer(Direction direction) => new KumiScrollContainer();
 

@@ -13,17 +13,13 @@ namespace Kumi.Game.Screens.Edit.Menus;
 
 public partial class DrawableEditorBarMenuItem : osu.Framework.Graphics.UserInterface.Menu.DrawableMenuItem
 {
-    private TextContainer text = null!;
     private Box background = null!;
+
+    protected TextContainer TextContent = null!;
 
     public DrawableEditorBarMenuItem(MenuItem item)
         : base(item)
     {
-        Foreground.Anchor = Anchor.CentreLeft;
-        Foreground.Origin = Anchor.CentreLeft;
-        Foreground.AutoSizeAxes = Axes.X;
-        Foreground.RelativeSizeAxes = Axes.Y;
-
         Padding = new MarginPadding(2);
     }
 
@@ -35,7 +31,7 @@ public partial class DrawableEditorBarMenuItem : osu.Framework.Graphics.UserInte
         FinishTransforms();
     }
 
-    protected override Drawable CreateContent() => text = new TextContainer();
+    protected override Drawable CreateContent() => TextContent = new TextContainer();
 
     protected override Drawable CreateBackground() => new Container
     {
@@ -70,19 +66,19 @@ public partial class DrawableEditorBarMenuItem : osu.Framework.Graphics.UserInte
 
         if (IsHovered && IsActionable)
         {
-            text.BoldText.FadeIn(100, Easing.OutQuint);
-            text.NormalText.FadeOut(100, Easing.OutQuint);
+            TextContent.BoldText.FadeIn(100, Easing.OutQuint);
+            TextContent.NormalText.FadeOut(100, Easing.OutQuint);
             background.FadeIn(100, Easing.OutQuint);
         }
         else
         {
-            text.BoldText.FadeOut(100, Easing.OutQuint);
-            text.NormalText.FadeIn(100, Easing.OutQuint);
+            TextContent.BoldText.FadeOut(100, Easing.OutQuint);
+            TextContent.NormalText.FadeIn(100, Easing.OutQuint);
             background.FadeOut(100, Easing.OutQuint);
         }
     }
 
-    private partial class TextContainer : Container, IHasText
+    protected partial class TextContainer : Container, IHasText
     {
         public LocalisableString Text
         {
