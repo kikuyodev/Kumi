@@ -18,7 +18,7 @@ public partial class KumiMenu : Menu
 
     protected override Menu CreateSubMenu() => new KumiSubMenu();
 
-    protected override DrawableMenuItem CreateDrawableMenuItem(MenuItem item) => new DrawableEditorBarMenuItem(item);
+    protected override DrawableMenuItem CreateDrawableMenuItem(MenuItem item) => new DrawableKumiMenuItem(item);
 
     protected override ScrollContainer<Drawable> CreateScrollContainer(Direction direction) => new BasicScrollContainer(direction);
 
@@ -34,8 +34,17 @@ public partial class KumiMenu : Menu
 
         protected override Menu CreateSubMenu() => new KumiSubMenu();
 
-        protected override DrawableMenuItem CreateDrawableMenuItem(MenuItem item) => new DrawableEditorBarMenuItem(item);
+        protected override DrawableMenuItem CreateDrawableMenuItem(MenuItem item) => new DrawableKumiMenuItem(item);
 
         protected override ScrollContainer<Drawable> CreateScrollContainer(Direction direction) => new BasicScrollContainer();
+    }
+        
+    private partial class DrawableKumiMenuItem : DrawableEditorBarMenuItem
+    {
+        public DrawableKumiMenuItem(MenuItem item)
+            : base(item)
+        {
+            TextContent.Padding = new MarginPadding { Right = 8 };
+        }
     }
 }
