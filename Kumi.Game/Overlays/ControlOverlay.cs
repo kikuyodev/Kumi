@@ -57,7 +57,7 @@ public partial class ControlOverlay : KumiFocusedOverlayContainer, INotification
                     RelativeSizeAxes = Axes.Both,
                     Colour = Colours.Gray(0.05f)
                 },
-                new BasicScrollContainer
+                new KumiScrollContainer
                 {
                     Masking = true,
                     RelativeSizeAxes = Axes.Both,

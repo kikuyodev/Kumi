@@ -1,4 +1,5 @@
-﻿using osu.Framework.Graphics;
+﻿using Kumi.Game.Graphics.Containers;
+using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Sprites;
 using osu.Framework.Graphics.UserInterface;
@@ -30,7 +31,7 @@ public partial class KumiFileSelector : FileSelector
 
     protected override DirectorySelectorDirectory CreateParentDirectoryItem(DirectoryInfo directory) => new BasicDirectorySelectorParentDirectory(directory);
 
-    protected override ScrollContainer<Drawable> CreateScrollContainer() => new BasicScrollContainer();
+    protected override ScrollContainer<Drawable> CreateScrollContainer() => new KumiScrollContainer();
 
     protected override DirectoryListingFile CreateFileItem(FileInfo file) => new BasicFilePiece(file);
 

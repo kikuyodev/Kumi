@@ -1,5 +1,6 @@
 ﻿using System.Collections.Specialized;
 using System.Diagnostics;
+using Kumi.Game.Graphics.Containers;
 using Kumi.Game.Graphics.UserInterface;
 using Kumi.Game.Online;
 using Kumi.Game.Online.Channels;
@@ -24,7 +25,7 @@ public partial class ChannelPickerPopover : KumiPopover
             CornerRadius = 5,
             Children = new Drawable[]
             {
-                new BasicScrollContainer
+                new KumiScrollContainer
                 {
                     RelativeSizeAxes = Axes.Both,
                     Child = channelsFlow = new FillFlowContainer<ChannelPickerItem>

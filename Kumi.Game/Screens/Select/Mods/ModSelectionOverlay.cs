@@ -78,7 +78,7 @@ public partial class ModSelectionOverlay : KumiFocusedOverlayContainer
                     },
                     new Drawable[]
                     {
-                        new BasicScrollContainer
+                        new KumiScrollContainer
                         {
                             RelativeSizeAxes = Axes.Both,
                             Child = searchContainer = new SearchContainer

@@ -1,8 +1,8 @@
-﻿using osu.Framework.Graphics.Containers;
+﻿using Kumi.Game.Graphics.Containers;
 
 namespace Kumi.Game.Overlays.Chat;
 
-public partial class ChannelScrollContainer : BasicScrollContainer
+public partial class ChannelScrollContainer : KumiScrollContainer
 {
     private bool trackingNewContent = true;
 
