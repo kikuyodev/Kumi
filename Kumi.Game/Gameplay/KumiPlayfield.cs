@@ -35,7 +35,7 @@ public partial class KumiPlayfield : ScrollingPlayfield, ISnapProvider
         ScrollContainer.TimeRange.BindTo(timeRange);
 
         timeRange.Value = 1000 / workingChart.Chart.ChartInfo.InitialScrollSpeed;
-        algorithm.Value = new DynamicScrollAlgorithm(((Chart)workingChart.Chart).TimingPoints);
+        algorithm.Value = new OverlapScrollAlgorithm(((Chart)workingChart.Chart).TimingHandler);
     }
 
     [BackgroundDependencyLoader]

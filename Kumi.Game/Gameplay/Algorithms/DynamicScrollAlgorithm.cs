@@ -1,14 +1,15 @@
 ﻿using Kumi.Game.Charts.Timings;
+using osu.Framework.Lists;
 
 namespace Kumi.Game.Gameplay.Algorithms;
 
 public class DynamicScrollAlgorithm : IScrollAlgorithm
 {
-    private readonly IReadOnlyList<TimingPoint> timingPoints;
+    private readonly SortedList<TimingPoint> timingPoints;
 
     private readonly List<PositionMapping> positionMappings = new List<PositionMapping>();
     
-    public DynamicScrollAlgorithm(IReadOnlyList<TimingPoint> timingPoints)
+    public DynamicScrollAlgorithm(SortedList<TimingPoint> timingPoints)
     {
         this.timingPoints = timingPoints;
     }
