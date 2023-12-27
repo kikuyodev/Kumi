@@ -60,7 +60,8 @@ public partial class TimingScreen : EditorScreenWithTimeline
                         Padding = new MarginPadding { Horizontal = 12 },
                         Child = new TimingPointList()
                     }
-                }
+                },
+                new MetronomeTick { RelativeSizeAxes = Axes.Both }
             }
         };
     }
