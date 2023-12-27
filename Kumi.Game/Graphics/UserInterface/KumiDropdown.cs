@@ -1,4 +1,5 @@
-﻿using osu.Framework.Graphics;
+﻿using Kumi.Game.Graphics.Containers;
+using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Sprites;
 using osu.Framework.Graphics.UserInterface;
@@ -73,7 +74,7 @@ public partial class KumiDropdown<T> : Dropdown<T>
         protected override Menu CreateSubMenu() => new BasicMenu(Direction.Vertical);
 
         protected override ScrollContainer<Drawable> CreateScrollContainer(Direction direction)
-            => new BasicScrollContainer(direction);
+            => new KumiScrollContainer(direction);
 
         protected override DrawableDropdownMenuItem CreateDrawableDropdownMenuItem(MenuItem item)
             => new DrawableKumiDropdownMenuItem(item);

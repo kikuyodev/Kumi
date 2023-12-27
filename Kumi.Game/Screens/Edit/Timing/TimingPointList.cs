@@ -1,4 +1,5 @@
 ﻿using Kumi.Game.Charts.Timings;
+using Kumi.Game.Graphics.Containers;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
@@ -35,7 +36,7 @@ public partial class TimingPointList : CompositeDrawable, IKeyBindingHandler<Pla
     {
         RelativeSizeAxes = Axes.Both;
 
-        InternalChild = new BasicScrollContainer
+        InternalChild = new KumiScrollContainer
         {
             RelativeSizeAxes = Axes.Both,
             Masking = false,

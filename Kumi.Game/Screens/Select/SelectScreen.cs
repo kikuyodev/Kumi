@@ -2,6 +2,7 @@
 using Kumi.Game.Charts;
 using Kumi.Game.Database;
 using Kumi.Game.Graphics;
+using Kumi.Game.Graphics.Containers;
 using Kumi.Game.Graphics.UserInterface;
 using Kumi.Game.Input;
 using Kumi.Game.Overlays;
@@ -78,7 +79,7 @@ public abstract partial class SelectScreen : ScreenWithChartBackground, IKeyBind
                 {
                     new Drawable[]
                     {
-                        new BasicScrollContainer
+                        new KumiScrollContainer
                         {
                             RelativeSizeAxes = Axes.Both,
                             ScrollbarVisible = true,
@@ -91,7 +92,7 @@ public abstract partial class SelectScreen : ScreenWithChartBackground, IKeyBind
                                     AutoSizeAxes = Axes.Y,
                                     Anchor = Anchor.Centre,
                                     Origin = Anchor.Centre,
-                                    Child = listSelect = new ListSelect
+                                    Child = listSelect = new ListSelect(() => new HalfScrollContainer(this) { RelativeSizeAxes = Axes.X })
                                     {
                                         Anchor = Anchor.Centre,
                                         Origin = Anchor.Centre,

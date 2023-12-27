@@ -1,4 +1,5 @@
 ﻿using Kumi.Game.Graphics;
+using Kumi.Game.Graphics.Containers;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.UserInterface;
@@ -20,7 +21,7 @@ public partial class EditorMenuBar : osu.Framework.Graphics.UserInterface.Menu
 
     protected override DrawableMenuItem CreateDrawableMenuItem(MenuItem item) => new DrawableEditorBarMenuItem(item);
 
-    protected override ScrollContainer<Drawable> CreateScrollContainer(Direction direction) => new BasicScrollContainer(direction);
+    protected override ScrollContainer<Drawable> CreateScrollContainer(Direction direction) => new KumiScrollContainer(direction);
 
     private partial class EditorBarSubMenu : osu.Framework.Graphics.UserInterface.Menu
     {
@@ -36,7 +37,7 @@ public partial class EditorMenuBar : osu.Framework.Graphics.UserInterface.Menu
 
         protected override DrawableMenuItem CreateDrawableMenuItem(MenuItem item) => new EditorMenuItem(item);
 
-        protected override ScrollContainer<Drawable> CreateScrollContainer(Direction direction) => new BasicScrollContainer();
+        protected override ScrollContainer<Drawable> CreateScrollContainer(Direction direction) => new KumiScrollContainer();
 
         private partial class EditorMenuItem : DrawableEditorBarMenuItem
         {
