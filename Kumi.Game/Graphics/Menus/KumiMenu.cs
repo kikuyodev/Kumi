@@ -36,7 +36,7 @@ public partial class KumiMenu : Menu
 
         protected override DrawableMenuItem CreateDrawableMenuItem(MenuItem item) => new DrawableKumiMenuItem(item);
 
-        protected override ScrollContainer<Drawable> CreateScrollContainer(Direction direction) => new BasicScrollContainer();
+        protected override ScrollContainer<Drawable> CreateScrollContainer(Direction direction) => new KumiScrollContainer();
     }
         
     private partial class DrawableKumiMenuItem : DrawableEditorBarMenuItem
