@@ -82,9 +82,11 @@ public partial class KumiGameBase : osu.Framework.Game, ICanAcceptFiles
         DependencyContainer.CacheAs(Storage);
 
         // TODO
-        API = new APIConnection(DebugUtils.IsDebugBuild
-                                    ? new DevelopmentServerConfiguration()
-                                    : new ProductionServerConfiguration());
+        // API = new APIConnection(DebugUtils.IsDebugBuild
+        //                             ? new DevelopmentServerConfiguration()
+        //                             : new ProductionServerConfiguration());
+
+        API = new APIConnection(new ProductionServerConfiguration());
 
         DependencyContainer.CacheAs(API);
         base.Content.Add((APIConnection) API);

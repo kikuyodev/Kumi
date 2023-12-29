@@ -40,7 +40,7 @@ public class APIChartSet : IAPIChartMetadata
     public APIChartSetStatus Status { get; set; }
 
     [JsonProperty("ranked_on")]
-    public DateTime RankedOn { get; set; }
+    public DateTime? RankedOn { get; set; }
 
     [JsonProperty("attributes")]
     public APIChartSetAttributes Attributes { get; set; } = null!;

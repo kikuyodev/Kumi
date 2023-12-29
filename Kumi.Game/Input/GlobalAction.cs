@@ -12,4 +12,5 @@ public enum GlobalAction
     ToggleSettings,
     ToggleChat,
     ToggleModSelect,
+    ToggleChartSetListing,
 }

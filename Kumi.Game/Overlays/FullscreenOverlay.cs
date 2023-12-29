@@ -20,8 +20,6 @@ public abstract partial class FullscreenOverlay : KumiFocusedOverlayContainer
 
     private readonly Container content;
 
-    private readonly Container mainContent;
-    
     protected FullscreenOverlay()
     {
         RelativeSizeAxes = Axes.Both;
