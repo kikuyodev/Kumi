@@ -1,6 +1,6 @@
 ﻿using Newtonsoft.Json;
 
-namespace Kumi.Game.Online.API.Requests.Responses;
+namespace Kumi.Game.Online.API.Charts;
 
 public class UploadedChartResponse
 {

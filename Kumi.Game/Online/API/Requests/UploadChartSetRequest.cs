@@ -1,4 +1,4 @@
-﻿using Kumi.Game.Online.API.Requests.Responses;
+﻿using Kumi.Game.Online.API.Charts;
 using osu.Framework.Extensions;
 
 namespace Kumi.Game.Online.API.Requests;
