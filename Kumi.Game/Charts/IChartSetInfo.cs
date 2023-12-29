@@ -1,11 +1,12 @@
 ﻿using Kumi.Game.Database;
+using Kumi.Game.Online;
 
 namespace Kumi.Game.Charts;
 
 /// <summary>
 /// A representation of a collection of charts.
 /// </summary>
-public interface IChartSetInfo : IHasFiles, IEquatable<IChartSetInfo>
+public interface IChartSetInfo : IHasFiles, IHasOnlineID, IEquatable<IChartSetInfo>
 {
     /// <summary>
     /// The date and time this set was added to the database.

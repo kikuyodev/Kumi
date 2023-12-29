@@ -1,9 +1,11 @@
-﻿namespace Kumi.Game.Charts;
+﻿using Kumi.Game.Online;
+
+namespace Kumi.Game.Charts;
 
 /// <summary>
 /// A single chart difficulty.
 /// </summary>
-public interface IChartInfo : IEquatable<IChartInfo>
+public interface IChartInfo : IHasOnlineID, IEquatable<IChartInfo>
 {
     /// <summary>
     /// The name of this chart.
