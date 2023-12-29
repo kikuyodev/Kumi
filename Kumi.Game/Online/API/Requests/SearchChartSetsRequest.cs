@@ -1,4 +1,5 @@
 ﻿using Kumi.Game.Online.API.Charts;
+using osu.Framework.IO.Network;
 
 namespace Kumi.Game.Online.API.Requests;
 
@@ -20,7 +21,7 @@ public class SearchChartSetsRequest : APIRequest<SearchChartSetsRequest.SearchCh
             : base(uri)
         {
             foreach (var (key, value) in parameters)
-                AddParameter(key, value);
+                AddParameter(key, value, RequestParameterType.Query);
         }
     }
 

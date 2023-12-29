@@ -1,5 +1,5 @@
-﻿using Kumi.Game.Charts;
-using Kumi.Game.Online.API;
+﻿using Kumi.Game.Online.API;
+using Kumi.Game.Online.API.Charts;
 using osu.Framework.Allocation;
 using osu.Framework.Audio;
 using osu.Framework.Audio.Track;
@@ -19,6 +19,9 @@ public partial class TrackPreviewManager : Component
 
     protected TrackManagerTrackPreview? CurrentTrack;
     
+    [Resolved]
+    private IAPIConnectionProvider api { get; set; } = null!;
+    
     public TrackPreviewManager(IAdjustableAudioComponent mainTrackComponent)
     {
         this.mainTrackComponent = mainTrackComponent;
@@ -30,9 +33,9 @@ public partial class TrackPreviewManager : Component
         trackStore = audio.GetTrackStore(new OnlineStore());
     }
 
-    public TrackPreview Get(IChartSetInfo chartSetInfo)
+    public TrackPreview Get(IAPIChartMetadata chartMetadata)
     {
-        var track = createTrackPreview(chartSetInfo, trackStore);
+        var track = createTrackPreview(chartMetadata, trackStore);
 
         track.Started += () => Schedule(() =>
         {
@@ -58,24 +61,23 @@ public partial class TrackPreviewManager : Component
         CurrentTrack?.Stop();
     }
 
-    private TrackManagerTrackPreview createTrackPreview(IChartSetInfo chartSetInfo, ITrackStore trackStore)
-        => new TrackManagerTrackPreview(chartSetInfo, trackStore);
+    private TrackManagerTrackPreview createTrackPreview(IAPIChartMetadata chartMetadata, ITrackStore trackStore)
+        => new TrackManagerTrackPreview(chartMetadata, trackStore, api);
 
     public partial class TrackManagerTrackPreview : TrackPreview
     {
-        private readonly IChartSetInfo chartSetInfo;
+        private readonly IAPIChartMetadata chartMetadata;
         private readonly ITrackStore trackStore;
+        private readonly IAPIConnectionProvider api;
 
-        [Resolved]
-        private IAPIConnectionProvider api { get; set; } = null!;
-
-        public TrackManagerTrackPreview(IChartSetInfo chartSetInfo, ITrackStore trackStore)
+        public TrackManagerTrackPreview(IAPIChartMetadata chartMetadata, ITrackStore trackStore, IAPIConnectionProvider api)
         {
-            this.chartSetInfo = chartSetInfo;
+            this.chartMetadata = chartMetadata;
             this.trackStore = trackStore;
+            this.api = api;
         }
 
         protected override Track? GetTrack()
-            => trackStore.Get($"{api.EndpointConfiguration.WebsiteUri}/cdn/previews/{chartSetInfo.OnlineID}");
+            => trackStore.Get($"{api.EndpointConfiguration.WebsiteUri}/cdn/previews/{chartMetadata.Id}");
     }
 }

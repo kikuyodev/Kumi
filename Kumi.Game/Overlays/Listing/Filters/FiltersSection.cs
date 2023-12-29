@@ -14,7 +14,8 @@ public partial class FiltersSection : CompositeDrawable
         AutoSizeAxes = Axes.Y;
         Padding = new MarginPadding
         {
-            Horizontal = 8,
+            Left = 8,
+            Right = 16,
             Top = 16
         };
         

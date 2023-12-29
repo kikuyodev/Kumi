@@ -30,6 +30,9 @@ public class APIChartSet : IAPIChartMetadata
     [JsonProperty("description")]
     public string? Description { get; set; }
 
+    [JsonProperty("charts")]
+    public APIChart[] Charts { get; set; } = null!;
+
     [JsonProperty("creator")]
     public APIAccount Creator { get; set; } = null!;
 

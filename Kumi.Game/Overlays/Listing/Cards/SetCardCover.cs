@@ -25,7 +25,7 @@ public partial class SetCardCover : Container
         
         Children = new Drawable[]
         {
-            cover = new DelayedLoadWrapper(new SetCardCoverSprite(metadata)
+            cover = new DelayedLoadWrapper(new ChartCoverSprite(metadata)
             {
                 RelativeSizeAxes = Axes.Both,
             }, 250),

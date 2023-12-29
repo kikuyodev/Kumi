@@ -1,21 +1,20 @@
 ﻿using Kumi.Game.Online.API;
-using Kumi.Game.Online.API.Charts;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Sprites;
 using osu.Framework.Graphics.Textures;
 
-namespace Kumi.Game.Overlays.Listing.Cards;
+namespace Kumi.Game.Overlays.Listing;
 
-public partial class SetCardCoverSprite : BufferedContainer
+public partial class ChartCoverSprite : BufferedContainer
 {
-    private readonly IAPIChartMetadata metadata;
+    private readonly IAPIModal modal;
 
-    public SetCardCoverSprite(IAPIChartMetadata metadata)
+    public ChartCoverSprite(IAPIModal modal)
         : base(cachedFrameBuffer: true)
     {
-        this.metadata = metadata;
+        this.modal = modal;
 
         RedrawOnScale = false;
     }
@@ -29,7 +28,7 @@ public partial class SetCardCoverSprite : BufferedContainer
             Anchor = Anchor.Centre,
             Origin = Anchor.Centre,
             FillMode = FillMode.Fill,
-            Texture = store.Get($"{api.EndpointConfiguration.WebsiteUri}/cdn/backgrounds/{metadata.Id}")
+            Texture = store.Get($"{api.EndpointConfiguration.WebsiteUri}/cdn/backgrounds/{modal.Id}")
         };
     }
 }

@@ -12,9 +12,11 @@ public partial class ListingOverlay : OnlineOverlay
 {
     [Resolved]
     private TrackPreviewManager previewManager { get; set; } = null!;
-    
+
     [Cached]
     private Bindable<APIChartSet?> selectedChartSet { get; set; } = new Bindable<APIChartSet?>();
+
+    private ChartSetInfoSection infoSection = null!;
 
     [BackgroundDependencyLoader]
     private void load()
@@ -35,13 +37,21 @@ public partial class ListingOverlay : OnlineOverlay
             {
                 new Drawable[]
                 {
-                    new ChartSetInfoSection()
+                    infoSection = new ChartSetInfoSection()
                 },
                 new Drawable[]
                 {
                     new ChartSetListing()
                 }
             }
+        });
+
+        selectedChartSet.BindValueChanged(v =>
+        {
+            if (v.NewValue is null)
+                infoSection.Hide();
+            else
+                infoSection.Show();
         });
     }
 }
