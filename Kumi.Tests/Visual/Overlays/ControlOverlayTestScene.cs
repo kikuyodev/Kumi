@@ -5,7 +5,7 @@ using NUnit.Framework;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 
-namespace Kumi.Tests.Visual.UserInterface;
+namespace Kumi.Tests.Visual.Overlays;
 
 public partial class ControlOverlayTestScene : KumiTestScene
 {
