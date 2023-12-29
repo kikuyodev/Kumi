@@ -1,4 +1,5 @@
-﻿using Kumi.Game.Charts;
+﻿using Kumi.Game.Audio;
+using Kumi.Game.Charts;
 using Kumi.Game.Database;
 using Kumi.Game.Gameplay.Mods;
 using Kumi.Game.Graphics;
@@ -126,6 +127,10 @@ public partial class KumiGameBase : osu.Framework.Game, ICanAcceptFiles
                 }
             }
         });
+        
+        TrackPreviewManager previewManager;
+        DependencyContainer.Cache(previewManager = new TrackPreviewManager(chartManager.ChartTrackStore));
+        base.Content.Add(previewManager);
 
         Add(MusicController = new MusicController());
         DependencyContainer.CacheAs(MusicController);
