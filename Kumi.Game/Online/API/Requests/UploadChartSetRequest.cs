@@ -5,8 +5,8 @@ namespace Kumi.Game.Online.API.Requests;
 
 public class UploadChartSetRequest : APIRequest<UploadChartSetRequest.UploadChartSetResponse>
 {
-    public Stream ChartSetStream { get; init; } = null!;
-    public bool IsWip { get; init; }
+    public Stream ChartSetStream { get; set; } = null!;
+    public bool IsWip { get; set; }
     
     public override string Endpoint => "/chartsets/submit";
     public override HttpMethod Method => HttpMethod.Post;
