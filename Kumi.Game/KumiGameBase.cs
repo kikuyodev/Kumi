@@ -134,10 +134,13 @@ public partial class KumiGameBase : osu.Framework.Game, ICanAcceptFiles
         DependencyContainer.Cache(previewManager = new TrackPreviewManager(chartManager.ChartTrackStore));
         base.Content.Add(previewManager);
         
-        
         ChartUploadTransmit chartUploadTransmit;
         DependencyContainer.Cache(chartUploadTransmit = new ChartUploadTransmit(realm, API));
         base.Content.Add(chartUploadTransmit);
+        
+        ChartDownloadTransmit chartDownloadTransmit;
+        DependencyContainer.Cache(chartDownloadTransmit = new ChartDownloadTransmit(realm, API));
+        base.Content.Add(chartDownloadTransmit);
 
         base.Content.Add(MusicController = new MusicController());
         DependencyContainer.CacheAs(MusicController);

@@ -21,7 +21,7 @@ public partial class ChartSetListing : CompositeDrawable
 
     [Resolved]
     private IAPIConnectionProvider api { get; set; } = null!;
-    
+
     [Resolved]
     private Bindable<APIChartSet?> selectedChartSet { get; set; } = null!;
 
@@ -31,7 +31,7 @@ public partial class ChartSetListing : CompositeDrawable
     }
 
     private ReverseChildIDFillFlowContainer<ChartSetCard> cards = null!;
-    
+
     [BackgroundDependencyLoader]
     private void load()
     {
@@ -104,20 +104,25 @@ public partial class ChartSetListing : CompositeDrawable
             api.PerformAsync(req);
         }, 300);
     }
-    
+
     private ChartSetCard[] createCards(APIChartSet[] sets)
         => sets.Select(set => new ChartSetCard(set)
         {
-            Action = () => selectedChartSet.Value = set
+            Action = () =>
+            {
+                if (!selectedChartSet.Disabled)
+                    selectedChartSet.Value = set;
+            }
         }).ToArray();
 
     protected override bool OnClick(ClickEvent e)
     {
         if (cards.Any(c => c.ReceivePositionalInputAt(e.ScreenSpaceMousePosition)))
             return false;
-        
-        selectedChartSet.Value = null;
-        
+
+        if (!selectedChartSet.Disabled)
+            selectedChartSet.Value = null;
+
         return true;
     }
 }

@@ -5,10 +5,9 @@ using Realms;
 
 namespace Kumi.Game.Database;
 
-public abstract partial class ModelTransmit<TModel, TRequest, TResponse> : Component, IModelTransmit<TModel>
+public abstract partial class ModelTransmit<TModel, TRequest> : Component, IModelTransmit<TModel>
     where TModel : RealmObjectBase
-    where TRequest : APIRequest<TResponse>
-    where TResponse : APIResponse
+    where TRequest : APIRequest
 {
     public event Action? TransmitStarted;
     public event Action<TModel?>? TransmitCompleted;
@@ -72,13 +71,12 @@ public abstract partial class ModelTransmit<TModel, TRequest, TResponse> : Compo
     private void finishTransmit(TModel model)
         => realm.Write(r =>
         {
-            var response = request!.Response;
-            var newModel = ProcessResponse(model, response, r);
+            var newModel = ProcessResponse(model, request!, r);
 
             TransmitCompleted?.Invoke(newModel);
         });
 
     protected abstract TRequest CreateRequest(TModel model);
 
-    protected abstract TModel? ProcessResponse(TModel model, TResponse response, Realm realm);
+    protected abstract TModel? ProcessResponse(TModel model, TRequest response, Realm realm);
 }

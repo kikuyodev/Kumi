@@ -171,7 +171,14 @@ public partial class ChartSetInfoSection : VisibilityContainer
                                 Spacing = new Vector2(4),
                                 Children = new Drawable[]
                                 {
-                                    new PreviewButton()
+                                    new PreviewButton(),
+                                    new DownloadButton
+                                    {
+                                        RelativeSizeAxes = Axes.None,
+                                        Width = 125,
+                                        Height = 32,
+                                        Important = true,
+                                    }
                                 }
                             },
                         }

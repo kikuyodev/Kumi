@@ -6,7 +6,7 @@ using Realms;
 
 namespace Kumi.Game.Charts;
 
-public partial class ChartUploadTransmit : ModelTransmit<ChartSetInfo, UploadChartSetRequest, UploadChartSetRequest.UploadChartSetResponse>
+public partial class ChartUploadTransmit : ModelTransmit<ChartSetInfo, UploadChartSetRequest>
 {
     public event Action<UploadChartSetRequest>? ModifyRequest;
 
@@ -39,8 +39,10 @@ public partial class ChartUploadTransmit : ModelTransmit<ChartSetInfo, UploadCha
         chartSetStream?.Dispose();
     }
 
-    protected override ChartSetInfo? ProcessResponse(ChartSetInfo model, UploadChartSetRequest.UploadChartSetResponse response, Realm realm)
+    protected override ChartSetInfo? ProcessResponse(ChartSetInfo model, UploadChartSetRequest request, Realm realm)
     {
+        var response = request.Response;
+        
         if (!response.IsSuccess)
             return null;
         

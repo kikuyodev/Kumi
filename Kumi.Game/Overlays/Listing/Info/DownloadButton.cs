@@ -1,10 +1,11 @@
-﻿using Kumi.Game.Graphics;
+﻿using Kumi.Game.Charts;
+using Kumi.Game.Graphics;
 using Kumi.Game.Graphics.UserInterface;
 using Kumi.Game.Online.API.Charts;
+using Kumi.Game.Online.API.Requests;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics.Sprites;
-using osu.Framework.Threading;
 using osuTK;
 
 namespace Kumi.Game.Overlays.Listing.Info;
@@ -15,8 +16,9 @@ public partial class DownloadButton : KumiProgressButton
     [Resolved]
     private Bindable<APIChartSet> selectedChartSet { get; set; } = null!;
 
-    private bool downloadInProgress;
-
+    [Resolved]
+    private ChartDownloadTransmit downloadTransmit { get; set; } = null!;
+    
     public DownloadButton()
     {
         Label = "Download";
@@ -26,53 +28,47 @@ public partial class DownloadButton : KumiProgressButton
 
         Action = () =>
         {
-            if (downloadInProgress)
+            if (downloadTransmit.TransmissionInProgress)
                 return;
-
-            startDownload();
-            waitForDownload();
+            
+            tryDownload();
         };
     }
 
-    private Task? downloadTask;
-
-    private void startDownload()
+    private void tryDownload()
     {
-        downloadInProgress = true;
+        downloadTransmit.ModifyRequest += modifyRequest;
+        downloadTransmit.TransmitStarted += onTransmissionStarted;
+        downloadTransmit.TransmitCompleted += onTransmissionCompleted;
+
+        var info = new ChartSetInfo { OnlineID = selectedChartSet.Value.Id };
+        downloadTransmit.StartTransmit(info);
+        downloadTransmit.WaitForTransmit(info);
+    }
+
+    private void modifyRequest(DownloadChartSetRequest req)
+    {
+        req.DownloadProgress += (current, length) => Progress = (float) current / length;
+    }
+
+    private void onTransmissionStarted()
+    {
         State = ButtonState.Loading;
-        Enabled.Value = false;
         selectedChartSet.Disabled = true;
-
-        downloadTask = Task.Factory.StartNew(download, TaskCreationOptions.LongRunning);
     }
 
-    private ScheduledDelegate? waitForDownloadDelegate;
-
-    private void waitForDownload()
+    private void onTransmissionCompleted(ChartSetInfo? model)
     {
-        Scheduler.Add(waitForDownloadDelegate = new ScheduledDelegate(() =>
-        {
-            if (downloadTask is not { IsCompleted: true })
-                return;
-
-            downloadTask = null;
-            waitForDownloadDelegate?.Cancel();
-            waitForDownloadDelegate = null;
-
-            finishDownload();
-        }, 0, 10));
-    }
-
-    private void download()
-    {
-        
-    }
-
-    private void finishDownload()
-    {
-        downloadInProgress = false;
         State = ButtonState.Idle;
-        Enabled.Value = true;
-        selectedChartSet.Disabled = true;
+        selectedChartSet.Disabled = false;
+    }
+
+    protected override void Dispose(bool isDisposing)
+    {
+        base.Dispose(isDisposing);
+        
+        downloadTransmit.ModifyRequest -= modifyRequest;
+        downloadTransmit.TransmitStarted -= onTransmissionStarted;
+        downloadTransmit.TransmitCompleted -= onTransmissionCompleted;
     }
 }

@@ -1,4 +1,5 @@
 ﻿using osu.Framework.Development;
+using osu.Framework.IO.Network;
 
 namespace Kumi.Game.Online.API;
 
@@ -58,11 +59,11 @@ public abstract class APIRequest
 
     protected virtual string Uri => Path.Join(Provider!.EndpointConfiguration.APIUri, Endpoint);
 
-    protected virtual APIWebRequest CreateWebRequest() => new APIWebRequest($@"{Uri}?{string.Join("&", QueryParameters.Select(x => $"{x.Key}={x.Value}"))}");
+    protected virtual WebRequest CreateWebRequest() => new APIWebRequest($@"{Uri}?{string.Join("&", QueryParameters.Select(x => $"{x.Key}={x.Value}"))}");
 
     protected IAPIConnectionProvider? Provider;
 
-    protected APIWebRequest Request = null!;
+    protected WebRequest Request = null!;
 
     private readonly object completionStateMutex = new object();
 
@@ -83,8 +84,8 @@ public abstract class APIRequest
         if (DebugUtils.IsDebugBuild)
             Request.AllowInsecureRequests = true; // We have to do this because the API is not always served over HTTPS.
         
-        Request.Failure += TriggerFailure;
-        Request.Success += TriggerSuccess;
+        Request.Failed += TriggerFailure;
+        Request.Finished += TriggerSuccess;
         Request.DownloadProgress += (current, total) => DownloadProgress?.Invoke(current, total);
         Request.UploadProgress += (current, total) => UploadProgress?.Invoke(current, total);
 

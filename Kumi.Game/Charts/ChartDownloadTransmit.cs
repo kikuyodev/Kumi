@@ -1,21 +1,44 @@
 ﻿using Kumi.Game.Database;
+using Kumi.Game.Online.API;
+using Kumi.Game.Online.API.Requests;
+using osu.Framework.Allocation;
+using Realms;
 
 namespace Kumi.Game.Charts;
 
-public class ChartDownloadTransmit : IModelTransmit<ChartSetInfo>
+public partial class ChartDownloadTransmit : ModelTransmit<ChartSetInfo, DownloadChartSetRequest>
 {
-    public event Action? TransmitStarted;
-    public event Action<ChartSetInfo?>? TransmitCompleted;
+    public event Action<DownloadChartSetRequest>? ModifyRequest;
 
-    public bool TransmissionInProgress { get; set; }
+    [Resolved]
+    private ChartManager chartManager { get; set; } = null!;
 
-    public void StartTransmit(ChartSetInfo model)
+    public ChartDownloadTransmit(RealmAccess realm, IAPIConnectionProvider api)
+        : base(realm, api)
     {
-        throw new NotImplementedException();
     }
 
-    public void WaitForTransmit(ChartSetInfo model)
+    protected override DownloadChartSetRequest CreateRequest(ChartSetInfo model)
     {
-        throw new NotImplementedException();
+        var request = new DownloadChartSetRequest(model.OnlineID!.Value);
+        ModifyRequest?.Invoke(request);
+
+        return request;
+    }
+
+    protected override ChartSetInfo? ProcessResponse(ChartSetInfo model, DownloadChartSetRequest request, Realm realm)
+    {
+        var set = realm.Find<ChartSetInfo>(model.ID);
+
+        if (set is null)
+        {
+            chartManager.Import(new[] { new ImportTask(request.Filename) }).ConfigureAwait(false);
+        }
+        else
+        {
+            // import as update
+        }
+
+        return model;
     }
 }
