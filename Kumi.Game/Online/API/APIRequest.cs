@@ -51,18 +51,10 @@ public abstract class APIRequest
     /// When possible, this event will be triggered on the update thread.
     /// </summary>
     public event APIWebRequest.APIRequestFailed? Failure;
-    
-    public event Action<long, long> DownloadProgress
-    {
-        add => Request.DownloadProgress += value;
-        remove => Request.DownloadProgress -= value;
-    }
-    
-    public event Action<long, long> UploadProgress
-    {
-        add => Request.UploadProgress += value;
-        remove => Request.UploadProgress -= value;
-    }
+
+    public event Action<long, long>? DownloadProgress;
+
+    public event Action<long, long>? UploadProgress;
 
     protected virtual string Uri => Path.Join(Provider!.EndpointConfiguration.APIUri, Endpoint);
 
@@ -93,6 +85,8 @@ public abstract class APIRequest
         
         Request.Failure += TriggerFailure;
         Request.Success += TriggerSuccess;
+        Request.DownloadProgress += (current, total) => DownloadProgress?.Invoke(current, total);
+        Request.UploadProgress += (current, total) => UploadProgress?.Invoke(current, total);
 
         if (isFailing)
             return;

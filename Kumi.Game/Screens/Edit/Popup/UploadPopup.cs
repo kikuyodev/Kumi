@@ -199,14 +199,11 @@ public partial class UploadPopup : EditorPopup
 
         stream.Seek(0, SeekOrigin.Begin);
 
-        UploadChartSetRequest request;
-
-        // TODO: Add progress bar
-        api.Perform(request = new UploadChartSetRequest
+        var request = new UploadChartSetRequest
         {
             ChartSetStream = stream,
             IsWip = isWip.Value,
-        });
+        };
 
         request.UploadProgress += (value, length) =>
         {
@@ -237,6 +234,8 @@ public partial class UploadPopup : EditorPopup
                 }
             });
         });
+        
+        api.Perform(request);
     }
 
     private void finishUpload()

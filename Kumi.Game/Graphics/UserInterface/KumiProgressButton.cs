@@ -20,7 +20,7 @@ public partial class KumiProgressButton : KumiIconButton, IStateful<ButtonState>
     public float Progress
     {
         get => progress.Width;
-        set => Schedule(() => progress.ResizeWidthTo(value, 200, Easing.OutQuint));
+        set => Schedule(() => progress.Width = value);
     }
     
     public new Vector2 IconScale
@@ -123,8 +123,8 @@ public partial class KumiProgressButton : KumiIconButton, IStateful<ButtonState>
                         Padding = new MarginPadding(2),
                         Child = progress = new Circle
                         {
-                            Anchor = Anchor.BottomCentre,
-                            Origin = Anchor.BottomCentre,
+                            Anchor = Anchor.BottomLeft,
+                            Origin = Anchor.BottomLeft,
                             RelativeSizeAxes = Axes.X,
                             Height = 2,
                             Width = 0,
