@@ -13,10 +13,6 @@ namespace Kumi.Game.Graphics.UserInterface;
 
 public partial class KumiIconButton : Button
 {
-    private readonly Container container;
-    private readonly Box background;
-    private readonly SpriteIcon spriteIcon;
-
     private IconUsage icon;
 
     public IconUsage Icon
@@ -25,7 +21,7 @@ public partial class KumiIconButton : Button
         set
         {
             icon = value;
-            spriteIcon.Icon = icon;
+            SpriteIcon.Icon = icon;
         }
     }
 
@@ -37,7 +33,7 @@ public partial class KumiIconButton : Button
         set
         {
             iconScale = value;
-            spriteIcon.Scale = iconScale;
+            SpriteIcon.Scale = iconScale;
         }
     }
     
@@ -49,7 +45,7 @@ public partial class KumiIconButton : Button
         set
         {
             iconColour = value;
-            spriteIcon.Colour = iconColour;
+            SpriteIcon.Colour = iconColour;
         }
     }
 
@@ -61,7 +57,7 @@ public partial class KumiIconButton : Button
         set
         {
             backgroundColour = value;
-            background.Colour = backgroundColour;
+            Background.Colour = backgroundColour;
         }
     }
 
@@ -96,14 +92,19 @@ public partial class KumiIconButton : Button
 
     public new float Height
     {
-        get => container.Height;
+        get => Container.Height;
         set
         {
-            container.AutoSizeAxes = Axes.None;
-            container.Padding = new MarginPadding(0);
-            container.Height = value;
+            Container.AutoSizeAxes = Axes.None;
+            Container.Padding = new MarginPadding(0);
+            Container.Height = value;
+            base.Height = value;
         }
     }
+    
+    protected Container Container = null!;
+    protected Box Background = null!;
+    protected SpriteIcon SpriteIcon = null!;
 
     public KumiIconButton()
     {
@@ -112,14 +113,23 @@ public partial class KumiIconButton : Button
         BorderThickness = 1.5f;
         BorderColour = Color4.Transparent;
         
-        Children = new Drawable[]
+        Children = CreateContent();
+        
+        Enabled.BindValueChanged(e =>
         {
-            background = new Box
+            this.FadeColour(e.NewValue ? Color4.White : Color4.White.Darken(0.5f), 100, Easing.OutQuint);
+        }, true);
+    }
+
+    protected virtual Drawable[] CreateContent()
+        => new Drawable[]
+        {
+            Background = new Box
             {
                 RelativeSizeAxes = Axes.Both,
                 Colour = backgroundColour
             },
-            container = new Container
+            Container = new Container
             {
                 RelativeSizeAxes = Axes.X,
                 AutoSizeAxes = Axes.Y,
@@ -127,7 +137,7 @@ public partial class KumiIconButton : Button
                 Origin = Anchor.Centre,
                 Children = new Drawable[]
                 {
-                    spriteIcon = new SpriteIcon
+                    SpriteIcon = new SpriteIcon
                     {
                         Icon = icon,
                         Anchor = Anchor.Centre,
@@ -137,22 +147,16 @@ public partial class KumiIconButton : Button
                 }
             }
         };
-        
-        Enabled.BindValueChanged(e =>
-        {
-            this.FadeColour(e.NewValue ? Color4.White : Color4.White.Darken(0.5f), 100, Easing.OutQuint);
-        }, true);
-    }
 
     protected override bool OnHover(HoverEvent e)
     {
-        background.FadeColour(backgroundColour.Lighten(0.25f), 200, Easing.OutQuint);
+        Background.FadeColour(backgroundColour.Lighten(0.25f), 200, Easing.OutQuint);
         return base.OnHover(e);
     }
 
     protected override void OnHoverLost(HoverLostEvent e)
     {
-        background.FadeColour(backgroundColour, 200, Easing.OutQuint);
+        Background.FadeColour(backgroundColour, 200, Easing.OutQuint);
         base.OnHoverLost(e);
     }
 
@@ -161,7 +165,7 @@ public partial class KumiIconButton : Button
         if (!Enabled.Value)
             return false;
         
-        background.FlashColour(backgroundColour.Lighten(0.9f), 500, Easing.OutQuint);
+        Background.FlashColour(backgroundColour.Lighten(0.9f), 500, Easing.OutQuint);
         return base.OnClick(e);
     }
 }

@@ -25,7 +25,7 @@ public partial class UploadPopup : EditorPopup
 
     [Resolved]
     private ChartManager chartManager { get; set; } = null!;
-    
+
     [Resolved]
     private RealmAccess realm { get; set; } = null!;
 
@@ -44,6 +44,8 @@ public partial class UploadPopup : EditorPopup
 
     private KumiTextBox descriptionBox = null!;
     private readonly BindableBool isWip = new BindableBool(true);
+
+    private KumiProgressButton uploadButton = null!;
 
     [BackgroundDependencyLoader]
     private void load()
@@ -131,11 +133,14 @@ public partial class UploadPopup : EditorPopup
                                     Anchor = Anchor.BottomCentre,
                                     Origin = Anchor.BottomCentre
                                 },
-                                new KumiButton
+                                uploadButton = new KumiProgressButton
                                 {
                                     RelativeSizeAxes = Axes.None,
                                     Width = 100,
-                                    Text = "Upload",
+                                    Height = 25,
+                                    Label = "Upload",
+                                    Icon = FontAwesome.Solid.Upload,
+                                    IconScale = new Vector2(0.6f),
                                     Important = true,
                                     Anchor = Anchor.BottomCentre,
                                     Origin = Anchor.BottomCentre,
@@ -165,6 +170,7 @@ public partial class UploadPopup : EditorPopup
         uploadInProgress = true;
         descriptionBox.Current.Disabled = true;
         isWip.Disabled = true;
+        uploadButton.State = ButtonState.Loading;
 
         uploadTask = Task.Factory.StartNew(upload, TaskCreationOptions.LongRunning);
     }
@@ -194,13 +200,19 @@ public partial class UploadPopup : EditorPopup
         stream.Seek(0, SeekOrigin.Begin);
 
         UploadChartSetRequest request;
-        
+
         // TODO: Add progress bar
         api.Perform(request = new UploadChartSetRequest
         {
             ChartSetStream = stream,
             IsWip = isWip.Value,
         });
+
+        request.UploadProgress += (value, length) =>
+        {
+            var progress = (float) value / length;
+            uploadButton.Progress = progress;
+        };
 
         request.Success += () => Schedule(() =>
         {
@@ -232,5 +244,6 @@ public partial class UploadPopup : EditorPopup
         uploadInProgress = false;
         descriptionBox.Current.Disabled = false;
         isWip.Disabled = false;
+        uploadButton.State = ButtonState.Idle;
     }
 }
