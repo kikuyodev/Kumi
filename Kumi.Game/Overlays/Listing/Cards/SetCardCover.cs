@@ -32,7 +32,7 @@ public partial class SetCardCover : Container
             new Box
             {
                 RelativeSizeAxes = Axes.Both,
-                Colour = ColourInfo.GradientHorizontal(Colours.Gray(0.1f).Opacity(1f), Colours.Gray(0.1f).Opacity(0.9f))
+                Colour = ColourInfo.GradientHorizontal(Colours.Gray(0.1f).Opacity(0.95f), Colours.Gray(0.1f).Opacity(0.75f))
             }
         };
         

@@ -140,7 +140,7 @@ public partial class ChartSetCard : ClickableContainer
         };
 
         chartedFlow.AddText("Charted by ");
-        chartedFlow.AddText(chartSet.Creator.Username);
+        chartedFlow.AddText(chartSet.Creator.Username, c => c.Font = KumiFonts.GetFont(FontFamily.Montserrat, FontWeight.SemiBold, 14));
 
         selectedChartSet.BindValueChanged(_ => updateState(), true);
     }

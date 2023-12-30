@@ -39,156 +39,165 @@ public partial class ChartSetInfoSection : VisibilityContainer
     [BackgroundDependencyLoader]
     private void load(Bindable<APIChartSet> selectedChartSet)
     {
-        Child = new Container
+        Children = new Drawable[]
         {
-            RelativeSizeAxes = Axes.X,
-            AutoSizeAxes = Axes.Y,
-            Children = new Drawable[]
+            new Container
             {
-                new ChartInfoCover
+                RelativeSizeAxes = Axes.X,
+                AutoSizeAxes = Axes.Y,
+                Masking = true,
+                Children = new Drawable[]
                 {
-                    RelativeSizeAxes = Axes.Both
-                },
-                new FillFlowContainer
-                {
-                    RelativeSizeAxes = Axes.X,
-                    AutoSizeAxes = Axes.Y,
-                    Direction = FillDirection.Vertical,
-                    Spacing = new Vector2(12),
-                    Padding = new MarginPadding
+                    new ChartInfoCover
                     {
-                        Horizontal = 28,
-                        Vertical = 20
+                        RelativeSizeAxes = Axes.Both
                     },
-                    Children = new Drawable[]
+                    new FillFlowContainer
                     {
-                        new FillFlowContainer
+                        RelativeSizeAxes = Axes.X,
+                        AutoSizeAxes = Axes.Y,
+                        Direction = FillDirection.Vertical,
+                        Spacing = new Vector2(12),
+                        Padding = new MarginPadding
                         {
-                            RelativeSizeAxes = Axes.X,
-                            AutoSizeAxes = Axes.Y,
-                            Direction = FillDirection.Vertical,
-                            Spacing = new Vector2(4),
-                            Children = new Drawable[]
-                            {
-                                new DifficultySelector
-                                {
-                                    RelativeSizeAxes = Axes.X,
-                                    AutoSizeAxes = Axes.Y,
-                                    Direction = FillDirection.Horizontal,
-                                    Spacing = new Vector2(8, 0)
-                                },
-                                difficultyName = new SpriteText
-                                {
-                                    Shadow = true,
-                                    Font = KumiFonts.GetFont(FontFamily.Montserrat, FontWeight.Medium),
-                                    Colour = Colours.GRAY_C
-                                }
-                            }
+                            Horizontal = 28,
+                            Vertical = 20
                         },
-                        new FillFlowContainer
+                        Children = new Drawable[]
                         {
-                            RelativeSizeAxes = Axes.X,
-                            AutoSizeAxes = Axes.Y,
-                            Direction = FillDirection.Vertical,
-                            Spacing = new Vector2(2),
-                            Children = new Drawable[]
+                            new FillFlowContainer
                             {
-                                title = new SpriteText
+                                RelativeSizeAxes = Axes.X,
+                                AutoSizeAxes = Axes.Y,
+                                Direction = FillDirection.Vertical,
+                                Spacing = new Vector2(4),
+                                Children = new Drawable[]
                                 {
-                                    Shadow = true,
-                                    Font = KumiFonts.GetFont(FontFamily.Montserrat, FontWeight.SemiBold, 24),
-                                    Colour = Colours.Gray(0.9f)
-                                },
-                                artist = new SpriteText
-                                {
-                                    Shadow = true,
-                                    Font = KumiFonts.GetFont(FontFamily.Montserrat, size: 20),
-                                    Colour = Colours.GRAY_C
-                                }
-                            }
-                        },
-                        new FillFlowContainer
-                        {
-                            RelativeSizeAxes = Axes.X,
-                            AutoSizeAxes = Axes.Y,
-                            Direction = FillDirection.Horizontal,
-                            Spacing = new Vector2(4),
-                            Children = new Drawable[]
-                            {
-                                avatar = new UpdateableAvatarSprite
-                                {
-                                    Size = new Vector2(48)
-                                },
-                                new Container
-                                {
-                                    RelativeSizeAxes = Axes.X,
-                                    Height = 48,
-                                    Children = new Drawable[]
+                                    new DifficultySelector
                                     {
-                                        new FillFlowContainer
+                                        RelativeSizeAxes = Axes.X,
+                                        AutoSizeAxes = Axes.Y,
+                                        Direction = FillDirection.Horizontal,
+                                        Spacing = new Vector2(8, 0)
+                                    },
+                                    difficultyName = new SpriteText
+                                    {
+                                        Shadow = true,
+                                        Font = KumiFonts.GetFont(FontFamily.Montserrat, FontWeight.Medium),
+                                        Colour = Colours.GRAY_C
+                                    }
+                                }
+                            },
+                            new FillFlowContainer
+                            {
+                                RelativeSizeAxes = Axes.X,
+                                AutoSizeAxes = Axes.Y,
+                                Direction = FillDirection.Vertical,
+                                Spacing = new Vector2(2),
+                                Children = new Drawable[]
+                                {
+                                    title = new SpriteText
+                                    {
+                                        Shadow = true,
+                                        Font = KumiFonts.GetFont(FontFamily.Montserrat, FontWeight.SemiBold, 24),
+                                        Colour = Colours.Gray(0.9f)
+                                    },
+                                    artist = new SpriteText
+                                    {
+                                        Shadow = true,
+                                        Font = KumiFonts.GetFont(FontFamily.Montserrat, size: 20),
+                                        Colour = Colours.GRAY_C
+                                    }
+                                }
+                            },
+                            new FillFlowContainer
+                            {
+                                RelativeSizeAxes = Axes.X,
+                                AutoSizeAxes = Axes.Y,
+                                Direction = FillDirection.Horizontal,
+                                Spacing = new Vector2(4),
+                                Children = new Drawable[]
+                                {
+                                    avatar = new UpdateableAvatarSprite
+                                    {
+                                        Size = new Vector2(48)
+                                    },
+                                    new Container
+                                    {
+                                        RelativeSizeAxes = Axes.X,
+                                        Height = 48,
+                                        Children = new Drawable[]
                                         {
-                                            RelativeSizeAxes = Axes.X,
-                                            AutoSizeAxes = Axes.Y,
-                                            Anchor = Anchor.CentreLeft,
-                                            Origin = Anchor.CentreLeft,
-                                            Direction = FillDirection.Vertical,
-                                            Spacing = new Vector2(2),
-                                            Children = new Drawable[]
+                                            new FillFlowContainer
                                             {
-                                                creatorName = new SpriteText
+                                                RelativeSizeAxes = Axes.X,
+                                                AutoSizeAxes = Axes.Y,
+                                                Anchor = Anchor.CentreLeft,
+                                                Origin = Anchor.CentreLeft,
+                                                Direction = FillDirection.Vertical,
+                                                Spacing = new Vector2(2),
+                                                Children = new Drawable[]
                                                 {
-                                                    Shadow = true,
-                                                    Font = KumiFonts.GetFont(weight: FontWeight.SemiBold),
-                                                    Anchor = Anchor.CentreLeft,
-                                                    Origin = Anchor.CentreLeft,
-                                                    Colour = Colours.GRAY_C
-                                                },
-                                                submittedOn = new TextFlowContainer(c =>
-                                                {
-                                                    c.Font = KumiFonts.GetFont(size: 14);
-                                                    c.Colour = Colours.GRAY_C;
-                                                })
-                                                {
-                                                    AutoSizeAxes = Axes.Both,
-                                                    Anchor = Anchor.CentreLeft,
-                                                    Origin = Anchor.CentreLeft,
-                                                    Alpha = 0.5f
+                                                    creatorName = new SpriteText
+                                                    {
+                                                        Shadow = true,
+                                                        Font = KumiFonts.GetFont(weight: FontWeight.SemiBold),
+                                                        Anchor = Anchor.CentreLeft,
+                                                        Origin = Anchor.CentreLeft,
+                                                        Colour = Colours.GRAY_C
+                                                    },
+                                                    submittedOn = new TextFlowContainer(c =>
+                                                    {
+                                                        c.Font = KumiFonts.GetFont(size: 14);
+                                                        c.Colour = Colours.GRAY_C;
+                                                    })
+                                                    {
+                                                        AutoSizeAxes = Axes.Both,
+                                                        Anchor = Anchor.CentreLeft,
+                                                        Origin = Anchor.CentreLeft,
+                                                        Alpha = 0.5f
+                                                    }
                                                 }
                                             }
                                         }
                                     }
                                 }
-                            }
-                        },
-                        new FillFlowContainer
-                        {
-                            RelativeSizeAxes = Axes.X,
-                            AutoSizeAxes = Axes.Y,
-                            Direction = FillDirection.Horizontal,
-                            Spacing = new Vector2(4),
-                            Children = new Drawable[]
+                            },
+                            new FillFlowContainer
                             {
-                                new PreviewButton()
-                            }
-                        },
-                    }
-                },
-                new Container
-                {
-                    RelativeSizeAxes = Axes.X,
-                    AutoSizeAxes = Axes.Y,
-                    Padding = new MarginPadding
-                    {
-                        Horizontal = 28,
-                        Vertical = 20
-                    },
-                    Children = new Drawable[]
-                    {
-                        new SkewedChartStatus
-                        {
-                            Anchor = Anchor.TopRight,
-                            Origin = Anchor.TopRight
+                                RelativeSizeAxes = Axes.X,
+                                AutoSizeAxes = Axes.Y,
+                                Direction = FillDirection.Horizontal,
+                                Spacing = new Vector2(4),
+                                Children = new Drawable[]
+                                {
+                                    new PreviewButton()
+                                }
+                            },
                         }
+                    },
+                    new ChartStatistics
+                    {
+                        Anchor = Anchor.BottomRight,
+                        Origin = Anchor.BottomRight,
+                        X = -28
+                    }
+                }
+            },
+            new Container
+            {
+                RelativeSizeAxes = Axes.Both,
+                Padding = new MarginPadding
+                {
+                    Horizontal = 28,
+                    Vertical = 20
+                },
+                Children = new Drawable[]
+                {
+                    new SkewedChartStatus
+                    {
+                        Anchor = Anchor.TopRight,
+                        Origin = Anchor.TopRight
                     }
                 }
             }

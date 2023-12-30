@@ -59,8 +59,11 @@ public partial class SkewedChartStatus : CompositeDrawable
                 Font = KumiFonts.GetFont(FontFamily.Montserrat, FontWeight.SemiBold),
                 Anchor = Anchor.Centre,
                 Origin = Anchor.Centre,
-                Colour = Colours.GRAY_C,
+                Colour = Colours.GRAY_E,
                 Padding = new MarginPadding(8)
+                {
+                    Vertical = 4
+                }
             },
         };
         
@@ -69,7 +72,7 @@ public partial class SkewedChartStatus : CompositeDrawable
             if (v.NewValue == null)
                 return;
 
-            statusText.Text = v.NewValue.Status.GetDescription();
+            statusText.Text = v.NewValue.Status.GetDescription().ToUpperInvariant();
             statusText.Colour = getForegroundColour(v.NewValue.Status);
             background.Colour = getBackgroundColour(v.NewValue.Status);
         }, true);

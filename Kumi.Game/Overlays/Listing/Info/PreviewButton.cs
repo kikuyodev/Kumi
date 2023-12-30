@@ -44,7 +44,7 @@ public partial class PreviewButton : ClickableContainer
                 new Box
                 {
                     RelativeSizeAxes = Axes.Both,
-                    Colour = Colours.Gray(0.07f)
+                    Colour = Colours.Gray(0.1f)
                 },
                 progress = new CircularProgress
                 {
@@ -75,6 +75,9 @@ public partial class PreviewButton : ClickableContainer
         {
             preview?.Stop();
             preview = null;
+            
+            progress.Alpha = 0;
+            icon.Icon = FontAwesome.Solid.Play;
         }, true);
     }
 

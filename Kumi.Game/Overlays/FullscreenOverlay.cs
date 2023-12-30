@@ -41,10 +41,16 @@ public abstract partial class FullscreenOverlay : KumiFocusedOverlayContainer
         
         AddRangeInternal(new Drawable[]
         {
-            new Box
+            new Container
             {
                 RelativeSizeAxes = Axes.Both,
-                Colour = Colours.Gray(0.05f)
+                Masking = true,
+                CornerRadius = 5,
+                Child = new Box
+                {
+                    RelativeSizeAxes = Axes.Both,
+                    Colour = Colours.Gray(0.05f)
+                },
             },
             content = new Container
             {

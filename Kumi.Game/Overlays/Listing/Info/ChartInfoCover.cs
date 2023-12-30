@@ -3,7 +3,9 @@ using Kumi.Game.Online.API;
 using Kumi.Game.Online.API.Charts;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
+using osu.Framework.Extensions.Color4Extensions;
 using osu.Framework.Graphics;
+using osu.Framework.Graphics.Colour;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
 
@@ -33,8 +35,8 @@ public partial class ChartInfoCover : CompositeDrawable
             new Box
             {
                 RelativeSizeAxes = Axes.Both,
-                Colour = Colours.Gray(0.07f),
-                Alpha = 0.75f
+                Colour = ColourInfo.GradientHorizontal(Colours.Gray(0.07f), Colours.Gray(0.07f).Opacity(0f)),
+                Alpha = 0.9f
             }
         };
         
@@ -66,7 +68,7 @@ public partial class ChartInfoCover : CompositeDrawable
     private ChartCoverSprite createSprite(IAPIModal modal)
         => new ChartCoverSprite(modal)
         {
-            Depth = depth--,
+            Depth = depth++,
             Anchor = Anchor.Centre,
             Origin = Anchor.Centre,
             RelativeSizeAxes = Axes.Both
