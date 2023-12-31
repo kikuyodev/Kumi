@@ -82,11 +82,9 @@ public partial class KumiGameBase : osu.Framework.Game, ICanAcceptFiles
         DependencyContainer.CacheAs(Storage);
 
         // TODO
-        // API = new APIConnection(DebugUtils.IsDebugBuild
-        //                             ? new DevelopmentServerConfiguration()
-        //                             : new ProductionServerConfiguration());
-
-        API = new APIConnection(new ProductionServerConfiguration());
+        API = new APIConnection(DebugUtils.IsDebugBuild
+                                    ? new DevelopmentServerConfiguration()
+                                    : new ProductionServerConfiguration());
 
         DependencyContainer.CacheAs(API);
         base.Content.Add((APIConnection) API);
@@ -133,11 +131,11 @@ public partial class KumiGameBase : osu.Framework.Game, ICanAcceptFiles
         TrackPreviewManager previewManager;
         DependencyContainer.Cache(previewManager = new TrackPreviewManager(chartManager.ChartTrackStore));
         base.Content.Add(previewManager);
-        
+
         ChartUploadTransmit chartUploadTransmit;
         DependencyContainer.Cache(chartUploadTransmit = new ChartUploadTransmit(realm, API));
         base.Content.Add(chartUploadTransmit);
-        
+
         ChartDownloadTransmit chartDownloadTransmit;
         DependencyContainer.Cache(chartDownloadTransmit = new ChartDownloadTransmit(realm, API));
         base.Content.Add(chartDownloadTransmit);
