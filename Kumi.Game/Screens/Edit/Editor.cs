@@ -1,11 +1,15 @@
 ﻿using Kumi.Game.Audio;
 using Kumi.Game.Charts;
+using Kumi.Game.Charts.Timings;
 using Kumi.Game.Gameplay.Mods;
+using Kumi.Game.Graphics.Containers;
 using Kumi.Game.Input;
 using Kumi.Game.Overlays;
 using Kumi.Game.Screens.Edit.Compose;
 using Kumi.Game.Screens.Edit.Popup;
 using osu.Framework.Allocation;
+using osu.Framework.Audio;
+using osu.Framework.Audio.Track;
 using osu.Framework.Bindables;
 using osu.Framework.Extensions.Color4Extensions;
 using osu.Framework.Graphics;
@@ -17,12 +21,13 @@ using osu.Framework.Input.Events;
 using osu.Framework.Logging;
 using osu.Framework.Screens;
 using osu.Framework.Threading;
+using osu.Framework.Timing;
 using osuTK.Graphics;
 using osuTK.Input;
 
 namespace Kumi.Game.Screens.Edit;
 
-public partial class Editor : ScreenWithChartBackground, ISamplePausablePlayback, IKeyBindingHandler<PlatformAction>, IKeyBindingHandler<GlobalAction>
+public partial class Editor : ScreenWithChartBackground, ISamplePausablePlayback, IBeatProvider, IKeyBindingHandler<PlatformAction>, IKeyBindingHandler<GlobalAction>
 {
     protected override OverlayActivation InitialOverlayActivation => Overlays.OverlayActivation.UserTriggered;
     public override float DimAmount => 0.5f;
@@ -415,4 +420,8 @@ public partial class Editor : ScreenWithChartBackground, ISamplePausablePlayback
         if (musicController != null)
             musicController.TrackChanged -= onTrackChanged;
     }
+
+    TimingPointHandler IBeatProvider.TimingPointHandler => editorChart.TimingPointHandler;
+    IClock IBeatProvider.Clock => clock;
+    ChannelAmplitudes IHasAmplitudes.CurrentAmplitudes => chart.Value.TrackLoaded ? chart.Value.Track.CurrentAmplitudes : ChannelAmplitudes.Empty;
 }
