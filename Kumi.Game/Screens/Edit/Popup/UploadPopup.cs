@@ -1,8 +1,6 @@
 ﻿using Kumi.Game.Charts;
-using Kumi.Game.Database;
 using Kumi.Game.Graphics;
 using Kumi.Game.Graphics.UserInterface;
-using Kumi.Game.Online.API;
 using Kumi.Game.Online.API.Requests;
 using Kumi.Game.Overlays.Settings.Components;
 using osu.Framework.Allocation;
@@ -11,23 +9,13 @@ using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
 using osu.Framework.Graphics.Sprites;
-using osu.Framework.Threading;
 using osuTK;
 
 namespace Kumi.Game.Screens.Edit.Popup;
 
 public partial class UploadPopup : EditorPopup
 {
-    protected override bool CanBeExited => !uploadInProgress;
-
-    [Resolved]
-    private IAPIConnectionProvider api { get; set; } = null!;
-
-    [Resolved]
-    private ChartManager chartManager { get; set; } = null!;
-    
-    [Resolved]
-    private RealmAccess realm { get; set; } = null!;
+    protected override bool CanBeExited => !uploadTransmit.TransmissionInProgress;
 
     [Resolved]
     private Editor editor { get; set; } = null!;
@@ -35,15 +23,18 @@ public partial class UploadPopup : EditorPopup
     [Resolved]
     private EditorChart editorChart { get; set; } = null!;
 
+    [Resolved]
+    private ChartUploadTransmit uploadTransmit { get; set; } = null!;
+
     public UploadPopup()
     {
         Size = new Vector2(400, 200);
     }
 
-    private bool uploadInProgress;
-
     private KumiTextBox descriptionBox = null!;
     private readonly BindableBool isWip = new BindableBool(true);
+
+    private KumiProgressButton uploadButton = null!;
 
     [BackgroundDependencyLoader]
     private void load()
@@ -131,23 +122,25 @@ public partial class UploadPopup : EditorPopup
                                     Anchor = Anchor.BottomCentre,
                                     Origin = Anchor.BottomCentre
                                 },
-                                new KumiButton
+                                uploadButton = new KumiProgressButton
                                 {
                                     RelativeSizeAxes = Axes.None,
                                     Width = 100,
-                                    Text = "Upload",
+                                    Height = 25,
+                                    Label = "Upload",
+                                    Icon = FontAwesome.Solid.Upload,
+                                    IconScale = new Vector2(0.6f),
                                     Important = true,
                                     Anchor = Anchor.BottomCentre,
                                     Origin = Anchor.BottomCentre,
                                     Action = () =>
                                     {
-                                        if (uploadInProgress)
+                                        if (uploadTransmit.TransmissionInProgress)
                                             return;
 
                                         editor.Save();
 
-                                        startUpload();
-                                        waitForUpload();
+                                        tryUpload();
                                     },
                                 }
                             }
@@ -158,79 +151,47 @@ public partial class UploadPopup : EditorPopup
         };
     }
 
-    private Task? uploadTask;
-
-    private void startUpload()
+    private void tryUpload()
     {
-        uploadInProgress = true;
+        uploadTransmit.ModifyRequest += modifyRequest;
+        uploadTransmit.TransmitStarted += onTransmissionStarted;
+        uploadTransmit.TransmitCompleted += onTransmissionFinished;
+        
+        uploadTransmit.StartTransmit(editorChart.ChartInfo.ChartSet!);
+        uploadTransmit.WaitForTransmit(editorChart.ChartInfo.ChartSet!);
+    }
+
+    private void modifyRequest(UploadChartSetRequest req)
+    {
+        req.IsWip = isWip.Value;
+        
+        req.UploadProgress += (value, length) =>
+        {
+            var progress = (float) value / length;
+            uploadButton.Progress = progress;
+        };
+    }
+
+    private void onTransmissionStarted()
+    {
         descriptionBox.Current.Disabled = true;
         isWip.Disabled = true;
-
-        uploadTask = Task.Factory.StartNew(upload, TaskCreationOptions.LongRunning);
+        uploadButton.State = ButtonState.Loading;
     }
 
-    private ScheduledDelegate? waitForUploadDelegate;
-
-    private void waitForUpload()
+    private void onTransmissionFinished(ChartSetInfo? model)
     {
-        Scheduler.Add(waitForUploadDelegate = new ScheduledDelegate(() =>
-        {
-            if (uploadTask is not { IsCompleted: true })
-                return;
-
-            uploadTask = null;
-            waitForUploadDelegate?.Cancel();
-            waitForUploadDelegate = null;
-
-            finishUpload();
-        }, 0, 10));
-    }
-
-    private void upload()
-    {
-        using var stream = new MemoryStream();
-        chartManager.ExportModelToStream(editorChart.ChartInfo.ChartSet!, stream);
-
-        stream.Seek(0, SeekOrigin.Begin);
-
-        UploadChartSetRequest request;
-        
-        // TODO: Add progress bar
-        api.Perform(request = new UploadChartSetRequest
-        {
-            ChartSetStream = stream,
-            IsWip = isWip.Value,
-        });
-
-        request.Success += () => Schedule(() =>
-        {
-            var data = request.Response;
-            var uploadedCharts = data.GetUploadedCharts();
-            var uploadedSet = data.GetUploadedSet();
-
-            realm.Write(r =>
-            {
-                var set = r.Find<ChartSetInfo>(editorChart.ChartInfo.ChartSet!.ID);
-                if (set is null)
-                    return;
-
-                set.OnlineID = uploadedSet.Id;
-                foreach (var chartInfo in set.Charts)
-                {
-                    var uploadedChart = uploadedCharts.FirstOrDefault(c => c.OriginalHash == chartInfo.Hash);
-                    if (uploadedChart is null)
-                        continue;
-
-                    chartInfo.OnlineID = uploadedChart.Chart.Id;
-                }
-            });
-        });
-    }
-
-    private void finishUpload()
-    {
-        uploadInProgress = false;
         descriptionBox.Current.Disabled = false;
         isWip.Disabled = false;
+        uploadButton.State = ButtonState.Idle;
+    }
+
+    protected override void Dispose(bool isDisposing)
+    {
+        base.Dispose(isDisposing);
+        
+        uploadTransmit.ModifyRequest -= modifyRequest;
+        uploadTransmit.TransmitStarted -= onTransmissionStarted;
+        uploadTransmit.TransmitCompleted -= onTransmissionFinished;
     }
 }

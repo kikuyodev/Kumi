@@ -52,7 +52,7 @@ public partial class EditorOverlay : Container
     [BackgroundDependencyLoader]
     private void load()
     {
-        Chart.BindValueChanged(_ => constructDisplay(), true);
+        Chart.BindValueChanged(_ => Schedule(constructDisplay), true);
     }
 
     private SpriteText chartInfoText = null!;

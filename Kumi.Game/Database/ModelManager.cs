@@ -30,14 +30,14 @@ using Realms;
 
 namespace Kumi.Game.Database;
 
-public class ModelManager<TModel> : IModelManager<TModel>, IModelFileManager<TModel, RealmNamedFileUsage>
+public abstract class ModelManager<TModel> : IModelManager<TModel>, IModelFileManager<TModel, RealmNamedFileUsage>
     where TModel : RealmObject, IHasGuidPrimaryKey, IHasFiles, ISoftDelete
 {
     protected readonly RealmAccess Realm;
 
     private readonly UserDataStorage userDataStorage;
 
-    public ModelManager(Storage storage, RealmAccess realm)
+    protected ModelManager(Storage storage, RealmAccess realm)
     {
         Realm = realm;
         userDataStorage = new UserDataStorage(realm, storage);

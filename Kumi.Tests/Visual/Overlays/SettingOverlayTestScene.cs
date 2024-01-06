@@ -4,26 +4,24 @@ using NUnit.Framework;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 
-namespace Kumi.Tests.Visual.UserInterface;
+namespace Kumi.Tests.Visual.Overlays;
 
-public partial class ChatOverlayTestScene : KumiTestScene
+public partial class SettingOverlayTestScene : KumiTestScene
 {
-    private ChatOverlay overlay = null!;
+    private readonly SettingOverlay overlay;
     
-    [SetUp]
-    public void Setup()
+    public SettingOverlayTestScene()
     {
         Children = new Drawable[]
         {
-            overlay = new ChatOverlay()
+            overlay = new SettingOverlay()
         };
     }
-    
+
     [Test]
     public void TestVisibility()
     {
         AddStep("Hide overlay", () => overlay.Hide());
-
         AddStep("Show overlay", () => overlay.Show());
         AddAssert("Overlay is visible", () => overlay.State.Value == Visibility.Visible);
     }

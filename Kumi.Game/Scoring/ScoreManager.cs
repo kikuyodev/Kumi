@@ -26,14 +26,14 @@ public class ScoreManager : ModelManager<ScoreInfo>, IModelImporter<ScoreInfo>
         {
             var items = r.All<ScoreInfo>()
                .Where(s => !s.DeletePending);
-            
+
             if (filter != null)
                 items = items.Where(filter);
 
             Delete(items.ToList());
         });
     }
-    
+
     public void Delete(ChartInfo chart)
     {
         Realm.Run(r =>

@@ -1,4 +1,5 @@
-﻿using Kumi.Game.Charts;
+﻿using Kumi.Game.Audio;
+using Kumi.Game.Charts;
 using Kumi.Game.Database;
 using Kumi.Game.Gameplay.Mods;
 using Kumi.Game.Graphics;
@@ -46,7 +47,7 @@ public partial class KumiGameBase : osu.Framework.Game, ICanAcceptFiles
     protected ChannelManager ChannelManager { get; private set; } = null!;
 
     protected KumiScreenStack ScreenStack = null!;
-    
+
     [Cached]
     [Cached(typeof(IBindableList<Mod>))]
     protected readonly BindableList<Mod> SelectedMods = new BindableList<Mod>();
@@ -127,10 +128,22 @@ public partial class KumiGameBase : osu.Framework.Game, ICanAcceptFiles
             }
         });
 
-        Add(MusicController = new MusicController());
+        TrackPreviewManager previewManager;
+        DependencyContainer.Cache(previewManager = new TrackPreviewManager(chartManager.ChartTrackStore));
+        base.Content.Add(previewManager);
+
+        ChartUploadTransmit chartUploadTransmit;
+        DependencyContainer.Cache(chartUploadTransmit = new ChartUploadTransmit(realm, API));
+        base.Content.Add(chartUploadTransmit);
+
+        ChartDownloadTransmit chartDownloadTransmit;
+        DependencyContainer.Cache(chartDownloadTransmit = new ChartDownloadTransmit(realm, API));
+        base.Content.Add(chartDownloadTransmit);
+
+        base.Content.Add(MusicController = new MusicController());
         DependencyContainer.CacheAs(MusicController);
 
-        Add(ChannelManager = new ChannelManager());
+        base.Content.Add(ChannelManager = new ChannelManager());
         DependencyContainer.CacheAs(ChannelManager);
 
         fileAcceptors.Add(chartManager);
